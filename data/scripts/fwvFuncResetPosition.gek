@@ -2,11 +2,18 @@ scn fwvFuncResetPosition
 
 ref rObjectRef
 float fCalc
+short sDisabled
 
 begin Function { rObjectRef }
+	if IsFormValid rObjectRef == 0
+		return
+	endif
+	let sDisabled := rObjectRef.GetDisabled
 	rObjectRef.Disable 0
 	rObjectRef.MoveTo rObjectRef
-	rObjectRef.Enable 0
+	if sDisabled == 0
+		rObjectRef.Enable 0
+	endif
 	set fCalc to rObjectRef.GetStartingPos X
 	rObjectRef.SetPos X fCalc
 	set fCalc to rObjectRef.GetStartingPos Y
@@ -19,6 +26,9 @@ begin Function { rObjectRef }
 	rObjectRef.SetAngle Y fCalc
 	set fCalc to rObjectRef.GetStartingAngle Z
 	rObjectRef.SetAngle Z fCalc
-	Update3D
-	PlayGroup Idle 0
-end
+
+	if sDisabled == 0
+		rObjectRef.Update3D
+		rObjectRef.Playgroup Idle 0
+	endif
+end 
