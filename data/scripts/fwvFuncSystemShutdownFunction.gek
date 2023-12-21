@@ -1,0 +1,101 @@
+scn fwvFuncSystemShutdownFunction
+
+ref lighting
+ref ambFx
+
+Begin Function {  }
+
+	if fwvq1.tTheme == 0
+		set lighting to fwvT1ClightNormalRef
+		set ambFx to fwvTCambRef
+	elseif fwvq1.tTheme == 1
+		set lighting to fwvT2ClightNormalRef
+		set ambFx to fwvT2CambRef
+	elseif fwvq1.tTheme == 2
+		set lighting to fwvT3ClightNormalRef
+		set ambFx to fwvT3CambRef
+	elseif fwvq1.tTheme == 3
+		set lighting to fwvT4ClightNormalRef
+	elseif fwvq1.tTheme == 4
+		set lighting to fwvT5ClightNormalRef
+		set ambFx to fwvT5CambRef
+	elseif fwvq1.tTheme == 5
+		set lighting to fwvT6ClightNormalTanRef
+		set ambFx to fwvT6CambRef
+	elseif fwvq1.tTheme == 6
+		set lighting to fwvT7ClightNormalRef
+		set ambFx to fwvT7CambRef
+	endif
+
+	printc "Enabling/Disabling Lighting/Sound for Desktop %g" fwvq1.tTheme
+
+	if fwvqSystems.cSys == 1
+
+		lighting.disable
+		ambFx.disable
+
+		printc "deactivating systems"
+		set fwvqSystems.cPower to fwvq1.tPower
+		set fwvq1.tPower to 0
+		rimod fwvTardisBlueISFX 
+		rimod fwvTardisRedISFX 
+
+		if fwvq1.tArchitectureOn == 1
+			set fwvqSystems.cArchitecture to 1
+			set fwvq1.tArchitectureOn to 0
+		endif
+		if fwvq1.tNavOn == 1
+			set fwvqSystems.cNav to 1
+			set fwvq1.tNavOn to 0
+		endif
+		if fwvq1.tCommsOn == 1
+			set fwvqSystems.cComms to 1
+			set fwvq1.tCommsOn to 0
+		endif
+		if fwvq1.tLifeSupportOn == 1
+			set fwvqSystems.cLifesupport to 1
+			set fwvq1.tLifeSupportOn to 0
+		endif
+		if fwvq1.tBeaconOn == 1
+			set fwvqSystems.cHomingBeacon to 1
+			set fwvq1.tBeaconOn to 0
+		endif
+		if fwvq1.tHadsOn == 1
+			set fwvqSystems.cHads to 1 
+			set fwvq1.tHadsOn to 0
+		endif
+		set fwvqSystems.cSys to 0
+
+	elseif fwvqSystems.cSys == 0
+		printc "restoring systems"
+
+		lighting.enable
+		ambFx.enable
+
+		set fwvq1.tPower to fwvqSystems.cPower	;restore power
+
+		if fwvqSystems.cArchitecture == 1
+			set fwvq1.tArchitectureOn to 1
+		endif		
+		if fwvqSystems.cLifesupport == 1
+			set fwvq1.tLifeSupportOn to 1
+		endif	
+		if fwvqSystems.cHads == 1
+			set fwvq1.tHadsOn to 1
+		endif	
+		if fwvqSystems.cHomingBeacon == 1
+			set fwvq1.tBeaconOn to 1
+		endif	
+		if fwvqSystems.cComms == 1
+			set fwvq1.tCommsOn to 1
+		endif	
+		if fwvqSystems.cNav == 1
+			set fwvq1.tNavOn to 1
+		endif
+		set fwvqSystems.cSys to 1
+
+		set fwvqSystems.navCtrls to 1
+		set fwvqSystems.commCtrls to 1
+
+	endif
+End

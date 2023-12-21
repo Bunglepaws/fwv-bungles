@@ -1,0 +1,19 @@
+scn fwvXOLibraryTriggersSCRIPT
+
+
+begin OnTriggerEnter Player
+	if fwvq1.tPower > 0 && fwvqSystems.crashed == 0
+	;if fwvqRooms.LibraryStackLights == 1
+		fwvLibraryStacksLightBigREF01.Disable
+		fwvLibraryStacksLightBigREF02.Disable
+		fwvLibraryStacksLightREF42.Disable
+		fwvTLibraryLightBig01.Enable
+		fwvTLibraryLightBig02.Enable
+		fwvTLibraryLightBig03.Enable
+		fwvTLibraryLightBig04.Enable
+		fwvTLibraryLightBig05.Enable
+		set fwvqRooms.LibraryStackLights to 0
+	endif
+
+			
+end

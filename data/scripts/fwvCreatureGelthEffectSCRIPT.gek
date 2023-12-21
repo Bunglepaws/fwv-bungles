@@ -1,0 +1,18 @@
+scn fwvCreatureGelthEffectSCRIPT
+
+Begin ScriptEffectStart
+	set fwvqGelth.sCurrentGelth to fwvqGelth.sCurrentGelth + 1
+	addToFaction fwvGelthFaction 1
+	pms fwvCreatureGelthFX
+	saa 0.75
+End
+
+Begin ScriptEffectUpdate
+
+End
+
+Begin ScriptEffectFinish
+	set fwvqGelth.sCurrentGelth to fwvqGelth.sCurrentGelth - 1
+	removeFromFaction fwvGelthFaction
+	;sms fwvCreatureGelthFX
+End

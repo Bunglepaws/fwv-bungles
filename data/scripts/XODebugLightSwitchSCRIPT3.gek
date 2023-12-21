@@ -1,0 +1,14 @@
+scn XODebugLightSwitchSCRIPT3
+
+;short button
+
+;short sNewComp
+;short sComp
+
+Begin OnFire
+
+	MessageEx "staveeff %g"  fwvqRegen.rStaveEffect
+	MessageEx "sWearThinOnce %g"  fwvqTimeLord.sWearThinOnce
+	
+end
+

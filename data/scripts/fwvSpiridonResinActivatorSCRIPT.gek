@@ -1,0 +1,36 @@
+scn fwvSpiridonResinActivatorSCRIPT
+
+short button
+
+short awaitingInput
+
+Begin OnActivate Player
+	ShowMessage fwvSpiridonResinDoorMSG
+	set awaitingInput to 1
+End
+
+Begin GameMode
+
+
+	if awaitingInput == 1
+		set button to GetButtonPressed
+		if button == 0 	; Melt Resin
+			playsound CWaterSmall
+			fwvSpiridonResin01.disable 3 
+			fwvSpiridonResin02.disable 3
+			fwvSpiridonResin03.disable 3
+			fwvSpiridonResin04.disable 3
+			fwvSpiridonResin01.MarkForDelete 
+			fwvSpiridonResin02.MarkForDelete
+			fwvSpiridonResin03.MarkForDelete
+			fwvSpiridonResin04.MarkForDelete			
+			set fwvqGameOfRassilon.sSpiridonResinOn to 2
+			player.removeitem fwvSpiridonAlkali 5
+			set awaitingInput to 0
+		elseif button == 1	; Cancel
+			set awaitingInput to 0	
+		endif
+
+	endif
+
+End

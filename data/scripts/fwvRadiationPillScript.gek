@@ -1,0 +1,14 @@
+scn fwvRadiationPillScript
+
+begin ScriptEffectStart
+	if player.hasmagiceffect fwvSkaroRadiationBaseEffect == 1
+		RemoveSpell fwvSkaroRadiationEffect
+	endif
+end
+
+
+begin ScriptEffectUpdate
+	if player.hasmagiceffect fwvSkaroRadiationBaseEffect == 1
+		RemoveSpell fwvSkaroRadiationEffect
+	endif
+end

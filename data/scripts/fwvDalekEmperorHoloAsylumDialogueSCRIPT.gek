@@ -1,0 +1,16 @@
+scn fwvDalekEmperorHoloAsylumDialogueSCRIPT
+
+short sTalked
+
+Begin Gamemode
+
+if sTalked == 0
+	if GetDistance Player < 1200 
+		if player.isInCombat == 0
+			player.startconversation fwvEmperorHoloREF, Greeting
+			set sTalked to 1
+		endif
+	endif
+endif
+
+END

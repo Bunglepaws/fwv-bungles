@@ -1,0 +1,30 @@
+scn fwvT6CdoorReleaseSCRIPT
+
+begin onActivate player
+
+	if IsAnimPlaying == 0
+		if fwvq1.tSpace == 0 && fwvq1.tFlying == 0 && getStage fwvqGameOfRassilon != 60
+			if fwvq1.sDoorIsOpen == 1 ; close it now
+				PlayGroup Backward 0
+				fwvTC6exteriorDoorRef.PlayGroup Backward 0
+			else ; open it
+				PlayGroup Forward 0
+				fwvTC6exteriorDoorRef.PlayGroup Forward 0
+			endif
+			PlaySound fwvFXtardisExteriorDoor
+			;set fwvq1.sDoorIsOpen to 1 - fwvq1.sDoorIsOpen
+		elseif fwvq1.tFlying == 1
+			ShowMessage fwvTardisFlyingMessage
+		elseif fwvq1.tSpace == 1
+			MessageEx "[Cannot open the doors whilst in Space]"
+			PlaySound DRSLocked
+		elseif getStage fwvqGameOfRassilon == 60
+			DisablePlayerControls 1 1 1 1 1 1 1
+			imod FadeToBlackAndBackISFX
+			let fwvqGameOfRassilon.sEnd := 2
+		endif
+		;set fwvq1.sDoorIsOpen to fwvTC6exteriorDoorRef.sOpen
+	endif
+	activate
+end
+

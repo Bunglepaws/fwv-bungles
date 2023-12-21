@@ -1,0 +1,60 @@
+scn fwvq3aStage75SCRIPT
+
+float timer
+short event
+
+begin onTriggerEnter player
+
+	if getStage fwvq3a == 75
+		ShowMessage fwvq3aHintMessage
+	endif
+
+	if getQC fwvq3a == 1
+		if fwvq3a.good == 1
+			fwvq3aGeckoRef.enable	;reenables all geckos in the area
+		endif
+	endif
+
+end
+
+begin onTrigger Player
+
+ref explosion1
+ref explosion2
+ref explosion3
+
+set explosion1 to fwvq3aExplosion1Ref
+set explosion2 to fwvq3aExplosion2Ref
+set explosion3 to fwvq3aExplosion3Ref
+	
+	if player.IsWeaponInList fwvWSonicList == 1 && IsControlPressed 4 == 1
+	printc "Sonic is firing"
+		if getStage fwvq3a == 75
+			imod MegatonNukeISFX
+			explosion1.placeatme SmallNukeExplosionNoKD
+			explosion2.placeatme fwvNukeExplosion
+			explosion3.placeatme SmallNukeExplosionNoKD
+			fwvq3aDestructionRef.enable
+			SetGlobalTimeMultiplier 0.25
+			set timer to 0.0
+			set event to 1
+			setObjectiveCompleted fwvq3a 75 1
+			set fwvqComms.init to 0
+			set fwvq3a.ending to 1
+			setStage fwvq3a 100
+			player.rewardKarma -10
+		endif
+	endif
+
+end
+
+begin gamemode
+	if event == 1
+		if timer < 5
+			set timer to timer + getsecondspassed
+		else
+			SetGlobalTimeMultiplier 1
+			set event to 0
+		endif
+	endif
+end

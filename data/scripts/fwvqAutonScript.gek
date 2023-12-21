@@ -1,0 +1,142 @@
+scn fwvqAutonScript
+
+short sCurRefNum
+short sMaxRefs
+short sCurLimb
+short sCurrentAuton
+short sDuplicateEdit
+float fTimeWaited
+float fNextDay
+ref rCurRef
+ref rOrigRef
+ref rBaseForm
+ref loot
+
+short sDuplicateMode
+array_var arDupCloneActors
+array_var arDupOriginalActors
+array_var arDupTimers
+array_var Entry
+int entryPos
+float fReleaseTime
+short sInitDone
+short sForceTest ; debug -- used to test
+
+begin GameMode
+
+	if eval (arDupCloneActors == Ar_Null || arDupOriginalActors == Ar_Null || arDupTimers == Ar_Null)
+		let arDupCloneActors := Ar_Construct "array"
+		let arDupOriginalActors := Ar_Construct "array"
+		let arDupTimers := Ar_Construct "array"
+		printc "init"
+	endif
+	let sDuplicateMode := Ar_Size arDupOriginalActors
+	if sDuplicateMode > 0 && sDuplicateEdit == 0
+		Foreach Entry <- arDupOriginalActors
+			let rOrigRef := Entry["value"] ; array value
+			let entryPos := Entry["key"] ; array key
+			let fReleaseTime := arDupTimers[entryPos]
+			if fReleaseTime <= GameDaysPassed
+				if rOrigRef.IsFormValid == 1
+					rOrigRef.enable 1
+					let rCurRef := arDupCloneActors[entryPos]
+					if rCurRef.IsFormValid == 1
+						if rCurRef.GetDead == 0 && rCurRef.GetDisabled == 0
+							rCurRef.placeAtMe fwvAutonAshPile
+							rCurRef.PlaceAtMe fwvAntiPlasticExplosion 1
+						endif
+						rCurRef.disable 0
+						rCurRef.MarkForDelete
+					endif
+				endif
+				
+				let arDupOriginalActors[entryPos] := 0 ; set to 0 for removal later
+				let arDupCloneActors[entryPos] := 0 ; set to 0 for removal later
+				let arDupTimers[entryPos] := 0 ; set to 0 for removal later
+			else
+				let rCurRef := arDupCloneActors[entryPos]
+				if rCurRef.IsFormValid == 1
+					if rCurRef.GetDead == 1 || rCurRef.GetDisabled == 1
+						let loot := fwvAutonAshPile
+						rCurRef.placeAtMe loot
+						rCurRef.disable 0
+						rCurRef.MarkForDelete
+						if rOrigRef.IsFormValid == 1
+							rOrigRef.enable 1
+						endif
+						let arDupOriginalActors[entryPos] := 0 ; set to 0 for removal later
+						let arDupCloneActors[entryPos] := 0 ; set to 0 for removal later
+						let arDupTimers[entryPos] := 0 ; set to 0 for removal later
+					endif
+				endif
+			endif
+		Loop
+		
+		; clear out empty array indices
+		Label 0
+		let entryPos := Ar_Find 0, arDupOriginalActors
+		if entryPos != Ar_BadNumericIndex
+			Ar_Erase arDupOriginalActors, entryPos
+			Ar_Erase arDupCloneActors, entryPos
+			Ar_Erase arDupTimers, entryPos
+			GoTo 0
+		endif
+		
+	endif
+
+	if sDuplicateEdit == 0 && player.getInWorldspace WastelandNV == 1 && player.IsInInterior == 0 && (sForceTest || GetStage fwvqAutonMurder >= 100) && player.getEquipped fwvOutfitBioDampener == 0
+		set fTimeWaited to fTimeWaited + GetSecondsPassed
+		if fTimeWaited > 30.0 || sForceTest
+			set fTimeWaited to 0
+			set sCurRefNum to 1
+			set sMaxRefs to GetNumRefs 42 1 ; 42 = NPC, 1 = cell depth (0 = current cell.  1 = surrounding 4 included)
+			if sMaxRefs > 0
+				set rOrigRef to GetFirstRef 42 1
+
+				;printToConsole "%.0f duplicate potentials found" sMaxRefs
+				Label 1
+				if rOrigRef.GetDead == 0 && (GetRandomPercent <= 5 || sForceTest) && rOrigRef.IsEssential == 0 && rOrigRef.GetPlayerTeammate == 0 && rOrigRef.GetDisabled == 0
+					if rOrigRef.GetDistance Player > 350 && rOrigRef.GetDistance Player < 2500 && rOrigRef.GetInFaction fwvAutonFaction == 0 && rOrigRef.GetInFaction fwvSilentCreatureFaction == 0
+						set sForceTest to 0
+						;turn NPC into an Auton
+						printc "An Auton duplicate has spawned!"
+						set rBaseForm to rOrigRef.GetBaseForm
+						set fNextDay to GameDaysPassed + 1.0
+						rOrigRef.Disable 0
+						set rCurRef to rOrigRef.PlaceAtMe rBaseForm 1
+						set sDuplicateEdit to 1
+						; add to array of cloned NPC's for later
+						Ar_Append arDupCloneActors rCurRef
+						Ar_Append arDupOriginalActors rOrigRef
+						Ar_Append arDupTimers fNextDay
+					endif
+				endif
+
+				set sCurRefNum to sCurRefNum + 1
+				if sCurRefNum < sMaxRefs && sDuplicateEdit == 0 ; loop to next NPC
+					set rOrigRef to GetNextRef
+					Goto 1
+				endif
+			endif
+		endif
+	elseif sDuplicateEdit == 1 ; only trigger 1 frame later
+		set sDuplicateEdit to 2
+		rCurRef.SetName "Auton Duplicate"
+		rCurRef.SetAV Aggression 2
+		rCurRef.ResetInventory
+		rCurRef.RemoveFromAllFactions
+	elseif sDuplicateEdit == 2
+		set sDuplicateEdit to 3
+		rCurRef.addToFaction fwvAutonFaction 1
+		rCurRef.addItem fwvItemNestenePolymer 3
+		rCurRef.addItem fwvWeapAutonWristgunNoLoop 1
+		rCurRef.addItem AmmoSmallEnergyCell 100
+	elseif sDuplicateEdit == 3
+		rCurRef.equipItem fwvWeapAutonWristgunNoLoop 1 1
+		rCurRef.Disable
+		rCurRef.Enable
+		rCurRef.startCombat player
+		set sDuplicateEdit to 0
+	endif
+
+end	

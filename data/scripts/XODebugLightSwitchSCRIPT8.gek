@@ -1,0 +1,23 @@
+scn XODebugLightSwitchSCRIPT8
+
+ref BloodyWeather
+
+Begin OnFire
+
+;MessageEx "ATTACK YOU FUCKERS"
+;set fwvqEncounter.encounter to 2
+;set fwvqEncounter.encounterType to 2
+;set fwvqEncounter.encounter to 1
+
+set BloodyWeather to fwvq1.rTDesktopWeatherRef
+
+MessageEx "Current Weather is"  + $BloodyWeather
+
+MessageEx "Current Weather is %n"  BloodyWeather
+
+printc "Is Current Weather 1996 Console?"
+if GetIsCurrentWeather fwvTardisConsole5Weather == 1
+	printc "YUP"
+endif
+
+end

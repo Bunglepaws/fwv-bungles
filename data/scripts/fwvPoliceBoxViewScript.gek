@@ -1,0 +1,16 @@
+scn fwvPoliceBoxViewScript
+
+float fTimeWait 
+
+begin GameMode
+	; Fix to delete duplicate policeboxes when the player teleports into the TARDIS then leaves it
+
+	if fTimeWait < 0.1 ; give a few frames before doing the following check
+		set fTimeWait to fTimeWait + GetSecondsPassed
+	else
+		if fwvq1.rPoliceBoxRef != GetSelf && GetSelf != PoliceBoxRef
+			MarkForDelete
+			Disable
+		endif
+	endif
+end

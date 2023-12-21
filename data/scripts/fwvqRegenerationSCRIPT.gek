@@ -1,0 +1,510 @@
+scn fwvqRegenerationSCRIPT
+
+short regenMode 		; 1; Immediate 2; 3 minute timer 3; no Regen
+short button				; Simple button var
+short TimeLordTrue	; Dictates whether the player is a Time Lord or not
+short regenVar			; The Incarnation number
+short rInit				; Initialise the regen anim
+short rMsg				; Initialise the Regen Menu
+short tInit				; Initi
+short noRegen
+short sPostRand		; Determines if post regen cycle kicks in
+short frame
+short damageMode	; What effects does the regen have, e.g blow up TARDIS
+short staveLimit 		; Maximum 15 minutes
+short regenNum		; regenVar + 1 equals which regen of 12 (Xoanon)
+float nrTimer
+float rTimer 		; Regen timer countdown
+float rAnimTimer	; Regen Animation Timer
+short rEvent		; Regen Anim Event Phase
+
+float rSex		; Gender randomiser
+float faceRand	; Face randomiser
+short sLCount 
+short sRandomPerc 
+ref rTemplate
+short sZeroRoomRegenEff
+; Mostly appearance
+short sAgeCur
+short sAgeTo
+short sAgeAmount
+float sHeight
+int iRGB ; hair RGB (65536 * r + 256 * g + b)
+float fHue
+float fSat
+float fLight
+float fLerpValue
+float fSatMult
+float fLightMult
+ref rRace
+ref rHairForm
+
+short rStaveFrame
+short rStaveEffect
+short fxCount
+
+short rCycle			; Regen Cycle
+float rCycleTimer	; Regen Cycle Timer
+float rCycleDay		; Stores the day at which the player's cycle began
+float rCycleRnd		; Cycle Randomiser
+
+short StrRand		; Strength
+short PerRand		; Perception
+short EndRand		; Endurance
+short ChaRand		; Charisma
+short IntRand		; Intelligence
+short AgRand		; Agility
+short LuckRand		; Luck
+
+short StrOrig		; Strength
+short PerOrig		; Perception
+short EndOrig		; Endurance
+short ChaOrig		; Charisma
+short IntOrig		; Intelligence
+short AgOrig		; Agility
+short LuckOrig		; Luck
+
+
+short BarterRand	; Barter
+short BGRand		; BigGuns
+short EWRand		; EnergyWeaps
+short ExpRand		; Explosives
+short LockRand		; LockPick
+short MedRand		; Medicine
+short MWRand		; MeleeWeaps
+short RepRand		; Repair
+short SciRand		; Science
+short SGRand		; SmallGuns
+short SneakRand		; Sneaking
+short SpRand		; Speech
+short UARand		; Unarmed
+
+short tLordGood	; Path of Benevolence
+short tLordBad		; Path of Malevolence
+short tLordNeutral	; Path of Indifference
+
+short tCompanions	; Set the max number of people you can have hypnotised or following you
+
+; the Stranger regen vars
+short sPlayer12Age
+ref rPlayer12Template
+ref rPlayer12HairForm
+int iPlayer12HairColor
+
+; How many SPECIAL points total
+short sSPECIALPoints
+
+; stat multiplier overrides
+float fStatModStr
+float fStatModPer
+float fStatModEnd
+float fStatModCha
+float fStatModInt
+float fStatModAg
+float fStatModLuck
+
+ref rConsoleRoom
+ref rCopyRegen
+
+array_var body 
+short patch
+ref curBody
+ref copiedBody
+
+short disableRegen			;used by quests and events to stop player regenerating
+
+short sDoOnce
+
+begin GameMode
+
+	set rConsoleRoom to fwvq1.rTDesktopRoom
+	
+	set button to getbuttonpressed
+	
+	if TimeLordTrue == 0 ; set base template for regen cloning
+		set rTemplate to Player
+	endif
+	
+	If TimeLordTrue == 1	; Checks to see if the player is a Time Lord
+
+		;Only patch if you are a Time Lord
+		if patch < 0
+			let body := ar_range 1, 50
+			set patch to 1
+		endif
+
+		;enable the timecracks only once you have become a Time Lord
+		if sDoOnce == 0
+			fwvTimeCrack01Ref.enable
+			fwvTimeCrack02Ref.enable
+			fwvTimeCrack03Ref.enable
+			set sDoOnce to 1
+		endif
+
+		; ======================== REGEN MENU ==============================
+		if disableRegen == 0
+			if player.getHealthPercentage < 0.25 || player.getAv RadiationRads > 950
+				if rMsg == 0									; Show the menu only once
+					showmessage fwvRegenMessage fwvqRegen.regenVar		; Player chooses what to do
+					set rMsg to 1
+				endif
+
+				if button == 0						; Player regenerates
+					set regenMode to 1
+				elseif button == 1					; Stave off regen
+					set regenMode to 2
+				elseif button == 2					; Use the BioContainer
+					set regenMode to 3
+				elseif button == 3					; die
+					set regenMode to 4
+					set noRegen to 0
+				endif
+			endif
+		endif
+
+		; ======================== REGENERATION ==============================
+
+		if regenMode == 1
+			; ======== INITIALISE ALL RANDOMISED VARIABLES =======
+
+			if rInit == 0
+				set sSPECIALPoints to Player.getAV Strength + Player.getAV Perception + Player.getAV Endurance + Player.getAV Charisma + Player.getAV Intelligence + Player.getAV Agility + Player.getAV Luck
+				set sSPECIALPoints to sSPECIALPoints / 7
+				
+				set StrOrig	to player.getav	Strength
+				set PerOrig	to player.getav Perception
+				set EndOrig	to player.getav Endurance
+				set ChaOrig	to player.getav Charisma
+				set IntOrig	to player.getav Intelligence
+				set AgOrig to player.getav Agility
+				set LuckOrig to player.getav Luck
+
+				set StrRand to Call fwvFuncGetRandomSPECIAL sSPECIALPoints fStatModStr StrOrig
+				set PerRand to Call fwvFuncGetRandomSPECIAL sSPECIALPoints fStatModPer PerOrig
+				set EndRand to Call fwvFuncGetRandomSPECIAL sSPECIALPoints fStatModEnd EndOrig
+				set ChaRand to Call fwvFuncGetRandomSPECIAL sSPECIALPoints fStatModCha ChaOrig
+				set IntRand to Call fwvFuncGetRandomSPECIAL sSPECIALPoints fStatModInt IntOrig
+				set AgRand to Call fwvFuncGetRandomSPECIAL sSPECIALPoints fStatModAg AgOrig
+				set LuckRand to Call fwvFuncGetRandomSPECIAL sSPECIALPoints fStatModLuck LuckOrig
+
+				set BarterRand to GetRandomPercent
+				set BGRand to GetRandomPercent		
+				set EWRand to GetRandomPercent		
+				set ExpRand to GetRandomPercent		
+				set LockRand to GetRandomPercent		
+				set MedRand to GetRandomPercent
+				set MWRand to GetRandomPercent		
+				set RepRand to GetRandomPercent		
+				set SciRand to GetRandomPercent		
+				set SGRand to GetRandomPercent		
+				set SneakRand to GetRandomPercent
+				set SpRand to GetRandomPercent		
+				set UARand to GetRandomPercent
+
+				player.pms GlowingOneFXShader
+				player.addSpell fwvRegenFX
+				set regenNum to regenVar +1
+				ShowMessage fwvRegenStartMessage regenNum			; Display that you are Regenerating and the number of incarnation
+				set rAnimTimer to 0
+				set rCycleDay to GameDaysPassed 				; Store the Day on which your Regen Cycle begins
+				set rEvent to 1											; Begin the Regen Process
+
+			; ======== STORE CURRENT BODY =======
+
+				set rInit to 1
+
+			endif
+
+			; ======== BEGIN REGEN ANIM =======
+
+			if rEvent == 1				; Run the regen animation, ending with explosion
+
+				;printc "EVENT IS %G" rEvent
+
+				if rAnimTimer < 17
+					set rAnimTimer to rAnimTimer + getsecondspassed
+				else
+					set rAnimTimer to 0
+					set rEvent to 2
+
+				endif
+				
+			elseif rEvent == 2 ; reset player's face to default
+
+				;printc "EVENT IS %G" rEvent
+
+				Player.MatchFaceGeometry Player 0
+				set rEvent to 3
+				
+			elseif rEvent == 3				; Begin the randomising of stats
+
+				;printc "EVENT IS %G" rEvent
+
+				if regenVar <= 12
+					set sAgeCur to Call fwvFuncGetAge Player
+					if sAgeCur == 0
+						set sAgeTo to 1
+					elseif sAgeCur == 1
+						set sAgeTo to 0
+					else
+						set sAgeTo to -1 ;Whether AgeCur is 2 or 3, sub 1 takes to Adult not Aged/Old
+					endif
+					;printc "got race"
+					set sAgeAmount to 1 ;sAgeTo - sAgeCur - not using this now
+					Call fwvFuncMatchAge Player 1 ;Does nothing to AgeRace so we have the next line
+					player.agerace sAgeTo
+					printc "aged from %g by %g" sAgeCur sAgeto
+					set rTemplate to Call fwvFuncGetRandomForm fwvRegenTemplate
+					;printc "Regen Template used %g" sRandomPerc
+					Player.MatchFaceGeometry rTemplate 100
+					; 0.15 = 56/360
+					set fSatMult to 1.0
+					set fLightMult to 1.0
+					
+					; for generic/modded races
+					if sAgeTo < 2 
+						set fSatMult to 0.7
+						set fLightMult to 1.1
+					elseif sAgeTo == 2
+						set fSatMult to 0.4
+						set fLightMult to 1.4
+					endif
+					
+					; attempt natural haircolor (badly)
+					set rRace to Player.GetRace
+					;printc "got race"
+					if IsRefInList rRace fwvRaceAfricanAmericanList
+						set fSatMult to 0.9
+						set fLightMult to 0.5
+						if sAgeTo == 2
+							set fSatMult to 0.85
+							set fLightMult to 0.5
+						elseif sAgeTo == 3 
+							set fSatMult to 0.6
+							set fLightMult to 0.6
+						endif
+					elseif IsRefInList rRace fwvRaceAsianList
+						set fSatMult to 0.7
+						set fLightMult to 0.5
+						if sAgeTo == 2
+							set fSatMult to 0.85
+							set fLightMult to 0.6
+						elseif sAgeTo == 3
+							set fSatMult to 0.6
+							set fLightMult to 0.65
+						endif
+					elseif IsRefInList rRace fwvRaceCaucasianList 
+						set fSatMult to 0.8
+						set fLightMult to 1.0
+						if sAgeTo == 2
+							set fSatMult to 0.85
+							set fLightMult to 1.0
+						elseif sAgeTo == 3
+							set fSatMult to 0.6
+							set fLightMult to 1.0
+						endif
+					elseif IsRefInList rRace fwvRaceHispanicList
+						set fSatMult to 0.8
+						set fLightMult to 0.8
+						if sAgeTo == 1
+							set fSatMult to 0.75
+							set fLightMult to 1.0
+						elseif sAgeTo == 2
+							set fSatMult to 0.85
+							set fLightMult to 1.0
+						elseif sAgeTo == 3
+							set fSatMult to 0.6
+							set fLightMult to 1.0
+						endif
+					endif
+					
+					;set sHeight to 0.96 + GetRandomPercent * (1.04 - 0.96 + 1)/100
+					;set sHeight to Rand 0.96,1.04
+					;player.SetScale sHeight
+					
+					;printc "calling function"
+					set iRGB to Call fwvFuncRandomHairColorRange 0.0 0.15 fSatMult fLightMult
+					;printc "race changed"
+					
+					if GetPCIsSex Male
+						set sLCount to ListGetCount fwvRegenMaleHairList
+						set sRandomPerc to 0 + GetRandomPercent * (sLCount - 0) / 100
+						set rHairForm to Call fwvFuncGetRandomForm fwvRegenMaleHairList
+					else
+						set sLCount to ListGetCount fwvRegenFemaleHairList
+						set sRandomPerc to 0 + GetRandomPercent * (sLCount - 0) / 100
+						set rHairForm to Call fwvFuncGetRandomForm fwvRegenFemaleHairList
+					endif
+					Player.SetHair rHairForm
+					
+					Player.SetHairColor iRGB
+					;printc "hair changed"
+					ListRemoveForm fwvRegenTemplate rTemplate
+
+				elseif regenVar == 12
+					player.matchRace fwvRegenDecayRef		;MAKE THE PLAYER BECOME WITHERED AND DECAYED
+					player.addSpell fwvTLinsanitySpell			;ALSO MAKE THEM BECOME MAD AND INSANE
+				elseif regenVar > 13
+					player.killActor
+				endif
+				set rEvent to 4
+
+				; ============== INITIATE REGEN CYCLE ==============
+
+			elseif rEvent == 4
+				set fwvqTimeLord.tBodyAge to 0
+				set fwvqTimeLord.sWearThinOnce to 0
+				printc "WT 0"
+				;printc "EVENT IS %G" rEvent
+
+				if fwvqRegen.sZeroRoomRegenEff < 1
+					player.addSpell fwvRegenCycle
+				else
+					ShowMessage fwvRegenCycleZeroRoomMessage
+					printc "Regen Cycle Spell blocked by ZR loc regen"
+				endif
+
+
+				if player.getInCell rConsoleRoom == 1 || player.getInCell fwvTinterior1 == 1
+					if damageMode == 1
+						Call fwvFuncDamageSystemsFunction
+					elseif damageMode == 2
+						set fwvq1.tHull to Rand 5,20
+						set fwvq1.tFuel to 0
+					endif
+				endif
+				set rEvent to 5
+
+				; ============== INITIATE STATS CHANGE ==============
+
+			elseif rEvent == 5
+				;printc "EVENT IS %G" rEvent
+
+				Player.setAV Strength StrRand
+				Player.setAV Perception PerRand
+				Player.setAV Endurance EndRand
+				Player.setAV Charisma ChaRand
+				Player.setAV Intelligence IntRand
+				Player.setAV Agility AgRand
+				Player.setAV Luck LuckRand
+				Player.setAV radiationRads 0
+
+				player.sms fwvRegenEffect2
+				player.sms GlowingOneFXShader
+				set regenVar to regenVar + 1
+				EnablePlayerControls 0 1 0 0 0 0
+				Player.ResetHealth		; Restore the player to full health
+				set rStaveEffect to 0
+				set noRegen to 0
+				set nrTimer to 0.0
+				set copiedBody to 0
+				set rInit to 0				; Resets the Regeneration Initialising
+				
+				; reset custom shit
+				set fStatModStr to 0.0
+				set fStatModPer to 0.0
+				set fStatModEnd to 0.0
+				set fStatModCha to 0.0
+				set fStatModInt to 0.0
+				set fStatModAg to 0.0
+				set fStatModLuck to 0.0
+				
+				set rMsg to 0
+				;Con_ToggleMenus
+
+				set regenMode to 0	; Turns off Regen
+				set rEvent to 0			; Complete the Regen Process
+				set fxCount to 0
+
+				;printc "END OF REGEN KEK"
+
+			endif
+				
+		; ======================== STAVE OFF REGENERATION ====================
+
+		elseif regenMode == 2
+
+			if rStaveEffect == 0
+				ShowMessage fwvRegenFindSafezoneMessage
+				if IsPC1stPerson == 1
+					TapControl 13
+				endif
+				player.pms GlowingOneFXShader
+				set staveLimit to 780
+				set rStaveFrame to 1
+				set rStaveEffect to 1
+			endif
+
+			if rStaveFrame == 1
+				if rTimer < 120
+					set rTimer to rTimer + getsecondspassed
+					player.resethealth			; Adds a 2 minute "God-Mode"
+				else
+					ShowMessage fwvRegenFindSafezone60Message
+					player.damageAV leftMobilityCondition 100
+					player.damageAV rightMobilityCondition 100
+					player.damageAV leftAttackCondition 100
+					player.damageAV rightAttackCondition 100
+					set rStaveFrame to 2
+					set rTimer to 0
+				endif
+			elseif rStaveFrame == 2
+				if rTimer < staveLimit
+					set rTimer to rTimer + getsecondspassed
+					;printc "%g" rTimer
+				else
+					if rTimer > 540
+						set damageMode to 2
+						;printc "TIME UP"
+					endif
+					set regenMode to 1				; Initialises the Regen Sequence
+					set rStaveFrame to 0
+					set rTimer to 0
+				endif
+			endif
+
+		; ======================== DIVERT REGENERATION ====================
+
+		elseif regenMode == 3
+
+			player.addSpell fwvRegenFX
+			set regenVar to regenVar + 1
+			player.placeatme fwvRegenExplosion2
+			player.removeItem fwvItemBioContainer 1
+			player.addItem fwvItemBioContainerFull 1
+			player.resetHealth
+			set rMsg to 0
+			set regenMode to 0
+
+		; ======================== NO REGENERATION ===========================
+
+		elseif regenMode == 4
+
+			if noRegen == 0
+				set nrTimer to 0.0
+				set noRegen to 1
+			endif
+
+			if nrTimer < 10; 	60.0
+				set nrTimer to nrTimer + getSecondsPassed
+			else
+				if player.getHealthPercentage < 0.25
+					showmessage fwvRegenMessage fwvqRegen.regenVar		; Player chooses what to do
+					set rMsg to 1
+				else
+					set rStaveEffect to 0
+					set noRegen to 0
+					set nrTimer to 0.0
+					set rInit to 0				; Resets the Regeneration Initialising
+					set rMsg to 0
+					set regenMode to 0	; Turns off Regen
+					set rEvent to 0			; Complete the Regen Process
+				endif
+			endif
+		elseif regenMode == 0
+			set damageMode to 0
+			set rStaveEffect to 0
+		endif
+	endif
+
+end

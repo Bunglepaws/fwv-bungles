@@ -1,0 +1,13 @@
+scn fwvGarethTalkTriggerScript
+
+begin onTriggerEnter Player
+
+if fwvqInvasions.sGarethTalkFlag == 0
+	set fwvqInvasions.sGarethTalkFlag to 1
+	;messageex "Flag to %g" fwvqInvasions.sGarethTalkFlag
+	;fwvCybermanGarethREF.Startconversation player, GREETING
+	player.startconversation fwvCybermanGarethREF, GREETING
+
+endif
+
+end

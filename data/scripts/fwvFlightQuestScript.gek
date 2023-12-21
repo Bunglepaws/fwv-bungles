@@ -1,0 +1,361 @@
+scn fwvFlightQuestScript
+
+; TARDIS Handbrake & Flight script, written by Demeggy & Spyduck 21/2/13
+
+short locationCount	; size of fwvLocations
+short locationIndex	; current index of formlist
+short rndNumber		; random index chosen from formlist
+short maxAreas		; size of fwvLocationLists (TODO: add fwvLocationLists containing formlists for each area's markers
+short areaIndex		; current index of fwvLocationLists formlist
+short locationFound	; boolean; whether the selected landing location is in the current formlist
+short sMethod			; Method for location selection: 1 = randomise completely, 2 = randomised by location, 3 = not randomised
+float fSecondsPassed	; Time since last GameMode block run (SetSecondsPassed can only run properly once per block, this is a workaround)
+ref curList			; Current formlist to go through; ends on fwvLocations if nothing else
+ref curRef			; temporary ref because GECKscript sucks
+ref curRotorRef		; which time rotor reference to use (depends on room)
+float fPz			; math stuff (angle)
+float fMx			; math stuff (x pos)
+float fMy			; math stuff (y pos)
+float fMz			; math stuff (z pos)
+float fCalc			; math stuff (general)
+ref rPoliceBoxRef
+ref handbrakeRef
+
+short FastRefUpdateBlocker
+
+ref FastRetRef
+ref FastRetTarget
+
+short tutOnce
+ref rTempRef
+
+float fPosX
+float fPosY
+float fMinDist
+short sPlanet
+float fTestDist
+float DoorAngle
+
+ref rRandCtrlRef
+
+ref rTCproximityRef1 
+
+short sEncountersForced ; how many encounters have been forced this trip
+
+short drifted	; 0 - off, 1 - has drifted from programmed coords (sets to random landing), 2 - course corrected for duration of flight
+short warpCheck	;checks once per landing if warp circuit is broken
+
+begin GameMode
+
+	set rTCproximityRef1 to fwvq1.rTCproximityRef1
+
+	; init
+	set handbrakeRef to fwvq1.rTChandbrakeRef
+	set curRotorRef to fwvq1.rCRotorRef
+	
+	set sMethod to fwvq1.tLandingMethod
+	if sMethod == 0
+		set sMethod to 1
+	endif
+	set rTempRef to fwvq1.chosenDoor
+	if fwvq1.chosenDoor == 0 || rTempRef.IsFormValid == 0
+		set fwvq1.chosenDoor to fwvLgibsonRef
+	endif
+	set rTempRef to fwvq1.enableDoor
+	if fwvq1.enableDoor == 0  || rTempRef.IsFormValid == 0
+		set fwvq1.enableDoor to fwvLgibsonRef
+	endif
+
+	; prevent GetfSecondsPassed multiple-uses-per-frame bug
+	set fSecondsPassed to GetSecondsPassed
+	
+	if fwvq1.tActive == 1 ; are TARDIS animations active?
+		if fwvqSystems.crashing == 0
+			set fwvqRooms.sShakeEnabled to 1 - fwvq1.tPowerAutopilot
+			set fwvqRooms.fShakeMultiplier to fwvq1.fTDShakeMultiplier
+			if fwvq1.tPowerAutopilot == 1 && (fwvq1.flightMode == 1 || fwvq1.flightMode == 3 || fwvq1.flightMode == 4)
+				set fwvqRooms.sShakeEnabled to 1 ; always shake on takeoff/landing
+				set fwvqRooms.fShakeMultiplier to fwvqRooms.fShakeMultiplier * 0.5
+			;elseif fwvqDrift.drift != 0
+			;	set fwvqRooms.sShakeEnabled to 1 ; give some shakiness to drift mode
+			;	set fwvqRooms.fShakeMultiplier to fwvqRooms.fShakeMultiplier * 0.3
+			endif
+		endif
+		if fwvq1.flightMode == -1 ; spaceflight navigating
+			if eval (Call fwvFuncIsAnimatingInSameCell curRotorRef) == 0
+				curRotorRef.PlayGroup Forward 0
+				if fwvq1.tTheme == 4
+					fwvT4flightRef.Enable 0
+				elseif fwvq1.tTheme != 2
+					fwvTflightRef.Enable 0
+				endif
+			endif
+		elseif fwvq1.flightMode == 1 ; takeoff
+			if FastRefUpdateBlocker == 0
+				let FastRetRef := fwvFastReturnRef
+				let FastRetTarget := fwvq1.enableDoor 
+				FastRetRef.moveto FastRetTarget
+				set DoorAngle to FastRetTarget.GetAngle Z
+				FastRetRef.SetAngle Z DoorAngle
+			endif
+			if fwvq1.hbTimerWait < 9.0
+				set fwvq1.hbTimerWait to fwvq1.hbTimerWait + fSecondsPassed
+				if eval (Call fwvFuncIsAnimatingInSameCell curRotorRef) == 0
+					curRotorRef.PlayGroup Forward 0
+				endif
+			elseif eval (Call fwvFuncIsAnimatingInSameCell curRotorRef) == 0 ; to sync with animation
+				set fwvq1.hbTimerWait to 0.0
+				set fwvq1.flightMode to 2
+			endif
+		elseif fwvq1.flightMode == 2 ;regular flight
+		
+			set fwvqRooms.fShakeAngle to 35
+			
+			if fwvq1.hbTimer < 90.0 && fwvqSystems.crashing == 0
+				if fwvqEncounter.combat == 0 && fwvqEncounter.anomaly == 0 ; not spacecombat
+					if fwvq1.tPowerAutopilot == 1 ; not as fast with Autopilot on
+						;SPEED DEFINED HERE --------------------------------
+						if fwvq1.tSpeedlvl == 0
+							set fwvq1.hbTimer to fwvq1.hbTimer + fSecondsPassed
+						elseif fwvq1.tSpeedlvl == 1
+							set fwvq1.hbTimer to fwvq1.hbTimer + (fSecondsPassed * 1.5)
+						elseif fwvq1.tSpeedlvl == 2
+							set fwvq1.hbTimer to fwvq1.hbTimer + (fSecondsPassed * 3)
+						endif
+					else			; Faster with Autopilot off
+						if fwvq1.tSpeedlvl == 0
+							set fwvq1.hbTimer to fwvq1.hbTimer + (fSecondsPassed * 1.25)
+							if fwvq1.hbTimer >= 90 - fwvq1.CsrMaxTime * 1.25 && fwvq1.csrON == 1
+								set fwvq1.CsrTimer to 0.0
+							endif
+						elseif fwvq1.tSpeedlvl == 1
+							set fwvq1.hbTimer to fwvq1.hbTimer + (fSecondsPassed * 1.875)
+							if fwvq1.hbTimer >= 90 - fwvq1.CsrMaxTime * 1.875 && fwvq1.csrON == 1
+								set fwvq1.CsrTimer to 0.0
+							endif
+						elseif fwvq1.tSpeedlvl == 2
+							set fwvq1.hbTimer to fwvq1.hbTimer + (fSecondsPassed * 3.75)
+							if fwvq1.hbTimer >= 90 - fwvq1.CsrMaxTime * 3.75 && fwvq1.csrON == 1
+								set fwvq1.CsrTimer to 0.0
+							endif
+						endif					
+					endif
+
+					if fwvq1.tFlightType == 3 && fwvq1.tSpace == 1
+						set fwvq1.hbTimer to 0.0
+					else
+						set fwvqDrift.sDrift to 0
+					endif
+
+				endif
+				if eval (Call fwvFuncIsAnimatingInSameCell curRotorRef) == 0
+					curRotorRef.PlayGroup Forward 0
+					;playSound fwvFXtardisEnginesLP
+					if fwvq1.tTheme == 4
+						fwvT4flightRef.Enable 0
+					elseif fwvq1.tTheme != 2 || fwvq1.tTheme != 6
+						fwvTflightRef.Enable 0
+					endif
+				endif
+			elseif eval (Call fwvFuncIsAnimatingInSameCell curRotorRef) == 0 ; to sync with animation
+				if fwvq1.tSpeedLvl == 0
+					set fCalc to fwvq1.tFuel - 2.5
+				elseif fwvq1.tSpeedLvl == 1
+					set fCalc to fwvq1.tFuel - 5
+				else
+					set fCalc to fwvq1.tFuel - 10
+				endif
+				
+				if fwvq1.chosenDoor == fwvq3fLstripInvadedRef && fwvqSystems.crashing == 0 && fwvqSystems.crashed == 0
+					set fCalc to 0.0
+					set rRandCtrlRef to fwvq1.rTCgyroRef1
+					rRandCtrlRef.PlaceAtMe fwvExpControlExplosion2 1
+				endif
+				
+				if fCalc <= 0 && fwvqSystems.crashing == 0 && fwvqSystems.crashed == 0
+					set fwvq1.tFuel to fCalc
+					set fwvq1.hbTimer to 0.0
+					set fwvq1.tFuel to 0
+					set fwvqSystems.crashing to 1
+					set fwvqSystems.crashStage to 0
+				elseif fwvqSystems.crashing == 1
+					curRotorRef.PlayGroup Forward 0
+					
+					if fwvq1.tTheme == 4
+						fwvT4flightRef.Enable 0
+					else
+						fwvTflightRef.Enable 0
+					endif
+				else
+					if fwvqDrift.sDrift != 2
+						set fwvq1.tFuel to fCalc
+					endif
+					set fwvq1.flightMode to 3
+					fwvT4flightRef.Disable 0
+					fwvTflightRef.Disable 0
+				endif
+			endif
+		elseif fwvq1.flightMode == 3 ; landing
+			set FastRefUpdateBlocker to 0
+			if eval (Call fwvFuncIsAnimatingInSameCell curRotorRef) == 0
+				curRotorRef.PlayGroup Forward 0
+			endif
+			; Rematerialisation here
+			if fwvq1.hbTimerWait == 0.0 && fwvqSystems.crashing == 0 && fwvqSystems.crashed == 0
+				;ShowMessage fwvTardisLandingMessage
+				fwvTflightRef.Disable 0
+				fwvT4flightRef.Disable 0
+				if fwvq1.tTheme == 4
+					playSound fwvFXT4Landing
+				else
+					playSound fwvFXtardisLandingShort ; fwvFXtardisLandingLong
+				endif
+			elseif fwvqSystems.crashed == 1 || fwvqSystems.crashing == 1
+				set fwvq1.hbTimerWait to 4.0
+			endif
+			set fwvq1.hbTimerWait to fwvq1.hbTimerWait + fSecondsPassed
+			if fwvq1.hbTimerWait >= 4.0 ; remat sound is at the point we can continue
+				; Figure out which landng location to use
+
+				if sMethod == 1 && fwvq1.tFlightType == 0 ; completely randomised ; only in randomised mode for now
+					Label 1
+					set fwvq1.tSpace to 0
+					set locationCount to ListGetCount fwvLocations
+					set rndNumber to GetRandomPercent * (locationCount - 1) / 100
+					set curRef to ListGetNthForm fwvLocations rndNumber
+					if curRef.GetDisabled
+						GoTo 1
+					else
+						set fwvq1.enableDoor to curRef
+						if fwvqRooms.fTeleportToHour < 0.0
+							set fCalc to GetRandomPercent * 24.0 / 100
+							set fwvqRooms.fTeleportToHour to fCalc
+						endif
+						set fwvqRooms.sTeleportToHourNow to 1
+					endif
+				elseif sMethod == 2 || (fwvq1.tFlightType == 2 && 1 == 0); partial randomisation ; disabled for now
+					set fwvq1.enableDoor to fwvq1.chosenDoor	; fallback in case we can't find a containing area
+					
+					set maxAreas to ListGetCount fwvLocationLists ; size of fwvLocationLists
+					
+					Label 0 ; mark here for loop 0
+					
+					if areaIndex <= maxAreas	; set next area to go through
+						set curList to ListGetNthForm fwvLocationLists areaIndex
+					else	 ; selected location isn't in a formlist, randomise completely
+						set curList to fwvLocations
+					endif
+					
+					set curRef to fwvq1.enableDoor
+					if ListGetFormIndex curList curRef >= 0 
+						; location is in this area, choose a new landing location from it
+						
+						set locationCount to ListGetCount curList	; size of curList
+						set rndNumber to GetRandomPercent * (locationCount - 1) / 100
+						set fwvq1.enableDoor to ListGetNthForm curList RndNumber
+
+					else ; not this area
+						if areaIndex <= locationCount + 1
+							set areaIndex to areaIndex + 1
+							GoTo 0
+						endif
+					endif
+				
+				elseif fwvq1.tFlightType == 2
+					; no randomisation
+					set fwvq1.enableDoor to fwvq1.chosenDoor
+					if fwvqRooms.fTeleportToHour < 0.0
+						set fCalc to GetRandomPercent * 24.0 / 100
+						set fwvqRooms.fTeleportToHour to fCalc
+						set fwvqRooms.sTeleportToHourNow to 1
+					endif
+					set fwvq1.tSpace to 0
+				
+				elseif fwvq1.tFlightType == 4
+					;if in Intergalactic Flight Mode
+					set fwvq1.tSpace to 1
+					set fwvqDrift.sDrift to 1
+					MessageEx "[Entering %z. Drift Mode activated]" fwvqDrift.svGalaxy
+				endif
+				
+				; Finish up rematerailisation
+
+				; teleport the exterior TARDIS stuff
+				set curRef to fwvq1.enableDoor
+				fwvTmonitorRef.Activate curRotorRef 1 ; don't activate as the player
+				
+				set fPz to curRef.GetAngle Z
+				set fMx to Sin fPz
+				set fMy to Cos fPz
+				set fMx to fMx * 96 + curRef.GetPos X
+				set fMy to fMy * 96 + curRef.GetPos Y
+				set fMz to curRef.GetPos Z
+				
+				; where the player steps out at
+				PoliceBoxDoorExitRef.moveTo curRef
+				PoliceBoxDoorExitRef.SetPos X fMx
+				PoliceBoxDoorExitRef.SetPos Y fMy
+				PoliceBoxDoorExitRef.SetPos Z fMz
+				PoliceBoxDoorExitRef.SetAngle Z fPz
+
+				; reset the position
+				set fMx to curRef.GetPos X
+				set fMy to curRef.GetPos Y
+				set fMz to curRef.GetPos Z
+				
+				ShowMessage fwvTardisLandingMessage
+
+				;resets deepscan control
+				if fwvqDrift.sScanned == 1
+					set fwvqDrift.sScanned to 0
+				endif
+
+				; quest 1 -- first landing done
+				if getStage fwvq1a == 40 && fwvTardisVoiceInterfaceRef.GetDisabled
+					fwvTardisVoiceInterfaceRef.Enable
+					set fwvTardisVoiceInterfaceRef.sDisabledLast to 1
+					PlaySound OBJForceFieldImpact
+				endif
+
+				; turn off flight
+				if rTCproximityRef1.getDisabled == 1
+					rTCproximityRef1.enable 0
+				endif
+
+				set warpCheck to 0				; resets warp check
+				let fwvqEvents.frame[1] := 0	; reset chance of bad demat
+				set drifted to 0 ; reset drifted status
+				set fwvq1.tFlying to 0 ; flying status
+				set fwvq1.tPath to 0 ; control path
+				set fwvq1.CSROn to 0 ; CSR
+				set fwvq1.tActive to 0 ; TARDIS animations
+				set fwvq1.hbTimer to 0.0 ; rotor sound timer
+				set fwvq1.hbTimerWait to 0.0 ; durr
+				set fwvq1.flightMode to 0 ; current flight mode
+				set fwvqRooms.sShakeEnabled to 0
+				;handbrakeRef.PlayGroup Backward 0
+				set fwvq1.tSpeedLvl to 0
+			elseif fwvq1.flightMode == 4 ; drift mode interrupt
+				; what do I do here
+			endif
+			set sEncountersForced to 0
+		elseif fwvq1.tActive == 1 ; don't fly, but do animate the rotor, enable the rotor sound
+			if eval (Call fwvFuncIsAnimatingInSameCell curRotorRef) == 0
+				curRotorRef.PlayGroup Forward 0
+				
+				if fwvq1.tTheme == 4
+					fwvT4flightRef.Enable 0
+				else
+					fwvTflightRef.Enable 0
+				endif
+			endif
+		elseif fwvq1.tActive == 0 && eval (Call fwvFuncIsAnimatingInSameCell curRotorRef) == 0 ; don't fly, don't animate rotor, disable the rotor sound once it's done animating
+			fwvT4flightRef.Disable 0
+			fwvTflightRef.Disable 0
+		endif
+	else
+		fwvT4flightRef.Disable 0
+		fwvTflightRef.Disable 0
+		set fwvqRooms.fShakeMultiplier to 1.0
+	endif
+end

@@ -1,0 +1,67 @@
+scn fwvTinteriorDoorSCRIPT
+
+short sFindType
+short sFindNumber
+short sCurCount
+ref rCurRef
+ref rTDesktopRoom
+ref rTDesktopInteriorDoor
+
+begin OnActivate Player
+	if eval (fwvqProtocols.protocol[9] != 1)
+		if GetQuestCompleted fwvq1a == 0	
+			MessageEx "[The TARDIS requires calibration before you can exit safely...]"
+			PlaySound DRSLocked
+		elseif fwvq1.tFlying == 0 && fwvq1.tSpace == 0 && getStage fwvqGameOfRassilon != 60 && eval (fwvqEvents.event[10] == 0 || fwvTardisRecallExtFadeInBox.GetDisabled == 1) && fwvqEvents.sCollapseHold == 0
+			PlaySound DRSWoodSingleLight01Open
+			setglobaltimemultiplier 1
+
+			if fwvq1.tTVGbroken == 2
+				player.moveTo fwvTpoliceIntMarkerRef
+			endif
+
+			if fwvq1.tRepair == 1
+				set fwvq1.tRepair to 2
+			endif
+
+			if fwvq1.tRefuel == 1
+				set fwvq1.tRefuel to 2
+			endif
+
+			if fwvq1.tReset == 1
+				set fwvq1.tReset to 2
+			endif
+
+			if eval fwvqSystems.tAdvanced == 1 && fwvqEvents.event[10] == 0
+				if getObjectiveCompleted fwvq2a 60 == 0
+					ShowTutorialMenu fwvAdvancedManualTardisSecurityMessage
+					set fwvqSystems.tTime to 5 + getRandomPercent * 10/100
+					SetObjectiveCompleted fwvq2a 60 1
+				else
+					;randomise what time the player has to return to the TARDIS before its broken into
+					set fwvqSystems.tTime to 5 + getRandomPercent * 10/100
+					printc "Player has %g minutes until the TARDIS is compromised" fwvqSystems.tTime
+				endif
+			endif
+
+			set fwvq1.sMoveBoxNow to 2
+			set fwvq1.sRoomLeave to 1
+		elseif fwvq1.tFlying == 1
+			ShowMessage fwvTardisFlyingMessage
+			PlaySound DRSLocked
+		elseif fwvq1.tSpace == 1
+			MessageEx "[Cannot open the doors whilst in Space]"
+			PlaySound DRSLocked
+		elseif fwvqEvents.sCollapseHold == 1
+			MessageEx "[Dimensions destabilized. Wait for Dimension Dams to stabilise.]"
+			PlaySound DRSLocked
+		elseif getStage fwvqGameOfRassilon == 60
+			DisablePlayerControls 1 1 1 1 1 1 1
+			imod FadeToBlackAndBackISFX
+			let fwvqGameOfRassilon.sEnd := 2
+		endif
+		activate
+	else
+		MessageEx "[Cannot open the doors in Siege Mode]"
+	endif
+end

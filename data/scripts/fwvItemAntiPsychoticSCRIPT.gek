@@ -1,0 +1,21 @@
+scn fwvItemAntiPsychoticSCRIPT
+
+Begin ScriptEffectFinish
+
+	PlaySound NPCHumanUsingStimpak
+	if player.hasmagiceffect fwvTLinsanityEffect == 1
+		set fwvqTimeLord.tlPoints to -50
+		player.removeSpell fwvTLinsanitySpell
+		player.removeSpell fwvTLfrenzySpell
+		if fwvqTimeLord.brainPower < 1
+			set fwvqTimeLord.brainPower to 1
+		endif
+		set fwvqTimeLord.brainDead to 0
+		rimod fwvInsaneISFX2
+		rimod fwvInsaneISFX
+		MessageEx "The pills have relieved your insanity."	
+	else
+		MessageEx "These pills only work on Timelord Insanity."
+	endif
+
+end

@@ -1,0 +1,10 @@
+scn fwvT4WallLightsScript
+
+begin GameMode
+	if IsAnimPlaying == 0
+		if fwvq1.tFlying == 1
+			PlayGroup Forward 0
+		endif
+	endif
+end
+

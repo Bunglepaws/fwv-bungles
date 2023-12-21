@@ -1,0 +1,26 @@
+scn fwvTCreadoutPowerSCRIPT
+
+; TARDIS Power Readout script, written by Demeggy 24/2/13
+
+short sPatchVersion
+ref rSelf
+string_var strReadout
+
+begin GameMode
+	if sPatchVersion < fwvPatchVersion
+		set sPatchVersion to fwvPatchVersion
+		set rSelf to GetSelf
+		Call fwvFuncResetPosition rSelf
+	endif
+end
+
+Begin OnActivate player
+
+	;ref shieldHealth
+	;set shieldHealth to 100 - 100 / fwvq1.tShields 
+
+	;ShowMessage fwvTCReadoutPowerMessage fwvq1.tPower
+	Call fwvFuncReadoutPowerUsage
+	activate
+	
+end

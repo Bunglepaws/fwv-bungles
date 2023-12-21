@@ -1,0 +1,89 @@
+scn fwvPoliceBoxFadeInScript
+
+float fTimeFade
+short sFadeOut
+short sDoNow
+float fCalc
+ref rPoliceBoxDoorRef
+ref rPoliceBoxInteriorRef
+ref rPlaceAtRef
+ref rSelf
+begin GameMode
+	if GetDisabled == 0 && sDoNow == 1
+		set sDoNow to 2
+	elseif GetDisabled == 0 && sDoNow == 2
+		if fwvq1.sPoliceBoxIsUnspawned == 0
+			;set rPoliceBoxDoorRef to fwvq1.rPoliceBoxDoorRef
+			;set rPoliceBoxInteriorRef to fwvq1.rPoliceBoxRef
+		endif
+		if sFadeOut == 0 ; fade in
+			if fTimeFade == 0.0
+				; move the interior teleporter too
+				set rSelf to GetSelf
+				
+				; Function to Change Fader Police Box Model to Appropriate For Console Theme
+				;call fwvFuncChangeFaderPoliceBoxSCRIPT fwvTardisRecallExtFadeInBox
+				;end func call
+				
+				fwvPoliceBoxTeleporterRef.Disable
+				fwvPoliceBoxTeleporterRef.MoveTo rSelf
+				Call fwvFuncSetPosition { fwvPoliceBoxTeleporterRef (rSelf.GetPos X) (rSelf.GetPos Y) (rSelf.GetPos Z + 32) }
+				set fCalc to rSelf.GetAngle Z
+				fwvPoliceBoxTeleporterRef.SetAngle Z fCalc
+				fwvPoliceBoxTeleporterRef.Enable 1   ;0
+				
+				set fwvq1.sMoveBoxNow to 1 ; remove old box
+				set fTimeFade to GetSecondsPassed * 0 + 0.01
+				PlayGroup Forward 1
+				;PlaySound3D fwvFXtardisLandingLong
+				if fwvq1.tTheme == 4
+					PlaySound3D fwvFXT4LandingExterior
+				else
+					PlaySound3D fwvFXtardisLandingLong
+				endif
+				;set fwvq1.enableDoor to PoliceBoxAltLocationRef
+			else
+				set fTimeFade to fTimeFade + GetSecondsPassed
+			endif
+			if fTimeFade >= 21.0
+				set fwvq1.sMoveBoxNow to 2 ; remove and replace box
+				set fTimeFade to 0.0
+				set sDoNow to 0
+				;fwvPoliceBoxTeleporterRef.Disable 0
+				disable 0
+				;endif
+			endif
+		else ; fade out
+			if fTimeFade == 0.0
+				set fTimeFade to GetSecondsPassed * 0 + 0.01
+				PlayGroup Backward 1
+				;PlaySound3D fwvFXtardisLaunchShort 
+				if fwvq1.tTheme == 4
+					PlaySound3D fwvFXT4LaunchExterior
+				else
+					PlaySound3D fwvFXtardisLaunchShort
+				endif	
+				;rPoliceBoxInteriorRef.disable 0
+				;rPoliceBoxDoorRef.disable 0
+				set fwvq1.sMoveBoxNow to 1 ; remove box
+			else
+				set fTimeFade to fTimeFade + GetSecondsPassed
+			endif
+			if fTimeFade >= 5.5
+				set fTimeFade to 0.0
+				if sFadeOut == 1
+					set sDoNow to 0
+					Call fwvFuncResetTardisExitLocation
+					disable 0
+				elseif sFadeOut == 2
+					set sFadeOut to 0
+					set rPlaceAtRef to fwvq1.enableDoor
+					set rSelf to GetSelf
+					Call fwvFuncSetPosition { rSelf (rPlaceAtRef.GetPos X) (rPlaceAtRef.GetPos Y) (rPlaceAtRef.GetPos Z) }
+					set fCalc to rPlaceAtRef.GetAngle Z
+					SetAngle Z fCalc
+				endif
+			endif
+		endif
+	endif
+end

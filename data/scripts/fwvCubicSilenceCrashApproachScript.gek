@@ -1,0 +1,8 @@
+scn fwvCubicSilenceCrashApproachScript
+
+begin OnTriggerEnter Player
+	fwvSilenceHologramRef.MoveTo fwvSilenceHologramPos1Ref
+	fwvSilenceHologramRef.Enable 0
+	Disable
+end
+

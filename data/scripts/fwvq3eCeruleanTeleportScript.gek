@@ -1,0 +1,5 @@
+scn fwvq3eCeruleanTeleportScript
+
+begin onTriggerEnter player
+
+end

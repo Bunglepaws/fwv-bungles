@@ -1,0 +1,36 @@
+scn fwvDiseaseSilurianSCRIPT
+
+;written by Demeggy 16/3/13
+
+short day
+
+begin scripteffectstart
+
+	ShowMessage fwvDiseaseSilurianMessage
+	set day to gamedayspassed
+
+end
+
+begin scripteffectupdate
+
+	if gamedayspassed > day + 0.5
+
+		player.damageAV leftmobilitycondition 100
+		player.damageAV rightmobilitycondition 100
+		
+	endif
+
+end
+
+begin scripteffectupdate
+
+	if gamedayspassed > day + 1
+
+		player.damageAV leftmobilitycondition 100
+		player.damageAV rightmobilitycondition 100
+		player.damageAV leftattackcondition 100
+		player.damageAV rightattackcondition 100
+		
+	endif
+
+end

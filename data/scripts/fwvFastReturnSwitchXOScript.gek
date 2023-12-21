@@ -1,0 +1,77 @@
+scn fwvFastReturnSwitchXOScript
+
+; I created and called the FastReturn Location ref "fwvFastReturnRef" 
+; in the Flight script it is moved to the current Door during Takeoff
+; so that once you have flown somewhere else, it is where you used to be
+; it starts at Gibson's Scrapyard
+; it's just an XMarkerHeading just like every other loc
+; now what we need to do is use this button to fire off travel
+; it needs to be automatic navigated to fwvFastReturnRef
+; it needs to be forced throttle high
+; it needs to autoamtically fire off the other CSRs and just immediately go
+; it should probably have a yes/no box
+
+
+;set CSR sLaunchType to 2
+; set throttle to high
+; fwvq1.tSpeedlvl == 2
+
+short sButtonChoice
+
+
+begin OnActivate Player
+
+; from CSR script
+	if fwvq1.pxl < 7
+		playsound UIHackingPassBad
+		MessageEx "[Fast Return requires Piloting Lev. 7]"
+	else 
+		if fwvq1.flightMode == 0 && fwvq1.tFuel > 0 && fwvqSystems.crashed == 0 ;landed, fuel, not crashed
+			; time rotor handbrake code
+			if fwvq1.tNavOn == 1 && fwvq1.tNav > 0  ;Navigations on, system not broken
+				if fwvq1.sDoorIsOpen == 1 ; don't takeoff with the doors open in the classical room
+					set fwvq1.tPath to 0
+					MessageEx "[Close TARDIS Doors Before Launching]"
+					PlaySound UIHackingPassBad
+				elseif fwvq1.tFlying == 0 && (fwvq1.sDoorIsOpen == 0)
+					ShowMessage fwvFastReturnButtonMesg
+				endif
+			else
+				MessageEx "[Fast Travel Currently Unavailable]"
+				PlaySound UIHackingPassBad
+			endif
+		else
+			MessageEx "[Fast Travel Currently Unavailable]"
+			PlaySound UIHackingPassBad
+		endif
+	endif			
+END				
+	
+
+
+
+	
+Begin Gamemode
+	set sButtonChoice to GetButtonPressed
+		
+	if sButtonChoice == 1
+		;printc "canceled choice"
+	elseif sButtonChoice == 0
+		set fwvqFlight.FastRefUpdateBlocker to 1
+		set fwvq1.chosenDoor to fwvFastReturnRef
+		set fwvq1.tPowerAutopilot to 1 ; autopilot always on
+		set fwvq1.tSpeedlvl to 2
+		if fwvq1.tTheme == 4
+			PlaySound fwvFXT4Launch
+		else
+			PlaySound fwvFXtardisLaunchLong
+		endif
+		set fwvq1.tNextFlightType to 1 ; reset, basically
+		set fwvq1.last1Control to 0 ; last used control
+		set fwvq1.last2Control to 0 ; second-to-last used contrl
+		set fwvq1.tActive to 1 ; time rotor activated
+		set fwvq1.tFlying to 1 ; TARDIS in-flight
+		set fwvq1.flightMode to 1 ; launching
+		set fwvq1.hbTimerWait to 0
+	endif		
+End

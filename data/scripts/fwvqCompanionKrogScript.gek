@@ -1,0 +1,9 @@
+scn fwvqCompanionKrogScript
+
+begin GameMode
+	if GetGameLoaded || GetGameRestarted
+		if eval (IsRefInList fwvCForceGreet, fwvKrog == -1)
+			AddFormToFormList fwvCForceGreet fwvKrog
+		endif
+	endif
+end

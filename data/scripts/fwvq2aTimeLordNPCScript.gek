@@ -1,0 +1,22 @@
+scn fwvq2aTimeLordNPCScript
+
+short doOnce
+ref rSelf
+
+Begin Gamemode
+
+	let rSelf := GetSelf
+	pms fwvHologramInterfaceNeutral
+
+	if getStage fwvq2a < 10
+		if doOnce == 0
+			rSelf.startConversation player
+			set doOnce to 1
+		endif
+	else
+		PlaySound OBJForceFieldImpact
+		rSelf.disable
+		rSelf.MarkForDelete
+	endif
+
+End

@@ -1,0 +1,804 @@
+scn fwvCompanionSCRIPT
+
+;============================= ORIGINAL NPC VARIABLES
+array_var arOrigNames
+array_var arNewNames					; For remembering names of current companions after session change
+array_var arOldOrigNames				; For remembering names of companions that didn't die.
+
+array_var arCompanions				
+array_var arOldCompanions			; For remembering references of companions that didn't die.
+
+array_var arNPCs
+array_var arParentCells
+
+array_var Entry
+array_var cEntry
+
+int cPos
+ref cRef
+short patch
+;============================= COMPANION RECRUIT/LEAVE VARIABLES
+
+ref rNPC						; NPC interacted with.
+ref rDeadComp			;Companion who has died
+short sAngle				; Angle for Home Marker
+short sHomeNum			; Which companion home?
+short sGetHome			; Determine which NPC is wanting to go home
+ref rGetNPCH
+short sGenericFollow  ; Xoanon attempt to force Follow package to work
+int iPos
+ref rComp
+
+short sRecruit				; Determines if the NPC will be force greeted.
+short sWasCompanion
+ref cursor
+
+string_var rName			; Default name to save
+string_var nName			; Var to restore name to companions after session change.
+string_var oName			; Custom name to restore to old companions
+short sFound				; Array index for companion
+short cCount				; Companion Count (1,2,3)
+short aCount				; Array Index Count (0,1,2)
+short cJoin					; Configure newly joined NPC
+
+short sGreetOverride
+short sReqOverride
+short sReqReturnType
+
+short cLeave				; NPC has left, do stuff
+short sLeaving
+short cAbleToLeave
+short cWantsToLeave
+ref rNPCLeaving
+
+short sDead						; Companion is dead, 1 = yes, 0 = no
+float fDeadTimer
+float fTimer
+;=============================
+
+short sRandomPerc
+short sGetNPC
+short sGetLastPackage
+short sGetSkills
+
+short sDisp
+short sSci
+short sSpeech
+short sLockp
+
+ref rGetNPC
+ref rGetNPCL		; Last Package NPC
+ref rGetNPCS		; Skills NPC
+
+short sPlayerCancelWait
+short sPCReturn
+short cWait
+short cReturn
+ref rWaitNPC
+ref rReturnNPC
+
+short sDisposition
+short sNewDisposition
+
+short sSkill						; Picking/Hacking is taking place
+short sSkillType 				; 1 = Lockpick, 2 = Hack
+short sPickStage
+ref rSkillNPC
+ref rSkillTarget
+float sTimer
+float sCTimer					; Cancel search timer, 30 secs
+
+short sReacting
+short sReacted
+short sPreRegenReacted		; Reacted to regen BEFORE regen happens
+short sCurDay
+
+short sActivityRequest			; Does a companion want to do something?
+short sActivity						; What activity do they want to do?
+short sRoomActive				; Is the activity room needed currently enabled?
+short sRoom						; Required activity room to check when the player enables it
+float aTimer
+
+ref rReqNPC					; For random companion daily request
+short sReqLoc					; Companion's requested location
+short sRequested				; Companion has requested
+short sReqComplete			; TARDIS has landed at correct location
+short sReqStage				; 1 = Inside TARDIS, 2 = Outside
+short sPlanet					; Whichever alien planet you take them to
+short sLandReact				; If they have reacted to landing
+ref rCurLoc						; Current TARDIS location
+
+ref rCurCell						; Last saved cell the companion was in
+
+ref rLastPackage				; Companion's previous package
+ref rCurPackage
+ref rPackage					; Companions new package
+
+ref rTDesktop
+ref cCompNPC		; Selected Companion NPC
+
+Begin GameMode
+
+	;================================================== COMPANION RECRUITMENT SHIT STARTS HERE
+
+	if patch <= 0
+		if eval (arParentCells == Ar_Null)
+			let arParentCells := Ar_Construct "array"
+		endif
+		set patch to 1
+	endif
+
+	if sGenericFollow == 0
+		printc "sGeneric Follow is %g" sGenericFollow
+		set sGenericFollow to 1
+		printc "sGeneric Follow to %g" sGenericFollow
+	endif
+	
+	if eval (arOrigNames == Ar_Null || arCompanions == Ar_Null || arOldCompanions == Ar_Null || arOldOrigNames == Ar_Null || arNewNames == Ar_Null)
+		let arOrigNames := Ar_Construct "array"
+		let arCompanions := Ar_Construct "array"
+		let arOldOrigNames := Ar_Construct "array"
+		let arOldCompanions := Ar_Construct "array"
+		let arNewNames := Ar_Construct "array"
+		;printc "init"
+	endif
+
+	let cCount := Ar_Size arCompanions
+	set aCount to cCount - 1
+
+	set cursor to getcrosshairref				; DETERMINES WHETHER YOU FORCE GREET THE NPC
+	if IsRefInList fwvCUnique cursor >= 0 
+		set sRecruit to 0
+	elseif eval (Ar_Find cursor, arCompanions) != Ar_BadNumericIndex
+		set sRecruit to 1	
+		;printc "Companion Already"
+	elseif IsRefInList fwvCompanionAllowed cursor >= 0 && fwvqCompanionTutorial.sHiring == 1 && cCount < 3
+		set sRecruit to 1
+	else
+		set sRecruit to 0
+	endif
+	;if IsRefInList fwvCWasCompanion cursor >= 0; Variables set in quest script because IsRefInList seems to break in conditions?
+	if cursor.getinfaction fwvFormerCompanionFaction == 1	
+		set sWasCompanion to 1
+	else
+		set sWasCompanion to 0
+	endif
+
+	if cJoin == 1
+		set cJoin to 0
+		let rName := rNPC.getName ; Get the default NPCs name for restore in the future
+		Ar_Append arOrigNames rName
+		Ar_Append arCompanions rNPC
+		let cCount := Ar_Size arCompanions
+		set aCount to cCount - 1
+		printc "Companion count is %f" cCount
+
+		if cCount == 1
+			fwvcHomeRef1.MoveTo rNPC
+			set sAngle to rNPC.GetAngle Z
+			fwvcHomeRef1.SetAngle Z sAngle
+		elseif cCount == 2
+			fwvcHomeRef2.MoveTo rNPC
+			set sAngle to rNPC.GetAngle Z
+			fwvcHomeRef2.SetAngle Z sAngle
+		elseif cCount == 3
+			fwvcHomeRef3.MoveTo rNPC
+			set sAngle to rNPC.GetAngle Z
+			fwvcHomeRef3.SetAngle Z sAngle
+		endif
+
+		Call fwvFuncRandomCompanionSkills rNPC
+		rNPC.AddToFaction fwvCompanionFaction 1
+
+
+		rNPC.modav health 250
+		rNPC.setav aggression 0
+		rNPC.setav confidence 0
+		rNPC.setav assistance 0
+
+
+
+
+		rNPC.AddToFaction FollowerFaction 1
+		rNPC.setcombatstyle VCSUnaggressive
+		if rNPC.getitemcount fwvAggressiveFlag == 1
+			printc "Default: Aggressive"
+
+
+
+
+			rNPC.setav aggression 1
+			rNPC.setav confidence 1
+			rNPC.setav assistance 1
+			rNPC.setcombatstyle DefaultCombatstyle
+		else
+			rNPC.additem fwvPassiveFlag 1
+		endif
+		if rNPC.GetDisposition Player > 50
+			rNPC.SetDisposition Player 50
+		endif
+		
+		if eval (Ar_Find rNPC arOldCompanions) == Ar_BadNumericIndex
+			;printc "Not an old companion!"
+			if rNPC.IsInList fwvCompanionAllowed >= 1 || IsRefInList fwvCompanionAllowed rNPC != -1
+				call fwvFuncRandomNameGEN rNPC
+				printc "RENAME"
+			elseif rNPC.IsInList fwvCompanionAllowed != 1 || IsRefInList fwvCompanionAllowed rNPC == -1
+				printc "DONT RENAME"
+			endif
+		elseif eval (Ar_Find rNPC arOldCompanions) != Ar_BadNumericIndex
+			;printc "Was a companion!"
+			if rNPC.IsInList fwvCompanionAllowed >= 1|| IsRefInList fwvCompanionAllowed rNPC != -1
+				printc "OLD RENAME"
+				foreach Entry <- arOldCompanions
+	    				let iPos := Entry["key"]
+	    				let rComp := Entry["value"]
+	    				Print "Old Companion #" + $iPos + " is " + $rComp
+					if rComp == rNPC
+						let sFound := Entry["key"]
+					endif
+				loop
+				let oName := arOldOrigNames[sFound]
+				rNPC.SetName $oName
+				printc "DONT RENAME unless Gecko fix"
+				if rNPC.GetIsID fwvGecko == 1
+					fwvGeckoRef.setName "Gecko"
+				endif
+			elseif rNPC.IsInList fwvCompanionAllowed != 1 || IsRefInList fwvCompanionAllowed rNPC == -1
+				printc "OLD DONT RENAME"
+				printc "DONT RENAME unless Gecko fix"
+				if rNPC.GetIsID fwvGecko == 1
+					fwvGeckoRef.setName "Gecko"
+				endif
+			endif
+		endif
+
+		Ar_Append arOldOrigNames oName ; Adds to the 'Previous companions' arrays after name change so it doesn't get confused
+		Ar_Append arOldCompanions rNPC
+		Ar_Append arNewNames rNPC.GetName
+
+		printc "Joining finished"
+	endif
+
+	if cLeave == 1
+		foreach Entry <- arCompanions
+    			let iPos := Entry["key"]
+    			let rComp := Entry["value"]
+    			Print "Entry #" + $iPos + " is " + $rComp
+			if rComp == rNPC
+				let sFound := Entry["key"]
+				print "Companion found: " + $sFound
+			endif
+		loop
+		let cCount := Ar_Size arCompanions
+		set aCount to cCount - 1
+		let rName := arOrigNames[sFound]
+		Ar_Erase arOrigNames sFound
+		Ar_Erase arCompanions sFound
+		Ar_Erase arNewNames sFound
+		rNPC.RemoveFromFaction fwvCompanionFaction
+		if rNPC.GetCurrentPackage == fwvCompanionWait
+   			set sPlayerCancelWait to 1
+		endif
+		;AddFormToFormList fwvCWasCompanion rNPC
+		rNPC.AddToFaction fwvFormerCompanionFaction 1
+		rNPC.ModDisposition Player -10
+		rNPC.RemoveScriptPackage
+		rNPC.evp
+		rNPC.RemoveFromFaction FollowerFaction
+		rNPC.SetName $rName
+		if sDead == 0
+			MessageBoxEx "Your companion has left the TARDIS and will return to their normal life."
+			if (rNPC.GetInCell fwvTinterior1 || rNPC.GetInCell rTDesktop) && cAbleToLeave == 1
+				imod FadeToBlackAndBackISFX
+				rNPC.MoveTo PoliceBoxDoorExitRef
+			endif
+		elseif sDead == 1
+			if rComp == rDeadComp ;rNPC
+				;set sDead to 0
+				MessageBoxEx "Your companion has died."
+				set sDead to 0
+			endif
+		endif
+		set sLeaving to 0
+		set cLeave to 0
+	endif
+
+	if fTimer < 1 ; Timer to check vars that could changes (Desktop, dead companion, etc)
+		set fTimer to fTimer + getsecondspassed
+	else
+		set fTimer to 0
+		set rTDesktop to fwvq1.rTDesktopRoom
+		set rCurLoc to fwvq1.enableDoor
+		if rCurLoc == fwvcHomeRef1 || rCurLoc == fwvcHomeRef2 || rCurLoc == fwvcHomeRef3
+			;printc "Can leave!"
+			set cAbleToLeave to 1
+			if cWantsToLeave == 1
+				set cWantsToLeave to 0
+				rNPCLeaving.RemoveScriptPackage
+				rNPCLeaving.AddScriptPackage fwvCompanionLeaving
+				rNPCLeaving.evp
+				set rNPCLeaving to 0
+			endif
+		else
+			;printc "Can't leave!"
+			set cAbleToLeave to 0
+		endif
+	endif
+
+
+	if GameDaysPassed > sCurDay && getQuestCompleted fwvqCompanionTutorial == 1 ; Adds disposition per day of being a companion.
+		if cCount > 0
+			Foreach Entry <- arCompanions
+				let iPos := Entry["key"]
+				let rComp := Entry["value"]
+				rComp.ModDisposition Player 5
+				rComp.ModAv Lockpick 2
+				rComp.ModAv Science 2
+				rComp.ModAv Speech 2
+				;printc "%n has improved their skills" rComp
+			Loop
+			set sRandomPerc to 0 + GetRandomPercent * (aCount - 0 + 1) / 100
+			let rReqNPC := arCompanions[sRandomPerc]
+			set rPackage to fwvCompanionRequest
+			set rGetNPC to rReqNPC
+			set sGetNPC to 1
+		endif
+		set sCurDay to GamedaysPassed +1
+	endif
+
+	if sDead == 1
+		if fDeadTimer < 30
+			set fDeadTimer to fDeadTimer + GetSecondsPassed
+		else
+			set cLeave to 1
+			set sLeaving to 1
+			;set rNPC to rDeadComp
+		endif
+	endif
+
+	if cCount > 0
+		Foreach Entry <- arCompanions
+			let iPos := Entry["key"]
+			let rComp := Entry["value"]
+	
+			if rComp.GetDead == 1 ; Check if companion is dead
+				if sLeaving == 0
+					set rDeadComp to rComp
+					;printc "rDeadComp to Comp"
+					set sDead to 1
+				elseif sLeaving >= 1
+					;printc "Companion currently needing to leave, so skip"
+				endif
+			endif
+
+			if patch == 1
+				let arParentCells[iPos] := rComp.GetParentCell
+				if iPos == aCount
+					printc "Companions patched."
+					set patch to 2
+				endif
+			endif
+
+			if player.IsSneaking == 1
+				if rComp.IsSneaking == 0 && rComp.GetCurrentPackage == DefaultFollowPlayerClose
+					rComp.SetForceSneak 1
+				endif
+			else
+				if rComp.IsSneaking == 1&& rComp.GetCurrentPackage == DefaultFollowPlayerClose
+					rComp.SetForceSneak 0
+				endif
+			endif
+
+			if eval (arParentCells[iPos] != rComp.GetParentCell)		; Hopefully stops companions running off like they have a rocket up their ass
+				if sReacting == 0
+					set rCurPackage to rComp.GetCurrentPackage
+					rComp.RemoveScriptPackage
+					rComp.AddScriptPackage rCurPackage
+					rComp.evp
+					;printc "RE-EVALUATED!"
+				endif
+			else
+			endif
+			let arParentCells[iPos] := rComp.GetParentCell
+
+			if eval (arNewNames[iPos] != rComp.GetName) ; Companion name check
+				let nName := arNewNames[iPos]
+				;print "Companion " + $iPos + " has incorrect name!"
+				rComp.setName $nName
+			elseif eval (arNewNames[iPos] == rComp.GetName)
+				;print "Companion " + $iPos + " has correct name!"
+			endif
+	
+			if player.GetInCell rTDesktop == 1 && IsRefInList fwvCTARDISReacted rComp == -1 && rComp.GetInSameCell Player == 1 && sReacting == 0
+				Label 10
+				set sRandomPerc to 0 + GetRandomPercent * (aCount - 0 + 1) / 100
+				let cCompNPC := arCompanions[sRandomPerc]
+				if IsRefInList fwvCTARDISReacted cCompNPC != -1
+					;printc "SELECTED COMPANION ALREADY REACTED, CHOOSING ANOTHER"
+					Goto 10
+				endif
+				set rPackage to fwvCompanionReactTARDIS
+
+				AddFormToFormList fwvCTARDISReacted rComp
+				set rGetNPC to cCompNPC
+				set sGetNPC to 1
+				set sReacting to 1
+
+			endif
+	
+			if IsRefInList fwvCRegenReacted rComp == -1 && rComp.GetInSameCell Player == 1 && fwvqRegen.regenMode == 2 && fwvqRegen.rTimer > 45 && fwvqRegen.rStaveFrame == 2 && sReacting == 0
+				set sRandomPerc to 0 + GetRandomPercent * (aCount - 0 + 1) / 100
+				let cCompNPC := arCompanions[sRandomPerc]
+				if IsRefInList fwvCRegenReacted cCompNPC != -1
+				  	set rPackage to fwvCompanionReactRegenOld
+				else
+					set rPackage to fwvCompanionReactRegen
+					set sPreRegenReacted to 1
+					AddFormToFormList fwvCRegenReacted rComp
+				endif
+				set rGetNPC to cCompNPC
+				set sGetNPC to 1
+				set sReacting to 1
+			elseif IsRefInList fwvCRegenReacted rComp == -1 && rComp.GetInSameCell Player == 1 && fwvqRegen.regenMode == 1 && fwvqRegen.rEvent == 3 && sReacting == 0
+				set sRandomPerc to 0 + GetRandomPercent * (aCount - 0 + 1) / 100
+				let cCompNPC := arCompanions[sRandomPerc]
+				if IsRefInList fwvCRegenReacted cCompNPC != -1
+				  	set rPackage to fwvCompanionReactPostRegenOld
+				else
+					set rPackage to fwvCompanionReactPostRegen
+					AddFormToFormList fwvCRegenReacted rComp
+				endif
+				set rGetNPC to cCompNPC
+				set sGetNPC to 1
+				set sReacting to 1
+			endif
+
+		Loop
+	Endif
+
+	;================================================== COMPANION RECRUITMENT SHIT ENDS HERE
+
+	;=========================REACTION SYSTEM
+
+	if sPreRegenReacted == 1
+		if fwvqRegen.regenMode == 0
+			set rPackage to fwvCompanionReactPostRegen
+			set sGetNPC to 1
+			set sReacting to 1
+			set sPreRegenReacted to 0
+		endif
+	endif
+
+	if sGetSkills == 1
+		set sDisp to rGetNPCS.GetDisposition Player
+		set sLockp to rGetNPCS.GetActorValue lockpick
+		set sSci to rGetNPCS.GetActorValue science
+		set sSpeech to rGetNPCS.GetActorValue speech
+		ShowMessage fwvTFstatsMessage sDisp sLockp sSpeech sSci
+		set sGetSkills to 0
+	endif
+
+	if sGetNPC == 1
+		set sGetNPC to 0
+		set rLastPackage to rGetNPC.GetCurrentPackage
+		rGetNPC.RemoveScriptPackage
+		rGetNPC.AddScriptPackage rPackage
+		rGetNPC.evp
+		set rPackage to 0
+	endif
+
+	if sGetLastPackage == 1
+		rGetNPCL.RemoveScriptPackage
+		rGetNPCL.AddScriptPackage rLastPackage
+		rGetNPCL.evp
+		set sGetLastPackage to 0
+	endif
+
+	if sGetHome == 1
+		set sGetHome to 0
+		if eval (Ar_Find rGetNPCH, arCompanions) == 0
+			set sHomeNum to 1
+		elseif eval (Ar_Find rGetNPCH, arCompanions) == 1
+			set sHomeNum to 2
+		elseif eval (Ar_Find rGetNPCH, arCompanions) == 2
+			set sHomeNum to 3
+		endif
+		set rGetNPCH to 0
+		printc "Home Num: %f" sHomeNum
+	endif
+
+	if cWait == 1
+		set cWait to 0
+		rWaitNPC.RemoveScriptPackage
+		rWaitNPC.AddScriptPackage fwvCompanionWait
+		rWaitNPC.evp
+		set rWaitNPC to 0
+	endif
+
+	if cReturn == 1
+		set cReturn to 0
+		rReturnNPC.RemoveScriptPackage
+		rReturnNPC.AddScriptPackage fwvCompanionReturn
+		rReturnNPC.evp
+		set rReturnNPC to 0
+	endif
+
+	if sSkill == 1
+		if sPickStage == 1
+			if sCTimer < 30
+				set sCTimer to sCTimer + getsecondspassed
+				set rSkillTarget to getcrosshairref
+				;printc "%n" rSkillTarget
+				if ((rSkillTarget.GetIsObjectType Door == 1 || rSkillTarget.GetIsObjectType Container == 1) && sSkillType == 1) || (rSkillTarget.GetIsObjectType Terminal == 1 && sSkillType == 2)
+					if rSkillTarget.GetLocked == 1
+						if IsControlPressed 5 == 1
+							printc "Pick found found"
+							set sCTimer to 0
+							set rLastPackage to rSkillNPC.GetCurrentPackage
+							rSkillTarget.SetPackageLocationReference fwvCompanionSkill
+							rSkillNPC.RemoveScriptPackage
+							rSkillNPC.AddScriptPackage fwvCompanionSkill
+							rSkillNPC.evp
+							Con_CloseAllMenus
+						endif
+					endif
+				endif
+			else
+				set sCTimer to 0
+				set sPickStage to 0
+				set sSkill to 0
+				set rSkillTarget to 0
+				set sSkillType to 0
+				MessageEx "[Companion no longer searching for object to pick/hack.]"
+			endif
+		endif
+
+		if sPickStage == 2		;Unlock the thing
+			if sTimer < 4
+				set sTimer to sTimer + GetSecondsPassed
+			else
+				if rSkillTarget == fwvCQdoor01Ref || rSkillTarget == fwvCQdriveDoorTerminalRef || rSkillTarget == fwvCQdoorTerminalRef
+					; hardcoded companion quest doors to be forced open only by them
+					rSkillTarget.unlock
+					if sSkillType == 1
+						rSkillNPC.ModAv Lockpick 2
+					elseif sSkillType == 2
+						rSkillNPC.ModAv Science 2
+					endif
+				elseif rSkillTarget.GetLockLevel != 255 && rSkillTarget.GetLockLevel != 5
+					; otherwise only open non-key locks
+					rSkillTarget.unlock
+					if sSkillType == 1
+						rSkillNPC.ModAv Lockpick 2
+					elseif sSkillType == 2
+						rSkillNPC.ModAv Science 2
+					endif
+				endif
+				set sSkillType to 0
+				set sTimer to 0
+				PlaySound UILockpickingUnlock
+				;printc "Object unlocked"
+				set sPickStage to 0
+				set sSkill to 0
+				rSkillNPC.RemoveScriptPackage
+				rSkillNPC.AddScriptPackage rLastPackage
+				rSkillNPC.evp
+				set rSkillNPC to 0
+			endif
+		endif
+	endif
+
+	if sActivityRequest == 1									; ACTIVITY REQUESTS
+		if sRoomActive == 1									; ROOM IS NOT ENABLED
+			if sRoom == 1
+
+				rReqNPC.StartConversation Player fwvcRequestRoom
+				set sRoom to 2
+				;printc "Room now enabled!"
+			elseif sRoom == 0
+				if sActivity == 1
+					set sRoom to fwvqRooms.tLibrary
+				elseif sActivity == 2
+					set sRoom to fwvqRooms.tBedroom
+				elseif sActivity == 3
+					set sRoom to fwvqRooms.tGalley
+				elseif sActivity == 4
+					set sRoom to fwvqRooms.tPool
+
+				endif
+				;printc "Room not enabled."
+			endif
+		elseif sRoomActive == 2								; ROOM IS ENABLED
+			imod FadeToBlackAndBackISFX
+			if aTimer < 1
+				set aTimer to aTimer + getsecondspassed
+			else
+				if sActivity == 1 ; Reading
+					rReqNPC.MoveTo fwvClibraryRef
+					rReqNPC.RemoveScriptPackage
+					rReqNPC.ModDisposition Player 1
+					rReqNPC.ModAv EnergyWeapons 2
+					rReqNPC.AddScriptPackage fwvCompanionIdleRequestRead
+					rReqNPC.evp
+					rReqNPC.additem fwvRoomReqFlag 1 1
+					rReqNPC.addSpell fwvTARDISRoomReqTimerAE
+					printc "timer"
+					;Teleport to library, add sandbox package
+				elseif sActivity == 2 ; Sleeping
+					rReqNPC.MoveTo fwvq1bedRef
+					rReqNPC.RemoveScriptPackage
+					rReqNPC.ModDisposition Player 1
+					rReqNPC.ModAv Guns 2
+					rReqNPC.AddScriptPackage fwvCompanionSleepRequest
+					rReqNPC.evp
+					rReqNPC.additem fwvRoomReqFlag 1 1
+					rReqNPC.addSpell fwvTARDISRoomReqTimerAE
+					printc "timer"					
+					;Teleport to bedroom, add sleeping package
+				elseif sActivity == 3 ; Relaxing in Galley
+					rReqNPC.MoveTo fwvCgalleyRef
+					rReqNPC.RemoveScriptPackage
+					rReqNPC.ModDisposition Player 1
+					rReqNPC.ModAv Unarmed 2
+					rReqNPC.AddScriptPackage fwvCompanionIdleRequestRelax
+					rReqNPC.evp
+					rReqNPC.additem fwvRoomReqFlag 1 1
+					rReqNPC.addSpell fwvTARDISRoomReqTimerAE	
+					printc "timer"
+					;Teleport to galley, add sandbox package
+				elseif sActivity == 4 ; Swimming
+					rReqNPC.MoveTo fwvCpoolRef
+					rReqNPC.RemoveScriptPackage
+					rReqNPC.ModDisposition Player 1
+					rReqNPC.ModAv MeleeWeapons 2
+					rReqNPC.AddScriptPackage fwvCompanionIdleRequestSwim
+					rReqNPC.evp
+					rReqNPC.additem fwvRoomReqFlag 1 1
+					rReqNPC.addSpell fwvTARDISRoomReqTimerAE	
+					printc "timer"
+					;Teleport to pool, add sandbox package swim package
+
+				endif
+				set aTimer to 0
+				set sActivityRequest to 0
+				set sRoomActive to 0
+				set sRoom to 0
+				set sActivity to 0
+			endif
+		endif
+	endif
+
+	if sRequested == 1													; LOCATION REQUESTS
+		set rCurLoc to fwvq1.enableDoor
+		if sReqLoc == 1
+			if IsRefInList fwvCLocationsVegas rCurLoc >= 1
+				set sReqComplete to 1
+				;printc "NEW VEGAS"
+				; reward xp ?
+			endif
+		elseif sReqLoc == 2
+			if rCurLoc == fwvLgoodspringsSaloonRef || rCurLoc == fwvLgoodspringsCemeteryExtRef || rCurLoc == fwvLgoodspringsExtRef
+				set sReqComplete to 1
+				;printc "GOODSPRINGS"
+			endif
+		elseif sReqLoc == 3
+			if IsRefInList fwvCLocationsFreeside rCurLoc >= 1
+				set sReqComplete to 1
+				;printc "FREESIDE"
+			endif
+		elseif sReqLoc == 4
+			if rCurLoc == fwvLmoonCraterRef
+				set sReqComplete to 1
+				;printc "MOON"
+			endif
+		elseif sReqLoc == 5
+			if rCurLoc == fwvLnellisHangarRef || rCurLoc == fwvLNellisGenRef || rCurLoc == fwvLnellisArrayExtRef || rCurLoc == fwvLnellisAfbExtRef
+				set sReqComplete to 1
+				;printc "NELLIS"
+			endif
+		elseif sReqLoc == 6
+			if rCurLoc == fwvLvikkivanceCasinoRef || rCurLoc == fwvLbisonSteveRef || rCurLoc == fwvLprimmHousesExtRef || rCurLoc == fwvLprimmExtRef
+				set sReqComplete to 1
+				;printc "PRIMM"
+			endif 
+		elseif sReqLoc == 7
+			if rCurLoc == fwvLdesertCraterRef
+				set sReqComplete to 1
+				set sPlanet to 1
+				;printc "KARN"
+			elseif rCurLoc == fwvLyuleRef
+				set sReqComplete to 1
+				set sPlanet to 2
+				;printc "YULE"
+			elseif rCurLoc == fwvLtelosCaveRef
+				set sReqComplete to 1
+				set sPlanet to 3
+				;printc "TELOS"
+			elseif rCurLoc == fwvLskaroForestRef
+				set sReqComplete to 1
+				set sPlanet to 4
+				;printc "SKARO"
+			endif
+		elseif sReqLoc == 8
+			if rCurLoc == fwvLcrimsonCaravanRef
+				set sReqComplete to 1
+				;printc "CRIMSON CARAVAN"
+			endif
+		elseif sReqLoc == 9
+			if rCurLoc == fwvLredrockCanyonExtRef
+				set sReqComplete to 1
+				;printc "REDROCK CANYON"
+			endif
+		elseif sReqLoc == 10
+			if rCurLoc == fwvLnovacExtRef
+				set sReqComplete to 1
+				;printc "NOVAC"
+			endif
+		elseif sReqLoc == 11
+			if rCurLoc == fwvLbitterspringsExtRef
+				set sReqComplete to 1
+				;printc "BITTERSPRINGS"
+			endif
+		elseif sReqLoc == 12
+			if rCurLoc == fwvLrepconBaseRef
+				set sReqComplete to 1
+				;printc "REPCONN BASE"
+			endif
+		elseif sReqLoc == 13
+			if rCurLoc == fwvLmccarranConcourseRef
+				set sReqComplete to 1
+				;printc "CAMP MCCARRAN"
+			endif
+		elseif sReqLoc == 14
+			if rCurLoc == fwvLjacobstownLodgeRef || rCurLoc == fwvLjacobstownExtRef || rCurLoc == fwvLjacobstownLodgeExtRef
+				set sReqComplete to 1
+				;printc "JACOBSTOWN"
+			endif
+		elseif sReqLoc == 15
+			if rCurLoc == fwvLbcStationRef || rCurLoc == fwvLbigHornRef || rCurLoc == fwvLboulderbeachExtRef || rCurLoc == fwvLboulderCityExtRef
+				set sReqComplete to 1
+				;printc "BOULDER CITY"
+			endif
+		elseif sReqLoc == 16
+			if rCurLoc == fwvLheliosDeckRef || rCurLoc == fwvLheliosExtRef
+				set sReqComplete to 1
+				;printc "HELIOS ONE"
+			endif
+
+
+
+
+
+		endif
+	endif
+
+	if sReqComplete == 1
+
+		if (player.GetInCell fwvTinterior1 == 1 || player.GetInCell rTDesktop == 1) && rGetNPC.GetInSameCell Player == 1 && sLandReact == 0
+			set sReqStage to 1
+			printc "ReqStage 1"
+		endif
+
+		if sLandReact == 1 && (player.GetInCell fwvTinterior1 == 0 || player.GetInCell rTDesktop == 0) && rGetNPC.GetInSameCell Player == 1
+			set sReqStage to 2
+			printc "ReqStage 2"
+		endif
+		
+		if sReqStage == 1 && sLandReact == 0
+			printc "Companion request TARDIS reacted"
+			set rLastPackage to rGetNPC.GetCurrentPackage
+			rGetNPC.StartConversation player fwvcRequestLanded
+			set sLandReact to 1
+		elseif sReqStage == 2 && sLandReact == 1
+			printc "Companion request OUTSIDE reacted" 
+			set sGetNPC to 1
+			set rPackage to fwvCompanionRequestComplete
+			set sReqComplete to 0
+			set sLandReact to 0
+			set sRequested to 0
+			set sReqStage to 0
+		endif
+	endif
+
+End

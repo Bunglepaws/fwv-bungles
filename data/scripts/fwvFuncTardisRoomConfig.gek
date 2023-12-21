@@ -1,0 +1,40 @@
+scn fwvFuncTardisRoomConfig
+
+short sRoomOn
+short sSetEnable
+ref rRoom
+
+begin Function { rRoom, sSetEnable }
+	let sRoomOn := 0
+	if fwvqSystems.tAdvanced == 1
+		let fwvqSystems.tRoomPower := 5 + (1-fwvqSystems.SpatialDampeners) * 5
+	else
+		let fwvqSystems.tRoomPower := 5
+	endif
+	if sSetEnable == 1
+		;let sPowerNeeded := fwvqSystems.tRoomPower * sNumRoomsActive
+		;let sPowerTotal := sNumRoomsActive * (5 + (fwvqSystems.SpatialDampeners) * 5)
+
+		if fwvq1.tPower - fwvqSystems.tRoomPower < 0 && fwvqSystems.failsafe == 1
+			ShowMessage fwvTpowerFailMessage
+			ForceTerminalBack
+			ForceTerminalBack
+			ForceTerminalBack
+			ForceTerminalBack
+		else
+			if fwvq1.tPower - fwvqSystems.tRoomPower < 0 && fwvqSystems.failsafe == 0
+				MessageBoxEx "Power requirements exceed tolerance"
+			endif
+			let fwvq1.tPower := fwvq1.tPower - fwvqSystems.tRoomPower
+			let fwvqSystems.Mass := fwvqSystems.Mass + 2.5
+			let sRoomOn := 1
+			rRoom.enable
+		endif
+	else		
+		rRoom.disable
+		let fwvq1.tPower := fwvq1.tPower + fwvqSystems.tRoomPower
+		let fwvqSystems.Mass := fwvqSystems.Mass - 2.5
+		let rRoom := 0
+	endif
+	SetFunctionValue sRoomOn
+end

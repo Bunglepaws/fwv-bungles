@@ -1,0 +1,36 @@
+scn fwvLibraryStackLightsSCRIPT
+
+Begin OnActivate
+
+	if fwvq1.tPower > 0 && fwvqSystems.crashed == 0
+
+		if fwvqRooms.LibraryStackLights == 0
+			fwvLibraryStacksLightBigREF01.Enable
+			fwvLibraryStacksLightBigREF02.Enable
+			fwvLibraryStacksLightREF42.Enable
+			fwvTLibraryLightBig01.Disable
+			fwvTLibraryLightBig02.Disable
+			fwvTLibraryLightBig03.Disable
+			fwvTLibraryLightBig04.Disable
+			fwvTLibraryLightBig05.Disable
+			Playgroup Forward 1
+			set fwvqRooms.LibraryStackLights to 1
+		else
+			fwvLibraryStacksLightBigREF01.Disable
+			fwvLibraryStacksLightBigREF02.Disable
+			fwvLibraryStacksLightREF42.Disable
+			fwvTLibraryLightBig01.Enable
+			fwvTLibraryLightBig02.Enable
+			fwvTLibraryLightBig03.Enable
+			fwvTLibraryLightBig04.Enable
+			fwvTLibraryLightBig05.Enable
+			set fwvqRooms.LibraryStackLights to 0
+			PlayGroup Backward 1
+		endif
+		Activate
+	
+	else 
+		MessageEx "[The TARDIS has no power...]"
+	endif
+	
+End

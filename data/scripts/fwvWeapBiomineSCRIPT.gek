@@ -1,0 +1,55 @@
+scn fwvWeapBiomineSCRIPT
+
+Float Timer
+Short DoOnce
+Short IsPile
+
+ref plant
+ref self
+
+Begin ScriptEffectStart
+
+	set self to GetSelf
+	if self.GetIsCreatureType 6 == 1 || self.GetInFaction fwvWeepingAngelFaction == 1
+		MessageEx "[Biogenic Mines only work on organic lifeforms]"
+		set DoOnce to 1
+	elseif GetIsId fwvZetaPlantBoss == 1
+		MessageEx "[The Gorlax's energy cancels out the Biogenic Mine...]"
+		set DoOnce to 1
+	elseif GetIsID fwvKarnBeast == 1
+		MessageEx "[Morbius' Gallifreyan mental powers shunt away the mine's Biogenic field]"
+		set DoOnce to 1
+	else
+		printc "Biomine else check passed"
+		set plant to HoneyMesquitePickable
+		PlaceAtMe plant
+		plant.setpos z 200
+		SetCriticalStage DisintegrateStart
+		PMS AlienCritGlowFXShader
+		PMS effectAlienDisintegration
+		Set Timer to 1.8
+		Set DoOnce to 0
+		Set IsPile to 0
+	endif
+
+
+End
+
+Begin ScriptEffectUpdate
+	If DoOnce == 0
+		If IsPile == 0
+			If Timer <= 0.5
+				Set IsPile to 1
+			EndIf
+		EndIf
+
+		If Timer <= 0 
+			SetCriticalStage DisintegrateEnd
+			SMS AlienCritGlowFXShader
+			SMS effectAlienDisintegration
+			Set DoOnce to 1
+		EndIf
+		Set Timer to (Timer - GetSecondsPassed)
+	EndIf
+End
+

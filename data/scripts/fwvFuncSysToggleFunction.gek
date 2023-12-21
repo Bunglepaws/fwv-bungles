@@ -1,0 +1,33 @@
+scn fwvFuncSysToggleFunction
+
+short currentValue
+
+short tempPower ; set to whatever
+short sysToggle ; what is this even
+short sysBool ; sysBool
+
+begin Function { currentValue, tempPower }
+
+	printc "Costing %g power" tempPower
+	printc "Sys is %g" currentValue
+	if currentValue == 1
+		set sysBool to 0
+		set fwvq1.tPower to fwvq1.tPower + tempPower
+		set sysToggle to 1
+	else
+		if fwvq1.tPower > tempPower
+			set fwvq1.tPower to fwvq1.tPower - tempPower
+			set sysBool to 1
+			set sysToggle to 1
+		else
+			MessageBoxEx "[System Error: Not enough Power]"
+			set sysToggle to 0
+		endif
+	endif
+	
+	if sysToggle == 1 ; power something something
+		SetFunctionValue sysBool ; return new value
+	else ; otherwise do nothing
+		SetFunctionValue currentValue ; return current
+	endif
+end

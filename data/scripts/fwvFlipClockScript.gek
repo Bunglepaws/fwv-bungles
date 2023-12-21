@@ -1,0 +1,9 @@
+scn fwvFlipClockScript
+
+begin GameMode
+	if IsAnimPlaying == 0
+		if fwvq1.flightMode == 3
+			PlayGroup Forward 0
+		endif
+	endif
+end

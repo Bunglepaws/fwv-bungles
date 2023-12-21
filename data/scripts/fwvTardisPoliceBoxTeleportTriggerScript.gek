@@ -1,0 +1,49 @@
+scn fwvTardisPoliceBoxTeleportTriggerScript
+
+ref rSelf
+ref rCurRef
+ref rTDesktopShipDoor
+
+short sFIndex
+short sFCount
+short sTeleportPlayer
+
+begin OnTriggerEnter
+	set rSelf to GetActionRef
+	if rSelf == Player && ListGetFormIndex fwvTardisEnterNPCList rSelf < 0
+		imod fwvPoliceBoxFadeInTrapISFX
+		set sTeleportPlayer to 1
+	endif
+	AddFormToFormList fwvTardisEnterNPCList rSelf
+end
+
+begin GameMode
+	if fwvq1.sPoliceBoxIsUnspawned == 0 && fwvTardisRecallExtFadeInBox.GetDisabled && GetDisabled == 0
+		set rTDesktopShipDoor to fwvq1.rTDesktopShipDoor
+		set sFIndex to 0
+		set sFCount to ListGetCount fwvTardisEnterNPCList
+		Label 0
+		
+		if sFIndex < sFCount
+			set rCurRef to ListGetNthForm fwvTardisEnterNPCList sFIndex
+			if rCurRef != Player
+				rCurRef.MoveTo rTDesktopShipDoor
+			endif
+			set sFIndex to sFIndex + 1
+			if sFIndex < sFCount
+				GoTo 0
+			endif
+		endif
+		ListClear fwvTardisEnterNPCList 
+		if sFIndex >= sFCount
+			ListClear fwvTardisEnterNPCList
+			if sTeleportPlayer == 1
+				rimod fwvPoliceBoxFadeInTrapISFX
+				set sTeleportPlayer to 0
+				set fwvq1.sMoveBoxNow to 1
+				Player.moveto rTDesktopShipDoor
+			endif
+		endif
+		Disable
+	endif
+end

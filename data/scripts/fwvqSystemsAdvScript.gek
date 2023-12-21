@@ -1,0 +1,275 @@
+scn fwvqSystemsAdvScript
+
+ref consoleRef
+ref tempRef
+short fluidBroken
+float tempMod
+float tMin
+float dChance		;chance of drifting
+float dTimer			;drift timer
+
+short tvg
+
+short Protocol01
+short Protocol02
+short Protocol03
+short Protocol04
+short Protocol05
+short Protocol06
+short Protocol07
+short Protocol08
+short Protocol09
+short Protocol10
+short Protocol11
+short Protocol12
+short Protocol13
+short Protocol14
+short Protocol15
+short Protocol16
+short Protocol17
+short Protocol18
+short Protocol19
+short Protocol20
+short Protocol21
+short Protocol22
+short Protocol23
+short Protocol24
+short Protocol25
+short FluidLinksOnce
+
+Begin GameMode
+
+	if fwvq1.tTheme == 0
+		set consoleRef to fwvTinteriorScanner1Ref
+	elseif fwvq1.tTheme == 1
+		set consoleRef to fwvTinteriorScanner2Ref
+	elseif fwvq1.tTheme == 2
+		set consoleRef to fwvTinteriorScanner3Ref
+	elseif fwvq1.tTheme == 4
+		set consoleRef to fwvTinteriorScanner5Ref
+	elseif fwvq1.tTheme == 5
+		set consoleRef to fwvTinteriorScanner6Ref
+	elseif fwvq1.tTheme == 6
+		set consoleRef to fwvTinteriorScanner7Ref
+	endif
+
+	if fwvqSystems.tAdvanced == 1
+
+		;Fluid Links - Disabled until decided what to do 
+		if fwvqSystems.fluidLinks > 0
+			fwvTmercuryRef.disable
+			rimod fwvTardisFluidLinksISFX
+			set fluidBroken to 0
+		else
+			if fluidBroken == 0
+				set fluidBroken to 1
+			endif
+			set fwvqSystems.fluidLinks to 0
+		endif
+
+		;Mass
+		if fwvqSystems.Mass > 50000
+			set fwvqSystems.Mass to 50000
+		elseif fwvqSystems.Mass < 0
+			set fwvqSystems.Mass to 0
+		endif
+
+		;Temperature
+		if tMin < 300
+			set tMin to tmin + GetSecondsPassed
+		else
+			if fwvqSystems.Temperature > 40
+				if eval (Call fwvFuncGetInTardis) == 1
+					fwvTardisHeatFXRef.enable
+					fwvTardisHeatFXRef.moveTo player
+					MessageEx "The TARDIS is overheating - and so are you!"
+					Call fwvFuncDamageSystemsFunction
+					imod fwvDehydrationISFX
+					if playerref.IsHardcore == 1
+						player.modav dehydration 50
+					endif
+				else
+					printc "TARDIS heat warning timer, but player not in the Box. Ignore."
+					MessageEx "The TARDIS has overheated and is being damaged..."
+					Call fwvFuncDamageSystemsFunction
+				endif
+			else
+				fwvTardisHeatFXRef.disable
+			endif
+			if fwvqSystems.ThermoBuffer == 0
+				set tempMod to fwvq1.tPower / (4 + getRandomPercent * 8/100)
+				set fwvqSystems.Temperature to fwvqSystems.Temperature + tempMod
+				;printc "Temperature increased by %g degrees" tempMod
+			endif
+			set tMin to 0
+		endif
+
+		;Effects
+		;FLUID LINKS
+		if fluidBroken == 1
+			fwvTmercuryRef.moveTo consoleRef
+			fwvTmercuryRef.enable
+			MessageEx "The Fluid Links have exploded!"
+			if FluidLinksOnce == 0
+				ShowMessage fwvFluidLinksWarning
+				set FluidLinksOnce to 1
+			endif
+			set fluidBroken to 2
+		elseif fluidBroken == 2
+			if player.getInCell fwvtInterior1 == 1
+				imod fwvTardisFluidLinksISFX
+				if player.getEquipped fwvOutfitSB6suit && player.getEquipped fwvOutfitSB6Helmet
+					fwvTARDISBreathingMaskLP.enable
+				elseif player.getEquipped ArmorNVSpaceSuit && player.getEquipped HelmetNVSpaceSuit
+					fwvTARDISBreathingMaskLP.enable
+				else				
+					player.damageAV Health 0.25
+					fwvTARDISBreathingMaskLP.disable
+				endif
+			else
+				rimod fwvTardisFluidLinksISFX
+				fwvTARDISBreathingMaskLP.disable
+			endif
+		endif
+
+		;COMPONENTS
+		if fwvqSystems.ArtronCapacitor <= 0
+			set fwvqSystems.TemporalEnergyCore to 0
+			set fwvqSystems.ArtronCapacitor to 0
+		endif
+		if fwvqSystems.DematerializationCircuit <= 0
+			set fwvqSystems.MainDrive to 0
+			set fwvqSystems.DematerializationCircuit to 0
+		endif
+		if fwvqSystems.ChronometricAstrometer <= 0
+			if fwvqSystems.Axiomator == 1
+				set fwvqSystems.Axiomator to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif
+			if fwvqSystems.TemporalStabilizer == 1
+				set fwvqSystems.TemporalStabilizer to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif
+			set fwvqSystems.RelativeChronometer to 0
+			set fwvqSystems.ChronometricAstrometer to 0
+		endif
+		if fwvqSystems.QuantumAccelerator <= 0
+			set fwvqSystems.CoaxialStabilizers to 0
+			set fwvqSystems.QuantumAccelerator to 0
+		endif
+		if fwvqSystems.relativedimensionalstabiliser <= 0
+			set fwvqSystems.ExponentialCrossfield to 0
+			set fwvqSystems.Omegaconfiguration to 0
+			if fwvqSystems.SpatialDampeners == 1
+				set fwvqSystems.SpatialDampeners to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif
+			set fwvqSystems.RelativeContinuumStabilizer to 0
+			set fwvqSystems.relativedimensionalstabiliser to 0
+		endif
+		if fwvqSystems.bluethermocouplings <= 0
+			if fwvqSystems.Thermobuffer == 1
+				set fwvqSystems.Thermobuffer to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif
+			set fwvqSystems.bluethermocouplings to 0
+		endif
+		if fwvqSystems.greenthermocouplings <= 0
+			set fwvqSystems.AutomaticOxygenSupply to 0
+			set fwvqSystems.greenthermocouplings to 0
+		endif
+		if fwvqSystems.redthermocouplings <= 0
+			set fwvqSystems.MolecularStabilizers to 0
+			set fwvqSystems.redthermocouplings to 0
+		endif
+		if fwvqSystems.interstitialbeamsynthesiser <= 0
+			set fwvqSystems.InterstitialAntenna to 0
+			set fwvqSystems.ImageTranslator to 0
+			set fwvqSystems.interstitialbeamsynthesiser to 0
+		endif
+		if fwvqSystems.forcefieldGenerator <= 0
+			set fwvqSystems.forcefieldPrisms to 0
+			if fwvqSystems.mandrelCondensers == 1
+				set fwvqSystems.mandrelCondensers to 0
+				set fwvq1.tPower to fwvq1.tPower + 5
+			endif
+			set fwvqSystems.forcefieldGenerator to 0
+		endif
+		if fwvqSystems.TemporalCircuits <= 0
+			if fwvqSystems.TemporalStabilizer == 1
+				set fwvqSystems.TemporalStabilizer to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif
+			set fwvqSystems.TemporalCircuits to 0
+		endif
+
+		;SUBSYSTEMS
+		if fwvqSystems.MainDrive == 0
+			if fwvq1.tNavOn == 1
+				set fwvq1.tNavOn to 0
+				set fwvq1.tPower to fwvq1.tPower + 25
+			endif
+		endif
+		if fwvqSystems.ExponentialCrossfield == 0 || fwvqSystems.OmegaConfiguration == 0
+			if fwvq1.tArchitectureOn == 1
+				set fwvq1.tArchitectureOn to 0
+				set fwvq1.tPower to fwvq1.tPower + 25
+			endif
+		endif
+		if fwvqSystems.AutomaticOxygenSupply == 0
+			if fwvq1.tLifeSupportOn == 1
+				set fwvq1.tLifeSupportOn to 0
+				set fwvq1.tPower to fwvq1.tPower + 10
+			endif
+		endif
+		if fwvqSystems.InterstitialAntenna == 0 || fwvqSystems.ImageTranslator == 0
+			if fwvq1.tCommsOn == 1
+				set fwvq1.tCommsOn to 0
+				set fwvq1.tPower to fwvq1.tPower + 5
+			endif
+		endif
+		if fwvqSystems.ForcefieldPrisms == 0
+			if fwvq1.tHadsOn == 1
+				set fwvq1.tHadsOn to 0
+				set fwvq1.tPower to fwvq1.tPower + 10
+			endif
+		endif
+	else
+		;reset all non-essential subsystems and stats to 0
+		set fwvqSystems.tRoomPower to 5
+
+		;turn off all non-essential subsystems
+
+		set fwvqSystems.AuxiliaryDrive to 0
+		set fwvqSystems.Axiomator to 0
+		set fwvqSystems.CoaxialStabilizers to 0
+		set fwvqSystems.CSBalance to 0
+		set fwvqSystems.RelativeChronometer to 0
+		set fwvqSystems.RCSynch to 0
+
+		set fwvqSystems.WarpEllipseCutoutCircuit to 0
+		set fwvqSystems.IsomorphicSecuritySystem to 0
+		set fwvqSystems.MandrelCondensers to 0
+
+		set fwvqSystems.SpatialDampeners to 0
+		set fwvqSystems.RelativeContinuumStabilizer to 0
+		set fwvqSystems.RelativeDimensionalComputer to 0
+		set fwvqSystems.RDCDebugged to 0
+
+		set fwvqSystems.TelepathicInductionCircuits to 0
+
+		set fwvqSystems.TemporalEnergyCore to 0
+		set fwvqSystems.TemporalStabilizer to 0
+
+		set fwvqSystems.ConditionalStates1to6 to 0
+		set fwvqSystems.ConditionalStates7to17 to 0
+		set fwvqSystems.ConditionalStates18to30 to 0
+		set fwvqSystems.ULinkCouplers to 0
+		set fwvqSystems.Calibrators to 0
+
+		set fwvqSystems.MolecularStabilizers to 0
+		set fwvqSystems.ThermoBuffer to 0
+
+	endif
+
+End

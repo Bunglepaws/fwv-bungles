@@ -1,0 +1,18 @@
+scn fwvq3eSewerValveScript
+
+ref vCount
+short doOnce
+
+begin onActivate player
+
+	if getStage fwvq3e == 92
+		if doOnce == 0
+			PlaySound NPCHumanDrinkingWaterValve
+			set fwvq3e.valve to fwvq3e.valve + 1
+			set vCount to 6 - fwvq3e.valve
+			ShowMessage fwvq3eSewerValveMessage vCount
+			set doOnce to 1
+		endif
+	endif
+
+end

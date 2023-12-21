@@ -1,0 +1,79 @@
+scn fwvq3cScript
+
+short hint1	; silurian disarm hint
+
+short ending	; 0 - good, 1 - bad
+
+short cypherGame
+float rType
+short p1	; 1 - green, 2 - red, 3 - blue
+short p2
+short p3
+short path
+short lives
+
+short testO
+
+begin gamemode
+
+if getstage fwvq3c == 10
+	printc "go!"
+	fwvq3cStartHouseRef.enable
+endif
+
+if player.getItemCount fwvq3cHomingBeacon == 1 && getstage fwvq3c == 30
+	setStage fwvq3c 35
+endif
+
+if player.getItemCount fwvq3cHomingBeaconAnalysed == 1 && getstage fwvq3c == 35
+	ShowMessage fwvq3cHomingBeaconAnalysedMessage
+	player.removeItem fwvq3cHomingBeaconAnalysed 1 1
+	setStage fwvq3c 40
+endif
+
+if player.getInCell fwvSilurianColony2 == 1 && getStage fwvq3c == 40
+	setStage fwvq3c 50
+endif
+
+;------
+
+if cypherGame == 1
+
+	if rType < 33.3
+		set p1 to 1	; green
+		set p2 to 3	; blue
+		set p3 to 2	; red
+	elseif rType < 66.6
+		set p1 to 2	; red
+		set p2 to 3	; blue
+		set p3 to 1	; green
+	elseif rType < 100
+		set p1 to 3	; blue
+		set p2 to 1	; green
+		set p3 to 2	; red
+	endif
+
+	if testO == 0
+		printc "first: %g" p1
+		printc "second: %g" p2
+		printc "third: %g" p3
+		set testO to 1
+	endif
+
+	if lives < 1
+		player.addSpell BarkScorpionPoison
+		PlaySound OBJComputerTerminalArc
+		set path to 0
+		set p1 to 0
+		set p2 to 0
+		set p3 to 0
+		set testO to 0
+		set cypherGame to 0
+	endif
+else
+	set p1 to 0
+	set p2 to 0
+	set p3 to 0
+endif
+
+end

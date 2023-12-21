@@ -1,0 +1,9 @@
+scn fwvTCreadoutMilometerSCRIPT
+
+Begin OnActivate player
+
+	ShowMessage fwvTCReadoutPowerMessage fwvq1.tPower
+
+activate
+
+end

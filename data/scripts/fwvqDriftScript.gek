@@ -1,0 +1,218 @@
+scn fwvqDriftScript
+
+string_var svGalaxy
+string_var svPlanet
+short sDrift					;-1- stationary, 0- orbiting, 1- drifting, 2- navigating, 3- adrift
+short gID						;Galaxy
+short gcX
+short gcY
+short gcTX
+short gcTY
+short sMenuMode			;1- Set Coords
+short sInit
+short sDetected			;1- Planet/Station in range
+short dirX
+short dirY
+short sFuelOut				;True if TARDIS runs out of fuel during navigation
+short sScanned 			;True if the Deep Scan has scanned a Galaxy (resets upon leaving a Galaxy)
+
+float fTimer
+float fSpeed
+float fRand
+
+ref rDesktopRoom
+
+Begin GameMode
+
+	if fwvqDrift.gID == 1
+		let svGalaxy := sv_construct "Acteon Galaxy"
+	elseif fwvqDrift.gID == 2
+		let svGalaxy := sv_construct "Isop Galaxy"
+	elseif fwvqDrift.gID == 3
+		let svGalaxy := sv_construct "Constellation of Kasterborous"
+	elseif fwvqDrift.gID == 4
+		let svGalaxy := sv_construct "Magellanic Clouds"
+	elseif fwvqDrift.gID == 5
+		let svGalaxy := sv_construct "Mutter's Spiral"
+	elseif fwvqDrift.gID == 6
+		let svGalaxy := sv_construct "Tremulus Three"
+	endif
+
+	;DRIFTING
+	;========
+	if sDrift == 1 && fwvq1.tSpace == 1 && eval (Call fwvFuncGetInTardis)
+		if fTimer < 90.0
+			let fTimer := fTimer + getSecondsPassed
+		else
+			let dirX := 1 + GetRandomPercent * 2/100
+			let dirY := 1 + GetRandomPercent * 2/100
+			if dirX == 1
+				if gcX < 10
+					let gcX := gcX + 1
+				else
+					let gcX := gcX - 1
+				endif
+			else
+				if gcX > 1
+					let gcX := gcX - 1
+				else
+					let gcX := gcX + 1
+				endif
+			endif
+			if dirY == 1
+				if gcY < 10
+					let gcY := gcY + 1
+				else
+					let gcY := gcY - 1
+				endif
+			else
+				if gcY > 1
+					let gcY := gcY - 1
+				else
+					let gcY := gcY + 1
+				endif
+			endif
+			PlaySound fwvFXtardisDrum 1
+			MessageEx "%z: X:%g Y:%g" svGalaxy gcX gcY  
+			Call fwvFuncDriftPlanetCheckFunction
+			let fTimer := 0.0
+		endif
+	;NAVIGATING
+	;==========
+	elseif sDrift == 2 && fwvq1.tSpace == 1 && eval (Call fwvFuncGetInTardis)
+
+		if fwvq1.tSpeedLvl == 0
+			if fwvq1.tPowerAutopilot == 0 
+				let fSpeed := 80.0		
+			else
+				let fSpeed := 90.0			
+			endif
+		elseif fwvq1.tSpeedLvl == 1
+			if fwvq1.tPowerAutopilot == 0 
+				let fSpeed := 40.0		
+			else
+				let fSpeed := 45.0						
+			endif
+		else
+			if fwvq1.tPowerAutopilot == 0 
+				let fSpeed := 20.0		
+			else
+				let fSpeed := 22.5						
+			endif
+		endif
+
+		if fTimer < fSpeed
+			let fTimer := fTimer + getSecondsPassed ; * (90 / fSpeed) 
+		else
+			if fwvq1.tSpeedLvl == 0
+				;deduct no fuel FOOL
+				printc "no fuel deduction at speed 0"
+				;MessageEx "Fuel now %g" fwvq1.tFuel
+			elseif fwvq1.tSpeedLvl == 1
+				if fwvq1.tFuel > 2.5
+					let fwvq1.tFuel := fwvq1.tFuel - 2.5
+					;MessageEx "Fuel now %g" fwvq1.tFuel
+				else
+					let sFuelOut := 1
+				endif
+			else
+				if fwvq1.tFuel > 5
+					let fwvq1.tFuel := fwvq1.tFuel - 5
+					;MessageEx "Fuel now %g" fwvq1.tFuel
+				else
+					let sFuelOut := 1
+				endif
+			endif
+			if gcX != gcTX
+				if gcX < gcTX
+					let gcX := gcX + 1
+				else
+					let gcX := gcX - 1
+				endif
+			endif
+			if gcY != gcTY
+				if gcY < gcTY
+					let gcY := gcY + 1
+				else
+					let gcY := gcY - 1
+				endif
+			endif
+			;printc "gcX %.0f gcTX %.0f gcY %.0f gcTY %.0f" gcX gcTX gcY gcTY
+			if gcX == gcTX && gcY == gcTY
+				Call fwvFuncDriftPlanetCheckFunction
+				if fwvqEncounter.encounter == 0
+					MessageEx "[You have arrived at your destination...]"
+					fwvTflightRef.Disable 0
+					fwvT4flightRef.Disable 0
+					if fwvq1.tTheme == 4
+						playSound fwvFXT4Landing
+					else
+						playSound fwvFXtardisLandingShort ; fwvFXtardisLandingLong
+					endif
+					let fwvq1.tFlying := 0
+					let fwvq1.tPath := 0
+					let fwvq1.CSROn := 0
+					let fwvq1.tActive := 0
+					let fwvq1.hbTimer := 0.0
+					let fwvq1.hbTimerWait := 0.0
+					let fwvq1.flightMode := 0
+					let fwvqRooms.sShakeEnabled := 0
+					let fwvq1.tSpeedLvl := 0
+					let sDrift := 1
+					let fTimer := 0.0
+				else
+					;MessageEx "[Flight can't end during an Encounter]"
+					;PlaySound fwvFXtardisDrum 1
+					;let fTimer := 0
+					let fTimer := fTimer - 1.0
+				endif
+			else
+				if fwvq1.tHadsOn == 0 && fwvq1.CSROn != 4
+					Call fwvFuncDriftPlanetCheckFunction
+					let fRand := getRandomPercent
+					printc "chance of combat %g" fRand
+					if fRand > 75
+						;start event
+						let fwvqCsr.control := 3
+						let fwvqCsr.csrON := 2
+						let fwvqCsr.CsrTimer := 0
+						let sDrift := -1
+					else
+						PlaySound fwvFXtardisDrum 1
+						MessageEx "%z: X:%g Y:%g" svGalaxy gcX gcY 
+						let fTimer := 0.0
+					endif
+				else
+					Call fwvFuncDriftPlanetCheckFunction
+					PlaySound fwvFXtardisDrum 1
+					MessageEx "%z: X:%g Y:%g" svGalaxy gcX gcY 
+					let fTimer := 0.0
+				endif
+			endif
+		endif
+	endif
+
+	if sFuelOut == 1
+		MessageBoxEx "[Artron Fuel reserves depleted. The TARDIS is now drifting]"
+		fwvTflightRef.Disable 0
+		fwvT4flightRef.Disable 0
+		PlaySound fwvFXtardisCrashLanding2
+		let fwvq1.tFlying := 0
+		let fwvq1.tPath := 0
+		let fwvq1.CSROn := 0
+		let fwvq1.tActive := 0
+		let fwvq1.hbTimer := 0.0
+		let fwvq1.hbTimerWait := 0.0
+		let fwvq1.flightMode := 0
+		let fwvqRooms.sShakeEnabled := 0
+		let fwvq1.tSpeedLvl := 0
+		let sDrift := 1
+		let fwvq1.tFuel := 0
+		let sFuelOut := 0
+	endif
+
+	if sDetected == 2
+		printc "sdetected is %g" sdetected
+	endif
+
+End

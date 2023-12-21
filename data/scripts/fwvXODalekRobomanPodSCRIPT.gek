@@ -1,0 +1,8 @@
+scn fwvXODalekRobomanPodSCRIPT
+
+Begin onActivate 
+
+	showmessage fwvXORobomanPodMSG
+
+end
+

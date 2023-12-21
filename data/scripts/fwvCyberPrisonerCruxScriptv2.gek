@@ -1,0 +1,65 @@
+scn fwvCyberPrisonerCruxScriptv2
+
+ref Pris1
+ref Pris2
+ref Pris3
+ref Pris4
+
+
+begin GameMode
+
+
+	if player.getInCell fwvStrongholdCyberman == 1 && fwvqInvasions.CyberPrisoner01Uncrux == 0 
+
+	let Pris1 := fwvqInvasionsCyber.CyberPrisoner01
+	let Pris2 := fwvqInvasionsCyber.CyberPrisoner02
+	let Pris3 := fwvqInvasionsCyber.CyberPrisoner03
+	let Pris4 := fwvqInvasionsCyber.CyberPrisoner04
+
+		if Pris1.getSitting == 0
+			Pris1.moveto fwvCyberStrngCrux01
+			printc "zFurn1"
+			;Pris1.evp
+		endif
+
+		if Pris2.getSitting == 0
+			Pris2.moveto fwvCyberStrngCrux02
+			printc "zFurn2"
+			;Pris2.evp
+		endif
+
+		if Pris3.getSitting == 0
+			Pris3.moveto fwvCyberStrngCrux03
+			printc "zFurn3"
+			;Pris3.evp
+		endif
+
+		if Pris4.getSitting == 0
+			Pris4.moveto fwvCyberStrngCrux04
+			printc "zFurn4"
+			;Pris4.evp
+		endif
+
+
+	endif
+
+	
+	
+	if player.getInCell fwvStrongholdCyberman == 1 && fwvqInvasionsCyber.sGarethProgLoaded < 1
+
+		if fwvCybermanGarethREF.getSitting == 0
+			fwvCybermanGarethREF.moveto fwvGarethCruxFurnSpotREF
+			printc "GarethFurn1"
+		endif
+
+	endif	
+
+	if player.getInCell fwvSpaceStationCyberman == 1 && fwvqGameOfRassilon.sCyberDone < 1
+		if fwvCyberTLRef.getSitting == 0
+			fwvCyberTLRef.moveto fwvKrotonCruxfurnREF
+		elseif fwvCyberTLRef.getSitting == 3 && fwvCyberTLRef.getangle z != -90
+			fwvCyberTLRef.setangle z -90
+		endif
+	endif
+
+End

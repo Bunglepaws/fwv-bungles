@@ -1,0 +1,264 @@
+scn fwvqInvasionsAutonHandlerSCRIPT
+
+
+short sAutonMaskFound
+short sKeysCount
+short sChemTutorial
+short sMaskOnce
+short sMaskDisintegrate
+float fDisguiseTimer
+short sMaskTruceTime
+short sForceRunNow
+
+; REF all the Autons and Captives and Sphered to be populated
+
+ref AutonPrisoner01
+ref AutonPrisoner02
+ref AutonPrisoner03
+ref AutonPrisoner04
+
+ref AutonWander01
+ref AutonWander02
+ref AutonWander03
+ref AutonWander04
+ref AutonWander05
+ref AutonWander06
+ref AutonWander07
+
+ref AutonGuard01
+ref AutonGuard02
+ref AutonGuard03
+ref AutonGuard04
+ref AutonGuard05
+
+ref AutonDuplicate01
+ref AutonDuplicate02
+ref AutonDuplicate03
+ref AutonDuplicate04
+
+Begin GameMode
+
+	; Population of Factory upon entry
+	if player.getInCell fwvStrongholdAuton == 1 && fwvqInvasions.sPopulateAutonFactory == 1
+	;if fwvqInvasions.sExternalPopAuton == 1
+
+		; Populate the Spheres  -  was fwvAutonSphereXOStrng
+		fwvAutonStrngSphereLight01.enable
+		fwvAutonStrngSphereLight02.enable
+		fwvAutonStrngSphereLight03.enable
+		fwvAutonStrngSphereLight04.enable
+		fwvAutonStrngSphereLight05.enable
+		fwvAutonStrngSphereLight06.enable
+		fwvAutonStrngSphereLight07.enable
+		fwvAutonStrngSphereLight08.enable
+		fwvAutonStrngSphereLight09.enable
+		fwvAutonStrngSphereLight10.enable
+		fwvAutonStrngSphereLight11.enable
+		fwvAutonStrngSphereLight12.enable
+		fwvAutonStrngSphereLight13.enable
+		fwvAutonStrngSphereLight14.enable
+		fwvAutonStrngSphereLight15.enable
+		
+		set fwvAutonStrngSphereLight01.sHits to 0
+		set fwvAutonStrngSphereLight02.sHits to 0
+		set fwvAutonStrngSphereLight03.sHits to 0
+		set fwvAutonStrngSphereLight04.sHits to 0
+		set fwvAutonStrngSphereLight05.sHits to 0
+		set fwvAutonStrngSphereLight06.sHits to 0
+		set fwvAutonStrngSphereLight07.sHits to 0
+		set fwvAutonStrngSphereLight08.sHits to 0
+		set fwvAutonStrngSphereLight09.sHits to 0
+		set fwvAutonStrngSphereLight10.sHits to 0
+		set fwvAutonStrngSphereLight11.sHits to 0
+		set fwvAutonStrngSphereLight12.sHits to 0
+		set fwvAutonStrngSphereLight13.sHits to 0
+		set fwvAutonStrngSphereLight14.sHits to 0
+		set fwvAutonStrngSphereLight15.sHits to 0
+	
+		; Turn off any warning lights or sounds
+		fwvAutonStrngMindLP.disable
+
+		
+		; reset the Nestene animation
+		fwvNesteneInTankREF.playgroup Idle 1
+		
+		; reset the Antenna
+		fwvAutonStrngAntennaSparks01.enable
+		fwvAutonStrngAntennaNoise.enable
+		fwvAutonStrngAntennaGeneratorSndREF.enable
+		fwvAutonStrngAntennaPowerActvREF.playgroup Forward 1		
+		
+		; Set the initial variables to get the Factory prepped for action
+		set fwvqInvasions.sAutonEscapes to 0
+		setAlly fwvAutonFaction fwvAutonStrongholdPrisonerFaction 1 1  ; Autons will not kill prisoners in cell
+		setAlly PlayerFaction fwvAutonStrongholdPrisonerFaction 1 1  ; Reset in case Player previously enraged Prisoners
+	
+		;Populate the prisoners
+		let AutonPrisoner01 := fwvAutonStrongPrisonerPlace01.placeatme fwvAutonStrongholdPrisoner01
+		let AutonPrisoner02 := fwvAutonStrongPrisonerPlace02.placeatme fwvAutonStrongholdPrisoner02
+		let AutonPrisoner03 := fwvAutonStrongPrisonerPlace03.placeatme fwvAutonStrongholdPrisoner03
+		let AutonPrisoner04 := fwvAutonStrongPrisonerPlace04.placeatme fwvAutonStrongholdPrisoner04
+		AutonPrisoner01.setunconscious 1
+		AutonPrisoner02.setunconscious 1
+		AutonPrisoner03.setunconscious 1
+		AutonPrisoner04.setunconscious 1
+		
+		; Populate the Autons
+		let AutonWander01 := fwvAutonStrngEnemyPlace01.placeatme fwvAutonDuplicateStronghold
+		let AutonWander02 := fwvAutonStrngEnemyPlace02.placeatme fwvAutonDuplicateStronghold
+		let AutonWander03 := fwvAutonStrngEnemyPlace03.placeatme fwvAutonDuplicateStronghold
+		let AutonWander04 := fwvAutonStrngEnemyPlace04.placeatme fwvAutonDuplicateStronghold
+		let AutonWander05 := fwvAutonStrngEnemyPlace05.placeatme fwvAutonDuplicateStronghold
+		let AutonWander06 := fwvAutonStrngEnemyPlace06.placeatme fwvAutonDuplicateStronghold
+		let AutonWander07 := fwvAutonStrngEnemyPlace07.placeatme fwvAutonDuplicateStronghold
+
+		let AutonGuard01 := fwvAutonStrngEnemyGuard01.placeatme fwvAutonDuplicateStrongholdGuard
+		let AutonGuard02 := fwvAutonStrngEnemyGuard02.placeatme fwvAutonDuplicateStrongholdGuard
+		let AutonGuard03 := fwvAutonStrngEnemyGuard03.placeatme fwvAutonDuplicateStrongholdGuard
+		let AutonGuard04 := fwvAutonStrngEnemyGuard04.placeatme fwvAutonDuplicateStrongholdGuard
+		let AutonGuard05 := fwvAutonStrngEnemyGuard05.placeatme fwvAutonDuplicateStrongholdGuard
+
+		let AutonDuplicate01 := fwvAutonStrngDuplicatePlace01.placeatme fwvAutonDuplicateCFStrng
+		let AutonDuplicate02 := fwvAutonStrngDuplicatePlace02.placeatme fwvAutonDuplicateAMStrng
+		let AutonDuplicate03 := fwvAutonStrngDuplicatePlace03.placeatme fwvAutonDuplicateCFStrng02
+		let AutonDuplicate04 := fwvAutonStrngDuplicatePlace04.placeatme fwvAutonDuplicateCMStrng
+	
+	
+		set fwvqInvasions.sPopulateAutonFactory to 0
+		;set fwvqInvasions.sExternalPopAuton to 0
+		set fwvqInvasions.DoOnce to 0
+		set fwvqInvasions.sTransmatOn to 0
+	
+	endif
+
+	
+	;During quest - this loop wakes up the Captives when the Antenna is turned off
+	if fwvAutonStrngAntennaPowerActvREF.sUsed == 1
+		AutonPrisoner01.setunconscious 0
+		AutonPrisoner02.setunconscious 0
+		AutonPrisoner03.setunconscious 0
+		AutonPrisoner04.setunconscious 0
+		AutonPrisoner01.stopcombat
+		AutonPrisoner02.stopcombat
+		AutonPrisoner03.stopcombat
+		AutonPrisoner04.stopcombat
+		AutonPrisoner01.evp
+		AutonPrisoner02.evp
+		AutonPrisoner03.evp
+		AutonPrisoner04.evp
+		let fwvAutonStrngAntennaPowerActvREF.sUsed := 2
+	endif
+
+	; And this is for the Auton Disguise.
+
+	if player.getequipped fwvAutonMaskPlayableSpell == 1
+		if fwvqInvasionsAuton.fDisguiseTimer < 60
+			if fwvqInvasionsAuton.fDisguiseTimer < 3
+				set sMaskTruceTime to 1
+				set fwvqInvasionsAuton.fDisguiseTimer to fwvqInvasionsAuton.fDisguiseTimer + GetSecondsPassed
+				;printc "TruceTimer %g" fwvqInvasionsAuton.fDisguiseTimer				
+			else
+				set sMaskTruceTime to 0
+				set fwvqInvasionsAuton.fDisguiseTimer to fwvqInvasionsAuton.fDisguiseTimer + GetSecondsPassed
+				;printc "Timer %g" fwvqInvasionsAuton.fDisguiseTimer
+			endif
+		else
+			;printc "Disintegrate Mask Now"
+			setEnemy playerFaction fwvAutonFaction
+			player.unequipitem fwvAutonMaskPlayableSpell
+			player.removeitem fwvAutonMaskPlayableSpell 1
+			playsound OBJStealthBoyActivateDvce
+			set fDisguiseTimer to 0
+			;printc "Timer set to %g" fDisguiseTimer
+		endif
+	endif
+
+	;NEW - force all Prisoners to run immediately when it's OK to go, not fiddlefart around
+	if fwvqInvasions.sEscape == 1 && player.getInCell fwvStrongholdAuton == 1
+		if sForceRunNow == 0
+			printc "Run Now %g" sForceRunNow
+			AutonPrisoner01.evp
+			AutonPrisoner02.evp
+			AutonPrisoner03.evp
+			AutonPrisoner04.evp
+			set sForceRunNow to 1
+			printc "Run Now now %g" sForceRunNow
+		endif
+	endif
+	
+	; After blowing up the Ship
+	 if fwvqInvasions.sBlow == 1 && player.getInCell fwvtInterior1 == 1 && fwvq1.tFlying == 1 && fwvqInvasions.eType == 3 
+	 
+	 ;if fwvqInvasions.sExternalCleanupAuton == 1
+		;Disable alarm noise
+		fwvAutonStrngMindLP.disable
+		set sForceRunNow to 0
+		printc "Reset sForceRunNow %g" sForceRunNow
+		;Reset Doors and Locks
+		fwvAutonStrngCellDoorREF.SetOpenState 0
+		fwvAutonDoorToFacFlrREF.SetOpenState 0
+		fwvAutonDoorToFacFlrREF.Lock 75
+		fwvAutonStrngBreakRmDoorREF.SetOpenState 0
+		fwvAutonStrngCellDoorREF.Lock 255
+		
+		; Remove Keys
+		set sKeysCount to player.getitemcount fwvAutonStrngPrisCellKey
+		Player.RemoveItem fwvAutonStrngPrisCellKey sKeysCount 1
+
+		; Reset Boom Switches			
+		let fwvAutonStrngChemStation01.sUsed := 0					
+		let fwvAutonStrngChemStation02.sUsed := 0									
+		let fwvAutonStrngChemStation03.sUsed := 0									
+		let fwvAutonStrngChemStation04.sUsed := 0		
+		let fwvAutonStrngAntennaPowerActvREF.sUsed := 0
+		
+		; clear any remaining Autons, Spheres, or Prisoners
+		AutonPrisoner01.disable
+		AutonPrisoner02.disable
+		AutonPrisoner03.disable
+		AutonPrisoner04.disable
+		AutonWander01.disable
+		AutonWander02.disable
+		AutonWander03.disable
+		AutonWander04.disable
+		AutonWander05.disable
+		AutonWander06.disable
+		AutonWander07.disable
+		AutonGuard01.disable
+		AutonGuard02.disable
+		AutonGuard03.disable
+		AutonGuard04.disable
+		AutonGuard05.disable
+		AutonDuplicate01.disable
+		AutonDuplicate02.disable
+		AutonDuplicate03.disable
+		AutonDuplicate04.disable
+
+		;Then Mark For Delete
+		AutonPrisoner01.MarkForDelete
+		AutonPrisoner02.MarkForDelete
+		AutonPrisoner03.MarkForDelete
+		AutonPrisoner04.MarkForDelete
+		AutonWander01.MarkForDelete
+		AutonWander02.MarkForDelete
+		AutonWander03.MarkForDelete
+		AutonWander04.MarkForDelete
+		AutonWander05.MarkForDelete
+		AutonWander06.MarkForDelete
+		AutonWander07.MarkForDelete
+		AutonGuard01.MarkForDelete
+		AutonGuard02.MarkForDelete
+		AutonGuard03.MarkForDelete
+		AutonGuard04.MarkForDelete
+		AutonGuard05.MarkForDelete
+		AutonDuplicate01.MarkForDelete
+		AutonDuplicate02.MarkForDelete
+		AutonDuplicate03.MarkForDelete
+		AutonDuplicate04.MarkForDelete
+		
+		;set fwvqInvasions.sExternalCleanupAuton to 0
+
+	endif
+
+
+end

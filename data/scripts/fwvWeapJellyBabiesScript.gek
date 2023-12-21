@@ -1,0 +1,17 @@
+scn fwvWeapJellyBabiesScript
+
+ref CombTarget
+short sType
+
+begin onFire
+
+	set CombTarget to GetCrosshairRef
+	set sType to GetObjectType CombTarget
+
+	if sType == 42			;apply only to NPCs
+		ShowMessage fwvWeapJellyBabyMessage
+		combTarget.moddisposition player 5
+		;temporarily reduce perception & intelligence
+	endif
+
+end

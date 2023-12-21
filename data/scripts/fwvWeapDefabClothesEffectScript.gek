@@ -1,0 +1,18 @@
+scn fwvWeapDefabClothesEffectScript
+
+ref rSelf
+ref armour
+ref hat
+
+begin ScriptEffectStart
+
+	;getitemequipped at armour slot, store as ref
+	;removeitem from inventory
+	let rSelf := getSelf
+	let armour := getEquippedObject 2
+	let hat := getEquippedObject 10
+
+	rSelf.removeItem armour 1
+	rSelf.removeItem hat 1
+
+end

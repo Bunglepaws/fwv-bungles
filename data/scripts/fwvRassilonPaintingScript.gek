@@ -1,0 +1,74 @@
+scn fwvRassilonPaintingScript
+
+short sFix
+short sCanvasCalc
+short sTeleport
+float fTimer
+
+Begin onActivate player
+
+	if getIsReference fwvRassilonPaintingEmptyRef == 1
+		if getStage fwvqGameOfRassilon == 30
+			player.removeItem fwvRassilonFragment01 1 0
+			player.removeItem fwvRassilonFragment02 1 0
+			player.removeItem fwvRassilonFragment03 1 0
+			player.removeItem fwvRassilonFragment04 1 0
+			player.removeItem fwvRassilonFragment05 1 0
+			player.removeItem fwvRassilonFragment06 1 0
+			imod FadeToBlackAndBackISFX
+			DisablePlayerControls 1 1 1 1 1 1 1
+			let sFix := 1
+			let fTimer := 0.0
+		elseif getStage fwvqGameOfRassilon == 20
+			let sCanvasCalc := 6 - fwvqGameofRassilon.sCanvas
+			MessageBoxEx "You still require %g fragments of the Canvas" sCanvasCalc
+		elseif getStage fwvqGameOfRassilon <= 10
+			MessageEx "[The painting is torn...]"
+		endif
+	elseif getIsReference fwvRassilonPaintingDoneRef == 1
+		DisablePlayerControls 1 1 1 1 1 1 1
+		imod FadeToWhiteISFX
+		set fwvqGameOfRassilon.sTeleport to 1
+		let fwvqGameOfRassilon.fTimer := 0.0
+	endif
+
+End
+
+Begin Gamemode
+
+	if sFix == 1
+		if fTimer < 2.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			fwvRassilonPaintingEmptyRef.disable
+			fwvRassilonPaintingDoneRef.enable
+			set sFix to 2
+		endif
+	elseif sFix == 2
+		if fTimer < 2.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			enableplayercontrols
+			setStage fwvqGameOfRassilon 40
+			set sFix to 0
+		endif
+	endif
+
+	;if sTeleport == 1
+	;	if fTimer < 5.0
+	;		set fTimer to fTimer + getSecondsPassed
+	;	else
+	;		player.moveTo fwvqRassilonStarterRef
+	;		EnablePlayerControls
+	;		set sTeleport to 2
+	;	endif
+	;elseif sTeleport == 2
+	;	if player.getInWorldspace fwvWorldDeathzoneWorld == 1
+	;		PlaySound OBJComputerTerminalArc
+	;		fwvqRassilonStarterRef.pushActorAway player 3
+	;		setStage fwvqGameOfRassilon 50
+	;		set sTeleport to 0
+	;	endif
+	;endif
+
+End

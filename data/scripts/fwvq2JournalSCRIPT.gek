@@ -1,0 +1,20 @@
+scn fwvq2JournalSCRIPT
+
+short doOnce
+
+begin onEquip player
+
+if doOnce == 0
+	ShowMessage fwvq2journalMessage
+	player.addItem fwvItemSchemSonicScrewdriver 1
+
+	if fwvqTutorials.scTutOnce == 0
+		ShowTutorialMenu fwvTUTschematicsMessage
+		set fwvqTutorials.scTutOnce to 1
+	endif
+
+	set doOnce to 1
+endif
+
+end
+

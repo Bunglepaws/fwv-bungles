@@ -1,0 +1,31 @@
+scn fwvTCESpellScript
+
+float fMyScale
+float fCalc
+ref rSelf
+
+begin ScriptEffectStart
+	set fMyScale to GetScale
+end
+
+begin ScriptEffectUpdate
+	set fMyScale to fMyScale - (ScriptEffectElapsedSeconds * 0.4)
+	SetScale fMyScale
+	if fMyScale <= 0.25 && GetDisabled == 0
+		set rSelf to GetSelf
+		fwvTeddySpawnMarker.MoveTo rSelf 
+
+		set fCalc to GetPos X
+		fwvTeddySpawnMarker.SetPos X fCalc
+		set fCalc to GetPos Y
+		fwvTeddySpawnMarker.SetPos Y fCalc
+		set fCalc to GetPos Z + 32
+		fwvTeddySpawnMarker.SetPos Z fCalc
+
+		KillActor Player
+		fwvTeddySpawnMarker.PlaceAtMe TeddyBear01 1
+		Disable
+		Dispel fwvTissueCompressionSpell
+	endif
+end
+

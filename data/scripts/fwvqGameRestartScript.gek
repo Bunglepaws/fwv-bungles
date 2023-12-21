@@ -1,0 +1,37 @@
+scn fwvqGameRestartScript
+
+short sChecked
+
+begin GameMode
+	if GetGameLoaded
+		let sChecked := 0
+	endif
+	if sChecked == 0
+		; NVSE check
+		set fwvqNVSECheck.iInstalled to 0 ; must be "set" incase NVSE isn't installed
+		
+		if eval (GetNVSEVersionFull >= 5) ; use GetNVSEVersionFull to ensure JIP is also installed
+			let fwvqNVSECheck.iInstalled := 1
+			if eval (fwvqNVSECheck.iInstalled == 0)
+				printc "NVSE load check passed"
+			endif
+		endif
+		   
+		if eval (ar_size fwvqProtocols.protocol) == -1
+			; array not yet initialized
+			return
+		endif
+		
+		if eval (fwvqProtocols.protocol[9] == 0 && fwvqProtocols.frame[9] != -1)
+			printc "Correcting Protocol9 Frame to -1 since Protocol9==0"
+			let fwvqProtocols.frame[9] := -1
+		else
+			printc "No Protocol9 Correction Needed"
+		endif
+ 
+		let sChecked := 1
+		
+		; restart event handler
+		SetEventHandler "PostLoadGame", fwvEventLoadGame
+	endif
+end

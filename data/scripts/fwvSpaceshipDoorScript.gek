@@ -1,0 +1,11 @@
+scn fwvSpaceshipDoorScript
+
+begin gamemode
+
+	if getDistance player < 100
+		SetOpenState 1
+	else
+		SetOpenState 0
+	endif
+
+end

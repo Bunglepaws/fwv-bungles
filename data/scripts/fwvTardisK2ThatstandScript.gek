@@ -1,0 +1,12 @@
+scn fwvTardisK2ThatstandScript
+
+begin onActivate player
+
+	player.addItem fwvOutfitDoctor4Scarf 1
+	player.equipItem fwvOutfitDoctor4Scarf
+	imod FadeInFromBlack2sISFX
+	Disable
+	MarkForDelete
+	PlaceAtMe SubHatstand
+
+end

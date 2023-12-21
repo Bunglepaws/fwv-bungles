@@ -1,0 +1,18 @@
+scn fwvZetaGorlaxTerminalSCRIPT
+
+begin OnActivate Player
+
+	if fwvZetaGorlaxForcefieldREF.GetDisabled == 0
+	
+		MessageBoxEx "Specimen in stasis. Growth slowed. Warning: Stasis field generator nearing overload!"
+	
+	else
+	
+	
+		MessageBoxEx "ALERT: Stasis field generator non-functional, specimen growth no longer halted!"	
+	
+	endif
+
+
+
+End

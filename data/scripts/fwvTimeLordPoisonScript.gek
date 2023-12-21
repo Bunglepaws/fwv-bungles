@@ -1,0 +1,14 @@
+scn fwvTimeLordPoisonScript
+
+short DoOnce
+
+begin ScriptEffectStart
+
+	if fwvqRegen.TimeLordTrue == 1
+		if DoOnce == 0
+			ShowMessage fwvTimeLordPoisonMessage
+			CastImmediateOnSelf  fwvTimeLordPoison
+			set DoOnce to 1
+		endif
+	endif
+end

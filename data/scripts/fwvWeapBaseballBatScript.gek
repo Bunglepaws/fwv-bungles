@@ -1,0 +1,13 @@
+scn fwvWeapBaseballBatScript
+
+Begin OnHit
+
+	Ref batTarget
+	Set batTarget to GetOwnerLastTarget
+
+	If (batTarget != PlayerRef)
+		batTarget.placeAtMe fwvWeapOmegaBatExplosion
+		batTarget.damageAV health 200
+	EndIf
+
+End

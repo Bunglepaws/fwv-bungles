@@ -1,0 +1,28 @@
+scn fwvDalekCasingScript
+
+short sOpen
+
+Begin onActivate player
+
+	if isAnimPlaying == 0
+		Activate
+	else
+		MessageEx "[The Casing is opening]"
+	endif
+End
+
+Begin Gamemode
+
+	if getLocked == 0
+		if sOpen == 0
+			Playgroup Forward 1
+			set sOpen to 1
+		endif
+	else
+		if sOpen == 1
+			Playgroup Backward 1
+			set sOpen to 0
+		endif
+	endif
+
+End

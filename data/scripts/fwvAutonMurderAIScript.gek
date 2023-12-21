@@ -1,0 +1,110 @@
+scn fwvAutonMurderAIScript
+
+short init
+short lastLoc
+short lastAct
+short rndLoc
+short rndAct
+short aiStage
+short loc
+short iChance
+short checked
+
+string_var name
+string_var fName
+string_var lName
+short rName
+
+ref self
+ref murderer
+ref lastLoc
+
+begin onActivate player
+
+	if getDead == 1
+		if checked == 0
+			set murderer to fwvqAutonMurder.murderer
+			set iChance to 1 + getRandomPercent * 10/100
+			printc "Investigation %g" iChance
+			if player.getAV Perception > iChance
+				if murderer.getVariable "lastLoc" == 1
+					MessageBoxEx "There is a smell of alcohol and woodsmoke around the victim..."
+				elseif murderer.getVariable "lastLoc" == 2
+					MessageBoxEx "The victims sleeves are spattered with ink stains..."
+				elseif murderer.getVariable "lastLoc" == 3
+					MessageBoxEx "A torn dining napkin is found clutched in the victims hand..."
+				elseif murderer.getVariable "lastLoc" == 4
+					MessageBoxEx "A crumpled room service stub for one of the House Suites is found beneath the victim..."
+				elseif murderer.getVariable "lastLoc" == 5
+					MessageBoxEx "There appears to be an unmarked Suite key found close to the victim..."
+				elseif murderer.getVariable "lastLoc" == 6
+					MessageBoxEx "A feather not dissimilar to those found in the House Suite pillows is found lodged in the victims mouth..."
+				endif
+			else
+				MessageEx "You find no clues about the body..."
+			endif
+			set checked to 1
+		else
+			MessageEx "You have already checked the body..."
+		endif
+	else
+		if isActionRef player == 1
+			if fwvqAutonMurder.initialise == 2
+				if fwvqAutonMurder.tutorial == 0
+					MessageBoxEx "Sleuthing: Question the suspects to find out where they were and what they were doing at the time of the last murder. Pay close attention to their reactions. Accuse the wrong suspect, and the murderer will flee, so be careful..."
+					set fwvqAutonMurder.tutorial to 1
+					Activate
+				endif
+				Activate
+			endif
+		endif
+
+		if isTalking == 0
+			Activate
+		else
+			MessageEx "This person is busy..."
+		endif
+
+	endif
+
+end
+
+begin gamemode
+
+	if aiStage == 1
+		;store last location
+		set lastLoc to rndLoc
+		set lastAct to rndAct
+		;randomise location
+		set rndLoc to 1 + GetRandomPercent * 6/100
+		;random activity
+		set rndAct to 1 + GetRandomPercent * 3/100
+		set aiStage to 2
+	elseif aiStage == 2
+		if lastAct == 1
+			placeAtMe BookGeneric07b 1
+		elseif lastAct == 2
+			placeAtMe DesertSalad 1
+		endif
+		set aiStage to 3
+	elseif aiStage == 3
+		RemoveScriptPackage
+		if rndLoc == 1
+			addScriptPackage fwvAutonMurderLoc1
+		elseif rndLoc == 2
+			addScriptPackage fwvAutonMurderLoc2
+		elseif rndLoc == 3
+			addScriptPackage fwvAutonMurderLoc3
+		elseif rndLoc == 4
+			addScriptPackage fwvAutonMurderLoc4
+		elseif rndLoc == 5
+			addScriptPackage fwvAutonMurderLoc5
+		elseif rndLoc == 6
+			addScriptPackage fwvAutonMurderLoc6
+		endif
+
+		evp
+		set aiStage to 0
+	endif
+
+end

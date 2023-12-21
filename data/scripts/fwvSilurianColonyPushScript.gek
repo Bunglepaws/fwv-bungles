@@ -1,0 +1,88 @@
+scn fwvSilurianColonyPushScript
+
+float y
+float b01Pos
+float b02Pos
+float b03Pos
+float b04Pos
+
+short init
+
+begin onActivate player
+	if getIsReference fwvSilurianColonyButton01Ref
+		if fwvqSilurianColony.move01 == 1
+			PlaySound OBJForceFieldDeactivate
+			set fwvqSilurianColony.move01 to 0
+		else
+			PlaySound OBJTurretGeneratorDisable
+			set fwvqSilurianColony.move01 to 1
+		endif
+	elseif getIsReference fwvSilurianColonyButton02Ref
+		if fwvqSilurianColony.move02 == 1
+			PlaySound OBJForceFieldDeactivate
+			set fwvqSilurianColony.move02 to 0
+		else
+			PlaySound OBJTurretGeneratorDisable
+			set fwvqSilurianColony.move02 to 1
+		endif
+	elseif getIsReference fwvSilurianColonyButton03Ref
+		if fwvqSilurianColony.move03 == 1
+			PlaySound OBJForceFieldDeactivate
+			set fwvqSilurianColony.move03 to 0
+		else
+			PlaySound OBJTurretGeneratorDisable
+			set fwvqSilurianColony.move03 to 1
+		endif
+	elseif getIsReference fwvSilurianColonyButton04Ref
+		if fwvqSilurianColony.move04 == 1
+			PlaySound OBJForceFieldDeactivate
+			set fwvqSilurianColony.move04 to 0
+		else
+			PlaySound OBJTurretGeneratorDisable
+			set fwvqSilurianColony.move04 to 1
+		endif
+	endif
+end
+
+begin gamemode
+
+	if init == 0
+		set fwvqSilurianColony.move01 to 1
+		set fwvqSilurianColony.move02 to 1
+		set fwvqSilurianColony.move03 to 1
+		set fwvqSilurianColony.move04 to 1
+		set init to 1
+	endif
+
+	set b01Pos to fwvSilurianColonyBoulder01Ref.getPos Y -30
+	set b02Pos to fwvSilurianColonyBoulder02Ref.getPos Y -20
+	set b03Pos to fwvSilurianColonyBoulder03Ref.getPos Y -25
+	set b04Pos to fwvSilurianColonyBoulder04Ref.getPos Y -20
+
+	if fwvqSilurianColony.move01 == 1
+		fwvSilurianColonyBoulder01Ref.setPos y b01Pos
+	endif
+	if fwvqSilurianColony.move02 == 1
+		fwvSilurianColonyBoulder02Ref.setPos y b02Pos
+	endif
+	if fwvqSilurianColony.move03 == 1
+		fwvSilurianColonyBoulder03Ref.setPos y b03Pos
+	endif
+	if fwvqSilurianColony.move04 == 1
+		fwvSilurianColonyBoulder04Ref.setPos y b04Pos
+	endif
+
+	if fwvSilurianColonyBoulder01Ref.getPos y <= -1408.0000
+		fwvSilurianColonyBoulder01Ref.setPos y 3163.8818
+	endif
+	if fwvSilurianColonyBoulder02Ref.getPos y <= -1408.0000
+		fwvSilurianColonyBoulder02Ref.setPos y 3163.8818
+	endif
+	if fwvSilurianColonyBoulder03Ref.getPos y <= -1408.0000
+		fwvSilurianColonyBoulder03Ref.setPos y 3163.8818
+	endif
+	if fwvSilurianColonyBoulder04Ref.getPos y <= -1408.0000
+		fwvSilurianColonyBoulder04Ref.setPos y 3163.8818
+	endif
+
+end

@@ -1,0 +1,13 @@
+scn fwvFuncRange
+
+float fMin
+float fMax
+float fValue
+float fReturnValue
+
+begin Function {fMin, fMax, fValue}
+	
+	set fReturnValue to (fValue - fMin) / (fMax - fMin)
+	SetFunctionValue fReturnValue
+end
+

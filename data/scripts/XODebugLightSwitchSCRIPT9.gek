@@ -1,0 +1,9 @@
+scn XODebugLightSwitchSCRIPT9
+
+
+Begin OnFire
+
+set fwvqSystems.DematerializationCircuit to 0
+set fwvq1.tNav to 0
+
+end

@@ -1,0 +1,19 @@
+scn fwvItemSerendipityScript
+
+begin scripteffectstart
+
+	if player.hasmagicEffect fwvDiseaseGreenDeath == 1
+		player.removeSpell fwvDiseaseGreenDeathPoison
+		if IsPC1stPerson == 1
+			printc "First person detected"
+			TapControl 13
+		endif
+		player.sms fwvDiseaseGreenDeathFX
+		imod Addiction01ISFX
+		MessageEx "You have been cured of Green Death..."
+	else
+		MessageEx "You do not need to take this right now..."
+		player.addItem fwvItemSerendipity 1 0
+	endif
+
+end

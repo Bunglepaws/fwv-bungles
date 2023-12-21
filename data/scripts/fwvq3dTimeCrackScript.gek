@@ -1,0 +1,19 @@
+scn fwvq3dTimeCrackScript
+
+short doOnce
+
+short frame
+float fTimer
+
+begin onActivate player
+
+	if doOnce == 0	; move player to the bomb
+		DisablePlayerControls 1 1 1 1 1 1 1
+		imod FadeInFromWhiteISFX
+		player.moveTo fwvq3dPos1Ref
+		set fwvq3d.cFrame to 1
+		set fwvq3d.cTimer to 0.0
+		set doOnce to 1
+	endif
+
+end

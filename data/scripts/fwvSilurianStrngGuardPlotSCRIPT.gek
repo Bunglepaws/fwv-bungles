@@ -1,0 +1,12 @@
+scn fwvSilurianStrngGuardPlotSCRIPT
+
+short DoOnce
+
+Begin GameMode
+
+		;if fwvSilurStrngPlotGuardREF.getdetected Player == 1 && sGuardTalkOnce == 0
+		;if fwvSilurStrngPlotGuardREF.GetDistance Player < 150 && fwvqSilurianPeaceAttempt01.sGuardTalkOnce == 0
+			;fwvSilurStrngPlotGuardREF.startconversation Player, GREETING
+		;endif
+
+End

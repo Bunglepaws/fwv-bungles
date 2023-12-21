@@ -1,0 +1,39 @@
+scn fwvTinteriorShipDoorSCRIPT
+
+ref iAm
+short rDoor
+
+begin OnActivate Player
+	set iAm to getSelf
+	activate
+
+	if fwvqGameOfRassilon.sRemote == 0
+		if fwvq1.tArchitecture > 0 || (fwvqSystems.tAdvanced == 1 && fwvq1.tArchitecture > 0 && fwvqSystems.timeVectorGenerator > 0)
+			imod fwvFadeFromBlackFastISFX
+			PlaySound DRSVaultVertical01Close
+			set rDoor to 1 + getRandomPercent * 5/100
+			if fwvq1a.spot <= 1 && GetQuestCompleted fwvq1a == 0
+				set fwvqRooms.sFixWeather to 1
+				set fwvqRooms.sConsoleWeather to 0
+				player.moveTo TardisInteriorRef
+			else
+				set fwvqRooms.sFixWeather to 1
+				set fwvqRooms.sConsoleWeather to 0
+				if rDoor == 1 || GetQuestCompleted fwvq1a == 0 || fwvq1a.spot < 6
+					player.moveTo TardisInteriorRef
+				elseif rDoor == 2
+					player.moveTo TardisInterior2Ref
+				elseif rDoor == 3
+					player.moveTo TardisInterior3Ref
+				elseif rDoor == 4
+					player.moveTo TardisInterior4Ref
+				elseif rDoor == 5
+					player.moveTo TardisInterior5Ref
+				endif
+			endif
+		endif
+	else
+		MessageBoxEx "[The Time Lords have sealed off the ship's interior]"
+	endif
+
+end

@@ -1,0 +1,35 @@
+scn fwvRassilonGameboardKillScript
+
+short sTriggerTrap
+float fTimer
+
+Begin onTriggerEnter player
+
+	if fwvRassilonTrapEnterRef.sTrapOn == 1
+		let sTriggerTrap := 1
+	endif
+
+End
+
+Begin GameMode
+
+	if sTriggerTrap == 1
+		if fwvRassilonChessTrapRef.getDisabled == 1
+			imod ZapGloveISFX
+			PlaySound FXExplosionRobotDeath
+			PlaySound OBJComputerTerminalArc
+			fwvRassilonChessTrapRef.enable
+		endif
+		DisablePlayerControls
+		set fTimer to 0.0
+		set sTriggerTrap to 2
+	elseif sTriggerTrap == 2
+		if fTimer < 5.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			EnablePlayerControls
+			player.killactor
+		endif
+	endif
+
+End

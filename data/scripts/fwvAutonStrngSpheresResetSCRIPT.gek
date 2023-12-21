@@ -1,0 +1,23 @@
+scn fwvAutonStrngSpheresResetSCRIPT
+
+ref rSelf
+short sHasReset
+float fTimer
+
+Begin Gamemode
+
+	if sHasReset == 0 && player.GetInCell fwvStrongholdAuton == 1
+		if fTimer < 3
+			set fTimer to fTimer + GetSecondsPassed
+		else
+			set rSelf to GetSelf
+			rSelf.Disable
+			rSelf.Enable
+			printc "reset"
+			set fTimer to 0
+			set sHasReset to 1
+		endif
+	endif
+end
+
+

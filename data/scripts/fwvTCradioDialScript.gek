@@ -1,0 +1,80 @@
+scn fwvTCradioDialScript
+
+short sInit
+short count
+short sReposition
+ref curList
+ref curRef
+ref rSelf
+ref rLinkedRef
+string_var strOriginName
+string_var strRadioName
+string_var strNewName
+
+short sPatchVersion
+begin GameMode
+	if sPatchVersion < fwvPatchVersion
+		set sPatchVersion to fwvPatchVersion
+		set rSelf to GetSelf
+		Call fwvFuncResetPosition rSelf
+	endif
+end
+
+
+begin OnActivate Player
+
+	set count to ListGetCount fwvRadioStationList
+	if fwvq1.sRadioIsOn == 0
+		set fwvq1.sRadioIsOn to 1
+		set sReposition to 1
+	else
+		set fwvq1.sEnableIndex to fwvq1.sEnableIndex + 1
+		if fwvq1.sEnableIndex >= count
+			set fwvq1.sEnableIndex to 0
+			set fwvq1.sRadioIsOn to 0
+		endif
+		set sReposition to 1
+	endif
+	if IsAnimPlaying Forward == 0
+		PlayGroup Forward 0
+	endif
+	
+	activate
+
+end
+
+begin GameMode
+	set rSelf to GetSelf
+
+	if GetGameLoaded || GetGameRestarted || sInit == 0
+		set sInit to 1
+		let strOriginName := rSelf.GetName
+	endif
+
+	if fwvq1.tSwitchTheme > 0
+		set sReposition to 1
+	endif
+	if fwvq1.tSwitchTheme == 0 && sReposition == 1 && fwvq1.rTCradioDial == rSelf
+		set count to ListGetCount fwvRadioStationList
+		if fwvq1.sEnableIndex >= count
+			set fwvq1.sEnableIndex to count
+		endif
+		set sReposition to 0
+		Call fwvFuncSetListIsDisabled fwvRadioStationList 1
+		if fwvq1.sRadioIsOn == 1
+			set curRef to ListGetNthForm fwvRadioStationList fwvq1.sEnableIndex
+			let strRadioName := curRef.GetName
+			let strNewName := sv_Construct "%z [%z]" strOriginName strRadioName
+			rSelf.SetNameEx "%z" strNewName
+			curRef.MoveTo rSelf
+			curRef.Enable 0
+			set rLinkedRef to curRef.GetLinkedRef
+			if rLinkedRef != 0
+				rLinkedRef.SetBroadcastState 1
+			endif
+		else
+			rSelf.SetNameEx "%z" strOriginName
+		endif
+	endif
+	
+end

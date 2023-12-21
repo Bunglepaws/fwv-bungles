@@ -1,0 +1,79 @@
+scn fwvTCorganicDiagnosticSCRIPT
+
+;written by Demeggy 7/3/13
+
+short button
+short brewing
+short cType 	;	1 - antiplastic
+					;	2 - movellan strain
+					;	3 - space plague
+					;	4 - spectrox cure
+					;	5 - silurian cure
+					;	6 - elixir of life
+
+float timer
+
+Begin onActivate player
+
+if fwvqCraft.brewing == 0
+
+	ShowMessage fwvTCorganicDiagnosticMessage
+
+else
+
+	ShowMessage fwvTCorganicBrewingMessage
+
+endif
+
+end
+
+Begin GameMode
+
+set button to getbuttonpressed
+
+if button == 0
+	player.removeItem fwvItemBaseAntiPlastic 1
+	player.removeItem fwvItemCultureAuton 1
+	ShowMessage fwvTCorganicBrewStartingMessage
+	set fwvqCraft.lTimer to 0.0
+	set fwvqCraft.brewing to 1
+	set fwvqCraft.cType to 1
+elseif button == 1
+	player.removeItem fwvItemBaseMovellanStrain 1
+	player.removeItem fwvItemCultureMovellanStrain 1
+	set fwvqCraft.lTimer to 0.0
+	set fwvqCraft.brewing to 1
+	set fwvqCraft.cType to 2
+elseif button == 2
+	player.removeItem fwvItemBaseSpacePlague 1
+	player.removeItem fwvItemCultureSpacePlague 1
+	ShowMessage fwvTCorganicBrewStartingMessage
+	set fwvqCraft.lTimer to 0.0
+	set fwvqCraft.brewing to 1
+	set fwvqCraft.cType to 3
+elseif button == 3
+	player.removeItem fwvItemBaseSpectroxAntiviral 1
+	player.removeItem fwvItemCultureSpectrox 1
+	ShowMessage fwvTCorganicBrewStartingMessage
+	set fwvqCraft.lTimer to 0.0
+	set fwvqCraft.brewing to 1
+	set fwvqCraft.cType to 4
+elseif button == 4
+	player.removeItem fwvItemBaseSilurianAntiviral 1
+	player.removeItem fwvItemCultureSilurian 1
+	ShowMessage fwvTCorganicBrewStartingMessage
+	set fwvqCraft.lTimer to 0.0
+	set fwvqCraft.brewing to 1
+	set fwvqCraft.cType to 5
+elseif button == 5
+	player.removeItem fwvItemBaseElixirOfLife 1
+	player.removeItem fwvItemCultureNumismaton 1
+	ShowMessage fwvTCorganicBrewStartingMessage
+	set fwvqCraft.lTimer to 0.0
+	set fwvqCraft.brewing to 1
+	set fwvqCraft.cType to 6
+else
+
+endif
+
+end

@@ -1,0 +1,644 @@
+scn fwvWeaponQuestSCRIPT
+
+;co-written by Spyduck & Demeggy for NVSE 2.0
+
+short screwdriverMenu
+short laserMenu
+short alphaMenu
+short vortexMenu
+short unarmedMenu
+short dalekGunMenu
+short defabMenu
+short medicalMenu
+short timescoopMenu
+short SilurianMenu
+
+short SilurianGunLvl ; Xoanon put this here because it fails to be called when in fwvq1
+
+short sonicMode
+short sonicRange
+short laserMode
+short lastLaserMode
+short alphaMode
+short lastAlphaMode
+short SilurianMode
+short lastSilurianMode
+short vortexMode
+short dalekGunMode
+short lastDalekGunMode
+short medicalMode
+short timescoopMode
+short defabMode
+short lastDefabMode
+short powercellMode
+short lastPowercellMode
+short button
+short sKeyCode
+ref curWeap
+
+ref targetCell
+ref CombTarget
+ref Weap
+ref rPoliceBox
+int WeapSkill
+short sIsRobot
+short sType
+short sMode
+short sRefType
+short sLoops
+short sIndex
+short sMaxIndex
+float fLaserHealth
+short sLaserNumber
+
+float tardisCooldown
+float vortexCooldown
+
+short sTardisRecallFrame
+
+ref vLoc
+short vLocNum
+float vTimer
+short vFrame
+
+float fPz
+float fMx
+float fMy
+float fMz
+float fWaitTimer
+short sSwitched
+
+;psychic paper vars
+short PowderGangers
+short Kings
+short SuperMutants
+short Boomer
+short Brotherhood
+short Enclave
+short NCR
+short Omerta
+short CaesarsLegion
+
+;chronodyne
+ref npcRef
+ref npcName
+short chronoMode
+float chronoDay
+array_var arChronoActors
+array_var arChronoTimers
+array_var Entry
+int entryPos
+float fChronoReleaseTime
+short chronoDone
+
+begin gamemode
+
+	if fwvq1.sRestart == 1
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWsonicScrewdriver1968
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWsonicScrewdriver1972
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWsonicScrewdriver1974
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWsonicScrewdriver1979
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWsonicScrewdriver1996
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWsonicScrewdriverBF
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWsonicScrewdriver2006
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWsonicScrewdriver2010
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWsonicScrewdriver2013
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWsonicScrewdriverRiver
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWsonicScrewdriver2015
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWlaserScrewdriver
+		AddFormToFormList NVImprovedHoldoutWeapons fwvWlaserScrewdriverBeam
+	endif
+	if chronoDone == 0
+		let arChronoActors := Ar_Construct "array"
+		let arChronoTimers := Ar_Construct "array"
+		set chronoDone to 1
+	endif
+
+	if laserMode == 0
+		set laserMode to 1
+	endif
+	if sonicMode == 0
+		set sonicMode to 1
+	endif
+	if alphaMode == 0
+		set alphaMode to 1
+	endif
+	if dalekGunMode == 0
+		set dalekGunMode to 1
+	endif
+	
+	if SilurianMode == 0
+		set SilurianMode to 1
+	endif
+
+	if chronoMode == 1
+		Foreach Entry <- arChronoActors
+			let npcRef := Entry["value"] ; array value
+			let entryPos := Entry["key"] ; array key
+			let fChronoReleaseTime := arChronoTimers[entryPos]
+			if fChronoReleaseTime <= GameDaysPassed
+				if npcRef.IsFormValid == 1 && npcRef > 0
+					MessageEx "%n has returned from the Vortex..." npcRef
+					npcRef.enable 1
+					npcRef.placeAtMe fwvWeapBiomineExplosion
+				endif
+				let arChronoActors[entryPos] := 0 ; set to 0 for removal later
+				let arChronoTimers[entryPos] := 0 ; set to 0 for removal later
+			endif
+		Loop
+		
+		; clear out empty array indices
+		Label 0
+		let entryPos := Ar_Find 0 arChronoActors
+		if entryPos != Ar_BadNumericIndex
+			Ar_Erase arChronoActors entryPos
+			Ar_Erase arChronoTimers entryPos
+			GoTo 0
+		endif
+		
+		if eval (Ar_Last arChronoActors) == -1
+			set chronoMode to 0
+		endif
+		
+	endif
+
+	if sSwitched == 1
+		set sSwitched to 0
+		set fWaitTimer to GetSecondsPassed
+		set fWaitTimer to 0.1
+	endif
+	if fWaitTimer > 0.0
+		set fWaitTimer to fWaitTimer - GetSecondsPassed
+	else
+
+		set sKeyCode to GetControl 18 ; ammo hotkey
+		
+		; do the following block first
+		if laserMenu == 2 ; equip laser screwdriver then reset
+			if laserMode == 3
+				Player.AddItemHealthPercent fwvWlaserScrewdriverBeam sLaserNumber fLaserHealth 1
+				Player.EquipItem fwvWlaserScrewdriverBeam 0 1
+			else
+				Player.AddItemHealthPercent fwvWlaserScrewdriver sLaserNumber fLaserHealth 1
+				Player.EquipItem fwvWlaserScrewdriver 0 1
+			endif
+			set laserMenu to 0
+		elseif alphaMenu == 2 ; equip alpha meson blaster then reset
+			if alphaMode == 1
+				Player.AddItemHealthPercent fwvWalphaBlaster sLaserNumber fLaserHealth 1
+				Player.EquipItem fwvWalphaBlaster 0 1
+			elseif alphaMode == 2
+				Player.AddItemHealthPercent fwvWalphaBlasterPacifier sLaserNumber fLaserHealth 1
+				Player.EquipItem fwvWalphaBlasterPacifier 0 1
+			elseif alphaMode == 3
+				Player.AddItemHealthPercent fwvWalphaBlasterOvercharge sLaserNumber fLaserHealth 1
+				Player.EquipItem fwvWalphaBlasterOvercharge 0 1
+			endif
+			set alphaMenu to 0
+		elseif dalekGunMenu == 2 ; equip dalek tommygun then reset
+			if dalekGunMode == 1
+				Player.AddItemHealthPercent fwvWdalekTommyGunNeutralise 1 fLaserHealth 1
+				Player.EquipItem fwvWdalekTommyGunNeutralise 0 1
+			elseif dalekGunMode == 2
+				Player.AddItemHealthPercent fwvWdalekTommyGunMaximum 1 fLaserHealth 1
+				Player.EquipItem fwvWdalekTommyGunMaximum 0 1
+			endif
+			set dalekGunMenu to 0
+		elseif defabMenu == 2
+			if defabMode == 1
+				Player.AddItemHealthPercent fwvWeapDefabricator 1 fLaserHealth 1
+				Player.EquipItem fwvWeapDefabricator 0 1				
+			elseif defabMode == 2
+				Player.AddItemHealthPercent fwvWeapDefabricatorBuster 1 fLaserHealth 1
+				Player.EquipItem fwvWeapDefabricatorBuster 0 1
+			endif
+			set defabMenu to 0
+		elseif SilurianMenu == 2 ; equip Modded Silurian Rifle then reset
+			if SilurianMode == 1
+				Player.AddItemHealthPercent fwvWsilurianRifleModded sLaserNumber fLaserHealth 1
+				Player.EquipItem fwvWsilurianRifleModded 0 1
+			elseif SilurianMode == 2
+				Player.AddItemHealthPercent fwvWAntiSilurianRifle sLaserNumber fLaserHealth 1
+				Player.EquipItem fwvWAntiSilurianRifle 0 1
+			elseif SilurianMode == 3
+				Player.AddItemHealthPercent fwvWSilurianCryoGun sLaserNumber fLaserHealth 1
+				Player.EquipItem fwvWSilurianCryoGun 0 1
+			endif
+			set SilurianMenu to 0			
+			
+		endif
+		
+		set curWeap to Player.GetEquippedObject 5
+		if curWeap == fwvWlaserScrewdriver || curWeap == fwvWlaserScrewdriverBeam
+			SetQuestDelay fwvqWeaponQuest 0.1
+			if IsKeyPressed sKeyCode && player.isWeaponOut == 1
+				ShowMessage fwvWeapLaserScrewdriverMessage
+				set unarmedMenu to 0
+				set vortexMenu to 0
+				set screwdriverMenu to 0
+				set laserMenu to 1
+				set alphaMenu to 0
+				set dalekGunMenu to 0
+				set defabMenu to 0
+				set timescoopMenu to 0
+				set silurianMenu to 0
+				set medicalMenu to 0
+			endif
+		elseif Player.IsWeaponInList fwvWSonicList
+			SetQuestDelay fwvqWeaponQuest 0.1
+			if IsKeyPressed sKeyCode && player.isWeaponOut == 1
+				ShowMessage fwvWeapSonicScrewdriverMessage
+				set unarmedMenu to 0
+				set vortexMenu to 0
+				set screwdriverMenu to 1
+				set laserMenu to 0
+				set alphaMenu to 0
+				set dalekGunMenu to 0
+				set defabMenu to 0
+				set timescoopMenu to 0
+				set silurianMenu to 0
+				set medicalMenu to 0
+			endif
+		elseif curWeap == fwvWalphaBlaster || curWeap == fwvWalphaBlasterPacifier || curWeap == fwvWalphaBlasterOvercharge
+			SetQuestDelay fwvqWeaponQuest 0.1
+			if IsKeyPressed sKeyCode && player.isWeaponOut == 1
+				ShowMessage fwvWeapAlphaBlasterMessage
+				set unarmedMenu to 0
+				set vortexMenu to 0
+				set screwdriverMenu to 0
+				set laserMenu to 0
+				set alphaMenu to 1
+				set dalekGunMenu to 0
+				set defabMenu to 0
+				set timescoopMenu to 0
+				set silurianMenu to 0
+				set medicalMenu to 0
+			endif
+		elseif curWeap == fwvWeapVortexManipulator
+			SetQuestDelay fwvqWeaponQuest 0.1
+			if IsKeyPressed sKeyCode && player.isWeaponOut == 1
+				ShowMessage fwvWeapVortexManipulatorMessage
+				set unarmedMenu to 0
+				set vortexMenu to 1
+				set screwdriverMenu to 0
+				set laserMenu to 0
+				set alphaMenu to 0
+				set dalekGunMenu to 0
+				set defabMenu to 0
+				set timescoopMenu to 0
+				set silurianMenu to 0
+				set medicalMenu to 0
+			endif
+		elseif curWeap == 0 && fwvq1.karateLvl == 1
+			SetQuestDelay fwvqWeaponQuest 0.1
+			if IsKeyPressed sKeyCode && player.isWeaponOut == 1
+				set unarmedMenu to 1
+				set vortexMenu to 0
+				set screwdriverMenu to 0
+				set laserMenu to 0
+				set alphaMenu to 0
+				set dalekGunMenu to 0
+				set defabMenu to 0
+				set timescoopMenu to 0
+				set silurianMenu to 0
+				set medicalMenu to 0
+				ShowMessage fwvWeapUnarmedMessage
+			endif
+		elseif curWeap == fwvWdalekTommyGunNeutralise || curWeap == fwvWdalekTommyGunMaximum
+			SetQuestDelay fwvqWeaponQuest 0.1
+			if IsKeyPressed sKeyCode && player.isWeaponOut == 1
+				set unarmedMenu to 0
+				set vortexMenu to 0
+				set screwdriverMenu to 0
+				set laserMenu to 0
+				set alphaMenu to 0
+				set dalekGunMenu to 1
+				set defabMenu to 0
+				set timescoopMenu to 0
+				set silurianMenu to 0
+				set medicalMenu to 0
+				if curWeap == fwvWdalekTommyGunNeutralise
+					set dalekGunMode to 1
+					set lastDalekGunMode to 1
+				elseif curWeap == fwvWdalekTommyGunMaximum
+					set dalekGunMode to 2
+					set lastDalekGunMode to 2
+				endif
+				ShowMessage fwvWeapDalekGunMessage
+			endif
+		elseif curWeap == fwvWeapDefabricator || curWeap == fwvWeapDefabricatorBuster
+			SetQuestDelay fwvqWeaponQuest 0.1
+			if IsKeyPressed sKeyCode && player.isWeaponOut == 1
+				set unarmedMenu to 0
+				set vortexMenu to 0
+				set screwdriverMenu to 0
+				set laserMenu to 0
+				set alphaMenu to 0
+				set dalekGunMenu to 0
+				set defabMenu to 1
+				set timescoopMenu to 0
+				set silurianMenu to 0
+				set medicalMenu to 0
+				ShowMessage fwvWeapDefabricatorMessage
+			endif
+		elseif curWeap == fwvWeapMedicalProbe
+			SetQuestDelay fwvqWeaponQuest 0.1
+			if IsKeyPressed sKeyCode && player.isWeaponOut == 1
+				set unarmedMenu to 0
+				set vortexMenu to 0
+				set screwdriverMenu to 0
+				set laserMenu to 0
+				set alphaMenu to 0
+				set dalekGunMenu to 0
+				set defabMenu to 0
+				set timescoopMenu to 0
+				set silurianMenu to 0
+				set medicalMenu to 1
+				ShowMessage fwvWeapMedicalProbeMessage
+			endif
+		elseif curWeap == fwvWeapTimescoop || curWeap == fwvWeapTimescoopOff
+			SetQuestDelay fwvqWeaponQuest 0.1
+			if IsKeyPressed sKeyCode && player.isWeaponOut == 1
+				set unarmedMenu to 0
+				set vortexMenu to 0
+				set screwdriverMenu to 0
+				set laserMenu to 0
+				set alphaMenu to 0
+				set dalekGunMenu to 0
+				set defabMenu to 0
+				set timescoopMenu to 1
+				set silurianMenu to 0
+				set medicalMenu to 0
+				ShowMessage fwvWeapTimeScoopMessage
+			endif
+		elseif curWeap == fwvWSilurianRifleModded || curWeap == fwvWAntiSilurianRifle || curWeap == fwvWSilurianCryoGun
+			SetQuestDelay fwvqWeaponQuest 0.1
+			if IsKeyPressed sKeyCode && player.isWeaponOut == 1
+				set unarmedMenu to 0
+				set vortexMenu to 0
+				set screwdriverMenu to 0
+				set laserMenu to 0
+				set alphaMenu to 0
+				set dalekGunMenu to 0
+				set defabMenu to 0
+				set timescoopMenu to 0
+				set silurianMenu to 1
+				set medicalMenu to 0
+				ShowMessage fwvWeapSilurianMessage
+			endif
+
+		else
+			SetQuestDelay fwvqWeaponQuest 1.0
+			set unarmedMenu to 0
+			set vortexMenu to 0
+			set screwdriverMenu to 0
+			set laserMenu to 0
+			set alphaMenu to 0
+			set dalekGunMenu to 0
+			set defabMenu to 0
+			set timescoopMenu to 0
+			set silurianMenu to 0
+			set medicalMenu to 0
+		endif
+		
+		if screwdriverMenu == 1		; ========= SONIC SCREWDRIVER MENU
+			set button to getbuttonpressed
+			if button == 0				; LOCKPICK MODE
+				set sonicMode to 1
+			elseif button == 1			; HACKING MODE
+				set sonicMode to 2
+			elseif button == 2			; SCANNING MODE (Opens Menu)
+				set sonicMode to 3
+			elseif button == 3			; BREAKING MODE
+				set sonicMode to 5
+			elseif button == 4			; TARDIS RECALL MODE
+				set sonicMode to 6
+			elseif button == 5
+				ShowMessage fwvWeapSonicScrewdriverRangeMessage
+				set screwdriverMenu to 2
+			elseif button == 6 ; was 5
+				set screwdriverMenu to 0
+			endif
+		elseif screwdriverMenu == 2	; ========= SONIC SCREWDRIVER RANGE SETTING SUB-MENU; this should never happen now
+			set button to getbuttonpressed
+			if button == 0
+				set sonicRange to 1
+			elseif button == 1
+				set sonicRange to 0
+			elseif button == 2
+				ShowMessage fwvWeapSonicScrewdriverMessage
+				set screwdriverMenu to 1				
+			endif
+		elseif laserMenu == 1
+			set button to getbuttonpressed
+			if button == 0   				; LOCKPICK MODE
+				set laserMode to 1
+				;printc "laser mode is %g" laserMode
+			elseif button == 1			; HACK MODE
+				set laserMode to 2
+				printc "laser mode is %g" laserMode
+			elseif button == 2		; DISINTEGRATION
+				set laserMode to 3
+				;printc "laser mode is %g" laserMode
+			elseif button == 3		; AGING
+				set laserMode to 4
+				;printc "laser mode is %g" laserMode
+			elseif button == 4		; TCE
+				set laserMode to 5	
+				;printc "laser mode is %g" laserMode
+			elseif button == 5		; universal - unused?
+				set laserMenu to 0
+				;printc "laser mode is %g" laserMode
+			endif
+			
+			if laserMode == 3
+				;curWeap.SetWeaponNumProjectiles 1
+			else
+				;curWeap.SetWeaponNumProjectiles 0
+			endif
+			
+			if (lastLaserMode == 3 || laserMode == 3) && (lastLaserMode != laserMode)
+				set fLaserHealth to Player.GetWeaponHealthPerc / 100
+				set sLaserNumber to Player.GetItemCount curWeap
+				Player.RemoveItem curWeap sLaserNumber 1
+				set laserMenu to 2
+				set sSwitched to 1
+			endif
+			
+			set lastLaserMode to laserMode
+		elseif alphaMenu == 1
+			set button to getbuttonpressed
+			if button == 0
+				set alphaMode to 1
+			elseif button == 1
+				set alphaMode to 2
+			elseif button == 2
+				set alphaMode to 3
+			elseif button == 3
+				set alphaMenu to 0
+			endif
+						
+			if alphaMode != lastAlphaMode
+				set fLaserHealth to Player.GetWeaponHealthPerc / 100
+				set sLaserNumber to Player.GetItemCount curWeap
+				Player.RemoveItem curWeap sLaserNumber 1
+				set alphaMenu to 2
+				set sSwitched to 1
+			endif
+			set lastAlphaMode to alphaMode
+			
+		elseif vortexMenu == 1
+			set button to getbuttonpressed
+			if button == 0
+				set vortexMode to 1
+				;printc "teleport selected"
+			elseif button == 1
+				set vortexMode to 2
+				;printc "fast return selected"
+			elseif button == 2
+				set vortexMode to 3
+				;printc "forcefield selected"
+			elseif button == 3
+				set vortexMenu to 0
+			endif
+		elseif unarmedMenu == 1
+			set button to getbuttonpressed
+			if button == 0
+				;printc "Fists selected"
+				player.equipItem Fists
+			elseif button == 1
+				;printc "Venusian Aikido selected"
+				player.addItem fwvWeapVenusianAikido 1 0
+				player.equipItem fwvWeapVenusianAikido
+			else
+				set unarmedMenu to 0
+			endif
+		elseif dalekGunMenu == 1
+			set button to GetButtonPressed
+			if button == 0
+				set dalekGunMode to 1
+			elseif button == 1
+				set dalekGunMode to 2
+			elseif button == 2
+				set dalekGunMenu to 0
+			endif
+			if dalekGunMode != lastDalekGunMode
+				set fLaserHealth to Player.GetWeaponHealthPerc / 100
+				set sLaserNumber to Player.GetItemCount curWeap
+				Player.RemoveItem curWeap 1 1
+				set dalekGunMenu to 2
+				set sSwitched to 1
+			endif
+			set lastDalekGunMode to dalekGunMode
+
+		elseif defabMenu == 1
+			set button to getbuttonpressed
+			if button == 0
+				set defabMode to 1
+			elseif button == 1
+				set defabMode to 2
+			elseif button == 2
+				set defabMenu to 0
+			endif
+
+			if defabMode != lastDefabMode
+				set fLaserHealth to Player.GetWeaponHealthPerc / 100
+				set sLaserNumber to Player.GetItemCount curWeap
+				Player.RemoveItem curWeap sLaserNumber 1
+				set defabMenu to 2
+				set sSwitched to 1
+			endif
+			set lastDefabMode to defabMode 
+
+		elseif medicalMenu == 1
+			set button to getbuttonpressed
+			if button == 0
+				set medicalMode to 1
+			elseif button == 1
+				set medicalMode to 2
+			elseif button == 2
+				set medicalMode to 3
+			elseif button == 3
+				set medicalMode to 4
+			elseif button == 4
+				set medicalMode to 5
+			elseif button == 5
+				set medicalMode to 6
+			elseif button == 6
+				set medicalMode to 7
+			elseif button == 7
+				set medicalMenu to 0
+			endif
+		
+		elseif timescoopMenu == 1
+			set button to getbuttonpressed
+			if button == 0
+				player.removeItem fwvWeapTimescoopOff 1 0
+				player.addItem fwvWeapTimescoop 1 0
+				player.equipItem fwvWeapTimescoop 1
+				set timescoopMode to 1
+			elseif button == 1
+				player.removeItem fwvWeapTimescoopOff 1 0
+				player.addItem fwvWeapTimescoop 1 0
+				player.equipItem fwvWeapTimescoop 1
+				set timescoopMode to 2
+			elseif button == 2
+				player.removeItem fwvWeapTimescoopOff 1 0
+				player.addItem fwvWeapTimescoop 1 0
+				player.equipItem fwvWeapTimescoop 1
+				set timescoopMode to 3
+			elseif button == 3
+				player.removeItem fwvWeapTimescoopOff 1 0
+				player.addItem fwvWeapTimescoop 1 0
+				player.equipItem fwvWeapTimescoop 1
+				set timescoopMode to 4
+			elseif button == 4
+				set timescoopMenu to 0
+			endif
+		
+		elseif SilurianMenu == 1
+			set button to getbuttonpressed
+			if button == 0
+				set SilurianMode to 1
+				;printc "SilurianMode %g (1)" SilurianMode
+				;printc "LastSilurianMode %g"
+			elseif button == 1
+				set SilurianMode to 2
+				;printc "SilurianMode %g (2)" SilurianMode
+				;printc "LastSilurianMode %g"
+			elseif button == 2
+				set SilurianMode to 3
+				;printc "SilurianMode %g (3)" SilurianMode
+				;printc "LastSilurianMode %g"
+			elseif button == 3
+				set SilurianMenu to 0
+				;printc "SilurianMode %g (0)" SilurianMode
+				;printc "LastSilurianMode %g"
+			endif
+						
+			if SilurianMode != lastSilurianMode
+				set fLaserHealth to Player.GetWeaponHealthPerc / 100
+				set sLaserNumber to Player.GetItemCount curWeap
+				Player.RemoveItem curWeap sLaserNumber 1
+				set SilurianMenu to 2
+				set sSwitched to 1
+				;printc "New Silurian Mode"
+			else	
+				;printc "SilurianMode same as Last"
+			endif
+			set lastSilurianMode to SilurianMode		
+		
+		endif
+	endif
+	
+	; TARDIS recall mode
+	if sTardisRecallFrame == 1
+		let sTardisRecallFrame := 2
+		printc "WeapQuest RecallFrame 1 to 2"
+		;imod FadeInFromWhiteISFX
+	elseif sTardisRecallFrame == 2
+		let sTardisRecallFrame := 0
+		printc "WeapQuest RecallFrame 2 to 0"
+		Call fwvFuncDematTardis PoliceBoxAltLocationRef
+	endif
+end

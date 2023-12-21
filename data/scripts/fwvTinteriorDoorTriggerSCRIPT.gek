@@ -1,0 +1,55 @@
+scn fwvTinteriorDoorTriggerSCRIPT
+
+short sFindType
+short sFindNumber
+short sCurCount
+short sTransitioning
+float fTimer
+ref rCurRef
+ref rTDesktopRoom
+ref rTDesktopInteriorDoor
+
+begin OnTriggerEnter Player
+	if fwvq1.tFlying == 0 && sTransitioning == 0
+		if eval fwvqSystems.tAdvanced == 1 && fwvqEvents.event[10] == 0
+			if getObjectiveCompleted fwvq2a 60 == 0
+				ShowTutorialMenu fwvAdvancedManualTardisSecurityMessage
+				set fwvqSystems.tTime to 5 + getRandomPercent * 10/100
+				SetObjectiveCompleted fwvq2a 60 1
+			else
+				;randomise what time the player has to return to the TARDIS before its broken into
+				set fwvqSystems.tTime to 5 + getRandomPercent * 10/100
+				printc "Player has %g minutes until the TARDIS is compromised" fwvqSystems.tTime
+			endif
+		endif
+		set sTransitioning to 1
+		set fTimer to 0.3
+		imod fwvFadeToBlackFastISFX
+	endif
+	activate
+end
+
+begin GameMode
+	if sTransitioning == 1 && fTimer <= 0
+		rimod fwvFadeToBlackFastISFX
+		set sTransitioning to 0
+		;PlaySound DRSWoodSingleLight01Open
+		setglobaltimemultiplier 1
+
+		if fwvq1.tRepair == 1
+			set fwvq1.tRepair to 2
+		endif
+
+		if fwvq1.tRefuel == 1
+			set fwvq1.tRefuel to 2
+		endif
+
+		set fwvq1.sMoveBoxNow to 2
+		;if eval fwvqEvents.event[10] == 1
+			set fwvq1.sRoomLeave to 1
+		;endif
+	elseif sTransitioning == 1
+		set fTimer to fTimer - GetSecondsPassed
+	endif
+end
+

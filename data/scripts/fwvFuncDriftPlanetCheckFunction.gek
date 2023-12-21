@@ -1,0 +1,170 @@
+scn fwvFuncDriftPlanetCheckFunction
+
+string_var svPlanet
+short gID
+short gcX
+short gcY
+short sDetected
+ref rDeepScan 
+
+short sOblv01
+short sOblv02
+
+Begin Function { }
+
+	let gID := fwvqDrift.gID
+	let gcX := fwvqDrift.gcX
+	let gcY := fwvqDrift.gcY
+	let svPlanet := fwvqDrift.svPlanet
+	let sDetected := fwvqDrift.sDetected
+
+	if gID == 1
+		if gcx == 1 && gcy == 8
+			if fwvqLocs.fwvLspiridonVisited == 0
+				let fwvqLocs.fwvLspiridonVisited := 1
+				MessageEx "[Astronav: Spiridon added to Navcom Databanks]"
+			endif
+			let svPlanet := sv_construct "Spiridon"
+			if sDetected < 1
+				let sDetected := 1
+			endif
+		elseif gcx == 3 && gcy == 5
+			let svPlanet := sv_construct "The Kurgon Wonder"
+			if sDetected < 2
+				let sDetected := 2
+			endif
+		else
+			let sDetected := 0
+		endif
+	elseif gID == 2
+		if gcx == 7 && gcy == 6
+			if fwvqLocs.fwvLzetoniaVisited == 0
+				let fwvqLocs.fwvLzetoniaVisited := 1
+				MessageEx "[Astronav: Zetonia added to Navcom Databanks]"
+			endif
+			let svPlanet := sv_construct "Zetonia"
+			if sDetected == 0
+				let sDetected := 1
+			endif
+		elseif gcx == 6 && gcy == 9
+			let svPlanet := sv_construct "The Silver Devastation"
+			if sDetected < 2
+				let sDetected := 2
+			endif
+		else
+			let sDetected := 0
+		endif
+	elseif gID == 3
+		if gcx == 5 && gcy == 5 && getQuestCompleted fwvqGameOfRassilon == 1
+			let svPlanet := sv_construct "Gallifrey"
+			if sDetected == 0
+				let sDetected := 1
+			endif
+		elseif gcx == 2 && gcy == 2
+			if fwvqLocs.fwvLkarnVisited == 0
+				let fwvqLocs.fwvLkarnVisited := 1
+				MessageEx "[Astronav: Karn added to Navcom Databanks]"
+			endif
+			let svPlanet := sv_construct "Karn"
+			if sDetected == 0
+				let sDetected := 1
+			endif
+		elseif gcx == 2 && gcy == 8
+			let svPlanet := sv_construct "The Medusa Cascade"
+			if sDetected < 2
+				let sDetected := 2
+			endif
+		else
+			let sDetected := 0
+		endif
+	elseif gID == 4
+		if gcx == 2 && gcy == 6
+			if fwvqLocs.fwvLskaroForestExtVisited == 0
+				let fwvqLocs.fwvLskaroForestExtVisited := 1
+				MessageEx "[Astronav: Skaro added to Navcom Databanks]"
+			endif
+			let svPlanet := sv_construct "Skaro"
+			if sDetected == 0
+				let sDetected := 1
+			endif
+		elseif gcx == 7 && gcy == 7
+			let svPlanet := sv_construct "The Oblivion Rift"
+			if sDetected < 2
+				let sDetected := 2
+			endif
+		else
+			let sDetected := 0
+		endif
+	elseif gID == 5
+		if gcX == 3 && gcY == 3
+			let svPlanet := sv_construct "Sol-3"
+			if sDetected == 0
+				let sDetected := 1
+			endif
+		elseif gcx == 7 && gcy == 9
+			if fwvqLocs.fwvLtrenzaloreVisited == 0 && fwvqTrenzalore.sTrenzaloreDestroyed == 0
+				let fwvqLocs.fwvLtrenzaloreVisited := 1
+				MessageEx "[Astronav: Trenzalore added to Navcom Databanks]"
+			endif
+			if fwvqTrenzalore.sTrenzaloreDestroyed == 0
+				let svPlanet := sv_construct "Trenzalore"
+			else
+				let svPlanet := sv_construct "Clouds of Space Dust"
+			endif
+			if sDetected == 0
+				let sDetected := 1
+			endif			
+		elseif gcx == 5 && gcy == 5
+			let svPlanet := sv_construct "The Heracletus Rift"
+			if sDetected < 2
+				let sDetected := 2
+			endif
+		else
+			let sDetected := 0
+		endif
+	elseif gID == 6
+		if gcX == 6 && gcY == 8
+			if fwvqLocs.fwvLtelosCaveVisited == 0
+				let fwvqLocs.fwvLtelosCaveVisited := 1
+				MessageEx "[Astronav: Telos - Ice Caps added to Navcom Databanks]"
+			endif
+			let svPlanet := sv_construct "Telos"
+			if sDetected == 0
+				let sDetected := 1
+			endif
+		elseif gcX == 3 && gcY == 7
+			if fwvqLocs.fwvLcyberStationVisited == 0
+				let fwvqLocs.fwvLcyberStationVisited := 1
+				MessageEx "[Astronav: Cyber-Station Zero added to Navcom Databanks]"
+			endif
+			let svPlanet := sv_construct "Cyber-Station Zero"
+			if sDetected == 0
+				let sDetected := 1
+			endif
+		elseif gcx == 2 && gcy == 4
+			let svPlanet := sv_construct "Tasker's Crown"
+			if sDetected < 2
+				let sDetected := 2
+			endif
+		else
+			let sDetected := 0
+		endif
+	endif
+
+	if sDetected == 1
+		MessageEx "[Orbiting %z]" svPlanet
+		let sDetected := 3
+	elseif sDetected == 2
+		imod FireExtinguisherISFX
+		PlaySound FXFireGasLow
+		MessageEx "[Entering %z]" svPlanet
+		let fwvq1.tFuel := 100
+		let sDetected := 3
+	elseif sDetected == 3
+		let rDeepScan := fwvqThemeDefaults.rTCdeepScanRef
+		fwvTCdetectorRef.moveTo rDeepScan
+		fwvTCdetectorRef.enable
+		let sDetected := -1
+	endif
+	sv_Destruct svPlanet
+End

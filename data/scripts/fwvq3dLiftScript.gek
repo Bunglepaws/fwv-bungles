@@ -1,0 +1,61 @@
+scn fwvq3dLiftScript
+
+short level
+
+short frame
+float lTimer
+
+begin onActivate player
+
+	;if getOpenState == 0
+		if level == 0
+			printc "going down"
+			fwvq3dTopLiftSFXRef.enable
+			PlaySound OBJSwitchButtonA
+			PlaySound DRSMonorailOpen
+			TriggerHitShader 5
+			fwvq3dTopLiftRef.setOpenState 0
+			fwvq3dBottomLiftRef.setOpenState 0
+			player.moveTo fwvq3dLiftMarkerRef
+			DisablePlayerControls 1 1 1 1 1 1 1
+			set lTimer to 0.0
+			set frame to 1
+		elseif level == 1
+			printc "going up"
+			fwvq3dTopLiftSFXRef.enable
+			fwvq3dTopLiftRef.setOpenState 0
+			fwvq3dBottomLiftRef.setOpenState 0
+			player.moveTo fwvq3dLiftMarker2Ref
+			DisablePlayerControls 1 1 1 1 1 1 1
+			set lTimer to 0.0
+			set frame to 1
+		endif
+	;else
+	;	setOpenState 0
+	;endif
+end
+
+begin gamemode
+
+	if frame == 1
+		if lTimer < 15.0
+			set lTimer to lTimer + getSecondsPassed
+		else
+			if level == 0
+				player.moveTo fwvq3dLiftMarker2Ref
+			elseif level == 1
+				player.moveTo fwvq3dLiftMarkerRef
+			endif
+			PlaySound DRSMonorailClose
+			EnablePlayerControls
+			TriggerHitShader 5
+			fwvq3dTopLiftRef.setOpenState 1
+			fwvq3dBottomLiftRef.setOpenState 1
+			PlaySound UIHackingPassGood
+			set level to 0
+			set lTimer to 0.0
+			set frame to 0
+		endif
+	endif
+
+end

@@ -1,0 +1,17 @@
+scn fwvq3eCyberDefTrigger02Script
+
+ref cyber
+
+begin ontrigger
+
+set cyber to getActionRef
+
+	if cyber.getBaseObject == fwvq3eCybermanAttack
+		if fwvq3eCyberDef02ArcRef.getDisabled == 0
+			printc "Cyberman detected!"
+			cyber.killActor
+		endif
+	endif
+
+end
+

@@ -1,0 +1,33 @@
+scn fwvWeapNitro9SCRIPT
+
+float fuse
+
+ref nitro
+ref smallFuse
+ref mediumFuse
+ref longFuse
+
+begin onFire player
+
+set smallFuse to fwvWeapNitroShortProjectile
+set mediumFuse to fwvWeapNitroMediumProjectile
+set longFuse to fwvWeapNitroLongProjectile
+set nitro to player.getEquippedObject 5
+
+	set fuse to getRandomPercent
+
+	if fuse < 33.3
+		nitro.setWeaponProjectile smallFuse
+		printc "Nitro9 set to short fuse %g" fuse
+
+	elseif fuse < 66.6
+		nitro.setWeaponProjectile mediumFuse 
+		printc "Nitro9 set to medium fuse %g" fuse
+
+	elseif fuse < 100
+		nitro.setWeaponProjectile longFuse
+		printc "Nitro9 set to long fuse %g" fuse
+
+	endif
+
+end

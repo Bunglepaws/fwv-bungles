@@ -1,0 +1,73 @@
+scn fwvXOTranspowerQuestSCRIPT
+
+short TranspowerOn
+short sEfficiency
+short TranspowerCutIn   ;effectively a DoOnce so you don't automatically get a million power or such
+short sCurrentTXL
+float fTimer
+short sBonusPower
+
+short sLuck
+short sLuckBonus
+short button
+float fRandPer
+short sBonusPowerLast
+
+short TranspowerAnimate
+
+
+Begin Gamemode
+	
+	if TranspowerAnimate == 1
+		fwvTransPowerGearSealREF.PlayGroup Forward 0
+		fwvTranspowerWallGearREF1.PlayGroup Forward 0
+		fwvTranspowerSteam01.PlayGroup Forward 0
+		fwvTranspowerSteam02.PlayGroup Forward 0
+		fwvTranspowerSteam03.PlayGroup Forward 0
+		fwvTranspowerSteam04.PlayGroup Forward 0
+		fwvTranspowerSteam05.PlayGroup Forward 0
+		fwvTranspowerSteam06.PlayGroup Forward 0
+		fwvTranspowerSteam07.PlayGroup Forward 0
+		fwvTranspowerSteam08.PlayGroup Forward 0
+		fwvTSteamPistonREF01.PlayGroup Forward 0
+		fwvTSteamPistonREF02.PlayGroup Forward 0
+		fwvTranspowerControlREF.PlayGroup Forward 0
+		fwvTransPowerAudioREF.enable
+		set TranspowerAnimate to 2
+	elseif TranspowerAnimate == 50
+		;MessageEx "Ancillary Power Station disconnecting..."
+		fwvTransPowerGearSealREF.PlayGroup Backward 1
+		fwvTranspowerWallGearREF1.PlayGroup Backward 1
+		fwvTranspowerSteam01.PlayGroup Backward 1
+		fwvTranspowerSteam02.PlayGroup Backward 1
+		fwvTranspowerSteam03.PlayGroup Backward 1
+		fwvTranspowerSteam04.PlayGroup Backward 1
+		fwvTranspowerSteam05.PlayGroup Backward 1
+		fwvTranspowerSteam06.PlayGroup Backward 1
+		fwvTranspowerSteam07.PlayGroup Backward 1
+		fwvTranspowerSteam08.PlayGroup Backward 1
+		fwvTSteamPistonREF01.PlayGroup Backward 1
+		fwvTSteamPistonREF02.PlayGroup Backward 1
+		fwvTranspowerControlREF.PlayGroup SpecialIdle 1
+		fwvTransPowerAudioREF.disable
+		set TransPowerAnimate to 97
+	elseif TransPowerAnimate == 2
+		if fTimer < 15
+			set fTimer to fTimer + GetSecondsPassed
+		else
+			fwvTranspowerControlREF.PlayGroup Left 1
+			set TransPowerAnimate to 3 
+		endif	
+	elseif TransPowerAnimate == 97
+		if fwvqSystems.tAdvanced == 1
+			MessageBoxEx "[Ancillary Power Station disconnected. Returning to Basic Mode to prevent Core Overload.]"
+			Call fwvFuncTardisModeToggle	; go to Basic Mode
+		else
+			MessageBoxEx "[Ancillary Power Station disconnected.]"
+		endif
+		set fwvXOTranspowerQuest.sBonusPower to 0
+		set fwvq1.tPower to fwvq1.tPower - fwvXOTranspowerQuest.sBonusPowerLast 
+		set fwvXOTranspowerQuest.sBonusPowerLast to 0
+		set TransPowerAnimate to 100
+	endif
+end

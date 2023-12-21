@@ -1,0 +1,132 @@
+scn fwvCyberStationActivatorScript
+
+short sButtonPressed
+short sMenu
+short sAnim
+short sEnding
+short sReward
+short sComplete 
+float fTimer
+
+Begin onActivate Player
+
+	if fwvqGameOfRassilon.sCyberDone < 1
+		MessageBoxEx "|Set the Conversion Unit to reverse any recent changes and release the Convert|Set the Conversion Unit to proceed to full Cyber-Conversion|Do nothing|"
+		let sMenu := 1
+	else
+		MessageBoxEx "[The Conversion Unit has completed its programmed process.]"
+	endif
+
+End
+
+Begin GameMode
+
+	let sButtonPressed := getButtonPressed
+
+	if sMenu == 1
+		if sButtonPressed == 0
+			fwvCyberStationConvUnit2Ref.playGroup Forward 1
+			let sAnim := 1
+			let sMenu := 0
+			let sEnding := 1
+			player.rewardKarma 5
+			let fTimer := 0.0
+		elseif sButtonPressed == 1
+			fwvCyberStationConvUnit2Ref.playGroup Forward 1
+			PlaySound fwvFXConversionScream
+			let sAnim := 1
+			let sMenu := 0
+			let sEnding := 0
+			player.rewardKarma -5
+			let fTimer := 0.0
+		elseif sButtonPressed == 2
+			;cancel
+		endif
+	endif
+
+	if sAnim == 1
+		if fTimer < 3.0
+			let fTimer := fTimer + getSecondsPassed
+		else
+			let fwvqGameOfRassilon.sCyberDone := 1
+			if sEnding == 1
+				fwvCyberTLRef.removeScriptPackage
+				fwvCyberTLRef.saa 0 
+				fwvCyberTLRef.moveto fwvCyberKrotonSpawn
+				;fwvCyberTLRef.saa 1 
+			else
+				fwvCyberTLRef.markForDelete
+				fwvCyberTLRef.disable
+				fwvCyberKrotonNewRef.moveto fwvCyberKrotonSpawn
+				fwvCyberKrotonNewRef.unequipitem fwvArmorKroton 0 1
+				printc "Armor Off..."
+				fwvCyberKrotonNewRef.equipitem fwvArmorKroton 1 1
+				printc "armor On and locked"
+				fwvCyberKrotonNewRef.unequipitem fwvWcybermanKroton 0 1
+				printc "Gun Off..."
+				fwvCyberKrotonNewRef.equipitem fwvWcybermanKroton 1 1
+				printc "Gun On and locked"
+				fwvCyberKrotonNewRef.enable
+			endif
+			let sAnim := 2
+			let fTimer := 0.0
+		endif
+	endif
+	
+	
+	
+	
+	if sAnim == 2
+		if fTimer < 3.0
+			let fTimer := fTimer + getSecondsPassed
+		else
+			fwvCyberStationConvUnit2Ref.playGroup Backward 1
+			;let fwvqGameOfRassilon.sCyberDone := 1
+			if sEnding == 1
+				fwvCyberTLRef.saa 1 
+				fwvCyberTLRef.removeScriptPackage
+			endif
+			let sAnim := 3
+			let fTimer := 0.0
+		endif
+	endif
+
+	
+	if sAnim == 3
+		if fTimer < 3.0
+			let fTimer := fTimer + getSecondsPassed
+		else
+			let sAnim := 4
+		endif
+	endif
+	
+	
+	if sAnim == 4
+		if sEnding == 1
+			player.startConversation fwvCyberTLRef
+			;fwvCyberTLRef.addscriptpackage fwvKrotonMoveToPackage
+		else
+			player.startConversation fwvCyberKrotonNewRef
+			;fwvCyberKrotonNewRef.addscriptpackage fwvKrotonMoveToPackage
+		endif
+		let sAnim := 0
+	endif
+
+	if sReward == 1
+		if fwvCyberKrotonNewRef.getDisabled == 0
+			fwvCyberKrotonNewRef.removeScriptPackage
+			let sReward := 2
+		elseif fwvCyberTLRef.getDisabled == 0
+			fwvCyberTLRef.removeScriptPackage
+			let sReward := 2
+		endif
+	elseif sReward == 2
+		if fwvCyberKrotonNewRef.getDisabled == 0
+			player.startConversation fwvCyberKrotonNewRef
+		elseif fwvCyberTLRef.getDisabled == 0
+			player.startConversation fwvCyberTLRef
+		endif
+		let sReward := 0
+	endif
+
+End

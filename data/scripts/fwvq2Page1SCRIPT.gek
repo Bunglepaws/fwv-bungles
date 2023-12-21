@@ -1,0 +1,22 @@
+scn fwvq2Page1SCRIPT
+
+short doOnce
+
+begin onactivate
+
+	ShowMessage fwvq2Page1Message
+	fwvq2Page2Ref.enable
+	Disable 1
+
+end
+
+begin gamemode
+
+if getDisabled == 0
+	if doOnce == 0
+		pms fwvRegenStaveEffectShader
+		set doOnce to 1
+	endif
+endif
+
+end

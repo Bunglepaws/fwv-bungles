@@ -1,0 +1,7 @@
+scn fwvDebuggingSCRIPT
+
+Begin onFire
+
+	player.moveTo fwvRassilonRastonRef
+
+end

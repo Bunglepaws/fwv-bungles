@@ -1,0 +1,70 @@
+scn fwvItemProtocolScript
+
+short effectOn
+
+Begin onActivate
+
+if getStage fwvqTardisManualQuest == 10
+
+	PlaySound UIPopUpMapMarkerAdded
+
+	let fwvqTardisManualQuest.page := fwvqTardisManualQuest.page + 1
+
+	MessageEx "[%g/15 pages found...]" fwvqTardisManualQuest.page
+
+	if fwvqTardisManualQuest.page == 1
+		MessageBoxEx "Protocol: Emergency Power Mode%r%rRequirements: TARDIS must be powered up and not in any down-system mode (i.e. Siege Mode, Emergency Power Mode)%r%rResult: TARDIS shuts down lighting and all systems, preventing flight and maintenance%r"
+	elseif fwvqTardisManualQuest.page == 2
+		MessageBoxEx "Protocol: System Reboot%r%rRequirements: TARDIS must be in Emergency Power Mode%rResult: TARDIS restores lighting and all previously active systems%r"
+	elseif fwvqTardisManualQuest.page == 3
+		MessageBoxEx "Protocol: Factory Reset%r%rRequirements: None%rResult: Acts like Refuel/Repair: resets the TARDIS to its factory settings, resetting all room configs and power allocations%r%rNOTE: Wipes the Navigational Databanks!%r"
+	elseif fwvqTardisManualQuest.page == 4
+		MessageBoxEx "Protocol: Refuel TARDIS%r%rRequirements: Less than 100%% Artron Energy stored%rResult: Unlocks the TARDIS Refuelling Lever, which is otherwise unusable until the protocol is completed%r"
+	elseif fwvqTardisManualQuest.page == 5
+		MessageBoxEx "Protocol: Repair TARDIS%r%rRequirements: None%rResult: Unlocks the TARDIS Repair Lever, which is otherwise unusable until the protocol is completed%r"
+	elseif fwvqTardisManualQuest.page == 6
+		MessageBoxEx "Protocol: Forcefield Extrapolation%r%rRequirements: Costs 15%% Power%rResult: Places a short range Forcefield around the TARDIS exterior for 30 seconds, rendering the player invincible within its radius%r"
+	elseif fwvqTardisManualQuest.page == 7
+		MessageBoxEx "Protocol: Siege Mode%r%rRequirements: Costs 25%% Power, not in Emergency Power Mode%rResult: When in a critical situation, Siege Mode puts the TARDIS into lockdown for 24 hours. This also acts as a Lockdown, similar to Emergency Power Mode%rNOTE: If in flight, the TARDIS will need the Crash Landing procedure before the protocol completes%r"
+	elseif fwvqTardisManualQuest.page == 8
+		MessageBoxEx "Protocol: Time Loop%r%rRequirements: Must be in Space Combat, Costs 5%% Power for every 10 seconds it is active%r%rResult: Can be toggled, when active, loops the last action performed by the enemy (i.e. charging weapon, firing or boarding), so timing is crucial%r"
+	elseif fwvqTardisManualQuest.page == 9
+		MessageBoxEx "Protocol: Oxygen Corridor%r%rRequirements: None%rResult: Places a temporary Oxygen Corridor around the TARDIS, allowing you to breathe within a small radius in airless environments%r"
+	elseif fwvqTardisManualQuest.page == 10
+		MessageBoxEx "Protocol: Shield Boost%r%rRequirements: Costs 15%% power%r%rResult: Temporarily boosts the TARDIS Shield Power to 200%%, then after 30 seconds, reverts back to its previous total%r"
+	elseif fwvqTardisManualQuest.page == 11
+		MessageBoxEx "Protocol: Controlled Temporal Implosion%r%rRequirements: Space Loop Event must be present%rResult: Cancels out the Space Loop, dematerialising the TARDIS from within itself%r"
+	elseif fwvqTardisManualQuest.page == 12
+		MessageBoxEx "Protocol: Vent the Thermobuffers%r%rRequirements: None%rResult: Resets the TARDIS interior Temperature to 0 degrees above Comfort Zone%r"
+	elseif fwvqTardisManualQuest.page == 13
+		MessageBoxEx "Protocol: Bio-locator%r%rRequirements: Must have an FWV Companion%rResult: When toggled, places a Map Marker at the location of upto 3 FWV Companions%r"
+	elseif fwvqTardisManualQuest.page == 14
+		MessageBoxEx "Protocol: Course Correction%r%rRequirements: TARDIS must have 'Drifted' off course%rResult: When the TARDIS has drifted (see Axiomator Subsystem), this puts it back on course to its intended destination if completed before landing%r"
+	elseif fwvqTardisManualQuest.page == 15
+		MessageBoxEx "Protocol: Core Jettison%r%rRequirements: TARDIS must be in flight%rResult: Jettisons the Eye of Harmony, shutting down all systems and effectively rendering the TARDIS 'dead'%r"
+	endif
+
+	MarkForDelete
+	Disable
+
+else
+
+	MessageEx "[Better leave it alone for now...]"
+
+endif
+
+End
+
+Begin GameMode
+
+	if player.getEquipped fwvOutfit3DGlasses == 1 && getDistance player <= 400
+		if effectOn == 0
+			pms fwvHologramInterface
+			set effectOn to 1
+		endif
+	else
+		sms fwvHologramInterface
+		set effectOn to 0
+	endif
+
+End

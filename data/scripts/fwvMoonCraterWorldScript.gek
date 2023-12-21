@@ -1,0 +1,63 @@
+scn fwvMoonCraterWorldScript
+
+ref self
+short sDoOnce
+float fTimer
+short sDoOnceBossMessage
+
+begin onTriggerEnter
+
+if isActionRef player == 0
+	;if getIsReference fwvMoonStartTriggerRef
+	;	set self to GetActionRef
+	;	if self.getEquipped fwvOutfitSB6Helmet == 0
+	;		self.addItem fwvOutfitSB6Helmet 1
+	;		self.equipItem fwvOutfitSB6Helmet 1
+	;	endif
+	;	if self.getEquipped fwvOutfitSB6suit == 0
+	;		self.addItem fwvOutfitSB6suit 1
+	;		self.equipItem fwvOutfitSB6suit 1
+	;	endif
+	;endif
+else
+	if getIsReference fwvMoonStartTriggerRef
+		printc "player is in trigger!"
+		;let fwvqCybermanMoon.arMoonNPCs := GetRefs 42, -1
+		;let fwvqCybermanMoon.arMoonCreatures := GetRefs 43, -1
+
+		if sDoOnce == 0
+			ShowMessage fwvMoonBreatheStupidMESG
+			set sDoOnce to 1
+		endif
+		set fwvqCybermanMoon.interior to 0
+	elseif getIsReference fwvMoonCommsTriggerRef
+		if getStage fwvqCybermanMoon != 40
+			setStage fwvqCybermanMoon 40
+		endif
+	elseif getIsReference fwvMoonStationTriggerRef
+		if getStageDone fwvqCybermanMoon 20 == 0
+			setStage fwvqCybermanMoon 20
+		endif
+
+		if getStage fwvqCybermanMoon == 50
+			fwvMoonDecoyDoorRef.placeAtMe DLC03FieldPanelExplosion
+			fwvMoonDecoyDoorRef.disable ;1
+			fwvMoonCyberBossRef.enable ;1
+			fwvMoonDoorIntRef.lock 200
+			fwvMoonCommsDoorRef.lock 200
+			fwvMoonBunkDoorRef.lock 200
+			setStage fwvqCybermanMoon 60
+			if sDoOnceBossMessage == 0
+				if fTimer < 7
+					set fTimer to fTimer + GetSecondsPassed
+				else
+					showmessage fwvXOMoonBossMessage
+					set sDoOnceBossMessage to 1
+				endif
+			endif
+			
+			
+		endif
+	endif
+endif
+end

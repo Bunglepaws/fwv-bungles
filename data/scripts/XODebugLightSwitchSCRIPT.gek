@@ -1,0 +1,14 @@
+scn XODebugLightSwitchSCRIPT
+
+;short button
+
+;short sNewComp
+;short sComp
+
+Begin OnFire
+
+	MessageEx "staveeff %g"  fwvqRegen.rStaveEffect
+
+	
+end
+

@@ -1,0 +1,75 @@
+scn fwvTardisWardrobeRandomiserSCRIPT
+
+short doOnce
+short fade
+float fTimer
+
+float dress
+float rClothes
+int iClothes
+int rClothesCount
+float rHat
+int iHat
+int rHatCount
+float rHatChance
+
+ref lastOutfit
+ref lastHat
+
+ref outfit
+ref hat
+
+begin onActivate player
+
+	set rClothesCount to ListGetCount fwvTardisWardrobeClothes
+	;set rClothes to 1 + getRandomPercent * rClothesCount/100
+	set iClothes to Rand 0, rClothesCount
+	set rHatCount to ListGetCount fwvTardisWardrobeHatsGlasses
+	;set rHat to 1 + getRandomPercent * rHatCount/100
+	set iHat to Rand 0, rHatCount	
+	set rHatChance to getRandomPercent
+	printc "%G clothes is" iClothes
+	printc "%G hat is" iHat
+	;DisablePlayerControls
+	imod FadeToBlackAndBackQuickExtendedISFX
+	set fTimer to 0.0
+	set fade to 1
+	set dress to 1
+
+end
+
+begin gamemode
+
+	set outfit to ListGetNthForm fwvTardisWardrobeClothes iClothes
+	set hat to ListGetNthForm fwvTardisWardrobeHatsGlasses iHat
+
+	if dress == 1
+		if rHatChance < 25												;randomly assign a hat from the Hats formlist to the player here
+			player.addItem hat 1 1
+			player.equipItem hat 0 1
+		else
+			set lastHat to player.GetEquippedObject 10
+			if lastHat != 0					;removes Hat if no chance of wearing one arises
+				player.unequipItem lastHat 0 1
+			endif
+		endif
+		player.addItem outfit 1 1
+		player.equipItem outfit 0 1										;force player to equip whatever random outfit is listed
+		set dress to 0
+		set fade to 2
+		printc "Fade %g" fade
+		DisablePlayerControls
+	endif
+
+	if fade == 2
+		if fTimer < 3.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			EnablePlayerControls
+			set fTimer to 0.0
+			set fade to 0
+			printc "fade %g" fade
+		endif
+	endif
+
+end

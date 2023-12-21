@@ -1,0 +1,61 @@
+scn fwvTardisTelephoneScript
+
+short sStopRinging
+float fRingTimer
+ref rLinkedRef
+short sStopGlow
+
+begin OnActivate Player
+	if fwvq1.tCommsOn == 1 && fwvqSystems.cSys == 1
+		SetTalkingActivatorActor fwvTardisPhoneNPCRef
+		Activate
+		if fwvqComms.sEventPhone != 0
+			set sStopRinging to 1
+		endif
+		sms fwvHologramHealthGreen  ; attempt to stop extra green
+	else
+		MessageEx "[System Offline]"
+	endif
+end
+
+begin GameMode
+	if sStopRinging == 1
+		set fwvqComms.qActive to 0
+		set fwvqComms.sEventPhone to 0
+		set sStopRinging to 0
+		sms fwvHologramHealthGreen
+	endif
+
+	if fwvqComms.sEventPhone != 0 ; there is a phone ringing event thingy. ring the phone
+		if fwvq1.tCommsOn == 1 && fwvqSystems.cSys == 1
+			if fRingTimer <= 0.0 ; phone should ring every 2 seconds
+				if fwvq1.tTheme == 2 || fwvq1.tTheme == 6 
+					if sStopGlow == 1
+						set sStopGlow to 0
+					endif
+					pms fwvHologramHealthGreen
+					PlaySound3d NPCRobotEdEFail2
+				else
+					if fwvq1.tTheme == 7
+						PlaySound3d NPCRobotEdEFail2
+					else	
+						PlaySound3d fwvTardisTelephoneRing
+					endif
+				endif
+				set fRingTimer to 2.0
+			endif
+		else
+			; don't ring, turn off shader
+			if sStopGlow == 0
+				sms fwvHologramHealthGreen
+				set sStopGlow to 1
+			endif
+		endif
+	endif
+	
+	if fRingTimer > 0.0
+		set fRingTimer to fRingTimer - GetSecondsPassed
+	else
+		set fRingTimer to 0.0
+	endif
+end

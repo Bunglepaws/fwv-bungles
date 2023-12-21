@@ -1,0 +1,10 @@
+scn fwvFuncDisplayLocationFound
+
+string_var strName
+
+begin function { strName }
+	if GetQuestCompleted fwvq1a
+		MessageEx "Suitable TARDIS landing location discovered and uploaded: %z" strName
+	endif
+	sv_Destruct strName
+end

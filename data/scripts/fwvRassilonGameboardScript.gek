@@ -1,0 +1,23 @@
+scn fwvRassilonGameboardScript
+
+short sTrapOn		;not strap-on...
+
+Begin onTriggerEnter player
+
+	if getIsReference fwvRassilonTrapEnterRef == 1
+		printc "entering"
+		if sTrapOn < 1
+			printc "trap on"
+			imod FireExtinguisherISFX
+			MessageEx "[The gameboard activates]"
+			let sTrapOn := 1
+		endif
+	elseif getIsReference fwvRassilonTrapExitRef == 1
+		if fwvRassilonTrapEnterRef.sTrapOn == 1
+			imod FireExtinguisherISFX
+			MessageEx "[The gameboard deactivates]"
+			let fwvRassilonTrapEnterRef.sTrapOn := 2
+		endif
+	endif
+
+End

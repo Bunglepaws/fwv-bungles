@@ -1,0 +1,379 @@
+scn fwvCyberStrongholdActivatorScript
+
+
+short sValveOff
+short sShieldOff
+
+short sPage
+short luckMod
+short sciMod
+ref rTarget
+ref rConvertobox
+short sAnim
+float fTimer
+short sMenu
+short button
+short WhichCrux
+short sLaunchPage
+short sZap
+short empOn
+float eTimer
+
+ref Pris1
+ref Pris2
+ref Pris3
+ref Pris4
+
+
+Begin onActivate Player
+
+	if getisReference fwvCyberEngineOverrideREF == 1
+		If Player.GetItemCount fwvCyberEngineRoomKey == 0
+			Player.AddItem fwvCyberEngineRoomKey 1
+		else
+			MessageEx "[You already have the Engine Room keycode]"
+		endIf
+	
+	elseif getisReference fwvCyberStrngKybd04REF == 1
+		If Player.GetItemCount fwvCyberStrngCellKey == 0
+			Player.AddItem fwvCyberStrngCellKey 1
+		else
+			MessageEx "[You already have the Conversion Labs keycode]"
+		endIf
+
+	elseif getisReference fwvGarethConversionTriangleREF == 1
+		if fwvqInvasionsCyber.sGarethProgLoaded == 0
+			showMessage fwvGarethTriangleMesg01
+		elseif fwvqInvasionsCyber.sGarethProgLoaded == 1
+			MessageEx "[Transmitting Cyberconditioning...]"
+			;fwvCybermanGarethREF.removescriptpackage
+			;fwvCybermanGarethREF.addscriptpackage fwvGarethStartPackage
+			set fwvqInvasionsCyber.sGarethProgLoaded to 2
+			;fwvCybermanGarethREF.addspell fwvGarethEMPSpell
+			set sZap to 1
+		else
+			MessageEx "[Terminal non-responsive]"
+		endif
+	
+	elseif getisReference fwvGarethConversion3ScrREF == 1
+		if fwvqInvasionsCyber.sGarethProgLoaded == 0
+			MessageEx "[Condition program modified.]"
+			MessageEx "[Warning! Error in Conditioning!]"
+			set fwvqInvasionsCyber.sGarethProgLoaded to 1
+			fwvCybermanGarethREF.removescriptpackage
+			fwvCybermanGarethREF.moveto fwvGarethStandLocREF			
+			fwvCybermanGarethREF.addscriptpackage fwvGarethStartPackage
+		else
+			MessageEx "[Terminal non-responsive]"
+		endif
+		
+	elseif getisReference fwvCybStrngShuttleNav == 1
+		if fwvqInvasions.sLanderTutorial == 0
+			showMessage fwvLanderTutorialMSG
+			set fwvqInvasions.sLanderTutorial to 1
+		else 
+			if fwvqInvasions.sTransmatOn == 0
+				MessageEx "[Lander navigation programmed.]"
+				set fwvqInvasions.sTransmatOn to 1
+				set fwvqInvasionsCyber.sLanderNavProgrammed to 1
+			else
+				MessageEx "[Lander navigation already programmed.]"
+			endif
+		endif
+	
+	elseif getisReference fwvxoCyberShuttleLaunch == 1
+		if fwvqInvasions.sLanderTutorial == 0
+			showMessage fwvLanderTutorialMSG
+			set fwvqInvasions.sLanderTutorial to 1
+		else 
+			if fwvqInvasions.sLanderLaunch == 0
+				if fwvqInvasionsCyber.sLanderNavProgrammed == 0
+					MessageEx "[Launch aborted. No navigation programmed.]"
+				else
+					ShowMessage fwvCyberLanderLaunchControlMESG
+					set sLaunchPage to 1	
+				endif
+			else
+				MessageEx "[Cyberlander already launched]"
+			endif
+		endif
+	
+	
+
+	
+	elseif getisReference fwvCybStrngEngScreens01 == 1
+		if sValveOff == 0
+			let fwvqInvasions.sShield := fwvqInvasions.sShield + 1
+			PlaySound NPCRobotEdEConfirmed
+			MessageEx "[Photon Limiters Disconnected]"
+			MessageEx "[%g/4 Propulsion Systems Hacked]" fwvqInvasions.sShield			
+			let sValveOff := 1
+		else
+			playsound NPCRobotEdEDenied
+			MessageEx "[Controls non-responsive]"
+		endif				
+	
+	elseif getisReference fwvCybStrngEngScreens02 == 1
+		if sValveOff == 0
+			let fwvqInvasions.sShield := fwvqInvasions.sShield + 1
+			PlaySound NPCRobotEdEConfirmed
+			MessageEx "[Photon Mirrors Unclamped]"
+			MessageEx "[%g/4 Propulsion Systems Hacked]" fwvqInvasions.sShield			
+			let sValveOff := 1
+		else
+			playsound NPCRobotEdEDenied
+			MessageEx "[Controls non-responsive]"
+		endif				
+	
+	elseif getisReference fwvCybStrngKeyboard01 == 1
+		if sValveOff == 0
+			let fwvqInvasions.sShield := fwvqInvasions.sShield + 1
+			PlaySound NPCRobotEdEConfirmed
+			MessageEx "[Engine Governors Disabled]"
+			MessageEx "[%g/4 Propulsion Systems Hacked]" fwvqInvasions.sShield			
+			let sValveOff := 1
+		else
+			playsound NPCRobotEdEDenied
+			MessageEx "[Controls non-responsive]"
+		endif				
+		
+	elseif getisReference fwvCybStrngKeyboard02 == 1
+		if sValveOff == 0
+			let fwvqInvasions.sShield := fwvqInvasions.sShield + 1
+			PlaySound NPCRobotEdEConfirmed
+			MessageEx "[Static Capacitors Unlinked]"
+			MessageEx "[%g/4 Propulsion Systems Hacked]" fwvqInvasions.sShield			
+			let sValveOff := 1
+		else
+			playsound NPCRobotEdEDenied
+			MessageEx "[Controls non-responsive]"
+		endif			
+		
+	elseif getisReference fwvCybStrngKeyboard03 == 1
+		if fwvqInvasions.sBlow == 0
+			if fwvqInvasions.sShield > 3
+				MessageEx "[Engine failure in 60 seconds...]"
+				fwvCyberStrngAlarmREF.enable
+				set fwvqInvasions.sBlow to 1
+				;set fwvqInvasions.Kablooey to 0
+				set fwvqInvasions.fTimer to 0.0
+			else
+				if fwvqInvasions.sEnginesTutorialOnce == 0
+					showmessage fwvCyberStrngPropulsionMSG01
+					set fwvqInvasions.sEnginesTutorialOnce to 1
+				endif
+				MessageEx "[Engine Status: Stable]"
+				playsound NPCRobotEdEFail2
+			endif
+		endif
+	
+	elseif getisReference fwvCyberConversionMFREF == 1
+		if fwvqInvasions.CyberPrisoner01Uncrux == 0
+			let Pris1 := fwvqInvasionsCyber.CyberPrisoner01
+			let Pris2 := fwvqInvasionsCyber.CyberPrisoner02
+			let Pris3 := fwvqInvasionsCyber.CyberPrisoner03
+			let Pris4 := fwvqInvasionsCyber.CyberPrisoner04
+			ShowMessage fwvCyberPrisonerPanelMESG
+			set luckMod to 1 + getRandomPercent * 10/100
+			set sciMod to 1 + getRandomPercent
+			set sPage to 1			
+		else
+			MessageEx "[Controls non-responsive]"
+		endif	
+	
+	
+	endif
+
+end
+
+Begin GameMode
+
+	if sZap == 1
+		fwvCybermanGarethREF.setrestrained 0
+		;fwvCybermanGarethREF.addspell fwvGarethEMPSpell
+		MEssageEx "[Protocol corrupted - failure imminent]"
+		fwvCybermanGarethREF.placeatme fwvWeapEMPExplosionGareth
+		set sZap to 0
+		set empOn to 1
+	endif
+
+	if empOn == 1
+		set eTimer to 0.0
+		fwvCybermanGarethREF.pms DLC03TeslaFXShader
+		set empOn to 2		
+	Endif
+
+	if empOn == 2
+		printc "EMP Effect is on"
+		if eTimer < 5.0
+			set eTimer to eTimer + getSecondsPassed
+		else
+			;fwvCybermanGarethREF.PlayIdle fwvAnimCyberMad
+			fwvCybermanGarethREF.PlayIdle fwvHumanCyberMad
+			set eTimer to 0.0
+			MessageEx "[System failure!]"
+			set empOn to 3
+		endif
+	endif
+		
+	if empOn == 3
+		if eTimer < 3.0
+			set eTimer to eTimer + getSecondsPassed
+		else
+			PlaySound WPNZapGlove3D
+			fwvCybermanGarethREF.PlaceAtMe fwvCyberZapExplosion
+			fwvCybermanGarethREF.KillActor
+			set empOn to 0
+		endif
+	endif
+
+
+	
+	if sPage == 1
+		set button to getButtonPressed
+		
+		; RTARGET IS REF
+		
+		;I Wrote For Luck (by the Happy Mondays) 		
+		if button == 0
+			if player.getAV Luck < luckMod
+				; Failtastic
+				PlaySound OBJTranquilityLanePodOpenFail
+				MessageEx "[Conversion Abort code denied. Conversion Initiated.]"
+				fwvCybStngConvertobox01REF.PlayGroup Forward 1
+				fwvCybStngConvertobox02REF.PlayGroup Forward 1
+				fwvCybStngConvertobox03REF.PlayGroup Forward 1
+				fwvCybStngConvertobox04REF.PlayGroup Forward 1
+				PlaySound fwvFXConversionScream
+		
+				let sAnim := 1
+				player.rewardKarma -5
+				let fTimer := 0.0				
+			else
+				; Epic Win dogg
+				PlaySound OBJForcefieldShutdown
+				set fwvqInvasions.CyberPrisoner01Uncrux to 1
+				
+				Pris1.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage1
+				Pris2.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage2
+				Pris3.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage3
+				Pris4.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage4
+
+				Pris1.moveto fwvCybStrngPrisoner01GoToPrep
+				Pris2.moveto fwvCybStrngPrisoner02GoToPrep
+				Pris3.moveto fwvCybStrngPrisoner03GoToPrep
+				Pris4.moveto fwvCybStrngPrisoner04GoToPrep
+
+				
+				Pris1.evp
+				Pris2.evp
+				Pris3.evp
+				Pris4.evp
+			
+				MessageEx "[Subjects released, Cyberconversion aborted]"
+			endif
+			set sPage to 0
+		
+		;Science! (she blinded ME!)
+		elseif button == 1
+			if player.getAV Science < sciMod
+				; Failtastic
+				PlaySound OBJTranquilityLanePodOpenFail
+				MessageEx "[Conversion Abort code denied. Conversion Initiated.]"
+				fwvCybStngConvertobox01REF.PlayGroup Forward 1
+				fwvCybStngConvertobox02REF.PlayGroup Forward 1
+				fwvCybStngConvertobox03REF.PlayGroup Forward 1
+				fwvCybStngConvertobox04REF.PlayGroup Forward 1
+				PlaySound fwvFXConversionScream
+				
+				let sAnim := 1
+				player.rewardKarma -5
+				let fTimer := 0.0				
+			else
+				; Epic Win dogg
+				PlaySound OBJForcefieldShutdown
+				set fwvqInvasions.CyberPrisoner01Uncrux to 1
+			
+				Pris1.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage1
+				Pris2.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage2
+				Pris3.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage3
+				Pris4.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage4
+
+				Pris1.moveto fwvCybStrngPrisoner01GoToPrep
+				Pris2.moveto fwvCybStrngPrisoner02GoToPrep
+				Pris3.moveto fwvCybStrngPrisoner03GoToPrep
+				Pris4.moveto fwvCybStrngPrisoner04GoToPrep
+
+				
+				Pris1.evp
+				Pris2.evp
+				Pris3.evp
+				Pris4.evp
+			
+				MessageEx "[Subjects released, Cyberconversion aborted]"
+			endif
+			set sPage to 0
+		endif
+	endif
+
+	if sAnim == 1
+		if fTimer < 6.0
+			let fTimer := fTimer + getSecondsPassed
+		else
+			fwvCybStngConvertobox01REF.PlayGroup Backward 1
+			fwvCybStngConvertobox02REF.PlayGroup Backward 1
+			fwvCybStngConvertobox03REF.PlayGroup Backward 1
+			fwvCybStngConvertobox04REF.PlayGroup Backward 1
+
+			; disable human 
+			Pris1.moveto fwvCybStrngPrisoner01GoToPrep
+			Pris2.moveto fwvCybStrngPrisoner02GoToPrep
+			Pris3.moveto fwvCybStrngPrisoner03GoToPrep
+			Pris4.moveto fwvCybStrngPrisoner04GoToPrep
+
+			Pris1.disable
+			Pris2.disable
+			Pris3.disable
+			Pris4.disable
+			set fwvqInvasions.CyberPrisoner01Uncrux to 1
+			; place cyberman			
+			Pris1.placeatme fwvLvlCybermenStrng 1
+			Pris2.placeatme fwvLvlCybermenStrng 1
+			Pris3.placeatme fwvLvlCybermenStrng 1
+			Pris4.placeatme fwvLvlCybermenStrng 1		
+			let sAnim := 0
+		endif
+	endif	
+	
+	if sLaunchPage == 1
+		set button to getButtonPressed
+		if button == 0
+			MessageEx "[Cyberlander launching]"
+			;Launch the Cyberlander, yo
+			set fwvqInvasions.sLanderLaunch to 1
+			
+			Pris1.removescriptpackage 
+			Pris2.removescriptpackage 
+			Pris3.removescriptpackage  
+			Pris4.removescriptpackage  
+
+			Pris1.addscriptpackage fwvCyberStrongholdPrisonerFreeMaroonedPackageAll
+			Pris2.addscriptpackage fwvCyberStrongholdPrisonerFreeMaroonedPackageAll
+			Pris3.addscriptpackage fwvCyberStrongholdPrisonerFreeMaroonedPackageAll
+			Pris4.addscriptpackage fwvCyberStrongholdPrisonerFreeMaroonedPackageAll
+
+			Pris1.evp
+			Pris2.evp
+			Pris3.evp
+			Pris4.evp
+
+			set sLaunchPage to 0
+			
+		else
+			MessageEx "[Launch aborted]"
+			set sLaunchPage to 0
+		endif
+	endif 
+
+	
+End

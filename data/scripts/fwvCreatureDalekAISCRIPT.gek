@@ -1,0 +1,78 @@
+scn fwvCreatureDalekAISCRIPT
+
+;float dday
+;short doOnce
+;short sConsoleWeather
+
+;begin GameMode
+
+;	if getDead == 1
+;		if doOnce == 0
+;			set dDay to gameDaysPassed
+;			set doOnce to 1
+;			set sConsoleWeather to fwvqRooms.sConsoleWeather
+;		endif
+
+;		if gameDaysPassed > dDay + 1 || (sConsoleWeather != fwvqRooms.sConsoleWeather && (GetParentCell == fwvTinterior1 || GetParentCell == fwvq1.rTDesktopRoom))
+;			; Is in the TARDIS, remove when moving between desktop/interior, or 1 day is passed
+;			MarkForDelete
+;			Disable
+;		endif
+;	endif
+
+;end
+
+short killOnce
+short destroy
+float dTimer
+ref rSelf
+short sDead
+short sModel
+short random
+short sIsCounted
+
+Begin GameMode
+
+	set rSelf to GetSelf
+
+	if rSelf.GetInWorldspace fwvWorldSmallTrenzalore == 1
+
+		if rSelf.getDead == 1 && sIsCounted == 0
+			set sIsCounted to 1
+			let fwvqTrenzalore.EDeaths[0] := fwvqTrenzalore.EDeaths[0] + 1
+		endif
+
+	endif
+
+	if getDead == 1
+		if killOnce == 0
+
+			let random := getRandomPercent
+			;if rSelf.getIsID fwvDalekSaucerDrone == 1 || rSelf.getIsID fwvDalekSaucerDronePatrol01 == 1
+				if random < 50
+					;rSelf.placeAtMe fwvDalekDroneRemains01
+					rSelf.placeAtMe fwvDalekDroneRemains01Havok
+					rSelf.disable
+					rSelf.MarkForDelete
+				else
+					;rSelf.placeAtMe fwvDalekDroneRemains02
+					rSelf.placeAtMe fwvDalekDroneRemains02Havok
+					rSelf.disable
+					rSelf.MarkForDelete
+				endif
+			;elseif rSelf.getIsID fwvqDalekAttackParadigm == 1
+			;	if random < 50
+			;		rSelf.placeAtMe fwvDalekParadigmRemains01
+			;	else
+			;		rSelf.placeAtMe fwvDalekParadigmRemains02
+			;	endif
+			;endif
+
+			PlaceAtMe fwvDalekExplosion
+			;rSelf.disable
+			;rSelf.MarkForDelete
+			let killOnce := 1
+		endif
+	endif
+
+End

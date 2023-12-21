@@ -1,0 +1,8 @@
+scn fwvEnableWaterRadsScript
+
+begin OnTriggerEnter Player
+	con_SetGameSetting fSwimRadiationDamageMult 0.1
+	con_SetGameSetting fWadeRadiationDamageMult 0.1
+	;set fwvTardisPoolTrigRef.swimOn to 0
+end
+

@@ -1,0 +1,34 @@
+scn fwvXOMomentRift
+
+short sSacrificeMade
+short sIncarnation
+begin OnActivate Player
+	
+	if fwvqRegen.TimeLordTrue == 1 && fwvqTrenzalore.sTheRift == 1
+		if fwvqRegen.regenVar < 3 ; can spare 10 lives
+			set sSacrificeMade to 1
+		else
+			MessageEx "You don't have enough regenerations to tune The Moment."
+		endif
+	else
+		MessageEx "A rift in Time. But your hand passes right through it."
+	endif
+end
+
+
+Begin Gamemode
+	if sSacrificeMade == 1
+		set fwvqRegen.regenVar to fwvqRegen.regenVar + 10
+		set fwvqTrenzalore.sSacrifice to 1 ; when rift used
+		fwvTrenzDoctorRiftRedREF.disable
+		fwvTrenzDoctorRiftWhiteREF.enable
+		set sIncarnation to fwvqRegen.regenVar + 1
+		ShowMessage fwvRiftTrenzSacrMessage sIncarnation
+		set sSacrificeMade to 2
+		set fwvqTrenzalore.sTheRift to 2
+	endif
+End
+	
+
+
+

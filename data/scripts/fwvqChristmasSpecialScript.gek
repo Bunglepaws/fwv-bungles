@@ -1,0 +1,68 @@
+scn fwvqChristmasSpecialScript
+
+ref PoliceBoxDoor
+ref PoliceBox 
+short wave
+float pmsTimer
+
+Begin Gamemode
+
+	set PoliceBoxDoor to fwvq1.rPoliceBoxDoorRef
+	set PoliceBox to fwvq1.rPoliceBoxRef
+	if GetStage fwvqChristmasSpecial < 100 && Player.GetInWorldspace fwvWorldYuleWorld
+		if pmsTimer < 2.0
+			set pmsTimer to pmsTimer + getSecondsPassed
+		else
+			PoliceBoxDoor.pms fwvLockedGlowShader
+			PoliceBox.pms fwvLockedGlowShader
+			set pmsTimer to 0.0
+		endif
+	endif
+	
+	if wave == 1
+		if fwvqXmasAuton1Ref.getDead == 1 && fwvqXmasAuton2Ref.getDead == 1 && fwvqXmasAuton3Ref.getDead == 1
+			MessageEx "Teleports inbound..."
+			fwvqXmasSilent1Ref.enable
+			fwvqXmasSilent1Ref.placeAtMe fwvVortexManipulatorExplosion
+			set wave to 2
+		endif
+	elseif wave == 2
+		if fwvqXmasSilent1Ref.getDead == 1 && fwvqXmasSilent2Ref.getDead == 1 && fwvqXmasSilent3Ref.getDead == 1
+			MessageEx "Teleports inbound..."
+			fwvqXmasAngel1Ref.enable
+			fwvqXmasAngel2Ref.enable
+			fwvqXmasAngel3Ref.enable
+			fwvqXmasAngel1Ref.placeAtMe fwvVortexManipulatorExplosion
+			fwvqXmasAngel2Ref.placeAtMe fwvVortexManipulatorExplosion
+			fwvqXmasAngel3Ref.placeAtMe fwvVortexManipulatorExplosion
+			set wave to 3
+		endif
+	elseif wave == 3
+		if fwvqXmasAngel1Ref.getDisabled == 1 && fwvqXmasAngel2Ref.getDisabled == 1 && fwvqXmasAngel3Ref.getDisabled == 1
+			MessageEx "Teleports inbound..."
+			fwvqXmasCyber1Ref.enable
+			fwvqXmasCyber1Ref.placeAtMe fwvVortexManipulatorExplosion
+			fwvqXmasCyber2Ref.placeAtMe fwvVortexManipulatorExplosion
+			fwvqXmasCyber3Ref.placeAtMe fwvVortexManipulatorExplosion
+			set wave to 4
+		endif
+	elseif wave == 4
+		if fwvqXmasCyber1Ref.getDead == 1 && fwvqXmasCyber2Ref.getDead == 1 && fwvqXmasCyber3Ref.getDead == 1
+			MessageEx "Teleports inbound..."
+			fwvqXmasDalek1Ref.enable
+			fwvqXmasDalek2Ref.enable
+			fwvqXmasDalek3Ref.enable
+			fwvqXmasDalek1Ref.placeAtMe fwvVortexManipulatorExplosion
+			fwvqXmasDalek2Ref.placeAtMe fwvVortexManipulatorExplosion
+			fwvqXmasDalek3Ref.placeAtMe fwvVortexManipulatorExplosion
+			set wave to 5
+		endif
+	elseif wave == 5
+		if fwvqXmasDalek1Ref.getDead == 1 && fwvqXmasDalek2Ref.getDead == 1 && fwvqXmasDalek3Ref.getDead == 1
+			SetStage fwvqChristmasSpecial 20
+			set wave to 0
+		endif
+	endif
+
+
+End

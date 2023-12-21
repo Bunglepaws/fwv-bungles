@@ -1,0 +1,70 @@
+scn fwvq3bHackSignal3Script
+
+short hack		; determines if hack is running
+short hacked	; determines if it is hacked
+
+float hTimer		; Hack timer
+
+begin onTriggerEnter player
+	if getstage fwvq3b == 40
+		ShowMessage fwvq3bHintMessage
+	endif
+end
+
+begin ontrigger player
+
+if hacked == 0
+	if hack == 0
+		if player.IsWeaponInList fwvWSonicList == 1 && IsControlPressed 4 == 1
+			printc "Sonic is firing"
+			ShowMessage fwvq3bHackStartedMessage
+			fwvq3bSignal3Auton1Ref.startCombat player
+			fwvq3bSignal3Auton2Ref.startCombat player
+			set hack to 1
+		endif
+	endif
+endif
+end
+
+begin ontriggerleave player
+	;if player leaves before hack is complete, hack fails
+	if hacked == 0
+		if hack == 1
+			ShowMessage fwvq3bHackFailedMessage
+			fwvq3bHackSignal3Ref.disable
+			set hTimer to 0.0
+			set hack to 0
+		endif
+	endif
+end
+
+begin gamemode
+	;run 30 second timer in here for the hacking
+	if hacked == 0
+		if hack == 1
+
+			fwvq3bHackSignal3Ref.enable
+
+			if hTimer < 30
+				set hTimer to hTimer + getSecondsPassed
+			else
+				;complete the hack here
+				player.rewardXp 25
+				PlaySound OBJForcefieldShutdown
+				PlaySound UIRadioBeacon04EF
+				fwvq3bSignal3SpawnRef.placeatme fwvExpControlExplosion
+				fwvq3bSignal3Auton1Ref.killActor
+				fwvq3bSignal3Auton2Ref.killActor
+				fwvq3bHackSignal3Ref.disable
+				fwvq3bSignal3SpawnRef.disable
+				set fwvq3b.transmitters to fwvq3b.transmitters + 1
+				ShowMessage fwvq3bTransmittersMessage fwvq3b.transmitters
+				set hacked to 1
+				set hack to 0
+			endif
+		endif
+	endif
+end
+
+
+

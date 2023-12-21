@@ -1,0 +1,17 @@
+scn fwvTardisWardrobeDummyScript
+
+ref self
+
+begin onActivate player
+
+	set self to getSelf
+	self.openTeammateContainer 1	
+
+end
+
+begin gamemode
+
+	setrestrained 1
+	setactorsai 0
+
+end

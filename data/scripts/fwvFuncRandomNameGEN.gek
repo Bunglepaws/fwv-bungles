@@ -1,0 +1,155 @@
+scn fwvFuncRandomNameGEN
+
+; For companion names	
+
+short sRandomPerc
+string_var strWord1
+string_var strWord2
+string_var strName
+
+ref rNPC
+
+begin function { rNPC }
+
+	if rNPC.GetIsSex Male
+		set sRandomPerc to 1 + getRandomPercent * (20-1+1) / 100
+		if sRandomPerc == 1
+			set strWord1 to sv_construct "Harry"
+		elseif sRandomPerc == 2
+			set strWord1 to sv_construct "Thomas"
+		elseif sRandomPerc == 3
+			set strWord1 to sv_construct "Jeremy"
+		elseif sRandomPerc == 4
+			set strWord1 to sv_construct "Michael"
+		elseif sRandomPerc == 5
+			set strWord1 to sv_construct "Liam"
+		elseif sRandomPerc == 6
+			set strWord1 to sv_construct "Daniel"
+		elseif sRandomPerc == 7
+			set strWord1 to sv_construct "Ryan"
+		elseif sRandomPerc == 8
+			set strWord1 to sv_construct "Chris"
+		elseif sRandomPerc == 9
+			set strWord1 to sv_construct "Jason"
+		elseif sRandomPerc == 10
+			set strWord1 to sv_construct "Zack"
+		elseif sRandomPerc == 11
+			set strWord1 to sv_construct "Joseph"
+		elseif sRandomPerc == 12
+			set strWord1 to sv_construct "Samuel"
+		elseif sRandomPerc == 13
+			set strWord1 to sv_construct "Nathan"
+		elseif sRandomPerc == 14
+			set strWord1 to sv_construct "Ian"
+		elseif sRandomPerc == 15
+			set strWord1 to sv_construct "David"
+		elseif sRandomPerc == 16
+			set strWord1 to sv_construct "George"
+		elseif sRandomPerc == 17
+			set strWord1 to sv_construct "Matthew"
+		elseif sRandomPerc == 18
+			set strWord1 to sv_construct "Jack"
+		elseif sRandomPerc == 19
+			set strWord1 to sv_construct "Steven"
+		elseif sRandomPerc == 20
+			set strWord1 to sv_construct "Kieran"
+		endif
+	elseif rNPC.GetIsSex Female
+		set sRandomPerc to 1 + getRandomPercent * (20-1+1) / 100
+		if sRandomPerc == 1
+			set strWord1 to sv_construct "Chloe"
+		elseif sRandomPerc == 2
+			set strWord1 to sv_construct "Hannah"
+		elseif sRandomPerc == 3
+			set strWord1 to sv_construct "Sarah"
+		elseif sRandomPerc == 4
+			set strWord1 to sv_construct "Sophie"
+		elseif sRandomPerc == 5
+			set strWord1 to sv_construct "Amy"
+		elseif sRandomPerc == 6
+			set strWord1 to sv_construct "Jenny"
+		elseif sRandomPerc == 7
+			set strWord1 to sv_construct "Helena"
+		elseif sRandomPerc == 8
+			set strWord1 to sv_construct "Abigail"
+		elseif sRandomPerc == 9
+			set strWord1 to sv_construct "Charlotte"
+		elseif sRandomPerc == 10
+			set strWord1 to sv_construct "Emma"
+		elseif sRandomPerc == 11
+			set strWord1 to sv_construct "Katherine"
+		elseif sRandomPerc == 12
+			set strWord1 to sv_construct "Isabel"
+		elseif sRandomPerc == 13
+			set strWord1 to sv_construct "Astrid"
+		elseif sRandomPerc == 14
+			set strWord1 to sv_construct "Jessica"
+		elseif sRandomPerc == 15
+			set strWord1 to sv_construct "April"
+		elseif sRandomPerc == 16
+			set strWord1 to sv_construct "Georgia"
+		elseif sRandomPerc == 17
+			set strWord1 to sv_construct "Lauren"
+		elseif sRandomPerc == 18
+			set strWord1 to sv_construct "Lidia"
+		elseif sRandomPerc == 19
+			set strWord1 to sv_construct "Milly"
+		elseif sRandomPerc == 20
+			set strWord1 to sv_construct "Rebecca"
+		endif
+	endif
+
+	set sRandomPerc to 1 + getRandomPercent * (20-1+1) / 100
+	if sRandomPerc == 1
+		set strWord2 to sv_construct "Thompson"
+	elseif sRandomPerc == 2
+		set strWord2 to sv_construct "Chambers"
+	elseif sRandomPerc == 3
+		set strWord2 to sv_construct "Smith"
+	elseif sRandomPerc == 4
+		set strWord2 to sv_construct "Jones"
+	elseif sRandomPerc == 5
+		set strWord2 to sv_construct "Price"
+	elseif sRandomPerc == 6
+		set strWord2 to sv_construct "Stewart"
+	elseif sRandomPerc == 7
+		set strWord2 to sv_construct "Morris"
+	elseif sRandomPerc == 8
+		set strWord2 to sv_construct "Lupton"
+	elseif sRandomPerc == 9
+		set strWord2 to sv_construct "Parker"
+	elseif sRandomPerc == 10
+		set strWord2 to sv_construct "Duck"
+	elseif sRandomPerc == 11
+		set strWord2 to sv_construct "Evans"
+	elseif sRandomPerc == 12
+		set strWord2 to sv_construct "Brown"
+	elseif sRandomPerc == 13
+		set strWord2 to sv_construct "Griffin"
+	elseif sRandomPerc == 14
+		set strWord2 to sv_construct "O'Neill"
+	elseif sRandomPerc == 15
+		set strWord2 to sv_construct "Jenks"
+	elseif sRandomPerc == 16
+		set strWord2 to sv_construct "Verheul"
+	elseif sRandomPerc == 17
+		set strWord2 to sv_construct "Burke"
+	elseif sRandomPerc == 18
+		set strWord2 to sv_construct "McKenzie"
+	elseif sRandomPerc == 19
+		set strWord2 to sv_construct "Giles"
+	elseif sRandomPerc == 20
+		set strWord2 to sv_construct "Rowe"
+	endif
+	
+	set strName to sv_Construct "%z %z" strWord1 strWord2
+	set fwvCompanion.oName to sv_Construct "%z %z" strWord1 strWord2
+	
+	SetFunctionValue strName
+	rNPC.SetName $strName
+	sv_Destruct strWord1
+	sv_Destruct strWord2
+	sv_Destruct strName
+
+end
+

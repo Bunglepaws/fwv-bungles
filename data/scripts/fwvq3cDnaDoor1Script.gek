@@ -1,0 +1,38 @@
+scn fwvq3cDnaDoor1Script
+
+ref cypher
+
+begin onLoad
+	Playgroup Forward 0
+end
+
+begin gamemode
+
+	set cypher to getLinkedRef
+
+	if getDistance player < 300
+		if cypher.getDisabled == 1
+		cypher.enable
+		set fwvq3c.lives to 6
+		set fwvq3c.path to 1
+		set fwvq3c.rType to getRandomPercent
+		set fwvq3c.cypherGame to 1
+		endif
+	else
+		;set fwvq3c.testO to 0
+		;set fwvq3c.path to 0
+		;set fwvq3c.cypherGame to 0
+		;cypher.disable
+	endif
+
+	if fwvq3c.path == 4
+		disable
+		PlaySound OBJForceFieldDeactivate
+		player.rewardXp 5
+		cypher.disable 1
+		MarkForDelete
+		set fwvq3c.path to 0
+	endif
+
+end
+

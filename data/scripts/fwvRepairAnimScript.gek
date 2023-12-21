@@ -1,0 +1,29 @@
+scn fwvRepairAnimScript
+
+float fxTimer
+float fTimer
+short frame
+short fxOn
+
+begin ScriptEffectStart
+
+	;set frame to 0
+	;if frame == 0
+		if IsPC1stPerson == 1
+			TapControl 13
+		endif
+	;	set frame to 1
+	;elseif frame == 1
+		DisablePlayerControls 1 1 1 0 0 1 1
+		if fwvq1.tTheme == 0
+			player.playIdle CharactersMaleIdleAnimsdlcpittweldingmididle
+		elseif fwvq1.tTheme == 1
+			player.playIdle CharactersMaleIdleAnimsdlcpittweldinghighidle
+		elseif fwvq1.tTheme == 2 || fwvq1.tTheme == 6
+			player.playIdle CharactersMaleIdleAnimsdlcpittweldinglowidle
+		else
+			player.playIdle CharactersMaleIdleAnimsdlcpittweldingmididle
+		endif
+		set frame to 0
+	;endif
+end

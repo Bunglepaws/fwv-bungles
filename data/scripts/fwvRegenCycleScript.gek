@@ -1,0 +1,81 @@
+scn fwvRegenCycleScript
+
+short rCycle			; Regen Cycle
+float day
+float rCycleTimer	; Regen Cycle Timer
+float rCycleRnd		; Cycle Randomiser
+
+begin scripteffectstart
+
+	;player.pms fwvRegenEffectShader
+	set day to gamedayspassed
+	DisableControl 15
+
+end
+
+begin scripteffectupdate
+
+if gamedayspassed > day + 1
+
+	;player.sms fwvRegenEffectShader 
+	printtoconsole "DAY HAS PASSED! REGEN CYCLE COMPLETE!"
+	ShowMessage fwvRegenCycleEndMessage
+	EnableControl 15
+	player.dispel fwvRegenCycle
+
+else
+
+	player.restoreAv health 0.5
+
+
+		;if fwvqRegen.sZeroRoomRegenEff == 1
+			;printtoconsole "ZERO ROOM PREVENTS REGEN SICKNESS"
+			;ShowMessage fwvRegenCycleZeroRoomMessage
+			;EnableControl 15
+			;player.dispel fwvRegenCycle
+		;endif
+
+		if rCycleTimer < 20
+			set rCycleTimer to rCycleTimer + getsecondspassed
+		else
+			set rCycle to 1
+			set rCycleRnd to getrandompercent	
+			set rCycleTimer to 0.0
+		endif
+
+		if rCycle == 1
+			if rCycleRnd <= 20						; Dizziness
+				PRINTTOCONSOLE "DIZZINESS"
+				PlaySound UIHealthHeartbeatBLP
+				TriggerHitShader 3
+				imod fwvRegenDizzyISFX
+				set rCycle to 0
+			elseif rCycleRnd <= 40					; Crippling Effect
+				PRINTTOCONSOLE "CRIPPLING EFFECT"
+				PlaySound UIHealthHeartbeatBLP
+				TriggerHitShader 3
+				player.castImmediateOnSelf PlayerConcussed
+				player.damageAV LeftAttackCondition 1000
+				player.damageAV RightAttackCondition 1000
+				player.damageAV RightMobilityCondition 1000
+				player.damageAV LeftMobilityCondition 1000
+				set rCycle to 0
+			elseif rCycleRnd <= 60				; Black Out
+				PRINTTOCONSOLE "BLACKOUT"
+				PlaySound UIHealthHeartbeatBLP
+				TriggerHitShader 3
+				imod fwvRegenBlackoutISFX
+				set rCycle to 0
+			elseif rCycleRnd <= 90				; Trigger Regen Burst
+				PRINTTOCONSOLE "REGENERATIVE ENERGY BURST"
+				PlaySound UIHealthHeartbeatBLP
+				TriggerHitShader 3
+				player.placeatme fwvRegenExplosion2
+				set rCycle to 0
+			elseif rCycleRnd <= 100				; Nothing
+				set rCycle to 0
+			endif
+		endif
+endif	
+
+end

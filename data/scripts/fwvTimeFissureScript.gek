@@ -1,0 +1,79 @@
+scn fwvTimeFissureScript
+
+
+ref rSelf
+ref rBigCrack
+
+short stage
+short awaitingInput
+short buttonVar
+short incarnation
+
+float timer
+
+
+Begin OnActivate Player
+
+	if fwvqRegen.timeLordTrue == 1
+		set incarnation to fwvqRegen.regenVar + 1
+		ShowMessage fwvRegenCycleResetMessage incarnation
+		set awaitingInput to 1
+	else
+		MessageBoxEx "A bizarre crack in the wall... your tiny human mind can't comprehend what it's looking at."
+	endif
+
+End
+
+Begin GameMode
+
+	if awaitingInput == 1
+		set buttonVar to GetButtonPressed
+
+		if buttonVar > -1
+			set awaitingInput to 0
+
+			if buttonVar == 0	;Yes
+				set rSelf to GetSelf
+				set rBigCrack to rSelf.GetLinkedRef
+				set stage to 1
+			elseif buttonVar == 1	;No
+				;nothing
+			endif
+		endif
+	endif
+
+	if stage == 1
+		disableplayercontrols
+		rSelf.Disable 1
+		set stage to 2
+		printc "set stage 2"
+	elseif stage == 2
+		if timer < 6
+			set timer to timer + GetSecondsPassed
+			;printc "%g" timer
+		else
+			printc "big crack enable. set stage 3"
+			rBigCrack.Enable 1
+			set timer to 0
+			set stage to 3
+		endif
+	elseif stage == 3
+		if timer < 6
+			set timer to timer + GetSecondsPassed
+			;printc "%g" timer
+		else
+			player.PlaceAtMe fwvRegenExplosion2
+			printc "player regen explode. set stage 4"
+			set timer to 0
+			set stage to 4
+		endif
+	elseif stage == 4
+		rBigCrack.Disable 1
+		set fwvqRegen.regenVar to 0
+		set fwvqRegen.regenMode to 2
+		MessageEx "Your regeneration cycle has been reset."
+		enableplayercontrols
+		set stage to 0
+	endif
+
+End

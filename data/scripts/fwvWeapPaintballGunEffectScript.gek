@@ -1,0 +1,19 @@
+scn fwvWeapPaintballGunEffectScript
+
+float curAggro
+
+Begin ScriptEffectStart
+
+	let curAggro := getActorValue aggression
+	setActorValue aggression 100
+	MessageEx "[Target temporarily blinded]"
+
+End
+
+Begin ScriptEffectFinish
+
+	setActorValue aggression curAggro
+	MessageEx "[Target's sight has returned]"
+
+End
+

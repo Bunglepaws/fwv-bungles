@@ -1,0 +1,136 @@
+scn fwvAngelMotelNpcScriptXO
+
+float curHealth
+float angle
+float sAngle
+float rndNumber
+float rndSound
+float rndAnim
+float playerDmg
+short seen
+short teleport
+short locationCount
+short statueDisabled
+short sUpdate
+short rndNumber
+ref scream
+ref self
+ref statue
+ref location
+ref rBag
+ref rStatueRoom
+
+
+begin OnLoad
+	printc "loaded"
+end
+
+begin gamemode
+
+	; if we're not in the same cell or worldspace as the player...
+	if ((IsInInterior != Player.IsInInterior) || (IsInInterior && GetParentCell != Player.GetParentCell) || (IsInInterior == 0 && GetParentWorldspace != Player.GetParentWorldspace))
+		;stopCombat
+		if statue != 0 && IsFormValid statue != 1
+			statue.disable 0
+		endif
+		set statue to 0
+		set seen to 0
+	else
+		if statue && IsFormValid statue && statueDisabled == 0
+			if statue.GetDisabled
+				set statueDisabled to 1
+			endif
+		endif
+		; we are
+		stopCombat
+		saa 0.0
+		set self to getSelf
+		set angle to player.getheadingangle self
+		if sUpdate == 1
+			set sUpdate to 0
+			statue.MoveTo self
+		elseif GetDisabled == 1 ; disabled
+			if statue != 0 ;disable/delete old statue
+				statue.disable 0
+				set statue to 0
+				set seen to 0
+			endif
+		elseif statue == 0 || IsFormValid statue != 1 || statueDisabled ; no statue assigned, make one.
+			set statueDisabled to 0
+			set sUpdate to 1
+			set statue to PlaceAtMe fwvCreatureWeepingAngelStatue 1
+			set rStatueRoom to GetParentCell
+			set seen to 0
+		elseif statue && rStatueRoom == GetParentCell
+			ResetHealth
+			if angle < 60 && angle > -60
+				if seen == 0
+
+					if getStage fwvqAngelMotel == 20
+						setStage fwvqAngelMotel 50
+					endif
+
+					if player.getLOS self == 1
+						set rndSound to getRandomPercent
+						if rndSound < 33.3
+							set scream to fwvCreatureFXangelVox1
+						elseif rndSound < 66.6
+							set scream to fwvCreatureFXangelVox2
+						elseif rndSound < 100
+							set scream to fwvCreatureFXangelVox3
+						endif
+						PlaySound scream
+						set rndAnim to getRandomPercent
+						if rndAnim < 20
+							statue.playGroup jamA 0
+						elseif rndAnim < 40
+							statue.playGroup jamB 0
+						elseif rndAnim < 60
+							statue.playGroup jamC 0
+						elseif rndAnim < 80
+							statue.playGroup jamD 0
+						elseif rndAnim < 100
+							statue.playGroup jamF 0
+						endif
+					endif
+					self.setRestrained 1
+					set seen to 1
+					set sAngle to self.getAngle Z -180
+					statue.moveTo self
+					statue.setAngle Z sAngle
+					statue.SetScale 1
+				endif
+			else
+				if getDistance player < 100 && seen == 0
+					if fwvqRegen.TimeLordTrue == 1 && fwvqRegen.regenVar < 12
+						if teleport == 0
+							player.moveTo fwvAngelMotel02RoomRef 	;throw into the past
+							fwvAngelLootRef.moveTo fwvAngelLootMoveREF
+							player.removeAllItems fwvAngelLootRef 1 0 
+							PlaySound UIHealthChemsWearOff
+							SetPCSleephours 12
+							imod FadeInFromWhiteISFX
+							set teleport to 1
+							ShowMessage fwvAngelMotel2044Message
+						endif
+					else
+						player.KillActor
+					endif
+				endif
+				set seen to 0
+				self.setRestrained 0
+				statue.SetScale 0.0001
+			endif
+
+		elseif statue && rStatueRoom != GetParentCell
+			if rStatueRoom != 0
+				statue.markForDelete
+			endif
+			set statue to 0
+		endif
+	endif
+
+end
+
+
+

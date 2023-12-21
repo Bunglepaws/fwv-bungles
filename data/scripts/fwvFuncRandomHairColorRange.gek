@@ -1,0 +1,63 @@
+scn fwvFuncRandomHairColorRange
+
+float fHue
+float fSat
+float fLight
+float fLerpValue
+float fH1
+float fH2
+float fSatScale
+float fLightScale
+int iRGB
+
+begin Function {fH1, fH2, fSatScale, fLightScale}
+	set fHue to fH1 + GetRandomPercent * (fH2 - fH1 + 1) / 100.0
+	set fHue to GetRandomPercent / 100.0
+	set fHue to Call fwvFuncLerp fH1 fH2 fHue
+	
+	set fLerpValue to fHue / fH2
+	set fLerpValue to Call fwvFuncRange 0.4 0.8 fLerpValue
+	
+	;32 = 0.08889
+	if fHue < 0.09
+		set fSat to 0.09 - fHue
+		set fSat to Abs fHue
+		set fLerpValue to 1 - Call fwvFuncRange 0.0 0.9 fSat
+		set fSat to fLerpValue + (-0.1 + GetRandomPercent * (-0.1 - 0.1 + 1) / 100.0)
+	elseif fHue >= 0.14
+		set fSat to 0.14 - fHue
+		set fSat to Abs fHue
+		set fLerpValue to 1 - Call fwvFuncRange 0.0 0.14 fSat
+		set fSat to Call fwvFuncLerp 0.005 0.3 fLerpValue
+		set fSat to fLerpValue + (-0.1 + GetRandomPercent * (-0.1 - 0.1 + 1) / 100.0)
+	elseif fHue >= 0.09
+		set fSat to 0.09 - fHue
+		set fSat to Abs fHue
+		set fLerpValue to 1 - Call fwvFuncRange 0.0 0.075 fSat
+		set fSat to Call fwvFuncLerp 0.3 1.0 fLerpValue
+		set fSat to fLerpValue + (-0.1 + GetRandomPercent * (-0.1 - 0.1 + 1) / 100.0)
+	endif
+	set fSat to fSat * fSatScale
+	if fSat < 0
+		set fSat to 0.0
+	endif
+	if fSat > 1
+		set fSat to 1.0
+	endif
+
+	;set fLerpValue to (fHue - fH1) / (fH2 - fH1)
+	set fLight to fHue + (-0.2 + GetRandomPercent * (-0.2 - 0.2 + 1) / 100.0)
+	set fLight to Call fwvFuncRange fH1 fH2 fHue
+	set fLight to Call fwvFuncLerp 0.01 0.88 fLight
+	set fLight to fLight * fLightScale
+	if fLight < 0.0
+		set fLight to 0.0
+	endif
+	if fLight > 1.0
+		set fLight to 1.0
+	endif
+
+	set iRGB to Call fwvFuncHSVToInt fHue fSat fLight
+
+	SetFunctionValue iRGB
+end

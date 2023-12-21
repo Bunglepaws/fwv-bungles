@@ -1,0 +1,107 @@
+scn fwvT2CthrottleSCRIPT
+
+; Throttle with only Forward and Backward animations
+
+short sDesSetting
+short sCurSetting
+short sLastManualSetting
+short sMenu
+short sChoice
+short sDoOnce
+short sShaderDone
+
+short sPatchVersion
+ref rSelf
+begin GameMode
+	if sPatchVersion < fwvPatchVersion
+		set sPatchVersion to fwvPatchVersion
+		set rSelf to GetSelf
+		Call fwvFuncResetPosition rSelf
+	endif
+end
+
+Begin OnActivate player
+
+	activate
+	
+	if IsAnimPlaying == 0 && fwvq1.tFlying == 0 && fwvq1.flightMode != 3 && sMenu == 0
+		if fwvq1.tPath == 2
+			PlaySound UIHackingPassGood
+			ShowMessage fwvTthrottleMessage
+			set sMenu to 1
+		else
+			PlaySound UIHackingPassBad
+			set fwvq1.tPath to 0
+		endif
+	elseif (fwvq1.csrON == 2 || fwvq1.csrON == 3) && fwvq1.done == 0 && fwvq1.control == 12
+		set fwvq1.done to 1
+		PlaySound UIHackingPassGood
+	elseif IsAnimPlaying == 0 && fwvq1.tFlying == 1 && fwvq1.flightMode == 2
+		ShowMessage fwvTthrottleMessage
+		set sMenu to 1
+	endif
+
+end
+
+begin GameMode
+
+	if fwvq1.csrON == 0 && fwvq1.flightMode == 0 && GetStage fwvq1a >= 30 && GetQuestCompleted fwvq1a == 0
+		if fwvq1.tPath == 2
+			if sShaderDone == 0
+				pms fwvHologramPsychicMarker
+				set sShaderDone to 1
+			endif
+		else
+			sms fwvHologramPsychicMarker
+			set sShaderDone to 0
+		endif
+	endif
+	
+	if sDoOnce == 0
+		set sLastManualSetting to 1
+		set sDoOnce to 1
+	endif
+	
+	if IsAnimPlaying == 0 && fwvq1.tFlying == 0 && fwvq1.flightMode != 3 && fwvq1.tPath == 0
+		set sDesSetting to 0
+	elseif fwvq1.flightMode == 1
+		set sDesSetting to sLastManualSetting
+	endif
+	
+	if sMenu
+		set sChoice to GetButtonPressed
+		printc "sChoice %g" sChoice
+		if sChoice > 0
+			set sDesSetting to sChoice
+			set sLastManualSetting to sChoice
+			set fwvq1.tSpeedLvl to sDesSetting - 1
+			set fwvq1.tPath to 3
+		endif
+		set sMenu to 0
+	else
+		if (fwvq1.flightMode == 3 || fwvq1.flightMode == 0) && fwvq1.tPath == 0
+			set sDesSetting to 0
+		endif
+		if IsAnimPlaying == 0 && sCurSetting != sDesSetting
+			if sCurSetting == 0 && sDesSetting > sCurSetting
+				PlayGroup Forward 0
+				set sCurSetting to 1
+			elseif sCurSetting == 1 && sDesSetting > sCurSetting
+				set sCurSetting to 2
+			elseif sCurSetting == 1 && sDesSetting < sCurSetting
+				PlayGroup Backward 0
+				set sCurSetting to 0
+			elseif sCurSetting == 2 && sDesSetting > sCurSetting
+				set sCurSetting to 3
+			elseif sCurSetting == 2 && sDesSetting < sCurSetting
+				set sCurSetting to 1
+			elseif sCurSetting == 3 && sDesSetting < sCurSetting
+				set sCurSetting to 2
+			endif
+		elseif IsAnimPlaying == 0
+			;set fwvq1.tSpeedLvl to sDesSetting
+			;set fwvq1.tPath to 3
+		endif
+	endif
+end
+

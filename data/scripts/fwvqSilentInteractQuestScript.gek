@@ -1,0 +1,295 @@
+scn fwvqSilentInteractQuestScript
+
+short formType
+
+short index
+short count
+
+short index2
+short count2
+
+short shouldIgnore
+short silentSeen
+short seenByPlayer
+short seenByCount
+
+short aggStat
+
+ref curLinkRef
+ref curRef
+ref curSilRef
+ref curCell
+
+float loadedTimer
+float angleToward
+float angleFov
+float eyesightDist
+float passedTime
+
+ref linkMainLoc ; linkedref
+ref linkFleeLoc ; mainloc.linkedref
+float hiddenAtDay
+
+begin GameMode
+	set passedTime to GetSecondsPassed
+	set eyesightDist to 1280
+	set angleFov to 85
+	set formType to 42
+	if loadedTimer > 0 && ListGetCount fwvSilentLoadedList > 0
+		set silentSeen to 0 ; reset
+		set seenByPlayer to 0 ; reset
+		
+		set count2 to ListGetCount fwvSilentSeenList
+		set index2 to 0
+		
+		Label 4
+		if index2 < count2
+			set curSilRef to ListGetNthForm fwvSilentSeenList index2
+			curSilRef.setActorValue Variable02 0 ;reset seenByCount
+			set index2 to index2 + 1
+			Goto 4
+		endif
+		
+	
+	
+		Label 0
+		set loadedTimer to loadedTimer - passedTime
+		SetQuestDelay fwvqSilentInteractQuest 0.01
+		if formType == -1
+			set count to 1
+		else
+			set count to GetNumRefs formType 2
+		endif
+		set index to 0
+
+		Label 1
+		if index < count
+			if formType == -1
+				set curRef to Player
+			else
+				if index == 0
+					set curRef to GetFirstRef formType 2
+				else
+					set curRef to GetNextRef
+				endif
+			endif
+			set count2 to ListGetCount fwvSilentLoadedList
+			set index2 to 0
+			
+			if curRef.GetInFaction fwvSilentCreatureFaction == 0 && curRef.GetEquipped fwvIeyeDrive == 0 ; can't remember a silent naturally or otherwise
+				set shouldIgnore to 1
+				Label 2
+				
+				if index2 < count2
+					set curSilRef to ListGetNthForm fwvSilentLoadedList index2
+					set angleToward to curRef.GetHeadingAngle curSilRef
+					set index2 to index2 + 1
+					if curRef.GetDisabled == 0 && curRef.GetDead == 0
+						if curRef.IsInInterior == curSilRef.IsInInterior || (curRef.IsInInterior == 0 && curRef.GetInSameCell curSilRef) ; GetDistance will work here
+							if angleToward < angleFov && angleToward > -angleFov && curRef.GetDistance curSilRef <= eyesightDist && curSilRef.GetDead == 0 ; silence in eyesight, also alive
+								if curRef.GetLOS curSilRef ; not behind stuff (run here because slow)
+									if formType == -1
+										set seenByPlayer to 1
+									endif
+									set shouldIgnore to 0
+									set silentSeen to 1
+									curSilRef.setActorValue Variable01 1 ; has been seen
+									if curRef.GetInFaction fwvSilentIgnoreFaction
+										set seenByCount to curSilRef.getActorValue Variable02 + 1
+										curSilRef.setActorValue Variable02 seenByCount
+									endif
+									if ListGetFormIndex fwvSilentSeenList curSilRef < 0
+										ListAddForm fwvSilentSeenList curSilRef
+									endif
+									set index2 to count2 ; skip the rest
+								endif
+							endif
+						endif
+					else
+						set shouldIgnore to -1 ; don't process
+						set index2 to count2 ; skip
+					endif
+					
+					Goto 2
+				endif
+				
+				if shouldIgnore == 0 && curRef.GetInFaction fwvSilentIgnoreFaction
+					if curRef.GetInFaction fwvSilentIgnoreFaction
+						curRef.RemoveFromFaction fwvSilentIgnoreFaction
+					endif
+					curRef.RemoveFromFaction fwvSilentIgnoreFaction ; don't ignore a silent
+					curRef.AddToFaction fwvSilentEnemyFaction 0
+					;curSilRef.StartCombat curRef ; start combat
+					printtoconsole "DEBUG: %n can see silents" curRef
+				elseif shouldIgnore == 1 && curRef.GetInFaction fwvSilentIgnoreFaction == 0
+					if curRef.GetInFaction fwvSilentEnemyFaction
+						curRef.RemoveFromFaction fwvSilentEnemyFaction
+					endif
+					curRef.AddToFaction fwvSilentIgnoreFaction 0 ; ignore any silent
+					set curSilRef to curRef.GetCombatTarget
+					if curSilRef.GetInFaction fwvSilentCreatureFaction ; fighting with a silent, stop this
+						if formType != -1
+							curRef.StopCombat
+						else
+							; curSilRef.StopCombat
+						endif
+					endif
+					printtoconsole "DEBUG: %n ignoring silents" curRef
+				endif
+			endif
+			
+			set index to index + 1
+			
+			Goto 1
+		endif
+		
+		if formType == 42
+			set formType to formType + 1
+			goTo 0
+		elseif formType == 43
+			set formType to -1
+			goTo 0
+		endif
+		
+				
+		set count2 to ListGetCount fwvSilentSeenList
+		set index2 to 0
+		
+		Label 7
+		if index2 < count2
+			set curSilRef to ListGetNthForm fwvSilentSeenList index2
+			;set curCell to curSilRef.GetParentCell
+			set aggStat to 0
+			;if fwvSilentCreatureFaction.IsCellOwner curCell == 0
+			if curSilRef.IsInMyOwnedCell == 0
+				set aggStat to 1
+				;curSilRef.SetActorValue Aggression 1
+			endif
+				
+			if curSilRef.GetActorValue Variable02 > 0 ; this silent is being observed
+				curSilRef.setActorValue Variable01 1
+			endif
+			if silentSeen == 0 && curSilRef.IsInMyOwnedCell == 0 ; none are observed, send those who have been into hiding
+				set aggStat to 1
+				;curSilRef.SetActorValue Aggression 1
+				printtoconsole "ACTIVATE"
+				ListAddForm fwvSilentHideList curSilRef
+				ListRemoveForm fwvSilentSeenList curSilRef
+				
+				
+				;curSilRef.Activate curSilRef 1 ; set hiddenAtDay to GameDaysPassed
+				
+				if curSilRef.GetActorValue Variable01 == 1
+					set hiddenAtDay to GameDaysPassed
+					SetVariable "hiddenAtDay", hiddenAtDay, curSilRef
+					curSilRef.SetActorValue Variable01 2
+				elseif curSilRef.GetActorValue Variable01 == 2
+					let hiddenAtDay := GetVariable "hiddenAtDay", curSilRef
+					if GameDaysPassed >= hiddenAtDay + 2.0
+						curSilRef.SetActorValue Variable01 0
+						ListRemoveForm fwvSilentHideList curSilRef
+						if curSilRef.GetDead == 0
+							let linkMainLoc := GetRefVariable "linkMainLoc", curSilRef
+							if linkMainLoc != 0
+								curSilRef.MoveTo linkMainLoc
+							endif
+						else
+							curSilRef.Disable 0
+							curSilRef.MarkForDelete
+						endif
+					endif
+				endif
+				
+				set curLinkRef to curSilRef.GetLinkedRef
+				if curLinkRef != 0
+					set curLinKRef to curLinkRef.GetLinkedRef
+					if curLinkRef != 0
+						curSilRef.moveTo curLinkRef
+					else ; default to fight if no teleport location
+						set aggStat to 2
+						;curSilRef.SetActorValue Aggression 2
+					endif
+				else ; default to fight if no teleport location
+					set aggStat to 2
+					;curSilRef.SetActorValue Aggression 2
+				endif
+			elseif curSilRef.IsInMyOwnedCell
+				set aggStat to 2
+				;curSilRef.SetActorValue Aggression 2
+			endif
+			if aggStat > 0 && curSilRef.GetActorValue Aggression != aggStat
+				curSilRef.SetActorValue Aggression aggStat
+			endif
+			set index2 to index2 + 1
+			Goto 7
+		endif
+		if seenByPlayer == 1
+			; player sees Silent here
+			fwvFXSilentIdleRef.enable 0
+			fwvFXSilentIdleRef.MoveTo Player 0
+		else
+			fwvFXSilentIdleRef.disable 0
+		endif
+		
+	elseif ListGetCount fwvSilentLoadedList > 0 ; no silents loaded according to timer, clear list
+		SetQuestDelay fwvqSilentInteractQuest 2
+		set count to ListGetCount fwvSilentLoadedList
+		set index to 0
+		
+		Label 3
+		if index < count
+			ListRemoveNthForm fwvSilentLoadedList index
+			set index to index + 1
+			Goto 3
+		endif
+		
+		set count to ListGetCount fwvSilentSeenList
+		set index to 0
+		
+		Label 5
+		if index < count
+			ListRemoveNthForm fwvSilentSeenList index
+			set index to index + 1
+			Goto 5
+		endif
+	else
+		SetQuestDelay fwvqSilentInteractQuest 2
+	endif
+	
+	if ListGetCount fwvSilentHideList > 0 ; silents in hiding
+	
+		set count to ListGetCount fwvSilentHideList
+		set index to 0
+		
+		Label 6
+		if index < count
+			set curSilRef to ListGetNthForm fwvSilentHideList index
+			if curSilRef.GetInSameCell Player == 0
+				;curSilRef.Activate curSilRef 
+				
+				if curSilRef.GetActorValue Variable01 == 1
+					set hiddenAtDay to GameDaysPassed
+					SetVariable "hiddenAtDay", hiddenAtDay, curSilRef
+					curSilRef.SetActorValue Variable01 2
+				elseif curSilRef.GetActorValue Variable01 == 2
+					let hiddenAtDay := GetVariable "hiddenAtDay", curSilRef
+					if GameDaysPassed >= hiddenAtDay + 2.0
+						curSilRef.SetActorValue Variable01 0
+						ListRemoveForm fwvSilentHideList curSilRef
+						if curSilRef.GetDead == 0
+							let linkMainLoc := GetRefVariable "linkMainLoc", curSilRef
+							if linkMainLoc != 0
+								curSilRef.MoveTo linkMainLoc
+							endif
+						else
+							curSilRef.Disable 0
+							curSilRef.MarkForDelete
+						endif
+					endif
+				endif
+			endif
+			set index to index + 1
+			Goto 6
+		endif
+	endif
+end

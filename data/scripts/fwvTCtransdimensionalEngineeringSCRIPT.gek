@@ -1,0 +1,70 @@
+scn fwvTCtransdimensionalEngineeringSCRIPT
+
+;written by Demeggy 27/2/13
+
+short button
+short refining
+short mType 	;	1 - Bazoolium
+					;	2 - Kontron Crystal
+					;	3 - Validium
+					;	4 - Jethrik
+					;	5 - Trisilicate
+					;	6 - Dalekanium
+float day
+float craftTime						; determines how long the player takes to create the mineral based on their current skill level
+float timer
+
+float fCalc
+
+Begin onActivate player
+
+	activate player
+	set fwvqCraft.rewardCount to 1 + getRandomPercent * 5/100
+	if fwvqCraft.rewardCount < 0
+		set fwvqCraft.rewardCount to 1
+	endif
+
+	if fwvqCraft.refining == 0
+
+		ShowMessage fwvTCtransdimensionalEngMessage fwvq1.txl fwvqCraft.craftTime
+
+	else
+
+		set fCalc to fwvqCraft.craftTime - fwvqCraft.wTimer
+		ShowMessage fwvTCtransEngineeringInProgressMessage fCalc
+
+	endif
+
+end
+
+Begin GameMode
+
+	set button to getbuttonpressed
+
+	if button == 0
+		set fwvqCraft.Wtimer to 0.0
+		set fwvqCraft.refining to 1
+		set fwvqCraft.mType to 1
+	elseif button == 1
+		set fwvqCraft.Wtimer to 0.0
+		set fwvqCraft.refining to 1
+		set fwvqCraft.mType to 2
+	elseif button == 2
+		set fwvqCraft.Wtimer to 0.0
+		set fwvqCraft.refining to 1
+		set fwvqCraft.mType to 3
+	elseif button == 3
+		set fwvqCraft.Wtimer to 0.0
+		set fwvqCraft.refining to 1
+		set fwvqCraft.mType to 4
+	elseif button == 4
+		set fwvqCraft.Wtimer to 0.0
+		set fwvqCraft.refining to 1
+		set fwvqCraft.mType to 5
+	elseif button == 5
+		set fwvqCraft.Wtimer to 0.0
+		set fwvqCraft.refining to 1
+		set fwvqCraft.mType to 6
+	endif
+
+end

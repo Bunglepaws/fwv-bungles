@@ -1,0 +1,41 @@
+scn fwvTardisLabExtractorSCRIPT
+
+short button
+short extract
+float fCalc
+
+begin onactivate player
+	activate
+	;if fwvq1.cxl == 0		; intended for patches to initialise the level
+	;	set fwvq1.cxl to 1
+	;endif
+	set fwvqCraft.brewTime to 100 - fwvq1.cxl
+
+	if fwvTardisLabExtractorRef.getNumItems > 0
+		set fwvqCraft.rewardCountLab to 1 + getRandomPercent * 5/100
+
+		if fwvqCraft.brewing == 0
+			ShowMessage fwvTCchemistrySetMessage fwvq1.cxl fwvqCraft.brewTime
+		else
+			set fCalc to fwvqCraft.brewTime - fwvqCraft.lTimer
+
+			ShowMessage fwvTCchemistryReplicatingMessage fCalc
+		endif
+	else
+		MessageEx "Extraction Centrifuge is currently empty..."
+	endif
+end
+
+begin gamemode
+
+set button to getbuttonpressed
+
+	if button == 0
+		ShowMessage fwvTCchemistryReplicatorStartingMessage
+		set fwvqCraft.Ltimer to 0.0
+		Set fwvqCraft.brewing to 1
+	else
+
+	endif
+
+end

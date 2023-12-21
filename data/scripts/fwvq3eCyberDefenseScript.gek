@@ -1,0 +1,17 @@
+scn fwvq3eCyberDefenseScript
+
+ref arc1
+ref arc2
+ref arc3
+
+begin gamemode
+
+set arc1 to fwvq3eCyberDef01ArcRef 
+;set arc2 to fwvq3eCyberDef02ArcRef 
+;set arc3 to fwvq3eCyberDef03ArcRef 
+
+	if getDistance arc1 < 50 && arc1.getDisabled == 0
+		KillActor
+	endif
+
+end

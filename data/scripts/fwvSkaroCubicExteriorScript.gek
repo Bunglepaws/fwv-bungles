@@ -1,0 +1,15 @@
+scn fwvSkaroCubicExteriorScript
+
+begin OnTriggerEnter Player
+	if fwvqRooms.sSkaroLastCubicTouched != 2
+		set fwvqRooms.sSkaroLastCubicTouched to 2
+	endif
+end
+
+begin OnTriggerLeave Player
+	if fwvqRooms.sSkaroIsInterior == 1 && fwvqRooms.sSkaroLastCubicTouched == 2
+		set fwvqRooms.sSkaroIsInterior to 0
+		printc "outside"
+	endif
+end
+

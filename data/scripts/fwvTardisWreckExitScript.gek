@@ -1,0 +1,41 @@
+scn fwvTardisWreckExitScript
+
+float fTimer
+
+begin onTriggerEnter player
+	
+	if fwvTardisWreckCubeRef.destruct == 1
+		set fwvTardisWreckCubeRef.frame to 0
+	endif
+	player.moveTo fwvTardisWardrobeMasterExitRef
+
+end
+
+begin gamemode
+
+	if fwvTardisWreckCubeRef.frame == 1
+		if fTimer < 10.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			fwvCubeMasterRef.enable
+			player.addItem fwvOutfitMaster 1
+			player.addItem fwvItemSchemLaserScrewdriver 1
+			fwvTardisWreckBellsRef.enable
+			set fwvTardisWreckCubeRef.destruct to 1
+			EnablePlayerControls
+			fwvTardisWreckCubeRef.MarkForDelete
+			fwvTardisWreckCubeRef.Disable
+			set fwvTardisWreckCubeRef.frame to 2
+			set fTimer to 0.0
+		endif
+	elseif fwvTardisWreckCubeRef.frame == 2
+		if fTimer < 5.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			PlaySound FXExplosionNukeSmall3D
+			imod WhiteISFX
+			player.killActor
+		endif
+	endif
+
+end

@@ -1,0 +1,24 @@
+scn XODebugLightSwitchSCRIPT2
+
+
+
+Begin OnFire
+	
+	;MessageEx "Flying == %g" fwvq1.tFlying
+	;MessageEx "Kablooey == %g" fwvqInvasions.Kablooey
+	;MessageEx "DoOnce == %g"  fwvqInvasions.DoOnce
+	
+	;if player.getInCell fwvtInterior1 == 1
+		;MessageEx "InTardis"
+	;else
+		;MessageEx "Not InTardis"
+	;endif
+
+	;showMessage fwvXOMagicDebugMessage fwvq1.tFlying fwvqInvasions.sBlow fwvqInvasions.Kablooey fwvqInvasions.DoOnce fwvqInvasions.eType fwvqInvasions.fKablooeyTimer
+
+	MessageEx "TimeLordTrue == %g" fwvqRegen.TimeLordTrue
+
+
+End
+
+

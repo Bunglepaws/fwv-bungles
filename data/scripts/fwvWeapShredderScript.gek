@@ -1,0 +1,20 @@
+scn fwvWeapShredderScript
+
+ref rDestination
+
+;begin OnFire ;player
+	;let rDestination := fwvq1.rTDesktopScannerPosRef
+	;imod FadeInFromWhiteISFX
+	;PlaySound OBJStealthBoyActivateDvce
+	;Player.MoveTo rDestination
+;end
+
+Begin GameMode
+	
+	if player.getEquipped fwvWeapShredder == 1 && (player.getInCell fwvAngelMotel01 == 1 || player.getInCell fwvAngelMotel02 == 1) 
+		player.unequipitem fwvWeapShredder 0 1
+		;MessageBoxEx "[Strange... The Atomic Shredder can't get a beacon signal here. Interference of some kind? Hmm...]"
+		MessageEx "[The Atomic Shredder can't get a signal here...]"
+	endif
+
+End

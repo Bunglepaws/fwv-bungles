@@ -1,0 +1,33 @@
+scn fwvDiseaseSpectroxSCRIPT
+
+short infected
+
+begin scripteffectstart
+
+	MessageEx "You have been ifnected with Spectrox Toxaemia..."
+	set infected to gamedayspassed
+
+end
+
+begin scripteffectupdate
+
+	if GameDaysPassed > infected + 0.5
+		player.damageAV LeftAttackCondition 100
+		player.damageAV RightAttackCondition 100
+		player.damageAV LeftMobilityCondition 100
+		player.damageAV RightMobilityCondition 100
+		player.damageAV CarryWeight 500
+	endif
+
+end
+
+begin scripteffectfinish
+
+	if fwvqregen.TimeLordTrue == 1
+		set fwvqregen.regenMode to 1
+		set infected to 0
+	else
+		player.killActor
+	Endif
+
+end

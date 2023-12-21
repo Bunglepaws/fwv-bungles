@@ -1,0 +1,38 @@
+scn fwvTCdriftModeSCRIPT
+
+;written by Demeggy 15/3/13
+
+begin onactivate player
+
+printc "Drift Compensators Activated: %g" fwvqDrift.drift
+set fwvqDrift.dTimer to fwvqDrift.cSpeed
+
+if fwvq1.tFlying == 0 && (fwvq1.tTheme != 2 || fwvTC3exteriorDoorRef.sOpen == 0) && 1 == 0
+	if fwvqDrift.drift == 0
+		;start time rotor here
+		PlaySound fwvFXtardisLaunchLong
+		set fwvq1.tActive to 1
+		set fwvq1.tFlying to 1
+		set fwvq1.flightMode to 1
+		set fwvq1.tFlightType to 3
+		ShowMessage fwvTflightDriftMessage
+		set fwvqDrift.drift to 1
+		set fwvqDrift.lDrift to 1
+		printc "drift is now %g (0 - off, 1 - random, 2 - coordinated)" fwvqDrift.drift
+	elseif fwvqDrift.drift == 1
+		;stop time rotor gere
+		set fwvq1.tFlightType to 2 ; enter programmable
+		set fwvq1.chosenDoor to fwvq1.enableDoor ; set it to the same landing point as takeoff
+		set fwvq1.hbTimer to fwvq1.tSpeed ; and immediately land
+		set fwvqDrift.drift to 0
+		set fwvqDrift.lDrift to 0
+		ShowMessage fwvTflightDriftOffMessage
+		printc "drift is now %g (0 - off, 1 - random, 2 - coordinated)" fwvqDrift.drift 
+	elseif fwvqDrift.drift == 2
+		printc "switching to random drift"
+		set fwvqDrift.drift to 1
+		set fwvqDrift.lDrift to 1
+	endif
+endif
+
+end

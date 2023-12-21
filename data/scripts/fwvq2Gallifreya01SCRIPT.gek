@@ -1,0 +1,21 @@
+scn fwvq2Gallifreya01SCRIPT
+
+short doOnce
+
+begin gamemode
+
+if doOnce == 0
+	pms fwvRegenEffectShader
+	set doOnce to 1
+endif
+
+if getDistance player < 150
+	PlaySound UIPopUpExperienceUp
+	PlaySound UIKarmaUp
+	set fwvqTimeLord.gallifreya to fwvqTimeLord.gallifreya + 1
+	printc "Encyclopedia Gallifreya Collected: %g" fwvqTimeLord.gallifreya
+	MarkForDelete
+	Disable
+endif
+
+end

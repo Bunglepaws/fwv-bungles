@@ -1,0 +1,5 @@
+scn fwvSilenceGhostScript
+
+begin GameMode
+	saa 0.9
+end

@@ -1,0 +1,14 @@
+scn fwvTCvortexWallScript
+
+;if flightMode is takeoff, animate backwards
+;if flightMode is landing, animate forwards
+
+Begin GameMode
+
+	if fwvq1.flightMode == 1
+		PlayGroup backward 1
+	elseif fwvq1.flightMode == 3
+		PlayGroup forward 1		
+	endif
+
+End

@@ -1,0 +1,14 @@
+scn fwvq2librarySafeSCRIPT
+
+short doOnce
+
+begin onActivate
+
+if doOnce == 0
+	ShowMessage fwvq2librarySafeMessage
+	set doOnce to 1
+else
+	activate
+endif
+
+end

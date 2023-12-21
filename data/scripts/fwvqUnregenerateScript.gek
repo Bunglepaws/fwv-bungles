@@ -1,0 +1,44 @@
+scn fwvqUnregenerateScript
+
+short hunt
+float hTimer
+
+float sChance
+
+begin gamemode
+
+	if hunt == 0
+		if player.getItemCount fwvItemBioContainerFull >= 1
+			set hunt to 1
+		else
+			set hunt to 0
+		endif
+	elseif hunt == 1
+		if hTimer < 60.0
+			set hTimer to hTimer + getSecondsPassed
+		else
+			if player.getItemCount fwvItemBioContainerFull >= 1
+				player.removeItem fwvItemBioContainerFull 1 1
+				ShowMessage fwvItemBioContainerStolenMessage
+				set hTimer to 0.0
+				set hunt to 2
+			else
+				set hTimer to 0.0
+				set hunt to 0
+			endif
+		endif
+	elseif hunt == 2
+		if hTimer < 60.0
+			set hTimer to hTimer + getSecondsPassed
+		else
+			set sChance to getRandomPercent
+			fwvFacelessMarkerRef.moveTo Player
+			if sChance < 50.0
+				fwvFaceless1.enable
+				set hunt to 3
+			endif
+			set hTimer to 0.0
+		endif
+	endif
+
+end

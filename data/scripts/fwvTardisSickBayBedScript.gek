@@ -1,0 +1,97 @@
+scn fwvTardisSickBayBedScript
+
+
+
+float Timer
+float HealingDoOnce
+
+begin onActivate player
+	DisablePlayerControls 1 1 0 0 1 1 1 
+	ShowMessage fwvTardisSickbayHealOnMessage
+	;IMod FadeToBlack9sISFX
+	fwvSickbayNanoCloudREF1.enable
+	fwvSickbayNanoCloudREF2.enable
+	fwvSickbayNanoCloudREF3.enable
+	fwvSickbayNanoCloudREF4.enable
+	fwvSickbayNanoCloudREF5.enable
+	fwvSickbayNanoCloudREF6.enable
+	fwvSickbayNanoCloudREF7.enable
+	fwvSickbayNanoCloudREF8.enable
+	set Timer to 0.0
+	set HealingDoOnce to 1
+end
+
+begin gamemode
+
+
+
+	If ( HealingDoOnce == 1 ) && ( Timer  <  8 )
+		set Timer to Timer + getSecondsPassed
+		;fwvTardisSickbay.pms GlowingOneFXShader
+		;player.pms GlowingOneFXShader
+		;fwvTARDISSickBaybedREF.pms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF1.pms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF2.pms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF3.pms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF4.pms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF5.pms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF6.pms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF7.pms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF8.pms fwvHologramEvadeShader
+	endif
+	
+	if HealingDoOnce == 1 && ( Timer >= 8 )
+		;fwvTardisSickbay.sms GlowingOneFXShader
+		;fwvTARDISSickBaybedREF.sms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF1.sms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF2.sms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF3.sms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF4.sms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF5.sms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF6.sms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF7.sms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF8.sms fwvHologramEvadeShader
+		fwvSickbayNanoCloudREF1.disable
+		fwvSickbayNanoCloudREF2.disable
+		fwvSickbayNanoCloudREF3.disable
+		fwvSickbayNanoCloudREF4.disable
+		fwvSickbayNanoCloudREF5.disable
+		fwvSickbayNanoCloudREF6.disable
+		fwvSickbayNanoCloudREF7.disable
+		fwvSickbayNanoCloudREF8.disable
+		player.RemoveSpell WithdrawalAlcohol
+		player.RemoveSpell WithdrawalAntNectar
+		player.RemoveSpell WithdrawalBuffout
+		player.RemoveSpell WithdrawalHydra
+		player.RemoveSpell WithdrawalJet
+		player.RemoveSpell WithdrawalMentats
+		player.RemoveSpell WithdrawalMorphine
+		player.RemoveSpell WithdrawalPsycho
+		player.RemoveSpell WithdrawalQuantumNukacola
+		player.RemoveSpell WithdrawalRebound
+		player.RemoveSpell WithdrawalSteady
+		player.RemoveSpell WithdrawalTobacco
+		player.RemoveSpell WithdrawalTurbo
+		player.RemoveSpell BarkScorpionPoison
+		player.RemoveSpell CazadorPoison
+		player.RemoveSpell DeathClawPoison
+		player.RemoveSpell DLC03FeralGhoulPoison
+		player.RemoveSpell DLC03RadScorpion3Poison
+		player.RemoveSpell NightstalkerPoison
+		player.RemoveSpell RadScorpion1Poison
+		player.RemoveSpell RadScorpion2Poison
+		player.RemoveSpell fwvSkaroRadiationEffect		
+		Player.ResetHealth
+		Player.RestoreActorValue RadiationRads 1000
+		;ShowMessage PoisonRemovalMsg
+		;ShowMessage AddictionRemovalMsg
+		;ShowMessage HD00InfirmaryRadsMessage
+		ShowMessage fwvTardisSickbayHealDoneMessage
+		EnablePlayerControls
+		set HealingDoOnce to 0
+
+	endif
+
+	
+	
+end

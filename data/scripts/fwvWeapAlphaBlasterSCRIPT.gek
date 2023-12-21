@@ -1,0 +1,27 @@
+scn fwvWeapAlphaBlasterSCRIPT
+
+;written by Demeggy 7/3/13
+
+ref weaponref
+ref projectile
+short button
+short fireMode
+
+begin OnEquip Player
+	set fwvq1.fQuestDelayWeapon to 0.1
+
+end
+
+begin gamemode
+
+		;if fwvqWeaponQuest.alphaMode == 1
+		;	weaponRef.SetWeaponCritChance 0
+		;elseif fwvqWeaponQuest.alphaMode == 2
+		;	weaponRef.SetWeaponCritChance 100
+		;elseif fwvqWeaponQuest.alphaMode == 3
+		;	weaponRef.SetWeaponCritChance 0
+		;	set projectile to fwvWeapAlphaBigProjectile
+		;	setweaponprojectile projectile
+		;endif		
+
+end

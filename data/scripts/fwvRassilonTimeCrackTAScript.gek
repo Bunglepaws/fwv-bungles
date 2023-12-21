@@ -1,0 +1,18 @@
+scn fwvRassilonTimeCrackTAScript
+
+begin OnActivate Player
+	SetTalkingActivatorActor fwvRassilonOverseerRef
+	Activate
+end
+
+begin gamemode
+
+	if getStage fwvqGameOfRassilon == 20
+		imod FadeInFromWhiteISFX
+		imod ExplosionInFace
+		PlaySound FXFireGasHigh
+		MarkForDelete 
+		Disable
+	endif
+
+end

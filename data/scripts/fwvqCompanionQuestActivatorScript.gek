@@ -1,0 +1,91 @@
+scn fwvqCompanionQuestActivatorScript
+
+ref rSelf
+short button
+short sMenu
+Begin onActivate player
+
+	set rSelf to GetSelf
+	
+	if rSelf == fwvCQaiConsoleRef
+		if getStage fwvqCompanionTutorial == 55
+			ShowMessage fwvqCompanionQuestAIMessage
+			set sMenu to 1
+		endif
+	elseif rSelf == fwvCQdoorTerminalRef
+		if getStage fwvqCompanionTutorial == 40
+			if getLocked == 1
+				MessageBoxEx "Ask your companion to assist you with hacking this terminal."
+			endif
+		endif
+	elseif rSelf == fwvCQwheelerRef
+		if getStage fwvqCompanionTutorial == 50
+
+			SetTalkingActivatorActor fwvCQwheelerNpcRef
+			fwvCQwheelerRef.Activate player 1
+
+			;fwvCQwheelerRef.SetTalkingActivatorActor fwvCQwheelerNpcRef
+			;player.startConversation fwvCQwheelerRef
+			;fwvCQwheelerRef.activate player	1		
+		endif		
+	elseif rSelf == fwvQCdriveRef
+		if getStage fwvqCompanionTutorial == 57
+			set fwvqCompanionTutorial.reactor to 1
+			MessageEx "[Drive Systems Disengaged]"
+			fwvCQenginesRef.disable
+			PlaySound fwvFXspaceshipSlow
+			PlaySound OBJTurretGeneratorDisable
+			fwvQCdriveSteamRef.enable
+			set fwvqCompanionTutorial.countdown to 0
+			rimod fwvTardisRedISFX
+			fwvCQalarmRef.disable
+			fwvCQtardisDoorRef.unlock
+			fwvCQtardisDoorRef.setOpenState 1
+			setStage fwvqCompanionTutorial 60
+		else
+			MessageEx "Nothing happens..."
+		endif
+	elseif rSelf == fwvCQdriveDoorTerminalRef
+		if fwvCQdriveDoorTerminalRef.getLocked == 1
+			MessageBoxEx "Ask your companion to assist you with hacking this terminal."
+		endif
+	elseif rSelf == fwvCQdoor01Ref
+		if fwvCQdoor01Ref.getLocked == 1
+			MessageBoxEx "Ask your companion to assist you with lockpicking this door."
+		endif
+	endif
+end
+
+begin gamemode
+
+	if sMenu == 1
+		set button to getbuttonpressed
+		if button == 0 ;RESTORE 
+			set fwvqCompanionTutorial.countdown to 0
+			rimod fwvTardisRedISFX
+			fwvCQalarmRef.disable
+			fwvCQtardisDoorRef.unlock
+			fwvCQtardisDoorRef.setOpenState 1
+			SetObjectiveCompleted fwvqCompanionTutorial 55 1
+			setStage fwvqCompanionTutorial 60
+			fwvCQwheelerNpcRef.say GREETING
+			player.rewardKarma 10
+			set fwvqCompanionTutorial.reactor to 1
+			MessageEx "[Drive Systems Disengaged]"
+		 elseif button == 1  ;DELETE
+			set fwvqCompanionTutorial.countdown to 0
+			rimod fwvTardisRedISFX
+			fwvCQalarmRef.disable
+			fwvCQtardisDoorRef.unlock
+			fwvCQtardisDoorRef.setOpenState 1
+			SetObjectiveCompleted fwvqCompanionTutorial 55 1
+			SetStage fwvqCompanionTutorial 60
+			;fwvCQwheelerNpcRef.say GREETING
+			player.rewardKarma -10
+			set fwvqCompanionTutorial.reactor to 1
+			MessageEx "[Drive Systems Disengaged]"
+			;set fwvqRooms.sShakeEnabled to 0
+		endif
+	endif
+
+end

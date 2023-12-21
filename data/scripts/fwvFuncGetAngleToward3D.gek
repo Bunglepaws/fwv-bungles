@@ -1,0 +1,49 @@
+scn fwvFuncGetAngleToward3D
+
+ref rRefToTurn
+ref rRefToFace
+short sReturnAngle
+float fDeltaX
+float fDeltaY
+float fDeltaZ
+float fAngleZ
+float fAngleY
+float fVLength
+
+begin function { sReturnAngle, rRefToTurn, rRefToFace }
+	set fDeltaX to (rRefToFace.getPos X - rRefToTurn.getPos X)
+	set fDeltaY to (rRefToFace.getPos Y - rRefToTurn.getPos Y)
+	set fDeltaZ to (rRefToFace.getPos Z - rRefToTurn.getPos Z)
+	
+	;set fVLength to fDeltaX * fDeltaX + fDeltaY * fDeltaY + fDeltaZ * fDeltaZ
+	set fVLength to sqrt fVLength
+	set fVLength to rRefToFace.GetDistance rRefToTurn
+	
+	if fDeltaX == 0.0
+		set fDeltaX to 0.0001
+	endif
+	
+	if fVLength > 0.0
+		set fAngleZ to fDeltaY / fDeltaX
+		set fAngleZ to 0 - Tan fAngleZ 1
+		set fAngleZ to fmod fAngleZ 360.0
+		
+		set fAngleY to fDeltaZ / fVLength
+		set fAngleY to -sin fAngleY 1
+		if fDeltaX < 0
+			set fAngleY to 180 - fAngleY
+		endif
+		set fAngleY to fmod fAngleY 360.0
+		
+
+	else
+		set fAngleZ to 0
+		set fAngleY to 0
+	endif
+	
+	if sReturnAngle == 1
+		SetFunctionValue fAngleY
+	else
+		SetFunctionValue fAngleZ
+	endif
+end

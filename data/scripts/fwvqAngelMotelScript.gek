@@ -1,0 +1,314 @@
+scn fwvqAngelMotelScript
+
+ref rStatueRef
+
+float aTimer
+short ageToDeath
+short button
+short sWentToPast
+short rift
+float rTimer
+float fTimer
+short rSpawn
+float rAngle
+short DoOnce
+short curPower
+
+ref rCRotorRef 
+short explosion
+float timeSp
+short xoDoOnce
+
+short patch
+
+ref consoleRef
+
+begin gamemode
+
+	;if fwvTardisRiftLightRef.getDisabled == 0
+	;	printc "rift light is disabled"
+	;else
+	;	printc "rift light is enabled"
+	;endif
+
+	if getQuestCompleted fwvqAngelMotel == 1
+		if xoDoOnce == 0
+			fwvAngelNiptonRef.disable
+			fwvAngelNipton02Ref.disable
+			fwvAngelSaloonRef.disable
+			fwvAngelSaloon02Ref.disable
+			fwvAngelTumbleweedRef.disable
+			printc "old Angels Disabled"
+			
+			fwvAngelNiptonRefXO.moveto fwvAngelSpawnNiptonRef
+			fwvAngelNipton02RefXO.moveto fwvAngelSpawnNiptonRef02
+			fwvAngelSaloonRefXO.moveto fwvAngelSaloonSpawnRef
+			fwvAngelSaloon02RefXO2.moveto fwvAngelSaloonSpawnRef02
+			fwvAngelTumbleweedRefXO3.moveto fwvAngelTumbleweedSpawnRef
+			printc "New Angels prepped"
+			set xoDoOnce to 1
+		endif		
+
+	endif
+
+	;2.2.1 patch
+	if patch < 3
+		if rift == 3 && (fwvAngelTardisNpc1Ref.getDisabled == 1 || fwvAngelTardisNpc2Ref.getDisabled == 1 || fwvAngelTardisNpc3Ref.getDisabled == 1)
+			;set fwvq1.tPower to curPower
+			fwvTardisRiftLightRef.disable
+			imod FadeInFromBlack2sISFX
+			PlaySound UIHealthChemsAddicted
+			if fwvqSystems.tAdvanced == 1
+				Call fwvFuncTardisModeToggle
+			endif
+			MessageBoxEx "FWV Patch Update%r%rA bug has been detected in your save that will now be patched. The TARDIS will be reset and you will be teleported back to the control room."
+			set consoleRef to fwvq1.rTDesktopScannerPosRef
+			player.moveTo consoleRef
+			set fwvq1.tPower to 25
+			set fwvq1.tShields to 100
+			set fwvq1.tHull to 100
+			set fwvq1.tSpeed to 90
+			set fwvq1.tFuel to 100
+			set fwvq1.tArchitecture to 100
+			set fwvq1.tLifeSupport to 100
+			set fwvq1.tNav to 100
+			set fwvq1.tComms to 100
+			set fwvq1.tArchitectureOn to 1	;25
+			set fwvq1.tLifeSupportOn to 1	;10
+			set fwvq1.tNavOn to 1			;25
+			set fwvq1.tCommsOn to 1		;5
+			set fwvq1.tHadsOn to 1			;10
+			set fwvqSystems.Mass to 10
+			set fwvqSystems.Temperature to 0
+			fwvTardisLibraryRef.disable
+			fwvTardisGalleryRef.disable
+			fwvTardisObservatoryRef.disable
+			fwvTardisGardensRef.disable
+			fwvTardisBedroomRef.disable
+			fwvTardisGalleyRef.disable
+			fwvTardisSickbayRef.disable
+			fwvTardisWardrobeRef.disable
+			fwvTardisPoolRef.disable
+			fwvTardisWorkshopRef.disable
+			fwvTardisLabRef.disable
+			fwvTardisZeroRef.disable
+			set fwvqRooms.tLibrary to 0
+			set fwvqRooms.tMuseum to 0
+			set fwvqRooms.tObservatory to 0
+			set fwvqRooms.tGardens to 0
+			set fwvqRooms.tBedroom to 0
+			set fwvqRooms.tGalley to 0
+			set fwvqRooms.tSickbay to 0
+			set fwvqRooms.tWardrobe to 0
+			set fwvqRooms.tPool to 0
+			set fwvqRooms.tWorkshop to 0
+			set fwvqRooms.tLab to 0
+			set fwvqRooms.tZeroRoom to 0
+			set rTimer to 0.0
+			set rift to 0	
+			let patch := 3
+		endif
+	endif
+
+	set rCRotorRef to fwvq1.rCRotorRef
+
+	if getStage fwvqAngelMotel == 50
+		if player.getInCell fwvTinterior1 == 1
+			setStage fwvqAngelMotel 75
+		endif
+	elseif getStage fwvqAngelMotel == 90
+		if fwvq1.tFlying == 1
+			if player.getInCell fwvTinterior1 == 1
+				SetObjectiveCompleted fwvqAngelMotel 90 1
+				if DoOnce == 0
+					if fTimer < 5 
+						set fTimer to fTimer + GetSecondsPassed
+						printc "fTimer is %g" fTimer
+					else
+						if sWentToPast == 1
+							showMessage fwvAngelParadox2044MSG
+							set DoOnce to 1
+							set fTimer to 0
+							setStage fwvqAngelMotel 100
+							fwvAngelMotelNpc1Ref.disable
+							fwvAngelMotelNpc2Ref.disable
+							fwvAngelMotelNpc3Ref.disable
+						else
+							showMessage fwvAngelParadoxMSG
+							set DoOnce to 1
+							set fTimer to 0
+							setStage fwvqAngelMotel 100
+							fwvAngelMotelNpc1Ref.disable
+							fwvAngelMotelNpc2Ref.disable
+							fwvAngelMotelNpc3Ref.disable
+						endif
+					endif
+				endif
+			endif
+		endif
+	endif
+
+	;paradox cinematic
+
+	if explosion == 1
+		if timeSp < 0.25
+			set timeSp to timeSp + getSecondsPassed
+		else
+			rCRotorRef.placeAtMe fwvTardisMediumExplosion
+			rCRotorRef.pushactoraway player 1
+			sgtm 0.05
+			set timeSp to 0.0
+			set explosion to 2
+		endif
+	elseif explosion == 2
+		if timeSp < 0.5
+			set timeSp to timeSp + getSecondsPassed
+		else
+			sgtm 0.25
+			set timeSp to 0.0
+			set explosion to 3
+		endif
+	elseif explosion == 3
+		if timeSp < 1.0
+			set timeSp to timeSp + getSecondsPassed
+		else
+			sgtm 0.75
+			set timeSp to 0.0
+			set explosion to 4
+		endif
+	elseif explosion == 4
+		if timeSp < 0.5
+			set timeSp to timeSp + getSecondsPassed
+		else
+			sgtm 1
+			set timeSp to 0.0
+			set explosion to 5
+		endif
+	elseif explosion == 5
+		rCRotorRef.placeAtMe GrenadePulseExplosion
+		PlaySound FXExplosionNukeSmall3D
+		set fwvq1.tHull to 20
+		setstage fwvqAngelMotel 90
+		set explosion to 0
+	endif
+
+	;post quest spawning
+
+	if getquestcompleted fwvqAngelMotel == 1
+		if player.getInCell fwvTinterior1 == 1 && fwvqSystems.TemporalStabilizer == 0 && fwvqSystems.tAdvanced == 1
+			if rift == 0 && fwvqRooms.sConsoleWeather == 0 && fwvqEvents.systemEvent == 0 ; if in TARDIS but not in console room (prevents getting locked away from rift)
+				fwvAngelTardisNpc1Ref.disable
+				fwvAngelTardisNpc2Ref.disable
+				fwvAngelTardisNpc3Ref.disable
+				if rTimer < 180.0
+
+					set rTimer to rTimer + getSecondsPassed
+				elseif fwvTardisRiftMarkerRef.getDistance player >= 128
+					set rSpawn to getRandomPercent
+					;MessageEx "rSpawn %g" rSpawn
+					if rSpawn < 80
+
+						set rTimer to 0.0
+					else
+						set fwvqEvents.systemEvent to 1
+						set rTimer to 0.0
+						set rift to 1
+						MessageEx "A Causal Rift has been detected within the TARDIS..."
+					endif
+				endif
+			elseif rift == 1
+				; if close to player, play the fade effect to transition it in nicely
+				printc "BLOCK RUNNING"
+				if player.getDistance fwvTardisRiftMarkerRef < 250
+					imod fwvFadeFromWhiteFastISFX
+				endif
+				fwvTardisRiftLightRef.setAngle X 0
+				fwvTardisRiftLightRef.setAngle Y 0
+				fwvTardisRiftLightRef.setAngle Z 0
+				fwvTardisRiftLightRef.enable 0
+				set rSpawn to 1 + getRandomPercent * 3/100
+				if rSpawn == 1
+					fwvTardisRiftLightRef.moveTo fwvCombatBoardingRef
+				elseif rSpawn == 2
+					fwvTardisRiftLightRef.moveTo fwvCombatBoarding2Ref
+				elseif rSpawn == 3
+					fwvTardisRiftLightRef.moveTo fwvCombatBoarding3Ref					
+				endif
+				fwvAngelTardisNpc1Ref.moveTo fwvCombatBoardingRef
+				fwvAngelTardisNpc2Ref.moveTo fwvCombatBoarding2Ref
+				fwvAngelTardisNpc3Ref.moveTo fwvCombatBoarding3Ref
+				set fwvAngelTardisNpc1Ref.statue to 0
+				set fwvAngelTardisNpc2Ref.statue to 0
+				set fwvAngelTardisNpc3Ref.statue to 0
+				fwvAngelTardisNpc1Ref.enable
+				fwvAngelTardisNpc2Ref.enable
+				fwvAngelTardisNpc3Ref.enable
+				;set curPower to fwvq1.tPower
+				set curPower to 0
+				set rift to 2
+			elseif rift == 2
+				if rTimer < 30.0
+					set rTimer to rTimer + getSecondsPassed
+				else
+					if fwvq1.tPower > 5
+						set fwvq1.tPower to fwvq1.tPower - 5
+						set curPower to curPower + 5
+						MessageEx "TARDIS Power now at %g%%" fwvq1.tPower
+					else
+						set fwvq1.tHull to fwvq1.tHull - 5
+						MessageEx "TARDIS Outer Plasmic Shell integrity now at %g%%" fwvq1.tHull
+					endif
+					set rTimer to 0.0
+				endif
+
+				;if the player finds the rift and enters, close it
+				if fwvTardisRiftLightRef.getDistance player < 50
+					set fwvqAngelMotel.rift to 3
+				endif
+
+			elseif rift == 3
+				set fwvq1.tPower to fwvq1.tPower + curPower
+				printc "%g was restored to the TARDIS" curPower
+				printc "power is %g" fwvq1.tPower 
+				fwvTardisRiftLightRef.disable
+				fwvAngelTardisNpc1Ref.disable
+				fwvAngelTardisNpc2Ref.disable
+				fwvAngelTardisNpc3Ref.disable
+				set rStatueRef to fwvAngelTardisNpc1Ref.statue
+				rStatueRef.MarkForDelete
+				set rStatueRef to fwvAngelTardisNpc2Ref.statue
+				rStatueRef.MarkForDelete
+				set rStatueRef to fwvAngelTardisNpc3Ref.statue
+				rStatueRef.MarkForDelete
+				imod FadeToWhiteAndBackISFX
+				PlaySound UIHealthChemsAddicted
+				MessageBoxEx "The Causal Rift has been sealed. Power has been restored..."
+				set fwvqEvents.systemEvent to 0
+				set rTimer to 0.0
+				set rift to 0			
+			endif
+		
+		elseif player.getInCell fwvTinterior1 == 1 && rift > 0 && (fwvqSystems.TemporalStabilizer == 1 || fwvqSystems.tAdvanced == 0)
+			set fwvq1.tPower to fwvq1.tPower + curPower
+			printc "%g was restored to the TARDIS" curPower
+			printc "power is %g" fwvq1.tPower 
+			fwvTardisRiftLightRef.disable
+			fwvAngelTardisNpc1Ref.disable
+			fwvAngelTardisNpc2Ref.disable
+			fwvAngelTardisNpc3Ref.disable
+			set rStatueRef to fwvAngelTardisNpc1Ref.statue
+			rStatueRef.MarkForDelete
+			set rStatueRef to fwvAngelTardisNpc2Ref.statue
+			rStatueRef.MarkForDelete
+			set rStatueRef to fwvAngelTardisNpc3Ref.statue
+			rStatueRef.MarkForDelete
+			imod FadeToWhiteAndBackISFX
+			PlaySound UIHealthChemsAddicted
+			MessageBoxEx "The Causal Rift has been sealed. Power has been restored..."
+			set fwvqEvents.systemEvent to 0
+			set rTimer to 0.0
+			set rift to 0
+		endif
+	endif
+
+end

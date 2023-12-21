@@ -1,0 +1,17 @@
+scn fwvTCchameleonRepairSCRIPT
+
+begin onactivate player
+
+if player.getItemCount fwvArmourChameleonArch == 1 
+	ShowMessage fwvTCchameleonRepairMessage
+	PlaySound UIRepairWeapon
+	imod FadeToBlackAndBackQuickISFX
+	player.removeItem fwvArmourChameleonArch 1
+	fwvTLeyeRef.enable
+	Disable
+else
+	ShowMessage fwvTCchameleonBrokenMessage
+endif
+
+end
+

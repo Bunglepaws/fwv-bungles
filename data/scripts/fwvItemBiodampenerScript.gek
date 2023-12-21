@@ -1,0 +1,9 @@
+scn fwvItemBiodampenerScript
+
+begin onEquip Player
+	MessageEx "You are now shielded from Alien Detection..."
+end
+
+begin onUnEquip Player
+	MessageEx "You are now unshielded from Alien Detection..."
+end

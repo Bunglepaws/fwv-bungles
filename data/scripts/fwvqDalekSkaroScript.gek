@@ -1,0 +1,68 @@
+scn fwvqDalekSkaroScript
+
+short dialogue
+short AsylumSecCount
+short component
+short repaired
+float rTimer
+float y
+float yPos
+float z
+float zPos
+float fDay
+short SetHolo
+
+begin gamemode
+
+	set yPos to fwvDalekSkaroZetaExitRef.getPos y - 30
+	set zPos to fwvDalekSkaroZetaExitRef.getPos z + 10
+
+	if getStage fwvqDalekSkaro < 75
+		if component >= 5
+			setStage fwvqDalekSkaro 75
+		endif
+	endif
+
+	if repaired == 1
+		if rTimer < 2.0
+			set rTimer to rTimer + getSecondsPassed
+		else
+			fwvDalekSkaroIntercomRef.disable 0
+			fwvDalekSkaroZetaExitRef.enable
+			set y to 14660.9043
+			set z to 590.7072
+			fwvDalekSkaroIntercomRef.disable 0
+			fwvDalekSkaroZetaExitRef.enable
+			fwvDalekSkaroZetaExitRef.PlayIdle Forward
+			PlaySound fwvDalekSkaroZetaExit
+			imod VArchimedesFlashISFX
+			setStage fwvqDalekSkaro 100
+			EnablePlayerControls
+			set rTimer to 0.0
+			set repaired to 2
+		endif
+	elseif repaired == 2
+		let fDay := GameDaysPassed 
+		if rTimer < 10.0
+			set rTimer to rTimer + getSecondsPassed
+			fwvDalekSkaroZetaExitRef.setPos y yPos
+			fwvDalekSkaroZetaExitRef.setPos z zPos
+		else
+			fwvDalekSkaroZetaExitRef.disable
+			set rTimer to 0.0
+			set repaired to 0
+		endif
+	endif
+
+
+	if player.getInCell fwvSkaroAsylum == 1
+		if fwvEmperorHoloRef.hasEffectShader fwvHologramInterfaceNeutral == 0
+			fwvEmperorHoloRef.pms fwvHologramInterfaceNeutral
+			fwvEmperorHoloRef.saa 0.6
+			;set SetHolo to 1
+		endif
+	endif
+
+
+
+end

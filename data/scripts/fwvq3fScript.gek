@@ -1,0 +1,17 @@
+scn fwvq3fScript
+
+float fTimer
+short frame
+
+begin gamemode
+
+	if getStage fwvq3f == 10
+		fwvq3fCrashedSaucerRef.enable
+		fwvq3fCrashedSaucerRef.skipAnim
+	endif
+
+	if fwvq3fDalekScoutRef.getDead == 1 && getStage fwvq3f == 20
+		setStage fwvq3f 30
+	endif
+
+end

@@ -1,0 +1,146 @@
+scn fwvqSilurianColonyScript
+
+short move01
+short move02
+short move03
+short move04
+
+short clevel
+short tlevel
+short init
+
+short gasOn
+short warning
+short reactorStart
+short reactorOn
+float rTimer
+
+short ventCount
+
+float vTimer
+float vCount
+float vChance
+
+float sTimer
+float sCount
+float sChance
+float sPoint
+
+short dialogue
+
+ref vent1
+ref vent2
+ref vent3
+ref vent4
+
+begin gamemode
+
+	set vent1 to fwvSilurianColonyValve01FXRef 
+	set vent2 to fwvSilurianColonyValve02FXRef 
+	set vent3 to fwvSilurianColonyValve03FXRef 
+	set vent4 to fwvSilurianColonyValve04FXRef 
+
+	if init == 0
+		set clevel to 2
+		set init to 1
+	endif
+
+	if getStage fwvqSilurianColony == 60
+		if fwvCompanionSalaanRef.getInCell fwvSilurianLostCity == 0
+			set dialogue to 7
+			player.startConversation fwvCompanionSalaanRef
+		endif
+	elseif getStage fwvqSilurianColony == 90
+		if fwvCompanionSalaanRef.getInWorldSpace WastelandNV
+			set dialogue to 8
+			player.startConversation fwvCompanionSalaanRef
+		endif	
+	endif
+
+	if gasOn == 1
+		if player.getInCell fwvSilurianLostCity == 1
+			player.damageAV health 0.05
+		endif
+	endif
+
+;--------------------------------
+
+if reactorOn == 1
+	if rTimer < 60.0
+		set rTimer to rTimer + getSecondsPassed
+	else
+		if warning == 0
+			MessageEx "60 seconds remaining..."
+			set warning to 1
+			set rTimer to 0.0
+		else
+			fwvSilurianColonyBridgeRef.enable
+			PlaySound QSTEndSecuritronsApproach
+			setStage fwvqSilurianColony 40
+			set fwvqSilurianColony.dialogue to 4
+			set move01 to 1
+			set move02 to 1
+			set move03 to 1
+			set move04 to 1
+			vent1.disable
+			vent2.disable
+			vent3.disable
+			vent4.disable
+			set reactorOn to 0
+			set reactorStart to 0
+		endif
+	endif
+endif
+
+if reactorStart == 1
+	if sTimer < sCount
+		set sTimer to sTimer + getSecondsPassed
+	else
+		set sChance to getRandomPercent
+		printc "chance of silurian appearing %g" sChance
+		if sChance > 50
+			set sPoint to getRandomPercent
+			if sPoint < 50
+				fwvSilurianColonyMagmaSpawn1Ref.placeAtMe fwvSilurianInfected 0
+			else
+				fwvSilurianColonyMagmaSpawn2Ref.placeAtMe fwvSilurianInfected 0
+			endif
+		endif
+		set sCount to 1 + getRandomPercent *6/100
+		printc "next silurian in %g" sCount
+		set sChance to 0
+		set sPoint to 0
+		set sTimer to 0.0
+
+	endif
+
+	if vTimer < vCount
+		if vent1.getDisabled == 0 && vent2.getDisabled == 0 && vent3.getDisabled == 0 && vent4.getDisabled == 0
+			imod FadeInFromWhiteISFX
+			PlaySound FXExplosionNukeSmall3D
+		else
+			set vTimer to vTimer + getSecondsPassed
+		endif
+	else
+		set vChance to getRandomPercent
+		if vChance < 25
+			fwvSilurianColonyValve01FXRef.enable
+			fwvSilurianColonyValve01FXRef.placeAtMe FireExtinguisherExplosion
+		elseif vChance < 50
+			fwvSilurianColonyValve02FXRef.enable
+			fwvSilurianColonyValve02FXRef.placeAtMe FireExtinguisherExplosion
+		elseif vChance < 75
+			fwvSilurianColonyValve03FXRef.enable
+			fwvSilurianColonyValve03FXRef.placeAtMe FireExtinguisherExplosion
+		elseif vChance <= 100
+			fwvSilurianColonyValve04FXRef.enable
+			fwvSilurianColonyValve04FXRef.placeAtMe FireExtinguisherExplosion
+		endif
+		PlaySound FXExplosionMineLunchbox
+		set vChance to 0
+		set vCount to 1 + getRandomPercent *6/100
+		set vTimer to 0.0
+	endif
+endif
+
+end

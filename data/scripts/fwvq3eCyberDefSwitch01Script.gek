@@ -1,0 +1,29 @@
+scn fwvq3eCyberDefSwitch01Script
+
+float timer
+short switchOn
+
+begin onActivate player
+
+	if getStage fwvq3e >= 80
+		if fwvq3eCyberDef01ArcRef.getDisabled == 1
+			fwvq3eCyberDef01ArcRef.enable
+			set switchOn to 1
+		endif
+	endif
+
+end
+
+begin gamemode
+
+	if switchOn == 1
+		if timer < 2.5
+			set timer to timer + getsecondspassed
+		else
+			fwvq3eCyberDef01ArcRef.disable
+			set timer to 0.0
+			set switchOn to 0
+		endif
+	endif
+
+end

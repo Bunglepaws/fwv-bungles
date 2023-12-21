@@ -1,0 +1,34 @@
+scn fwvFuncGetRandomSPECIAL
+
+short sRandomStat
+short sBaseAverageStat
+float fStatMultiplier
+short sOriginalStat
+
+begin function { sBaseAverageStat, fStatMultiplier, sOriginalStat }
+	if sBaseAverageStat == 0
+		set sBaseAverageStat to 5
+		set fStatMultiplier to 0.5
+	endif
+	if fStatMultiplier == 0.0 ; never use exactly 0.0 for multipliers, only for resetting
+		set fStatMultiplier to 0.5
+	endif
+
+	if fStatMultiplier == 0.5
+		set sRandomStat to 0 + GetRandomPercent * (3 - 0 + 1) / 100
+	else
+		set fStatMultiplier to fStatMultiplier * 2.0 - 1.0
+		set sRandomStat to (0 + GetRandomPercent * (3 - 0 + 1) / 100) + (fStatMultiplier * 10.0)
+	endif
+	if GetRandomPercent < 50 && fStatMultiplier == 0.5
+		set sRandomStat to -sRandomStat
+	endif
+	set sRandomStat to sBaseAverageStat + sRandomStat
+	if sRandomStat < 1
+		set sRandomStat to 1
+	endif
+	if sRandomStat > 10
+		set sRandomStat to 10
+	endif
+	SetFunctionValue sRandomStat
+end

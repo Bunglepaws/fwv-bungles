@@ -1,0 +1,8 @@
+scn fwvTardisDeathTriggerScript
+
+Begin onTriggerEnter player
+
+	imod WhiteISFX
+	player.killActor
+
+End

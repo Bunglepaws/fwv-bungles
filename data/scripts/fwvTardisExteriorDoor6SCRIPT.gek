@@ -1,0 +1,31 @@
+scn fwvTardisExteriorDoor6SCRIPT
+
+short sOpen
+short sInit
+
+begin GameMode
+	if sInit == 0
+		set sInit to 1
+		set sOpen to 1
+	endif
+
+	if sOpen != fwvq1.sDoorIsOpen
+		set sOpen to fwvq1.sDoorIsOpen
+		if sOpen == 0
+			PlayGroup Forward 0
+		else
+			PlayGroup Backward 0
+		endif
+	endif
+
+	if IsAnimPlaying == 0
+		if sOpen == fwvT6ExitDoorTriggerRef.GetDisabled
+			if sOpen == 0
+				fwvT6ExitDoorTriggerRef.Disable 0
+			else
+				fwvT6ExitDoorTriggerRef.Enable 0
+			endif
+		endif
+	endif
+end
+

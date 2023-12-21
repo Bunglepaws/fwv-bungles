@@ -1,0 +1,39 @@
+scn fwvSkillJournalEffectScript
+
+ref rTDesktopRoom
+short sEffectStep
+float fElapsedSeconds
+
+begin ScriptEffectUpdate
+	set fElapsedSeconds to fElapsedSeconds + ScriptEffectElapsedSeconds
+
+	set rTDesktopRoom to fwvq1.rTDesktopRoom
+		
+	if Player.GetInCell rTDesktopRoom || Player.GetInCell fwvTinterior1
+		if sEffectStep == 0
+			set sEffectStep to 1
+			imod fwvFadeToWhiteFastISFX
+		elseif sEffectStep == 1 && fElapsedSeconds >= 0.5
+			set sEffectStep to 2
+			PlayBink "fowv\SpinningText.bik" 0 1 0 1
+		elseif sEffectStep == 2 && fElapsedSeconds >= 1.0
+			set sEffectStep to 10
+			imod fwvFadeFromWhiteFastISFX
+		endif
+	elseif sEffectStep == 0
+		set sEffectStep to 10
+		if Player.IsSpellTarget fwvSkillJournal1Effect
+			if Player.GetActorValue Intelligence <= 3
+				ShowMessage fwvSkillJournal1DumbMessage
+			elseif Player.GetActorValue Intelligence >= 7
+				ShowMessage fwvSkillJournal1SmartMessage
+			else
+				ShowMessage fwvSkillJournal1AverageMessage
+			endif
+		endif
+	endif
+
+	if sEffectStep == 10
+		RemoveSpell fwvSkillJournal1Effect
+	endif
+end

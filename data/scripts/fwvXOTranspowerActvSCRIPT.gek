@@ -1,0 +1,172 @@
+scn fwvXOTranspowerActvSCRIPT
+
+short sAwaitingInput
+float fRandPer
+;short TranspowerAnimate
+;float fTimer
+short button
+float EngineDay
+short sMustWait
+
+
+begin OnActivate ; player clicks the thing
+	if getisReference fwvTranspowerControlREF == 1
+		
+		if GameDaysPassed < EngineDay
+			set EngineDay to 0.0
+		endif
+	
+		if fwvqSystems.tAdvanced == 1  ; Only allow Transpower in Advanced
+			if fwvq1.tFlying == 1 
+				MessageBoxEx "You cannot connect or improve the performance of the Ancillary Power Station while the TARDIS is in flight."
+			endif
+			
+			if fwvqSystems.failsafe == 0
+				MessageBoxEx "You cannot connect or improve the performance of the Ancillary Power Station without Core failsafes in place."
+			endif
+			
+			if fwvqSystems.cSys == 0
+				MessageBoxEx "You cannot connect or improve the performance of the Ancillary Power Station while the TARDIS is nonfunctional."
+			endif
+			
+			if fwvqEvents.systemEvent == 1
+				MessageBoxEx "You cannot connect or improve the performance of the Ancillary Power Station at this time - deal with the Event at hand first!"
+			endif	
+			
+			if fwvq1.txl >= 50 && fwvq1.tFlying == 0 && fwvqSystems.failsafe == 1 && fwvqSystems.cSys == 1 && fwvqEvents.systemEvent == 0
+				showmessage fwvAncillaryMenuMSG
+				set sAwaitingInput to 1
+			endif
+
+			if fwvXOTranspowerQuest.TranspowerOn == 1 && (fwvq1.tFlying == 1 || fwvqSystems.failsafe == 0 || fwvqSystems.cSys == 0 || fwvqEvents.systemEvent == 1)
+				showmessage fwvAncillaryMenuMSG3
+				set sAwaitingInput to 1
+			endif
+			
+			if fwvq1.txl < 50
+				MessageBoxEx "Your Temporal Engineering Skill is too low to modify the Quantum Field."
+			endif
+		else
+			MessageBoxEx "You can only connect the Ancillary Power Station while the TARDIS is operating in Advanced Mode."
+		endif
+	endif
+	
+	if getisReference fwvTancPanelREF02A
+		if fwvXOTranspowerQuest.TranspowerOn == 1
+			showmessage fwvTranspowerRunningMSG fwvXOTranspowerQuest.sCurrentTXL fwvXOTranspowerQuest.sBonusPower
+		else
+			MessageEx "[Ancillary Power Station offline]"
+		endif
+	endif
+end
+
+
+
+begin GameMode
+	if sAwaitingInput == 1
+		set button to GetButtonPressed
+		if button == 0 	; Modify the Quantum Field, do all the stuff here
+			
+			if GameDaysPassed > EngineDay + 1.0
+					
+				set fwvXOTranspowerQuest.sCurrentTXL to fwvq1.txl
+				set fwvXOTranspowerQuest.sLuck to player.GetActorValue Luck
+				set fwvXOTranspowerQuest.sLuckBonus to fwvXOTranspowerQuest.sLuck - 5
+				printc "Luck is %g  & sLuckBonus is %g" fwvXOTranspowerQuest.sLuck fwvXOTranspowerQuest.sLuckBonus
+				printc "CurrentTXL is %g" fwvXOTranspowerQuest.sCurrentTXL
+				let fRandPer := getRandomPercent
+				printc "Randper intiial is %g" fRandPer
+				set fRandPer to fRandPer + fwvXOTranspowerQuest.sLuckBonus
+				printc "RandPer adjusted is %g" fRandPer
+				
+				
+				if fRandPer <= 20
+					MessageBoxEx "The connection shorts, and the Powercell is destroyed. There is no change to the Ancillary Power Station status."
+					player.removeItem fwvWeapEmergencyPowercell 1
+					set sAwaitingInput to 0
+					set EngineDay to GameDaysPassed
+					
+				elseif fRandPer > 66 ; Full Efficiency
+					set fwvXOTranspowerQuest.sBonusPower to (fwvXOTranspowerQuest.sCurrentTXL / 3)   	; CALCULATE BONUS POWER
+					if fwvXOTranspowerQuest.sBonusPower > 30
+						set fwvXOTranspowerQuest.sBonusPower to 30
+						printc "sBonusPower rounded down to %g" fwvXOTranspowerQuest.sBonusPower
+					endif
+								
+					if fwvXOTranspowerQuest.sBonusPower <= fwvXOTranspowerQuest.sBonusPowerLast
+						MessageBoxEx "Your attempt failed to increase Bonus Power. The Powercell was consumed in the attempt."
+						player.removeItem fwvWeapEmergencyPowercell 1
+						set sAwaitingInput to 0
+						set EngineDay to GameDaysPassed
+					endif
+						
+					if fwvXOTranspowerQuest.sBonusPower > fwvXOTranspowerQuest.sBonusPowerLast
+						MessageBoxEx "You connect the Powercell with high efficiency. Bonus power is %g Units."  fwvXOTranspowerQuest.sBonusPower				
+						set fwvq1.tPower to fwvq1.tPower - fwvXOTranspowerQuest.sBonusPowerLast
+						set fwvq1.tPower to fwvq1.tPower + fwvXOTranspowerQuest.sBonusPower; SET POWER HERE
+						set fwvXOTranspowerQuest.sBonusPowerLast to fwvXOTranspowerQuest.sBonusPower			
+						player.removeItem fwvWeapEmergencyPowercell 1
+						set fwvXOTranspowerQuest.TranspowerAnimate to 1
+						set sAwaitingInput to 0
+						set fwvXOTranspowerQuest.TransPowerOn to 1
+						set EngineDay to GameDaysPassed
+					endif
+					
+									
+				else ; That should be anything over 20 and under/equal to 66, so that's Half Efficiency
+					set fwvXOTranspowerQuest.sBonusPower to (fwvXOTranspowerQuest.sCurrentTXL / 6)				; CALCULATE BONUS POWER
+					if fwvXOTranspowerQuest.sBonusPower > 20
+						set fwvXOTranspowerQuest.sBonusPower to 20
+						printc "sBonusPower rounded down to %g" fwvXOTranspowerQuest.sBonusPower
+					endif
+								
+					if fwvXOTranspowerQuest.sBonusPower <= fwvXOTranspowerQuest.sBonusPowerLast
+						MessageBoxEx "Your attempt failed to increase Bonus Power. The Powercell was consumed in the attempt."
+						player.removeItem fwvWeapEmergencyPowercell 1
+						set sAwaitingInput to 0
+						set EngineDay to GameDaysPassed
+					endif
+						
+					if fwvXOTranspowerQuest.sBonusPower > fwvXOTranspowerQuest.sBonusPowerLast
+						MessageBoxEx "You connect the Powercell with limited efficiency. Bonus power is %g Units." fwvXOTranspowerQuest.sBonusPower			
+						set fwvq1.tPower to fwvq1.tPower - fwvXOTranspowerQuest.sBonusPowerLast
+						set fwvq1.tPower to fwvq1.tPower + fwvXOTranspowerQuest.sBonusPower; SET POWER HERE
+						set fwvXOTranspowerQuest.sBonusPowerLast to fwvXOTranspowerQuest.sBonusPower						
+						player.removeItem fwvWeapEmergencyPowercell 1
+						set fwvXOTranspowerQuest.TranspowerAnimate to 1
+						set sAwaitingInput to 0
+						set fwvXOTranspowerQuest.TransPowerOn to 1
+						set EngineDay to GameDaysPassed
+					endif
+				endif
+					
+			else
+				set sAwaitingInput to 0
+				set sMustWait to 1
+			endif
+			
+			
+		elseif button == 1	; Disconnect the Quantum Field
+			;MessageBoxEx "Ancillary Power Station disconnected. Returning to Basic Mode to prevent Core Overload."
+			;Call fwvFuncTardisModeToggle	; go to Basic Mode
+			;set fwvXOTranspowerQuest.sBonusPower to 0
+			;set fwvq1.tPower to fwvq1.tPower - fwvXOTranspowerQuest.sBonusPowerLast 
+			;set fwvXOTranspowerQuest.sBonusPowerLast to 0
+			set fwvXOTranspowerQuest.TranspowerAnimate to 50
+			set fwvXOTranspowerQuest.TranspowerOn to 0
+			set sAwaitingInput to 0
+		elseif button == 2	; Cancel
+			set sAwaitingInput to 0
+		endif
+	endif
+
+	if sMustWait == 1 && button == 0
+		MessageBoxEx "You cannot modify the Quantum Field more than once a day."
+		set sMustWait to 0
+	endif
+	
+	
+end
+
+
+

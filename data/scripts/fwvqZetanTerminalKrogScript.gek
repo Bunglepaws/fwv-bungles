@@ -1,0 +1,9 @@
+scn fwvqZetanTerminalKrogScript
+
+short init
+begin onactivate player
+if init == 0
+ set init to 1
+setStage fwvKrogQuest 50
+endif
+end

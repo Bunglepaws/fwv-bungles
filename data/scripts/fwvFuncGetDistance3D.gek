@@ -1,0 +1,12 @@
+scn fwvFuncGetDistance3D
+
+ref rRef1
+ref rRef2
+float fCalc
+float fDist
+float fDist2
+
+begin function { rRef1, rRef2 }
+	let fDist := rRef1.GetDistance3D rRef2
+	SetFunctionValue fDist
+end

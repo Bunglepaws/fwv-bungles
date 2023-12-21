@@ -1,0 +1,82 @@
+scn fwvTCrepairSCRIPT
+
+;written by Demeggy 24/2/13
+
+short direction
+short button
+short rTimerMinutes
+short tutOnce
+ref repairRef
+
+short sPatchVersion
+ref rSelf
+begin GameMode
+	if sPatchVersion < fwvPatchVersion
+		set sPatchVersion to fwvPatchVersion
+		set rSelf to GetSelf
+		Call fwvFuncResetPosition rSelf
+	endif
+end
+
+Begin onActivate player
+
+	if fwvq1.tFlying == 0
+		if fwvqSystems.tAdvanced == 0
+			if fwvq1.tRepair == 0
+				set rTimerMinutes to ((500 - fwvq1.damageTotal) / 60) + 1
+				ShowMessage fwvTrepairMessage rTimerMinutes
+			endif		
+		elseif fwvqSystems.tAdvanced == 1
+			if fwvqSystems.MolecularStabilizers == 1 ;&& fwvqEvents.systemEvent == 0
+ 				if eval fwvqProtocols.protocol[7]== 1
+					if fwvq1.tRepair == 0
+						set rTimerMinutes to ((500 - fwvq1.damageTotal) / 60) + 1
+						ShowMessage fwvTrepairMessage rTimerMinutes
+					endif
+				else
+					MessageEx "[Protocol must be engaged]"
+				endif
+			elseif fwvqSystems.MolecularStabilizers == 0
+				MessageEx "[Subsystem(s) offline]"
+			;elseif fwvqEvents.systemEvent == 1
+			;	MessageEx "[Cannot activate during an Event]"
+			endif
+		endif
+	else
+		ShowMessage fwvTardisFlyingMessage
+	endif
+	set repairRef to 500 - fwvq1.damageTotal
+
+end
+
+begin GameMode
+
+set button to getbuttonpressed
+
+if button == 0
+
+	if direction
+		PlayGroup Backward 0
+	else
+		PlayGroup Forward 0
+	endif
+	if GetIsID fwvT5Crepair == 0
+		set direction to 1 - direction
+	endif
+
+	PlaySound OBJForceFieldDeactivate
+	ShowMessage fwvTrepairStartMessage 
+	;fwvTardisAmbRef.disable
+	set fwvq1.tRepair to 1
+	set fwvq1.rTimer to 0
+
+elseif button == 1
+
+	if fwvqSystems.tAdvanced == 1
+		let fwvqProtocols.protocol[7] := 0
+	endif
+
+endif
+
+end
+

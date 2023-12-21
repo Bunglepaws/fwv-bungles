@@ -1,0 +1,14 @@
+scn fwvXOHarkB29NoteSCRIPT
+
+begin OnActivate Player
+
+	AddNote fwvXOHarknessB29Note
+	if fwvqLocs.fwvLnellisAfbExtVisited == 0
+		set fwvqLocs.fwvLnellisAfbExtVisited to 1
+		MessageEx "Nellis Air Force Base added to NavCom Databanks."
+	endif
+	fwvXOHarkB29NoteREF.disable
+	
+end
+
+

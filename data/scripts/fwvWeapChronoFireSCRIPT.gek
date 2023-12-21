@@ -1,0 +1,10 @@
+scn fwvWeapChronoFireSCRIPT
+
+Begin GameMode
+	
+	if player.getInCell fwvtInterior1 == 1 && player.getEquipped fwvWeapChronodyne == 1
+		player.unequipitem fwvWeapChronodyne 1
+		MessageBoxEx "[Cannot equip whilst in the TARDIS]"
+	endif
+
+End

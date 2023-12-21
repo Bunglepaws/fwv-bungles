@@ -1,0 +1,200 @@
+scn fwvArmorChameleonArchSCRIPT
+
+; This script stores all of the players human stats before they become a Time Lord
+; written by Demeggy 12/3/13
+
+short button
+
+short hStr			;Strength
+short hPer		;Perception
+short hEnd		;Endurance
+short hCha		;Charisma
+short hInt			;Intelligence
+short hAg			;Agility
+short hLuck		;Luck
+
+short hBarter	;Bartering
+short hBG		;BigGuns
+short hEW		;EnergyWeaps
+short hExp		;Explosives
+short hLock		;LockPick
+short hMed		;Medicine
+short hMW		;MeleeWeaps
+short hRep		;Repair
+short hSci		;Science
+short hSG			;SmallGuns
+short hSneak	;Sneaking
+short hSp			;Speech
+short hUA			;Unarmed
+
+; spyduck-added
+short curStatBase
+short curStat
+short newMod
+short event
+
+begin onEquip player
+
+	ShowMessage fwvTCchameleonArchMessage
+	set event to 2
+	activate
+
+end
+
+begin gameMode
+
+if event == 2	
+
+	set button to getbuttonpressed
+
+	if button == 0
+
+		ShowMessage fwvRegenHumanMessage
+
+		player.setAV Strength fwvTardisEyeRef.hStr
+		player.setAV Perception fwvTardisEyeRef.hPer
+		player.setAV Endurance fwvTardisEyeRef.hEnd
+		player.setAV Charisma fwvTardisEyeRef.hCha
+		player.setAV Intelligence fwvTardisEyeRef.hInt
+		player.setAV Agility fwvTardisEyeRef.hAg
+		player.setAV Luck fwvTardisEyeRef.hLuck
+
+		; do barter
+		set curStatBase to player.getbaseav barter
+		set curStat to player.getav barter
+		set newMod to curStat - curStatBase
+		player.modav barter newMod
+		set newMod to hBarter - curStatBase
+		player.modav barter newMod
+
+		; do BIGGUNS
+		set curStatBase to player.getbaseav BigGuns
+		set curStat to player.getav BigGuns
+		set newMod to curStat - curStatBase
+		player.modav BigGuns newMod
+		set newMod to hBG - curStatBase
+		player.modav BigGuns newMod
+
+		; do EnergyWeapons 
+		set curStatBase to player.getbaseav EnergyWeapons
+		set curStat to player.getav EnergyWeapons
+		set newMod to curStat - curStatBase
+		player.modav EnergyWeapons newMod
+		set newMod to hEW - curStatBase
+		player.modav EnergyWeapons newMod
+
+		; do Explosives 
+		set curStatBase to player.getbaseav Explosives 
+		set curStat to player.getav Explosives 
+		set newMod to curStat - curStatBase
+		player.modav Explosives newMod
+		set newMod to hExp - curStatBase
+		player.modav Explosives newMod
+
+		; do Lockpicking 
+		set curStatBase to player.getbaseav Lockpick
+		set curStat to player.getav Lockpick
+		set newMod to curStat - curStatBase
+		player.modav Lockpick newMod
+		set newMod to hLock - curStatBase
+		player.modav Lockpick newMod
+
+		; do Medicine 
+		set curStatBase to player.getbaseav Medicine 
+		set curStat to player.getav Medicine 
+		set newMod to curStat - curStatBase
+		player.modav Medicine newMod
+		set newMod to hMed - curStatBase
+		player.modav Medicine newMod
+
+		; do Repair 
+		set curStatBase to player.getbaseav Repair  
+		set curStat to player.getav Repair  
+		set newMod to curStat - curStatBase
+		player.modav Repair newMod
+		set newMod to hRep - curStatBase
+		player.modav Repair newMod
+
+		; do Science  
+		set curStatBase to player.getbaseav Science  
+		set curStat to player.getav Science  
+		set newMod to curStat - curStatBase
+		player.modav Science newMod
+		set newMod to hSci - curStatBase
+		player.modav Science newMod
+
+		; do Small Guns
+		set curStatBase to player.getbaseav Guns   
+		set curStat to player.getav Guns 
+		set newMod to curStat - curStatBase
+		player.modav Guns newMod
+		set newMod to hSG - curStatBase
+		player.modav Guns newMod
+
+		; do Sneak
+		set curStatBase to player.getbaseav Sneak 
+		set curStat to player.getav Sneak 
+		set newMod to curStat - curStatBase
+		player.modav Sneak newMod
+		set newMod to hSneak - curStatBase
+		player.modav Sneak newMod
+
+		; do speech
+		set curStatBase to player.getbaseav speech
+		set curStat to player.getav speech
+		set newMod to curStat - curStatBase
+		player.modav speech newMod
+		set newMod to hSp - curStatBase
+		player.modav speech newMod
+		
+		; do unarmed
+		set curStatBase to player.getbaseav unarmed
+		set curStat to player.getav unarmed
+		set newMod to curStat - curStatBase
+		player.modav unarmed newMod
+		set newMod to hUA - curStatBase
+		player.modav unarmed newMod
+
+		set fwvq1.pxl to 0
+		set fwvqRegen.TimeLordTrue to 0
+		player.addItem fwvWfobWatch 1
+		set event to 3
+
+	elseif button == 1
+
+			printtoconsole "TimeLord is %.0f" fwvqRegen.TimeLordTrue 
+
+			printtoconsole "Pilot Level is %.0f" fwvq1.pxl 
+			printtoconsole "STR %.0f" fwvChameleonRef.hStr 
+			printtoconsole "PER %.0f" fwvChameleonRef.hPer 
+			printtoconsole "END %.0f" fwvChameleonRef.hEnd 
+			printtoconsole "CHA %.0f" fwvChameleonRef.hCha 
+			printtoconsole "INT %.0f" fwvChameleonRef.hInt 
+			printtoconsole "AGI %.0f" fwvChameleonRef.hAg 
+			printtoconsole "LUCK %.0f" fwvChameleonRef.hLuck 
+			printtoconsole "BARTER %.0f" fwvChameleonRef.hBarter 
+			printtoconsole "BIGGUNS %.0f" fwvChameleonRef.hBG 
+			printtoconsole "ENERGY WEAPS %.0f" fwvChameleonRef.hEW 
+			printtoconsole "EXPLOSIVES %.0f" fwvChameleonRef.hExp 
+			printtoconsole "LOCKPICKING %.0f" fwvChameleonRef.hLock 
+			printtoconsole "MEDICAL %.0f" fwvChameleonRef.hMed 
+			printtoconsole "MELEE %.0f" fwvChameleonRef.hMW 
+			printtoconsole "REPAIR %.0f" fwvChameleonRef.hRep 
+			printtoconsole "SCIENCE %.0f" fwvChameleonRef.hSci 
+			printtoconsole "SMALL GUNS %.0f" fwvChameleonRef.hSG 
+			printtoconsole "SNEAK %.0f" fwvChameleonRef.hSneak 
+			printtoconsole "SPEECH %.0f" fwvChameleonRef.hSp 
+			printtoconsole "UNARMED %.0f" fwvChameleonRef.hUA
+			set event to 3
+
+	else
+
+	endif
+
+elseif event == 3
+
+	set event to 0
+
+endif
+
+end

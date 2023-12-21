@@ -1,0 +1,55 @@
+scn fwvAutonStrongholdActivatorSCRIPT
+
+
+short sUsed
+
+Begin onActivate Player
+
+	if GetIsID fwvAutonStrngLabActv == 1
+		; REFs are fwvAutonStrngChemStation01 to 04
+		if fwvqInvasionsAuton.sChemTutorial == 0
+			showmessage fwvAutonStrngChemDropTut
+			set fwvqInvasionsAuton.sChemTutorial to 1
+		else
+			if sUsed == 0
+				if player.GetItemCount fwvWeapAntiplastic > 3
+					let fwvqInvasions.sShield := fwvqInvasions.sShield + 1
+					player.removeitem fwvWeapAntiplastic 3
+					if fwvqInvasions.sShield > 3
+						MessageEx "[Warning! Plastics mixture dissolving!]"
+						PlaySound FSTWaterWalkL
+						fwvAutonStrngMindLP.enable
+						; Then do the visual 
+						fwvNesteneInTankREF.playgroup Forward 1
+						set fwvqInvasions.sBlow to 1
+						set fwvqInvasions.fTimer to 0.0
+						let sUsed := 1
+					else
+						PlaySound FSTWaterWalkL
+						MessageEx "[%g/4 Input Stations Tainted]" fwvqInvasions.sShield			
+						let sUsed := 1
+					endif
+				else	
+					MessageEx "[You'll need more Anti-Plastic...]"
+				endif
+			else
+				playsound DRSLocker02Open
+				MessageEx "[Input Station Already Tainted]"
+			endif
+		
+		endif
+	elseif GetIsID fwvAutonStrngAntennaPowerACTV == 1
+		if sUsed == 0
+			fwvAutonStrngAntennaPowerActvREF.playgroup Left 1
+			fwvAutonStrngAntennaGeneratorSndREF.disable
+			fwvAutonStrngAntennaSparks01.disable
+			fwvAutonStrngAntennaNoise.disable
+			MessageEx "[The captives should awaken now...]"
+			let sUsed := 1
+		else
+			MessageEx "[Generators Disabled]"
+		endif
+
+	endif
+
+End

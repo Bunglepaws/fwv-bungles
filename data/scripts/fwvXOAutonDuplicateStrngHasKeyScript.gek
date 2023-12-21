@@ -1,0 +1,38 @@
+scn fwvXOAutonDuplicateStrngHasKeyScript
+
+ref rSelf
+short sEquipForce
+
+Begin GameMode
+
+	set rSelf to GetSelf
+
+	if rSelf.isincombat == 0
+		rSelf.unEquipItem fwvWeapAutonWristgunNoLoop 1 1
+	else
+		rSelf.EquipItem fwvWeapAutonWristgunNoLoop 1 1
+	endif
+
+
+	if rSelf.GetEquipped fwvWeapAutonWristgunNoLoop == 1 && sEquipForce == 0
+		rSelf.EquipItem fwvWeapAutonWristgunNoLoop 1 1
+		set sEquipForce to 1
+	endif
+
+	if rSelf.getDead == 1
+		if player.GetItemCount fwvAutonStrngPrisCellKey < 1
+			rSelf.placeAtMe fwvAutonAshPileHasStrngKey
+		else
+			rSelf.placeAtMe fwvAutonAshPile
+		endif
+		rSelf.PlaceAtMe fwvAntiPlasticExplosion 1
+		rSelf.disable 0
+		rSelf.MarkForDelete
+	else
+		if player.getequipped fwvAutonMaskPlayableSpell == 1 && rSelf.isincombat == 1 && fwvqInvasionsAuton.sMaskTruceTime == 1
+			rSelf.stopcombat player
+		endif	
+	
+
+	endif
+End

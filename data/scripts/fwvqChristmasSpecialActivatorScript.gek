@@ -1,0 +1,110 @@
+scn fwvqChristmasSpecialActivatorScript
+
+float apr
+short init
+short sPage
+short button
+short luckMod
+short sciMod
+ref PoliceBoxDoor
+ref PoliceBox 
+
+string_var strMessageText
+
+Begin onActivate player
+
+	if getStage fwvqChristmasSpecial == 5
+		if getIsReference fwvqXmasLetterRef == 1
+			;ShowMessage fwvqChristmasLetterMessage
+			let strMessageText := "Seasons Greetings to you, " + $Player + "!%r%rYou've been very well behaved this year, so I won't kill you straight away!%rA little challenge is in order...%rA select guestlist will shortly be arriving... %rThe gifts before you have been handpicked to 'accomodate' each guest accordingly...%rI trust you'll use them wisely and sparingly!%rAfter all - it is your life on the line - HO HO HO!%r%rMerry Yulestide - and a Happy New Year,%r%rF. Christmas."
+			MessageBoxEx "%z" strMessageText
+			setStage fwvqChristmasSpecial 10
+			set fwvqChristmasSpecial.wave to 1
+			MessageEx "Teleports inbound..."
+			fwvqXmasAuton1Ref.enable
+			fwvqXmasAuton2Ref.enable
+			fwvqXmasAuton3Ref.enable
+			fwvqXmasAuton1Ref.placeAtMe fwvVortexManipulatorExplosion
+			fwvqXmasAuton2Ref.placeAtMe fwvVortexManipulatorExplosion
+			fwvqXmasAuton3Ref.placeAtMe fwvVortexManipulatorExplosion
+			Disable
+			MarkForDelete
+		else
+			MessageEx "Better read the letter first..."
+		endif
+	elseif getStage fwvqChristmasSpecial == 10
+		if getIsReference fwvqXmasPresent01Ref == 1
+			player.addItem fwvWeapAntiplastic 10
+			Disable
+			MarkForDelete
+		elseif getIsReference fwvqXmasPresent02Ref == 1
+			player.addItem fwvIeyeDrive 1
+			Disable
+			MarkForDelete
+		elseif getIsReference fwvqXmasPresent03Ref == 1
+			player.addItem fwvWeapChronodyne 6
+			Disable
+			MarkForDelete
+		elseif getIsReference fwvqXmasPresent04Ref == 1
+			player.addItem fwvWempBomb 6
+			Disable
+			MarkForDelete
+		elseif getIsReference fwvqXmasPresent05Ref == 1
+			player.addItem fwvWeapDalekaniumBomb 6
+			Disable
+			MarkForDelete
+		else
+			MessageEx "Better deal with these 'Guests' first..."
+		endif
+	elseif getStage fwvqChristmasSpecial == 20
+		if getIsReference fwvqXmasShieldsRef == 1
+			ShowMessage fwvqChristmasShieldsMessage
+			set luckMod to 1 + getRandomPercent * 10/100
+			set sciMod to 1 + getRandomPercent
+			set sPage to 1
+		endif
+	endif
+
+End
+
+Begin GameMode
+
+	set PoliceBoxDoor to fwvq1.rPoliceBoxDoorRef
+	set PoliceBox to fwvq1.rPoliceBoxRef
+
+	if sPage == 1
+		set button to getButtonPressed
+		
+		;repair
+		if button == 0
+			if player.getAV Luck < luckMod
+				set fwvq1.tHull to 5
+				fwvLyuleRef.placeAtMe GrenadeNukaFireBurst
+				MessageEx "The Circuits break..."
+			endif
+			set sPage to 2
+		;smash			
+		elseif button == 1
+			if player.getAV Science < sciMod
+				if fwvqRegen.TimeLordTrue == 1 && fwvqRegen.regenVar < 12
+					player.placeAtMe fwvNukeExplosion
+					set fwvqRegen.RegenMode to 1
+				else
+					player.placeAtMe GrenadeFragExplosion
+					player.damageAV health 75
+				endif
+				MessageEx "The Power Supply backfires..."
+			endif		
+			set sPage to 2
+		endif
+	elseif sPage == 2
+		PlaySound OBJForcefieldShutdown
+		SetObjectiveCompleted fwvqChristmasSpecial 20 1
+		SetStage fwvqChristmasSpecial 100
+		fwvqXmasForceFieldRef.disable
+		PoliceBoxDoor.sms fwvLockedGlowShader
+		PoliceBox.sms fwvLockedGlowShader
+		set sPage to 0
+	endif
+
+End

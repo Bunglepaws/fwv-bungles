@@ -1,0 +1,144 @@
+scn fwvqCompanionQuestScript
+
+ref companion
+short doOnce
+short patch
+short oldCount
+short reactor
+
+short sHiring
+
+short mCalc
+short minute
+short countdown
+float fTimer
+
+begin gamemode
+
+	if patch < 1
+		fwvCQEngineerRef.setDisposition player 25
+		fwvCQEngineerFRef.setDisposition player 25
+		fwvCQDoctorRef.setDisposition player 25
+		fwvCQCopilotRef.setDisposition player 25
+		set patch to 1
+	endif
+
+	if player.getInCell fwvCiriusInterior == 1
+
+		if countdown == 1
+			if fTimer < 60.0
+				set fTimer to fTimer + getSecondsPassed
+			else
+				set mCalc to 4 - minute
+				if minute < 4
+					MessageEx "[%g minutes remaining]" mCalc
+					set minute to minute + 1
+					set fTimer to 0.0
+				elseif minute < 5
+					MessageEx "[60 seconds until impact]"
+					PlaySound FXExplosionArtilleryExplosionFar
+					imod fwvTardisRedISFX
+					fwvCQalarmRef.enable
+					set minute to minute + 1
+					set fTimer to 0.0
+				elseif minute >= 5
+					PlaySound FXExplosionNukeSmall3D
+					imod WhiteISFX
+					player.killActor
+					set countdown to 1
+				endif
+			endif
+		endif		
+
+		if reactor == 0
+			if minute < 4
+				;if fwvqRooms.sShakeEnabled == 0
+					set fwvqRooms.fShakeAngleExtra to 20
+				;endif
+			endif
+		else
+			;set fwvqRooms.fShakeAngleExtra to 0
+		endif
+
+		if getStage fwvqCompanionTutorial == 10
+			setStage fwvqCompanionTutorial 20
+			set sHiring to 1
+			set fwvCompanion.sGreetOverride to 1
+			set oldCount to fwvCompanion.cCount
+		elseif getStage fwvqCompanionTutorial == 30
+			;check for npc companion
+			if fwvCompanion.cCount > oldCount
+				MessageBoxEx "Companions can be instructed to follow you, wait, or when familiar enough, return to the TARDIS."
+				setStage fwvqCompanionTutorial 35
+				set fwvCompanion.sGreetOverride to 0
+			endif
+		elseif getStage fwvqCompanionTutorial == 40
+			if fwvCQdoorTerminalRef.getlocked == 0
+				if fwvCQbulkDoorRef.getOpenState == 3
+					;fwvCQwheelerSpeakerRef.activate
+					setStage fwvqCompanionTutorial 50
+					fwvCQbulkDoorRef.unlock
+					fwvCQbulkDoorRef.setOpenState 1
+				endif
+			endif
+		elseif getStage fwvqCompanionTutorial == 60
+			if doOnce == 0
+				fwvXOCiriusCrewQtrREF.unlock
+				fwvXOCiriusCrewQtrREF.SetOpenState 1
+				fwvXOCiriusCapnQtrREF.unlock
+				fwvXOCiriusCapnQtrREF.SetOpenState 1	
+				set fwvCompanion.sReqOverride to 1 				; For unique request dialogue
+				fwvCQcaptainRef.addScriptPackage fwvqCompanionQuestCompletedPackage
+				fwvCQcaptainRef.evp
+				set doOnce to 1
+			endif
+		endif
+
+		;if companion hacks the drive room door
+		if fwvCQdriveDoorTerminalRef.getlocked == 0
+			if fwvCQdriveDoorRef.getOpenState == 3
+				fwvCQdriveDoorRef.unlock
+				fwvCQdriveDoorRef.setOpenState 1
+			endif
+		endif
+
+		;if companion hacks the drive room door
+		if fwvCQdoor01Ref.getlocked == 0
+			if fwvCQdoor01Ref.getOpenState == 3
+				fwvCQdoor01Ref.unlock
+				fwvCQdoor01Ref.setOpenState 1
+			endif
+		endif
+
+	elseif player.getInCell fwvTinterior1 == 1
+		if getStage fwvqCompanionTutorial == 60 && fwvCompanion.cCount > 0
+			;let companion := fwvCompanion.arCompanions[0] ;
+			;modified by cookiemorph, companion set in request output
+			setStage fwvqCompanionTutorial 70
+		endif
+	endif
+
+	if getStage fwvqCompanionTutorial == 70
+		if companion.GetInWorldspace WastelandNV == 1
+			;MessageBoxEx "You have completed the FWV Companion Tutorial. Look after your companion!"
+			ShowMessage fwvCompanionTutorialDoneMSG
+			fwvCompanionDiaryREF.enable
+			setObjectiveCompleted fwvqCompanionTutorial 70 1
+			setStage fwvqCompanionTutorial 100
+		endif
+	endif
+
+
+	if GetQuestCompleted fwvqCompanionTutorial == 1
+		if fwvCompanionDiaryREF.getdisabled == 1
+			fwvCompanionDiaryREF.enable
+			set sHiring to 1
+			printc "Companion Diary Enabled"
+		endif
+	endif
+
+
+
+
+
+end

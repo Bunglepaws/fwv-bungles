@@ -1,0 +1,61 @@
+scn fwvWeatherSetTriggerScript
+
+short sChangeNow
+short sShortHour
+short sTheme
+short sSetToWeather
+float fLockHour
+float fCalc
+
+begin OnTriggerEnter Player
+
+	if GetSelf != fwvqRooms.rLastLoc
+
+		if GetSelf == fwvGardenEnterTriggerRef
+			set sSetToWeather to 1
+			fwvAMBGardenRef.enable
+			set fLockHour to -1
+		elseif GetSelf == fwvGardenExitTriggerRef || (GetSelf == fwvObservatoryExitTriggerRef && fwvqRooms.rLastLoc == fwvObservatoryEnterTriggerRef)
+			set sSetToWeather to 0
+			fwvAMBGardenRef.disable
+			fwvTardisGardenLight.disable
+			fwvXOObservatoryLightSetREF.disable
+			set fLockHour to -1
+		elseif GetSelf == fwvObservatoryEnterTriggerRef
+			set sSetToWeather to 0
+			set fLockHour to 0.0 ;midinght
+			fwvTardisGardenLight.enable
+			fwvAMBGardenRef.disable
+		elseif GetSelf == fwvPoolEnterTriggerRef && fwvqRooms.rLastLoc == fwvPoolExitTriggerRef
+			set sSetToWeather to 2
+			set fLockHour to 12.0 ;noon
+			set fwvqRooms.fSettingSwimRadiationDamageMult to GetNumericGameSetting fSwimRadiationDamageMult
+			set fwvqRooms.fSettingWadeRadiationDamageMult to GetNumericGameSetting fWadeRadiationDamageMult
+			SetNumericGameSetting fSwimRadiationDamageMult 0.0
+			SetNumericGameSetting fWadeRadiationDamageMult 0.0
+		elseif GetSelf == fwvPoolExitTriggerRef && fwvqRooms.rLastLoc == fwvPoolEnterTriggerRef
+			set sSetToWeather to 0
+			set fLockHour to -1
+			set fwvTardisPoolSwimRef.swimOn to 0
+			set fwvTardisPoolSwimRef.init2 to 0
+			set fCalc to fwvqRooms.fSettingSwimRadiationDamageMult 
+			SetNumericGameSetting fSwimRadiationDamageMult fCalc
+			set fCalc to fwvqRooms.fSettingWadeRadiationDamageMult 
+			SetNumericGameSetting fWadeRadiationDamageMult fCalc
+			
+		else
+			set sSetToWeather to 0
+			set fLockHour to -1
+		endif
+
+
+		set sShortHour to Floor GameHour
+		
+		set fwvqRooms.fLockHour to fLockHour
+		
+		set sChangeNow to 0
+		set fwvqRooms.sConsoleWeather to 0
+		set fwvqRooms.sDayWeather to sSetToWeather
+		set fwvqRooms.rNextLoc to GetSelf
+	endif
+end

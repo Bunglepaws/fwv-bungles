@@ -1,0 +1,322 @@
+scn fwvAsylumActivatorsSCRIPT
+
+
+short sTriggered 
+short SetHolo
+
+Begin onActivate player
+	
+
+	If getIsId fwvAsylumSecurityConsole == 1
+		if GetIsReference fwvAsySecConsole01
+			if sTriggered == 0
+				let fwvqDalekSkaro.AsylumSecCount := fwvqDalekSkaro.AsylumSecCount + 1
+				if fwvqDalekSkaro.AsylumSecCount > 3
+					MessageEx "[Intensive Care Ward unlocked]"
+					PlaySound OBJForcefieldShutdown
+					IntensiveCareWard.unlock
+				else
+					PlaySound OBJIntercomHail
+					MessageEx "[%g/4 Security Tokens Input]" fwvqDalekSkaro.AsylumSecCount			
+				endif
+				let sTriggered := 1
+			else
+				MessageEx "[Security Token already input]"
+			endif
+
+		endif
+		
+		if GetIsReference fwvAsySecConsole02
+			if sTriggered == 0
+				let fwvqDalekSkaro.AsylumSecCount := fwvqDalekSkaro.AsylumSecCount + 1
+				if fwvqDalekSkaro.AsylumSecCount > 3
+					MessageEx "[Intensive Care Ward unlocked]"
+					PlaySound OBJForcefieldShutdown
+					IntensiveCareWard.unlock
+				else
+					PlaySound OBJIntercomHail
+					MessageEx "[%g/4 Security Tokens Input]" fwvqDalekSkaro.AsylumSecCount			
+				endif
+				let sTriggered := 1
+			else
+				MessageEx "[Security Token already input]"
+			endif
+
+		endif
+
+		
+		if GetIsReference fwvAsySecConsole03
+			if sTriggered == 0
+				let fwvqDalekSkaro.AsylumSecCount := fwvqDalekSkaro.AsylumSecCount + 1
+				if fwvqDalekSkaro.AsylumSecCount > 3
+					MessageEx "[Intensive Care Ward unlocked]"
+					PlaySound OBJForcefieldShutdown
+					IntensiveCareWard.unlock
+				else
+					PlaySound OBJIntercomHail
+					MessageEx "[%g/4 Security Tokens Input]" fwvqDalekSkaro.AsylumSecCount			
+				endif
+				let sTriggered := 1
+			else
+				MessageEx "[Security Token already input]"
+			endif
+
+		endif
+
+		
+		if GetIsReference fwvAsySecConsole04
+			if sTriggered == 0
+				let fwvqDalekSkaro.AsylumSecCount := fwvqDalekSkaro.AsylumSecCount + 1
+				if fwvqDalekSkaro.AsylumSecCount > 3
+					MessageEx "[Intensive Care Ward unlocked]"
+					PlaySound OBJForcefieldShutdown
+					IntensiveCareWard.unlock
+				else
+					PlaySound OBJIntercomHail
+					MessageEx "[%g/4 Security Tokens Input]" fwvqDalekSkaro.AsylumSecCount			
+				endif
+				let sTriggered := 1
+			else
+				MessageEx "[Security Token already input]"
+			endif
+		endif
+	endif
+
+	
+	
+	
+	If getIsId fwvDalekCellControls02 == 1
+		if GetIsReference CellFFControls01
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF01.disable
+				CellFFImpact01.disable
+				let sTriggered := 1
+			else
+				CellFF01.enable
+				CellFFImpact01.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		if GetIsReference CellFFControls02
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF02.disable
+				CellFFImpact02.disable
+				let sTriggered := 1
+			else
+				CellFF02.enable
+				CellFFImpact02.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		
+		if GetIsReference CellFFControls03
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF03.disable
+				CellFFImpact03.disable
+				let sTriggered := 1
+			else
+				CellFF03.enable
+				CellFFImpact03.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		if GetIsReference CellFFControls04
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF04.disable
+				CellFFImpact04.disable
+				let sTriggered := 1
+			else
+				CellFF04.enable
+				CellFFImpact04.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		if GetIsReference CellFFControls05
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF05.disable
+				CellFFImpact05.disable
+				let sTriggered := 1
+			else
+				CellFF05.enable
+				CellFFImpact05.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		if GetIsReference CellFFControls06
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF06.disable
+				CellFFImpact06.disable
+				let sTriggered := 1
+			else
+				CellFF06.enable
+				CellFFImpact06.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		
+		if GetIsReference CellFFControls07
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF07.disable
+				CellFFImpact07.disable
+				let sTriggered := 1
+			else
+				CellFF07.enable
+				CellFFImpact07.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		if GetIsReference CellFFControls08
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF08.disable
+				CellFFImpact08.disable
+				let sTriggered := 1
+			else
+				CellFF08.enable
+				CellFFImpact08.enable
+				let sTriggered := 0
+			endif
+		endif
+
+		if GetIsReference CellFFControls09
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF09.disable
+				CellFFImpact09.disable
+				let sTriggered := 1
+			else
+				CellFF09.enable
+				CellFFImpact09.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		if GetIsReference CellFFControls10
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF10.disable
+				CellFFImpact10.disable
+				let sTriggered := 1
+			else
+				CellFF10.enable
+				CellFFImpact10.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		
+		if GetIsReference CellFFControls11
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF11.disable
+				CellFFImpact11.disable
+				let sTriggered := 1
+			else
+				CellFF11.enable
+				CellFFImpact11.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		if GetIsReference CellFFControls12
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF12.disable
+				CellFFImpact12.disable
+				let sTriggered := 1
+			else
+				CellFF12.enable
+				CellFFImpact12.enable
+				let sTriggered := 0
+			endif
+		endif
+
+
+		if GetIsReference CellFFControls13
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF13.disable
+				CellFFImpact13.disable
+				let sTriggered := 1
+			else
+				CellFF13.enable
+				CellFFImpact13.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		if GetIsReference CellFFControls14
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF14.disable
+				CellFFImpact14.disable
+				let sTriggered := 1
+			else
+				CellFF14.enable
+				CellFFImpact14.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		
+		if GetIsReference CellFFControls15
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF15.disable
+				CellFFImpact15.disable
+				let sTriggered := 1
+			else
+				CellFF15.enable
+				CellFFImpact15.enable
+				let sTriggered := 0
+			endif
+		endif
+		
+		
+		if GetIsReference CellFFControls16
+			if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				CellFF16.disable
+				CellFFImpact16.disable
+				let sTriggered := 1
+			else
+				CellFF16.enable
+				CellFFImpact16.enable
+				let sTriggered := 0
+			endif
+		endif		
+		
+		
+	endif
+	
+end
+
+
+
+

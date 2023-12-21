@@ -1,0 +1,73 @@
+scn fwvqRegenFxScript
+
+float fxTimer
+float fTimer
+short frame
+short fxOn
+
+begin ScriptEffectStart
+	if IsPC1stPerson == 1
+		printc "First person detected"
+		TapControl 13
+	endif
+	;DisableControl 13
+	DisablePlayerControls 1 1 0 0 0 0 0
+	;Con_ToggleMenus
+	;player.pms fwvRegenEffect2   - flames
+	;player.pms fwvRegenFXShader	; - glowey skin
+	set frame to 1
+	set fxOn to 1
+	printc "EFFECT ADDED"
+end
+
+begin ScriptEffectUpdate
+
+	if IsPC1stPerson == 1
+		TapControl 13
+	endif
+
+	if frame == 1
+		if fTimer < 1
+			set fTimer to fTimer + getSecondsPassed
+		else
+			player.restoreAV leftMobilityCondition 100
+			player.restoreAV rightMobilityCondition 100
+			player.restoreAV leftAttackCondition 100
+			player.restoreAV rightAttackCondition 100
+			player.playIdle fwvAnimIdleRegen			
+			set fTimer to 0.0
+			set frame to 2
+		endif
+	elseif frame == 2
+		if fTimer < 5
+			set fTimer to fTimer + getSecondsPassed
+		else
+			PlaySound fwvFXregenLong
+			player.additem fwvRegenOutfitFx 1 1
+			player.equipItem fwvRegenOutfitFx 1 1
+			set fTimer to 0.0
+			set frame to 3
+		endif
+	elseif frame == 3
+		if fTimer < 11.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			EnablePlayerControls
+			player.unequipItem fwvRegenOutfitFx 1 1
+			player.removeItem fwvRegenOutfitFx 1 1
+			if fwvqRegen.damageMode == 0 || fwvqRegen.damageMode == 1
+				player.placeatme fwvRegenExplosion2
+			else	
+				player.placeatme fwvRegenNukeExplosion
+			endif
+			;player.sms fwvRegenFXShader
+			EnableControl 13
+			set fxOn to 0
+			set fxTimer to 0.0
+			set fTimer to 0.0
+			set frame to 0
+			set fwvqRegen.damageMode to 0
+			dispel fwvRegenFX
+		endif
+	endif
+end

@@ -1,0 +1,15 @@
+scn fwvFuncIsAnimatingInSameCell
+
+ref rRefCheck
+
+begin Function { rRefCheck }
+	if rRefCheck.GetInSameCell Player
+		if rRefCheck.IsAnimPlaying
+			SetFunctionValue 1
+		else
+			SetFunctionValue 0
+		endif
+	else
+		SetFunctionValue 0
+	endif
+end

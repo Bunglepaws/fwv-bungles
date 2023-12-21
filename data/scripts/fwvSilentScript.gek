@@ -1,0 +1,63 @@
+scn fwvSilentScript
+
+ref rSelf
+
+ref linkMainLoc ; linkedref
+ref linkFleeLoc ; mainloc.linkedref
+
+short rOnce
+float fX
+float fY
+float fZ
+float fTimePassed
+float hiddenAtDay
+
+begin OnLoad
+	set rOnce to 0
+end
+
+begin OnActivate
+	if GetActionRef == rSelf
+		if GetActorValue Variable01 == 1
+			set hiddenAtDay to GameDaysPassed
+			SetActorValue Variable01 2
+		elseif GetActorValue Variable01 == 2
+			if GameDaysPassed >= hiddenAtDay + 2.0
+				SetActorValue Variable01 0
+				ListRemoveForm fwvSilentHideList rSelf
+				if GetDead == 0
+					rSelf.moveTo linkMainLoc 
+				else
+					disable 0
+					MarkForDelete
+				endif
+			endif
+		endif
+	endif
+end
+
+begin GameMode
+	;Set fTimePassed to fTimePassed + GetSecondsPassed
+	set rSelf to GetSelf
+	if rOnce == 0 || GetGameLoaded
+		set rOnce to 1
+		;PlaySound3D fwvNPCsilentIdle
+		if GetLinkedRef != 0
+			set linkMainLoc to GetLinkedRef
+			set linkFleeLoc to linkMainLoc.GetLinkedRef
+		endif
+	endif
+	set fwvqSilentInteractQuest.loadedTimer to 1
+	if ListGetFormIndex fwvSilentLoadedList rSelf < 0 && GetInSameCell Player
+		ListAddForm fwvSilentLoadedList rSelf
+		SetQuestDelay fwvqSilentInteractQuest 0.01
+	endif
+end
+
+begin OnDeath
+	if ListGetFormIndex fwvSilentLoadedList rSelf >= 0
+		ListRemoveForm fwvSilentLoadedList rSelf
+	endif
+	;Disable
+	;MarkForDelete
+end

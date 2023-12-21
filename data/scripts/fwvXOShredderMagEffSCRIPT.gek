@@ -1,0 +1,12 @@
+scn fwvXOShredderMagEffSCRIPT
+
+ref rDestination
+
+Begin ScriptEffectStart
+	let rDestination := fwvq1.rTDesktopScannerPosRef
+	imod FadeInFromWhiteISFX
+	PlaySound OBJStealthBoyActivateDvce
+	Player.MoveTo rDestination
+end
+
+

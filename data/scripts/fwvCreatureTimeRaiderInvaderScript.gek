@@ -1,0 +1,24 @@
+scn fwvCreatureTimeRaiderInvaderScript
+
+float dDay
+short sConsoleWeather
+ref rSelf
+
+begin OnDeath
+	set rSelf to GetSelf
+	rSelf.removeitem fwvWdalekTommyGunNPC 1
+	rSelf.additem fwvWdalekTommyGunNeutralise 1
+end
+
+begin GameMode
+	if GetDead
+		if dDay == 0.0
+			set dDay to gameDaysPassed
+		elseif gameDaysPassed > dDay + 1 || (sConsoleWeather != fwvqRooms.sConsoleWeather && (GetParentCell == fwvTinterior1 || GetParentCell == fwvq1.rTDesktopRoom))
+			; Is in the TARDIS, remove when moving between desktop/interior, or 1 day is passed
+			MarkForDelete
+			Disable
+		endif
+	endif
+end
+

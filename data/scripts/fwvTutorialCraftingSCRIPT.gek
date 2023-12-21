@@ -1,0 +1,14 @@
+scn fwvTutorialCraftingSCRIPT
+
+short doOnce
+
+begin onTriggerEnter player
+
+if doOnce == 0
+
+ShowTutorialMenu fwvTutorialCraftingMessage
+set doOnce to 1
+
+endif
+
+end

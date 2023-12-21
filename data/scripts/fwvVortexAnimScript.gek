@@ -1,0 +1,7 @@
+scn fwvVortexAnimScript
+
+begin GameMode
+	if IsAnimPlaying == 0
+		Playgroup Forward 0
+	endif
+end

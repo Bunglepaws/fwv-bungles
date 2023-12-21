@@ -1,0 +1,11 @@
+scn fwvq3bNesteneTalkingScript
+
+begin ontriggerenter player
+
+if getStage fwvq3b == 50
+	printc "trigger entered"
+	fwvq3bNesteneEyeRef.SetTalkingActivatorActor fwvq3bNesteneRef
+	fwvq3bNesteneEyeRef.StartConversation player GREETING [headtrack=1]
+endif
+
+end

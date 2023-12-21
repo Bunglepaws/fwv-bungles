@@ -1,0 +1,8 @@
+scn fwvTardisBookshelfScript
+
+begin onactivate player
+
+	activate
+	set fwvq1.sBookCheck to 1
+
+end

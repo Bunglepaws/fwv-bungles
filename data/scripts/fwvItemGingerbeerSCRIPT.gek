@@ -1,0 +1,10 @@
+scn fwvItemGingerbeerSCRIPT
+
+begin ScriptEffectStart
+	
+	if player.hasmagiceffect fwvTimeLordPoisonBaseEffect == 1
+		Dispel fwvTimeLordPoison
+		ShowMessage PoisonRemovalMsg
+	endif
+	
+end

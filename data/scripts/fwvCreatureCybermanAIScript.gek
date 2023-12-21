@@ -1,0 +1,54 @@
+scn fwvCreatureCybermanAIScript
+
+short doOnce
+short empOn
+float eTimer
+float dDay
+short sConsoleWeather
+short sIsCounted
+ref rSelf
+
+begin gamemode
+
+	set rSelf to GetSelf
+
+	if rSelf.GetInWorldspace fwvWorldSmallTrenzalore == 1
+
+		if rSelf.getDead == 1 && sIsCounted == 0
+			set sIsCounted to 1
+			let fwvqTrenzalore.EDeaths[1] := fwvqTrenzalore.EDeaths[1] + 1
+		endif
+	endif
+
+	if empOn == 1
+		if eTimer < 10.0
+			set eTimer to eTimer + getSecondsPassed
+		else
+			setAV Aggression 0
+			StopCombat
+			PlayIdle fwvAnimCyberMad
+			set eTimer to 0.0
+			set empOn to 2
+		endif
+	elseif empOn == 2
+		if eTimer < 3.0
+			set eTimer to eTimer + getSecondsPassed
+		else
+			PlaySound WPNZapGlove3D
+			PlaceAtMe DLC03TeslaCannonExplosionSmall
+			KillActor
+			set empOn to 0
+		endif
+	endif
+
+	if GetDead
+		if dDay == 0.0
+			set dDay to gameDaysPassed 
+		elseif gameDaysPassed > dDay + 1 || (sConsoleWeather != fwvqRooms.sConsoleWeather && (GetParentCell == fwvTinterior1 || GetParentCell == fwvq1.rTDesktopRoom))
+			; Is in the TARDIS, remove when moving between desktop/interior, or 1 day is passed
+			MarkForDelete
+			Disable
+		endif
+	endif
+
+end

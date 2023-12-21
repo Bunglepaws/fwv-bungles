@@ -1,0 +1,106 @@
+scn fwvSilurianStrongholdActivatorScript
+
+ref rSteam
+short sValveOff
+short sShieldOff
+
+
+Begin onActivate Player
+
+	if getisReference fwvXOSilurStrngGeothermAccessREF == 1
+		If Player.GetItemCount fwvSilurianStrngGeoKey == 0
+			Player.AddItem fwvSilurianStrngGeoKey 1
+			;MessageEx "[Geothermal Substation Access Key granted...]"
+		else
+			MessageEx "[You already have the Substation Access key]"
+		endIf
+	
+	elseif getisReference fwvXOSilurStrngCellsKeyREF == 1
+		If Player.GetItemCount fwvSilurianStrngCellKey == 0
+			Player.AddItem fwvSilurianStrngCellKey 1
+			;MessageEx "[Captive Cells Magno-Key granted...]"
+		else
+			MessageEx "[You already have the Captive Cells key]"
+		endIf
+	
+	elseif getisReference fwvXOSilurianShaftButtonREF == 1
+		if fwvqInvasions.sTransmatOn == 0
+			MessageEx "[Grav Bubble Transport Shafts primed...]"
+			fwvXOSilurShaftLightREF01.enable
+			fwvXOSilurShaftLightREF02.enable
+			fwvXOSilurShaftLightREF03.enable
+			fwvXOSilurShaftLightREF04.enable
+			fwvGravBubbles01.enable
+			fwvGravBubbles02.enable
+			set fwvqInvasions.sTransmatOn to 1
+		else
+			MessageEx "[Grav Bubble Transport Shafts already primed...]"
+			;MessageEx "[Grav Bubble Transport Shafts disabled...]"
+			;fwvXOSilurShaftLightREF01.disable
+			;fwvXOSilurShaftLightREF02.disable
+			;fwvXOSilurShaftLightREF03.disable
+			;fwvXOSilurShaftLightREF04.disable
+			;fwvGravBubbles01.disable
+			;fwvGravBubbles02.disable
+			;set fwvqInvasions.sTransmatOn to 0
+		endif
+	
+	elseif getisReference fwvXOSilurStrngPDA01 == 1
+		if fwvqSilurianGasStation.sSilurianRead == 0
+			ShowMessage fwvXOSilurianLanguageMESG
+			set fwvqSilurianGasStation.sSilurianRead to 1
+		endif
+		ShowMessage fwvXOSilurianPDAMESG
+		player.additem fwvItemSchemHuntressMask 1
+		fwvXOSilurStrngPDA01.disable
+		
+	elseif getisReference fwvXOSilurStrngPDA02 == 1
+		if fwvqSilurianGasStation.sSilurianRead == 0
+			ShowMessage fwvXOSilurianLanguageMESG
+			set fwvqSilurianGasStation.sSilurianRead to 1
+		endif
+		ShowMessage fwvXOSilurianPDAMESG2 
+		fwvXOSilurStrngPDA02.disable	
+
+	elseif getIsID fwvSilurianStrongholdValve == 1
+		if sValveOff == 0
+			set rSteam to GetLinkedRef
+			rSteam.disable
+			let fwvqInvasions.sShield := fwvqInvasions.sShield + 1
+			if fwvqInvasions.sShield > 3
+				MessageEx "[Geothermal Pump Controls Unlocked]"
+				PlaySound OBJPipeControlTurn
+				PlaySound NPCRobotEdESonarBeep
+				let sValveOff := 1
+			else
+				PlaySound OBJPipeControlTurn
+				MessageEx "[%g/4 Safety Valves Closed]" fwvqInvasions.sShield			
+				let sValveOff := 1
+			endif
+		else
+			playsound DRSLocker02Open
+			MessageEx "[Safety Valve Closed and Locked]"
+		endif	
+		
+	elseif getisReference fwvXOSilurStrngBoomButtonREF == 1
+		if fwvqInvasions.sBlow == 0
+			if fwvqInvasions.sShield > 3
+				MessageEx "[Critical Pump Failure in 60 seconds]"
+				fwvXOSilurStrngAlertREF.enable
+				set fwvqInvasions.sBlow to 1
+				;set fwvqInvasions.Kablooey to 0
+				set fwvqInvasions.fTimer to 0.0
+			else
+				MessageEx "[Geothermal Safety Valves Active]"
+				MessageEx "[Pump Controls Locked]"
+				playsound NPCRobotEdEFail2
+			endif
+		endif
+	endif
+
+end
+
+
+
+
+

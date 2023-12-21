@@ -1,0 +1,118 @@
+scn fwvWeapVortexManipulatorSCRIPT
+
+float vLocNum
+ref vLoc
+float vTimer
+short vFrame
+short vLocLast
+short vortexOn
+ref rConsoleRoom
+
+short cHours
+
+short vortex
+
+begin OnEquip Player
+	set vortexOn to 1
+	set fwvq1.fQuestDelayWeapon to 0.1
+	set fwvqWeaponQuest.screwdrivermenu to 0
+	printc "equipped!"
+end
+
+begin OnUnequip Player
+	if player.hasMagicEffect fwvVortexFieldEffect == 1
+		player.removeSpell fwvVortexShield
+		PlaySound OBJForcefieldShutdown
+		player.sms DLC03TeslaFXShader	
+	endif
+	set vortexOn to 0
+	set fwvqWeaponQuest.vortexMenu to 0
+	set fwvqWeaponQuest.vortexMode to 0
+end
+
+begin gamemode
+
+	set cHours to fwvqWeaponQuest.VortexCoolDown - GameDaysPassed
+	set rConsoleRoom to fwvq1.rTDesktopRoom
+	if vortexOn == 1
+		if isControlPressed 6 == 1 && vortex == 0 && vTimer == 0.0
+			if fwvqWeaponQuest.VortexCoolDown > GameDaysPassed + 0.5
+				set fwvqWeaponQuest.VortexCoolDown to 0 ; reset if broken
+			endif
+			if Player.GetInCell rConsoleRoom || Player.GetInCell fwvTinterior1 || Player.GetInCell fwvStrongholdAuton || Player.GetInCell fwvStrongholdCyberman || Player.GetInCell fwvStrongholdDalek || Player.GetInCell fwvSilurianStronghold 
+				ShowMessage fwvWeapModeUnavailableMessage
+			elseif fwvqWeaponQuest.vortexMode <= 2
+				if GameDaysPassed > fwvqWeaponQuest.VortexCoolDown + 0.5
+					if fwvqWeaponQuest.vortexMode == 1
+						vLocLastRef.moveTo player						;store players location only if teleporting
+					endif
+					SGTM 0.5
+					PlaySound OBJComputerTerminalArc
+					player.PlaceAtMe fwvVortexManipulatorExplosion
+					printc "vortexMode is %g" fwvqWeaponQuest.vortexMode
+					set vLocNum to GetRandomPercent + 1
+					set vLoc to ListGetNthForm fwvLocations vLocNum
+					printc "Location is %g" vlocNum
+					set vTimer to 0.0
+					set vortex to 1
+				else
+					ShowMessage fwvWeapCooldownMessage
+				endif
+			elseif fwvqWeaponQuest.vortexMode == 3
+				if GameDaysPassed > fwvqWeaponQuest.VortexCoolDown + 0.5
+					player.addSpell fwvVortexShield
+					set fwvqWeaponQuest.vortexMenu to 0
+					set fwvqWeaponQuest.vortexMode to 0
+					set fwvqWeaponQuest.VortexCoolDown to gameDaysPassed
+				else
+					ShowMessage fwvWeapCooldownMessage
+				endif
+			endif
+		endif
+
+		if vortex == 1
+			DisablePlayerControls
+			player.setActorAlpha 0
+			if vTimer < 3.0
+				set vTimer to vTimer + getSecondsPassed
+			else
+				if vFrame == 0
+					printc "Teleporting player!"
+					if fwvqWeaponQuest.vortexMode == 1			;Random teleport
+						player.moveTo vLoc
+					elseif fwvqWeaponQuest.vortexMode == 2		;Return to last location
+						if vLocLast == 1
+							player.moveTo vLocLastRef
+						else
+							PlaySound WPNRechargerFail
+						endif
+					endif
+					set vTimer to 0.0
+					set vFrame to 1
+				elseif vFrame == 1
+					printc "Player safely transmatted!"
+					PlaySound OBJComputerTerminalArc
+					player.PlaceAtMe fwvVortexManipulatorExplosion
+					SGTM 1
+					player.setActorAlpha 100
+					if vLocLast == 0
+						printc "Fast return location initialised"
+						set vLocLast to 1
+					endif
+					EnablePlayerControls
+					set fwvqWeaponQuest.vortexMenu to 0
+					set fwvqWeaponQuest.vortexMode to 0
+					set fwvqWeaponQuest.VortexCoolDown to gameDaysPassed
+					set vTimer to 0.0
+					set vFrame to 0
+					set vortex to 0	
+				endif
+			endif
+		elseif vTimer > 0.0 && vTimer < 2.0 ; so it doesn't trigger error messageboxes repeatedly
+			set vTimer to vTimer + getSecondsPassed
+		elseif vTimer >= 2.0
+			set vTimer to 0.0
+		endif
+	endif
+
+end

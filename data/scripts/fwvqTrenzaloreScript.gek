@@ -1,0 +1,231 @@
+scn fwvqTrenzaloreScript
+
+short init
+short patch
+short doOnce
+short sTalkedtoWoman
+
+array_var ASpawn
+array_var BSpawn
+array_var CSpawn
+array_var DSpawn
+array_var ESpawns	Index 0 = Daleks, index 1 = cyber, index 3 = silurians, index 4 = silence, index 5 = autons
+array_var EDeaths
+
+float fBattleTimer
+float fIncomingTimer
+
+short sTrenzaloreDestroyed
+short sMomentReady
+short sHumans
+short sChildren
+short sSilenceMet
+short sSilenceMove
+
+short sIncomingTimeLimit
+short sBattle					; Is a battle happening?
+short sBattleSpawnTimer	; Condition to run the timer
+short sBattlesWon
+short sIncoming				; Short time to prepare traps
+short sFrame
+
+short sSpawnLoc 				; 1 = A, 2 = B, 3 = C, 4 = D
+short sCount					; Count of spawned enemies
+short sSpeciesAliveCount	; Count of how many attacking species are still alive (and believe me I am still alive)
+short sEnemyRand			; Spawn Sequences 1 = daleks 2 = cybermen 3 = silurians 4 = autons 5 = silence
+short sEnemyCountRand	; How many enemies should spawn for each species
+short sEnemySpawn
+
+short sSacrifice    ;sacrificed 10 regens, can tune moment
+short sTheWoman	   ;can talk to The Woman
+short sTheRift 			; can use Rift
+
+ref Enemy
+ref Marker
+
+Begin GameMode
+
+	if init == 0
+		if eval (ASpawn == Ar_Null || BSpawn == Ar_Null || CSpawn == Ar_Null || DSpawn == Ar_Null || ESpawns == Ar_Null || EDeaths == Ar_Null)
+			let ASpawn := Ar_Construct "array"
+			let BSpawn := Ar_Construct "array"
+			let CSpawn := Ar_Construct "array"
+			let DSpawn := Ar_Construct "array"
+			let ESpawns := Ar_Construct "array"
+			let EDeaths := Ar_Construct "array"
+		endif
+		Call fwvFuncSetTrenzaloreSpawns
+		set init to 1
+	endif
+
+	if player.GetInWorldspace fwvWorldSmallTrenzalore == 1
+		if fBattleTimer < GameDaysPassed
+			if sBattle == 0 && sBattleSpawnTimer == 0
+				set sEnemyRand to 1 + GetRandomPercent * (5-1+1) / 100
+				set sBattleSpawnTimer to 1
+				set sIncomingTimeLimit to Rand 15, 180
+				fwvTrWarAlarmRef1.Enable
+				set fBattleTimer to GameDaysPassed + 1
+				SetStage fwvqTrenzalore 10
+				MessageBoxEx "Enemies inbound in %g seconds!" sIncomingTimeLimit
+			endif
+		endif
+
+		if sBattleSpawnTimer == 1
+			if fIncomingTimer < sIncomingTimeLimit
+				set fIncomingTimer to fIncomingTimer + GetSecondsPassed
+			else
+				SetStage fwvqTrenzalore 15
+				fwvTrWarAlarmRef1.Disable
+				set sBattleSpawnTimer to 0
+				set fIncomingTimer to 0
+				set sCount to 0
+				set sSpawnLoc to 1
+				set sSpeciesAliveCount to 4
+				set sEnemyCountRand to 5 + GetRandomPercent * (10-5+1) / 100
+				printc "Enemy number: %g" sEnemyCountRand
+				set sBattle to 1
+				set sEnemySpawn to 1
+			endif
+		endif
+	endif
+
+	if sEnemySpawn == 1
+		While sCount < sEnemyCountRand
+			if sSpawnLoc == 1
+				let Marker := ASpawn[sCount]
+				if sEnemyRand == 1
+					let Enemy := fwvTrenzDalekSaucerDrone
+					let ESpawns[0] := 1
+				elseif sEnemyRand == 2
+					let Enemy := fwvTrenzCrCyberman
+					let ESpawns[1] := 1
+				elseif sEnemyRand == 3
+					let Enemy := fwvTrenzSilurianGuardian
+					let ESpawns[2] := 1
+				elseif sEnemyRand == 4
+					let Enemy := fwvTrenzSilentPriestShip
+					let ESpawns[3] := 1
+				elseif sEnemyRand == 5
+					let Enemy := fwvTrenzAutonDuplicate
+					let ESpawns[4] := 1
+				endif
+			elseif sSpawnLoc == 2
+				let Marker := BSpawn[sCount]
+				if sEnemyRand == 1
+					let Enemy := fwvTrenzCrCyberman
+					let ESpawns[1] := 2
+				elseif sEnemyRand == 2
+					let Enemy := fwvTrenzSilentPriestShip
+					let ESpawns[3] := 2
+				elseif sEnemyRand == 3
+					let Enemy :=  fwvTrenzAutonDuplicate
+					let ESpawns[4] := 2
+				elseif sEnemyRand == 4
+					let Enemy := fwvTrenzDalekSaucerDrone
+					let ESpawns[1] := 2
+				elseif sEnemyRand == 5
+					let Enemy := fwvTrenzSilurianGuardian
+					let ESpawns[2] := 2
+				endif
+			elseif sSpawnLoc == 3
+				let Marker := CSpawn[sCount]
+				if sEnemyRand == 1
+					let Enemy := fwvTrenzSilurianGuardian
+					let ESpawns[2] := 3
+				elseif sEnemyRand == 2
+					let Enemy := fwvTrenzAutonDuplicate
+					let ESpawns[4] := 3
+				elseif sEnemyRand == 3
+					let Enemy := fwvTrenzDalekSaucerDrone
+					let ESpawns[0] := 3
+				elseif sEnemyRand == 4
+					let Enemy := fwvTrenzCrCyberman
+					let ESpawns[1] := 3
+				elseif sEnemyRand == 5
+					let Enemy := fwvTrenzSilentPriestShip
+					let ESpawns[3] := 3
+				endif
+			elseif sSpawnLoc == 4
+				let Marker := DSpawn[sCount]
+				if sEnemyRand == 1
+					let Enemy := fwvTrenzSilentPriestShip
+					let ESpawns[3] := 4
+				elseif sEnemyRand == 2
+					let Enemy := fwvTrenzSilurianGuardian
+					let ESpawns[2] := 4
+				elseif sEnemyRand == 3
+					let Enemy := fwvTrenzCrCyberman
+					let ESpawns[1] := 4
+				elseif sEnemyRand == 4
+					let Enemy := fwvTrenzAutonDuplicate
+					let ESpawns[4] := 4
+				elseif sEnemyRand == 5
+					let Enemy := fwvTrenzDalekSaucerDrone
+					let ESpawns[0] := 4
+				endif
+			endif
+			Marker.PlaceAtMe fwvVortexManipulatorExplosion
+			Marker.PlaceAtMe Enemy 1
+			set sCount to sCount + 1
+			if sCount >= sEnemyCountRand
+				if sSpawnLoc < 4
+					set sSpawnLoc to sSpawnLoc + 1
+					set sCount to 0
+				else
+					set sCount to 99
+					set sEnemySpawn to 0
+					printc "EVERYTHING HAS SPAWNED"
+				endif
+			endif
+		Loop
+	endif
+
+	if sBattle == 1
+		if eval EDeaths[0] >= sEnemyCountRand
+			printc "ALL DALEKS DEAD"
+			let EDeaths[0] := 0
+			set sSpeciesAliveCount to sSpeciesAliveCount - 1
+		endif
+		if eval EDeaths[1] >= sEnemyCountRand
+			printc "ALL CYBERMEN DEAD"
+			let EDeaths[1] := 0
+			set sSpeciesAliveCount to sSpeciesAliveCount - 1
+		endif
+		if eval EDeaths[2] >= sEnemyCountRand
+			printc "ALL SILURIANS DEAD"
+			let EDeaths[2] := 0
+			set sSpeciesAliveCount to sSpeciesAliveCount - 1
+		endif
+		if eval EDeaths[3] >= sEnemyCountRand
+			printc "ALL SILENCE DEAD"
+			let EDeaths[3] := 0
+			set sSpeciesAliveCount to sSpeciesAliveCount - 1
+		endif
+		if eval EDeaths[4] >= sEnemyCountRand
+			printc "ALL AUTONS DEAD"
+			let EDeaths[4] := 0
+			set sSpeciesAliveCount to sSpeciesAliveCount - 1
+		endif
+
+		if sSpeciesAliveCount == 0
+			set sBattlesWon to sBattlesWon + 1
+			set sBattle to 0
+			printc "ALL SPECIES DEAD"
+			MessageEx "The battle is over... for today."
+			SetObjectiveCompleted fwvqTrenzalore 15 1
+			SetStage fwvqTrenzalore 16
+			MessageEx "Tomorrow, it will begin anew, as it does every single day."
+			if sBattlesWon >= 4
+				if doOnce == 0
+					MessageBoxEx "You have received a psychic message: Go to the Omega Arsenal using the TARDIS Navcom."
+					set sMomentReady to 1
+					SetStage fwvqTrenzalore 20
+					set doOnce to 1
+				endif
+			endif
+			SetStage fwvqTrenzalore 5
+		endif
+	endif
+
+End

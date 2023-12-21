@@ -1,0 +1,97 @@
+scn fwvCompanionDiarySCRIPT
+
+ref rComp1
+ref rComp2
+ref rComp3
+
+string_var rName1
+string_var rName2
+string_var rName3
+
+short button
+short awaitingInput
+
+short sHireOK
+short sHireNotOK
+
+Begin OnActivate Player
+	printc "sHiring starts at %g" fwvqCompanionTutorial.sHiring
+	if fwvqCompanionTutorial.sHiring ==1
+		set sHireOK to 1
+		set sHireNotOK to 0
+	else
+		set sHireOK to 0
+		set sHireNotOK to 1
+	endif
+
+	if fwvCompanion.cCount < 1 
+		;showmessage fwvCompanionDiary0
+		MessageBoxEx "Current Companions: None%r%rYou can enable or disable the Fallout Who Vegas Companion Recruitment Function with this book.%rDisabling only affects generic Wasteland NPCs, not New Vegas Follower or Unique Fallout Who Vegas companions.%r%r|[Cancel]%{|[Enable Companion Recruitment]%}%{|[Disable Companion Recruitment]%}" sHireNotOk sHireOK
+	elseif fwvCompanion.cCount == 1
+		let rComp1 := fwvCompanion.arCompanions[0]
+		let rName1 := " "
+		let rName1 += $rComp1
+		printc "rName1 is %z" rName1
+		printc "rComp1 is %n" rComp1
+		;showmessage fwvCompanionDiary0
+		;showmessage fwvCompanionDiary1 rComp1
+		MessageBoxEx "Current Companions:%r%r1. %z %r2.  (none) %r3.  (none) %r%rYou can enable or disable the Fallout Who Vegas Companion Recruitment Function with this book.%rDisabling only affects generic Wasteland NPCs, not New Vegas Follower or Unique Fallout Who Vegas companions.%r%r|[Cancel]%{|[Enable Companion Recruitment]%}%{|[Disable Companion Recruitment]%}" rName1 sHireNotOk sHireOK	
+
+		;MessageBoxEx "Current Companions:%r%r1. %z %r2. None %r3. None" rName1
+
+
+		
+	elseif fwvCompanion.cCount == 2
+		let rComp1 := fwvCompanion.arCompanions[0]
+		let rComp2 := fwvCompanion.arCompanions[1]
+		let rName1 := " "
+		let rName1 += $rComp1
+		let rName2 := " "
+		let rName2 += $rComp2
+		printc "rComp1 is %n" rComp1
+		printc "rComp2 is %n" rComp2
+		;showmessage fwvCompanionDiary0
+		;showmessage fwvCompanionDiary2 rComp1 rComp2
+		MessageBoxEx "Current Companions:%r%r1. %z %r2. %z %r3.  (none) %r%rYou can enable or disable the Fallout Who Vegas Companion Recruitment Function with this book.%rDisabling only affects generic Wasteland NPCs, not New Vegas Follower or Unique Fallout Who Vegas companions.%r%r|[Cancel]%{|[Enable Companion Recruitment]%}%{|[Disable Companion Recruitment]%}" rName1 rName2 sHireNotOk sHireOK
+		
+	elseif fwvCompanion.cCount == 3
+		let rComp1 := fwvCompanion.arCompanions[0]
+		let rComp2 := fwvCompanion.arCompanions[1]
+		let rComp3 := fwvCompanion.arCompanions[2]	
+		let rName1 := " "
+		let rName1 += $rComp1
+		let rName2 := " "
+		let rName2 += $rComp2
+		let rName3 := " "
+		let rName3 += $rComp3
+		printc "rComp1 is %n" rComp1
+		printc "rComp2 is %n" rComp2
+		printc "rComp3 is %n" rComp3
+		;showmessage fwvCompanionDiary0
+		;showmessage fwvCompanionDiary3 rComp1 rComp2 rComp3
+		MessageBoxEx "Current Companions:%r%r1. %z %r2. %z %r3. %z %r%rYou can enable or disable the Fallout Who Vegas Companion Recruitment Function with this book.%rDisabling only affects generic Wasteland NPCs, not New Vegas Follower or Unique Fallout Who Vegas companions.%r%r|[Cancel]%{|[Enable Companion Recruitment]%}%{|[Disable Companion Recruitment]%}" rName1 rName2 rName3 sHireNotOk sHireOK		
+		
+	endif
+	set awaitingInput to 1
+End
+
+
+Begin Gamemode
+	if awaitingInput == 1
+		set button to GetButtonPressed
+		if button == 1 	; Allow Companions
+			if fwvqCompanionTutorial.sHiring == 0
+				set fwvqCompanionTutorial.sHiring to 1
+				printc "sHiring %g" fwvqCompanionTutorial.sHiring
+				MessageEx "[Companion Recruitment Activated]"
+			else
+				set fwvqCompanionTutorial.sHiring to 0
+				printc "sHiring %g" fwvqCompanionTutorial.sHiring
+				MessageEx "[Companion Recruitment Deactivated]"				
+			endif
+		elseif button == 0 ; Cancel
+			printc "button %g" button
+			set awaitingInput to 0
+		endif
+	endif
+end

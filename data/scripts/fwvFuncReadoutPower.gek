@@ -1,0 +1,73 @@
+scn fwvFuncReadoutPower
+
+short roomTotal
+short primaryTotal
+short secondaryTotal
+short protocolsTotal
+short drainsTotal
+
+Begin Function { }
+
+	printc "fwvFuncReadoutPower: running"
+
+	;Check rooms active
+	Call fwvFuncTardisChkRooms
+	let roomTotal := ListGetCount fwvTardisActiveRooms * 5
+
+	;Check primary systems active
+	if fwvq1.tNavOn == 1
+		let primaryTotal := primaryTotal + 25
+	endif
+	if fwvq1.tArchitectureOn == 1
+		let primaryTotal := primaryTotal + 25
+	endif
+	if fwvq1.tLifeSupportOn == 1
+		let primaryTotal := primaryTotal + 10
+	endif
+	if fwvq1.tCommsOn == 1
+		let primaryTotal := primaryTotal + 5
+	endif
+
+	;Check secondary systems active
+	if fwvqSystems.axiomator == 1
+		let secondaryTotal := secondaryTotal + 2.5
+	endif
+	if fwvqSystems.isomorphicSecuritySystem == 1
+		let secondaryTotal := secondaryTotal + 2.5
+	endif
+	if fwvqSystems.MandrelCondensers == 1
+		let secondaryTotal := secondaryTotal + 5
+	endif
+	if fwvqSystems.Thermobuffer == 1
+		let secondaryTotal := secondaryTotal + 2.5
+	endif
+	if fwvqSystems.RelativeContinuumStabilizer == 1
+		let secondaryTotal := secondaryTotal + 2.5
+	endif
+
+	;Check Protocols active
+	if eval fwvqProtocols.protocol[8] == 1
+		let protocolsTotal := protocolsTotal + 15
+	endif
+	if eval fwvqProtocols.protocol[9] == 1
+		let protocolsTotal := protocolsTotal + 25
+	endif
+	if eval fwvqProtocols.protocol[15] == 1
+		let protocolsTotal := protocolsTotal + 15
+	endif
+	if eval fwvqProtocols.protocol[19] == 1
+		let protocolsTotal := protocolsTotal + 5
+	endif
+
+	;Check Power drains active
+
+	if eval fwvqProtocols.protocol[10] == 1
+		let drainsTotal := drainsTotal + 1
+	endif
+	if fwvqAngelMotel.rift > 0
+		let drainsTotal := drainsTotal + 1
+	endif
+	
+	MessageBoxEx "Transpower System:%r%rArchitectural Config:%g%rPrimary Systems: %g%rSecondary Systems: %g%rProtocols: %g%rPowerdrains: %g%r%rTotal Power Remaining: %g%r" roomTotal primaryTotal secondaryTotal protocolsTotal drainsTotal fwvq1.tPower
+	
+End

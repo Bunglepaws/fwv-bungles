@@ -1,0 +1,72 @@
+scn fwvWeapPsychicSpellScript
+
+short frame
+float fTimer
+
+begin ScriptEffectStart
+
+	if fwvqWeaponQuest.PowderGangers == 1
+		player.addToFaction PowderGangerFactionNV 1
+	elseif fwvqWeaponQuest.Kings == 1
+		player.addToFaction KingsFaction 1
+	elseif fwvqWeaponQuest.SuperMutants == 1
+		player.addToFaction SuperMutantFaction 1
+	elseif fwvqWeaponQuest.Boomer == 1
+		player.addToFaction BoomerFaction 1
+	elseif fwvqWeaponQuest.Brotherhood == 1
+		player.addToFaction BrotherhoodSteelFaction 1
+	elseif fwvqWeaponQuest.Enclave == 1
+		player.addToFaction NCRFactionNV 1
+	elseif fwvqWeaponQuest.NCR == 1
+		player.addToFaction NCRFactionNV 1
+	elseif fwvqWeaponQuest.Omerta == 1
+		player.addToFaction OmertaFaction 1
+	elseif fwvqWeaponQuest.CaesarsLegion == 1
+		player.addToFaction VCaesarsLegionFaction 1
+	endif
+	set fTimer to 0.0
+	set frame to 1
+
+end
+
+begin ScriptEffectUpdate
+
+	if frame == 1
+		if fTimer < 30.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			if fwvqWeaponQuest.PowderGangers == 1
+				player.removeFromFaction PowderGangerFactionNV
+				set fwvqWeaponQuest.PowderGangers to 0
+			elseif fwvqWeaponQuest.Kings == 1
+				player.removeFromFaction KingsFaction
+				set fwvqWeaponQuest.Kings to 0
+			elseif fwvqWeaponQuest.SuperMutants == 1
+				player.removeFromFaction SuperMutantFaction
+				set fwvqWeaponQuest.Supermutants to 0
+			elseif fwvqWeaponQuest.Boomer == 1
+				player.removeFromFaction BoomerFaction
+				set fwvqWeaponQuest.Boomer to 0
+			elseif fwvqWeaponQuest.Brotherhood == 1
+				player.removeFromFaction BrotherhoodSteelFaction
+				set fwvqWeaponQuest.Brotherhood to 0
+			elseif fwvqWeaponQuest.Enclave == 1
+				player.removeFromFaction EnclaveFaction
+				set fwvqWeaponQuest.Enclave to 0
+			elseif fwvqWeaponQuest.NCR == 1
+				player.removeFromFaction NCRFactionNV
+				set fwvqWeaponQuest.NCR to 0
+			elseif fwvqWeaponQuest.Omerta == 1
+				player.removeFromFaction OmertaFaction
+				set fwvqWeaponQuest.Omerta to 0
+			elseif fwvqWeaponQuest.CaesarsLegion == 1
+				player.removeFromFaction VCaesarsLegionFaction
+				set fwvqWeaponQuest.CaesarsLegion to 0
+			endif
+			set frame to 0
+			PlaySound UIHealthChemsAddicted
+			player.removeSpell fwvWeapPsychicSpell
+		endif
+	endif
+
+end

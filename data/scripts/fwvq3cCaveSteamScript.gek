@@ -1,0 +1,56 @@
+scn fwvq3cCaveSteamScript
+
+short steam
+float timer
+
+ref tDist
+
+begin gamemode
+
+set tDist to fwvq3cSteam1Ref.getDistance player
+
+if timer < 5.0
+	set timer to timer + getSecondsPassed
+else
+	fwvq3cSteam1Ref.disable
+	fwvq3cSteam2Ref.disable
+	fwvq3cSteam3Ref.disable
+	fwvq3cSteam4Ref.disable
+	fwvq3cSteam5Ref.disable
+	fwvq3cSteam6Ref.disable
+	set steam to steam + 1
+	set timer to 0.0
+endif
+
+if steam == 1
+	fwvq3cSteam1Ref.enable
+elseif steam == 2
+	fwvq3cSteam2Ref.enable
+elseif steam == 3
+	fwvq3cSteam3Ref.enable
+elseif steam == 4
+	fwvq3cSteam4Ref.enable
+elseif steam == 5
+	fwvq3cSteam5Ref.enable
+elseif steam == 6
+	fwvq3cSteam6Ref.enable
+elseif steam > 6
+	set steam to 1
+endif
+
+if steam == 1 && fwvq3cSteam1Ref.getDisabled == 0 && player.getDistance fwvq3cSteam1Ref < 100
+	printc "player is %g units from gas" tDist
+	player.damageAv health 1
+elseif steam == 2 && fwvq3cSteam2Ref.getDisabled == 0 && player.getDistance fwvq3cSteam2Ref < 100
+	player.damageAv health 1
+elseif steam == 3 && fwvq3cSteam3Ref.getDisabled == 0 && player.getDistance fwvq3cSteam3Ref < 100
+	player.damageAv health 1
+elseif steam == 4 && fwvq3cSteam4Ref.getDisabled == 0 && player.getDistance fwvq3cSteam4Ref < 100
+	player.damageAv health 1
+elseif steam == 5 && fwvq3cSteam5Ref.getDisabled == 0 && player.getDistance fwvq3cSteam5Ref < 100
+	player.damageAv health 1
+elseif steam == 6 && fwvq3cSteam6Ref.getDisabled == 0 && player.getDistance fwvq3cSteam6Ref < 100
+	player.damageAv health 1
+endif
+
+end

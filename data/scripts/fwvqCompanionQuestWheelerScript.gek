@@ -1,0 +1,6 @@
+scn fwvqCompanionQuestWheelerScript
+
+begin OnActivate Player
+	SetTalkingActivatorActor fwvCQwheelerNpcRef
+	Activate
+end

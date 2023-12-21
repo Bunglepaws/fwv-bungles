@@ -1,0 +1,26 @@
+scn fwvK9whistleSCRIPT
+
+Begin ScriptEffectStart
+
+	if fwvCompanionK9Ref.GetDead != 1
+		If GetPCIsSex Male
+			MessageEx "Coming Master!"
+		else
+			MessageEx "Coming Mistress!"
+		endif
+	else
+		MessageEx "K9 uses the last of his power to return to you, then falls to pieces. He needs major repairs."
+	endif
+	
+	fwvCompanionK9Ref.disable
+	fwvCompanionK9Ref.enable
+	set fwvqCompanionK9.sK9FollowFlag to 1
+	fwvCompanionK9Ref.moveto player
+	fwvCompanionK9Ref.addScriptPackage fwvK9FollowPlayerClose
+	fwvCompanionK9Ref.evp
+	
+	AddItem fwvK9Whistle 1 1	
+
+End
+
+

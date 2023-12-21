@@ -1,0 +1,112 @@
+scn fwvCompanionK9Script
+
+short sDeadInit 
+short sRepairK9
+int sScrapElectronics
+short sRepairMenu
+short sButtonPressed
+short sFirstRepair
+
+float fx
+float fy
+float fz
+
+Begin OnActivate player
+
+	if getDead == 1
+		if sRepairK9 == 0
+			set sScrapElectronics to Rand 1, 4	    ; minimum(inclusive) to maximum(exclusive)
+			printc "sScrapEl == %g" sScrapElectronics
+			let sRepairK9 := 1
+		endif
+		
+		if sFirstRepair == 0
+			set sScrapElectronics to Rand 1, 4	    ; minimum(inclusive) to maximum(exclusive)
+			printc "sScrapEl == %g" sScrapElectronics
+			MessageBoxEx "K9 needs completely rebuilt. You will need %g x Scrap Electronics, a Motivator Unit, a Sensory Array, a Vocal Modulator, and a Temporal Engineering Skill of 25 (%g) or more to make repairs...|Make Repairs|Leave Him alone|" sScrapElectronics fwvq1.txl
+			let sRepairMenu := 1
+		else		
+			set sScrapElectronics to Rand 1, 4	    ; minimum(inclusive) to maximum(exclusive)
+			printc "sScrapEl == %g" sScrapElectronics
+			MessageBoxEx "K9 has been damaged beyond functionality. You will need %g x Spare Electronics and a Temporal Engineering Skill of 25 (%g) or more to make repairs...|Make Repairs|Leave Him alone|" sScrapElectronics fwvq1.txl
+			printc "debug msg"
+			let sRepairMenu := 1
+		endif
+		
+	else
+		if fwvqCompanionK9.sPlayGame == 0
+			Activate
+		else
+			MessageEx "[K9 is playing Rock, Paper, Scissors]"
+		endif
+	endif
+
+End
+
+Begin Gamemode
+
+	let sButtonPressed := getButtonPressed
+
+	if sRepairMenu == 1
+		if sButtonPressed == 0
+			if sFirstRepair == 0
+				if fwvq1.txl >= 25 && (player.getItemCount ScrapElectronics >= sScrapElectronics && player.getItemCount fwvK9motivatorUnit >=1 && player.getItemCount fwvK9sensoryArray >=1 && player.getItemCount fwvK9vocalModulator >=1)
+					fwvCompanionK9Ref.resurrectActor
+					if fwvqCraft.sK9Schem == 0
+						let fwvqCraft.sK9Schem := 1
+					endif
+					MessageBoxEx "K9 has been repaired! A schematic was tucked in his housing. If K9 were to be completely destroyed and unrepairable, you could build a new one."
+					fwvItemSchemK9PlacedREF.enable
+					let sFirstRepair := 1
+					player.removeItem ScrapElectronics sScrapElectronics 0
+					player.removeItem fwvK9motivatorUnit 1
+					player.removeItem fwvK9sensoryArray 1
+					player.removeItem fwvK9vocalModulator 1
+					player.additem fwvK9Whistle 1
+					If GetPCIsSex Female
+     					PlaySound fwvK9ThxMisRepCom
+					else
+     					PlaySound fwvK9AllSysFuncNorm
+					endif
+				elseif fwvq1.txl < 25
+					MessageBoxEx "Your Temporal Engineering Skill is not High enough (%g)" fwvq1.txl
+				elseif player.getItemCount ScrapElectronics < sScrapElectronics || player.getItemCount fwvK9motivatorUnit == 0 || player.getItemCount fwvK9sensoryArray == 0 || player.getItemCount fwvK9vocalModulator == 0
+					MessageBoxEx "You do not have all the required parts."
+				endif
+				let sRepairMenu := 0
+		
+			else
+				if fwvq1.txl >= 25 && (player.getItemCount ScrapElectronics >= sScrapElectronics)
+					fwvCompanionK9Ref.resurrectActor
+					if fwvqCraft.sK9Schem == 0
+						let fwvqCraft.sK9Schem := 1
+					endif
+					MessageBoxEx "K9 has been repaired!"
+					If GetPCIsSex Female
+     					PlaySound fwvK9ThxMisRepCom
+					else
+     					PlaySound fwvK9AllSysFuncNorm
+					endif
+					player.removeItem ScrapElectronics sScrapElectronics 0
+				elseif fwvq1.txl < 25
+					MessageBoxEx "Your Temporal Engineering Skill is not High enough (%g)" fwvq1.txl
+				elseif player.getItemCount ScrapElectronics < sScrapElectronics
+					MessageBoxEx "You do not have enough Scrap Electronics."
+				endif
+				let sRepairMenu := 0		
+			endif
+		
+		elseif sButtonPressed == 1
+			let sRepairMenu := 0
+		endif
+	endif
+
+	;if isInCombat == 1 && GetCombatTarget player == 1
+	;	if fwvqCompanionK9.sWeaponType == 0
+	;		let fwvqCompanionK9.sWeaponType := 1
+	;		fwvCompanionK9Ref.removeItem fwvCompanionK9LaserStun 1
+	;		fwvCompanionK9Ref.addItem fwvCompanionK9Laser 1
+	;	endif
+	;endif
+
+End

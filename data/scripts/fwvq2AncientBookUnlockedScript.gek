@@ -1,0 +1,12 @@
+scn fwvq2AncientBookUnlockedScript
+
+begin onEquip player
+	printc "test>"
+	if getStage fwvquestTwo == 25
+		PlaySound NPCIdleRprWallScrew
+		PlaySound OBJBookSpecialPageTurn
+		ShowMessage fwvq2ancientBookUnlockedMessage
+		player.addItem fwvItemSchemChameleonArch 1
+		setStage fwvquestTwo 40
+	endif
+end

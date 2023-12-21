@@ -1,0 +1,267 @@
+scn fwvTardisGardenAllotment3ScriptRevised
+
+short buttonType
+short buttonPlant
+short TypeChosen
+short PlantChosen
+
+begin onActivate player
+
+	if fwvqCraft.growing3 == 0
+		set buttonType to 0
+		set buttonPlant to 0
+		set TypeChosen to 0
+		set PlantChosen to 0
+		printc "detected"
+		ShowMessage fwvTardisGardenPlantTypeMessage
+	else
+		ShowMessage fwvTardisGardenPlantGrowingMessage
+	endif
+ 	printc "growing is %g" fwvqCraft.growing3 
+
+end
+
+begin GameMode
+
+	if TypeChosen == 0
+		set buttonType to getbuttonpressed
+		set TypeChosen to 1
+	endif
+	
+	if TypeChosen == 1 && PlantChosen == 0
+		;set PlantChosen to 1
+		if buttonType == 0 ; Fruits and Succulents
+			ShowMessage fwvTardisGardenPlantFruitsMenu
+			set buttonPlant to getbuttonpressed
+			set TypeChosen to 2
+			set PlantChosen to 1
+		elseif buttonType == 1 ; Veg and Beans
+			ShowMessage fwvTardisGardenPlantVegMenu
+			set buttonPlant to getbuttonpressed
+			set TypeChosen to 2
+			set PlantChosen to 1		
+		elseif buttonType == 2 ; Seeds Nuts Flowers Roots
+			ShowMessage fwvTardisGardenPlantNutsRootsMenu
+			set buttonPlant to getbuttonpressed
+			set TypeChosen to 2
+			set PlantChosen to 1		
+		elseif buttonType == 3 ; Other
+			ShowMessage fwvTardisGardenPlantAlienOtherMenu
+			set buttonPlant to getbuttonpressed
+			set TypeChosen to 2
+			set PlantChosen to 1		
+		elseif buttonType == 4 ; Not Now
+			set TypeChosen to 2
+			set PlantChosen to 2
+		endif
+	endif
+	
+
+	if PlantChosen == 1 && buttonType == 0 ; Fruits and Succulents
+		set buttonPlant to getbuttonpressed
+			if buttonPlant == 0 ; Banana Yucca
+				player.removeItem NVFreshBananaYuccaFruit 1
+				set fwvqCraft.growing3Day to gameDaysPassed
+				set fwvqCraft.growing3Phase to 1
+				set fwvqCraft.growing3 to 1
+				set fwvqCraft.growing3Type to 3
+				set PlantChosen to 2
+			elseif buttonPlant == 1 ; Barrel Cactus
+				player.removeItem NVFreshBarrelCactusFruit 1
+				set fwvqCraft.growing3Day to gameDaysPassed
+				set fwvqCraft.growing3Phase to 1
+				set fwvqCraft.growing3 to 1
+				set fwvqCraft.growing3Type to 1
+				set PlantChosen to 2				
+			elseif buttonPlant == 2 ; Mutfruit
+				player.removeItem Mutfruit2 1
+				set fwvqCraft.growing3Day to gameDaysPassed
+				set fwvqCraft.growing3Phase to 1
+				set fwvqCraft.growing3 to 1
+				set fwvqCraft.growing3Type to 20
+				set PlantChosen to 2				
+			elseif buttonPlant == 3 ; Crunchy Mutfruit
+				player.removeItem Mutfruit1 1
+				set fwvqCraft.growing3Day to gameDaysPassed
+				set fwvqCraft.growing3Phase to 1
+				set fwvqCraft.growing3 to 1
+				set fwvqCraft.growing3Type to 12
+				set PlantChosen to 2				
+			elseif buttonPlant == 4 ; Apple
+				player.removeItem Apple 1
+				set fwvqCraft.growing3Day to gameDaysPassed
+				set fwvqCraft.growing3Phase to 1
+				set fwvqCraft.growing3 to 1
+				set fwvqCraft.growing3Type to 13	
+				set PlantChosen to 2				
+			elseif buttonPlant == 5 ; Pear
+				player.removeItem Pear 1
+				set fwvqCraft.growing3Day to gameDaysPassed
+				set fwvqCraft.growing3Phase to 1
+				set fwvqCraft.growing3 to 1
+				set fwvqCraft.growing3Type to 15	
+				set PlantChosen to 2				
+			elseif buttonPlant == 6 ; Nevada Agave
+				player.removeItem NevadaAgaveFruit 1
+				set fwvqCraft.growing3Day to gameDaysPassed
+				set fwvqCraft.growing3Phase to 1
+				set fwvqCraft.growing3 to 1
+				set fwvqCraft.growing3Type to 2		
+				set PlantChosen to 2				
+			elseif buttonPlant == 7 ; Prickly Pear
+				player.removeItem PricklyPearCactusFruit 1
+				set fwvqCraft.growing3Day to gameDaysPassed
+				set fwvqCraft.growing3Phase to 1
+				set fwvqCraft.growing3 to 1
+				set fwvqCraft.growing3Type to 5	
+				set PlantChosen to 2		
+			elseif buttonPlant == 8  ; Not Now
+				set PlantChosen to 2
+			endif
+	endif
+	
+	if PlantChosen == 1 && buttonType == 1 ; Veg and Beans
+		set buttonPlant to getbuttonpressed
+		if buttonPlant == 0 ; Carrots
+			player.removeItem Carrot 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 14	
+			set PlantChosen to 2				
+		elseif buttonPlant == 1 ; Potatoes
+			player.removeItem Potato 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 16
+			set PlantChosen to 2				
+		elseif buttonPlant == 2 ; Mesquite
+			player.removeItem NVFreshHoneyMesquiteFruit 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 17	
+			set PlantChosen to 2				
+		elseif buttonPlant == 3 ; Jalapenos
+			player.removeItem JalapenoPepper 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 18
+			set PlantChosen to 2				
+		elseif buttonPlant == 4 ; Maize
+			player.removeItem NVFreshMaize 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 19	
+			set PlantChosen to 2				
+		elseif buttonPlant == 5 ; Pinto
+			player.removeItem PintoBeanPod 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 21	
+			set PlantChosen to 2				
+		elseif buttonPlant == 6 ; Celery
+			player.removeItem fwvXOCelery 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 25	
+			set PlantChosen to 2				
+		elseif buttonPlant == 7  ; Not Now
+			set PlantChosen to 2
+		endif
+	endif
+		
+	if PlantChosen == 1 && buttonType == 2 ; Seeds Nuts Flowers Roots
+		set buttonPlant to getbuttonpressed
+		if buttonPlant == 0 ; Buffalo Gourd
+			player.removeItem BuffaloGourdSeed 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 4		
+			set PlantChosen to 2				
+		elseif buttonPlant == 1 ; Demeter Plant
+			player.removeItem fwvItemDemeterSeed 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 7		
+			set PlantChosen to 2				
+		elseif buttonPlant == 2 ; Pinyon
+			player.removeItem NVPinyonNuts 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 22
+			set PlantChosen to 2				
+		elseif buttonPlant == 3 ; Broc Flower
+			player.removeItem BrocFlower 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 10	
+			set PlantChosen to 2				
+		elseif buttonPlant == 4 ; Xander Root
+			player.removeItem XanderRoot 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 24	
+			set PlantChosen to 2				
+		elseif buttonPlant == 5  ; Not Now
+			set PlantChosen to 2
+		endif			
+	endif
+	
+	if PlantChosen == 1 && buttonType == 3 ; Other
+		set buttonPlant to getbuttonpressed
+		if buttonPlant == 0 ; Cave Fungus
+			player.removeItem CaveFungus 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 9		
+			set PlantChosen to 2				
+		elseif buttonPlant == 1 ; Coyote Tobacco
+			player.removeItem NVCoyoteTobaccoFruit 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 11
+			set PlantChosen to 2				
+		elseif buttonPlant == 2 ; Teaplant
+			player.removeItem fwvItemTealeaf 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 6		
+			set PlantChosen to 2				
+		elseif buttonPlant == 3 ; Horsenettle
+			player.removeItem WhiteHorsenettleBerry 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 23	
+			set PlantChosen to 2				
+		elseif buttonPlant == 4 ; Janis Thorns
+			player.removeItem fwvItemJanisThorn 1
+			set fwvqCraft.growing3Day to gameDaysPassed
+			set fwvqCraft.growing3Phase to 1
+			set fwvqCraft.growing3 to 1
+			set fwvqCraft.growing3Type to 8		
+			set PlantChosen to 2				
+		elseif buttonPlant == 5  ; Not Now
+			set PlantChosen to 2
+		endif			
+	endif
+	
+	if PlantChosen == 1 && buttonType == 4 ; Not Now
+		set PlantChosen to 2
+	endif
+
+end

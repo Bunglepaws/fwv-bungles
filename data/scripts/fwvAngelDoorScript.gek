@@ -1,0 +1,11 @@
+scn fwvAngelDoorScript
+
+Begin onActivate
+
+	if ( GetActionRef != fwvAngelNpc ) || ( GetActionRef != fwvAngelMojaveXO )
+		Activate
+	else
+		printc "fwvAngelDoorScript: angel has opened door"
+	endif
+
+End

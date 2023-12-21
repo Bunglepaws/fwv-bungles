@@ -1,0 +1,16 @@
+scn fwvq3eEldoradoTrapScript
+
+ref cyber
+
+begin onTrigger
+
+set cyber to getActionRef cyber
+
+	if cyber.getBaseObject == fwvq3eCybermanAttack
+		if fwvq3eCyberDef01ArcRef.getDisabled == 0
+			printc "Cyberman detected!"
+			cyber.killActor
+		endif
+	endif
+
+end

@@ -1,0 +1,58 @@
+scn fwvGravBubGo02SCRIPT
+
+float zPosBub
+float zPosPlat
+float zCaptPos
+float fTimer02
+short DoOnce
+ref rSelfPlat
+ref rSelfBub
+ref rCapt
+
+begin GameMode
+	
+	if fwvqInvasions.GravGo02 == 1 
+		
+		if GetIsID fwvSilurianGravDiscACT02 == 1
+			set rSelfPlat to GetSelf
+		endif
+		
+		let rSelfBub := fwvqInvasionsSilurian.GravBubble02
+	
+		let rCapt := fwvqInvasionsSilurian.SilurianPrisoner02
+		set zPosBub to rSelfBub.getPos z + 10    
+		set zPosPlat to rSelfPlat.getPos z + 10 
+		set zCaptPos to rCapt.getPos z + 12.5    
+			
+		if fTimer02 < 5.0
+			set fTimer02 to fTimer02 + getSecondsPassed
+			printc "fTimer02 : %g" fTimer02
+			rSelfBub.setPos z zPosBub
+			printc "Break 1"
+			rSelfPlat.setPos z zPosPlat
+			printc "Break 2"
+			rCapt.setPos z zCaptPos
+			printc "Break 3"
+			if DoOnce == 0
+				PlaySound fwvFXdalekSaucerWoosh
+				set DoOnce to 4
+				printc "Break 4"
+			endif
+		else
+			printc "Break 5"
+			set fTimer02 to 0.0
+			rSelfPlat.disable 1
+			rSelfPlat.MarkForDelete
+			rSelfBub.disable 1
+			rSelfBub.MarkForDelete
+			rCapt.disable 1
+			rCapt.MarkForDelete
+			rewardKarma 5
+			MessageEx "[Captive returned to the surface]" 
+			printc "Break 6" 
+			set fwvqInvasions.sSilurianEscapes to fwvqInvasions.sSilurianEscapes + 1	
+			set fwvqInvasions.GravGo02 to 0
+		endif
+	endif
+		
+End

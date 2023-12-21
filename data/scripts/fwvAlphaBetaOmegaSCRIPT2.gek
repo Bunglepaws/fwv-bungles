@@ -1,0 +1,75 @@
+scn fwvAlphaBetaOmegaSCRIPT2
+
+short killOnce
+short destroy
+float dTimer
+ref rSelf
+short sDead
+short sModel
+short random
+short random2
+short sIsCounted
+short sDoOnce
+short sDoOnce2
+float fTimer
+short frame
+float fAngle
+
+Begin GameMode
+
+	if fwvAsySecConsole01.sTriggered == 0
+		if sDoOnce == 0
+			set fTimer to 0.0
+			set sDoOnce to 1
+		endif
+	endif
+
+	if fwvAsySecConsole01.sTriggered == 1 && getDead == 0
+		if sDoOnce2 == 0
+			set fTimer to 0.0
+			set frame to 1
+			set sDoOnce2 to 1
+		endif
+		
+		set fAngle to getAngle Z + 10
+
+		if frame == 1 && GetIsId fwvCrDalekOmega
+			if fTimer < 10
+				set fTimer to fTimer + getSecondsPassed
+				setAngle Z fAngle
+				StopCombat
+			else
+				set frame to 0
+			endif
+		endif
+	endif
+
+	
+	
+	
+	
+	if getDead == 1
+		if killOnce == 0
+
+			let random := getRandomPercent
+			
+				if random < 50
+
+					rSelf.placeAtMe fwvDalekDroneRemains01Havok
+					rSelf.disable
+					rSelf.MarkForDelete
+				else
+
+					rSelf.placeAtMe fwvDalekDroneRemains02Havok
+					rSelf.disable
+					rSelf.MarkForDelete
+				endif
+
+
+			PlaceAtMe fwvDalekExplosion
+
+			let killOnce := 1
+		endif
+	endif
+
+End

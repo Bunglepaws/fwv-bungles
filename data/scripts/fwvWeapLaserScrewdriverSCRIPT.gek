@@ -1,0 +1,198 @@
+scn fwvWeapLaserScrewdriverSCRIPT
+
+ref CombTarget
+ref laser
+ref targetCell
+
+float fEnemyScale
+
+short sIsRobot
+short sType
+short sMode
+short sRefType
+short sLoops
+short sIndex
+short sMaxIndex
+float fLFHealthPerc
+
+ref rAgeRace
+short sTargetAge
+
+begin OnEquip Player
+
+	set fwvq1.fQuestDelayWeapon to 0.1
+
+	set laser to Player.getequippedobject 5
+	;laser.SetWeaponNumProjectiles 0
+	;if fwvqWeaponQuest.laserMode != 3
+	;	SetWeaponNumProjectiles 0 laser
+	;else
+	;	SetWeaponNumProjectiles 1 laser
+	;endif
+
+	if fwvqTutorials.lTutOnce == 0
+		set fwvqTutorials.lTutOnce to 2
+	endif
+
+end
+
+begin OnUnEquip Player
+	;SetQuestDelay fwvqWeaponQuest 0.1
+	set laser to Player.getequippedobject 5
+	;laser.SetWeaponNumProjectiles 0
+	;if fwvqWeaponQuest.laserMode != 3
+	;	SetWeaponNumProjectiles 0 laser
+	;else
+	;	SetWeaponNumProjectiles 1 laser
+	;endif
+end
+
+begin onFire
+
+	set CombTarget to GetCrosshairRef
+	set sType to GetObjectType CombTarget
+
+
+	if fwvqWeaponQuest.laserMode == 1		; ========= LOCKPICK MODE
+
+		if sType == 28 || sType == 27
+			if CombTarget.GetLocked == 1
+				if CombTarget.GetLockLevel <= 100
+					PlaySound UILockpickingUnlock
+					CombTarget.Unlock
+
+					if targetCell == 0
+
+						;CombTarget.Activate Player 1
+
+					else
+
+						CombTarget.setOpenState 1
+
+					endif
+
+				else
+					MessageEx "[You cannot open a Deadlock Seal...]"
+				endif
+			elseif CombTarget.GetLocked == 0
+				PlaySound UILockpickingUnlock
+				CombTarget.setOpenState 0
+				CombTarget.lock 100
+			endif
+		endif
+
+	elseif fwvqWeaponQuest.laserMode == 2	; ========= HACKING MODE
+
+		if sType == 23
+			if CombTarget.GetLockLevel <= 500
+					PlaySound UIHackingPassGood
+					CombTarget.Unlock
+			endif
+		endif
+		
+		if CombTarget.GetIsID fwvMoonJunctionBox == 1
+			printc "MoonJuncBox Targeted"
+			CombTarget.do 8
+		endif
+
+		if CombTarget == fwvTelosSensor01 || CombTarget == fwvTelosSensor02 || CombTarget ==  fwvTelosSensor03 || CombTarget ==  fwvTelosSensor04 || CombTarget == fwvAutonMurderTransmitterRef
+			CombTarget.Activate Player 1
+		endif
+
+		if CombTarget == fwvCyberConversionMFREF
+			if fwvqInvasions.CyberPrisoner01Uncrux == 0
+				PlaySound OBJForcefieldShutdown
+				set fwvqInvasions.CyberPrisoner01Uncrux to 1
+				
+				fwvCybStrngPrisoner01NPC.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage1
+				fwvCybStrngPrisoner02NPC.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage2
+				fwvCybStrngPrisoner03NPC.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage3
+				fwvCybStrngPrisoner04NPC.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage4
+				
+				fwvCybStrngPrisoner01NPC.moveto fwvCybStrngPrisoner01GoToPrep
+				fwvCybStrngPrisoner02NPC.moveto fwvCybStrngPrisoner02GoToPrep
+				fwvCybStrngPrisoner03NPC.moveto fwvCybStrngPrisoner03GoToPrep
+				fwvCybStrngPrisoner04NPC.moveto fwvCybStrngPrisoner04GoToPrep
+
+				fwvCybStrngPrisoner01NPC.evp
+				fwvCybStrngPrisoner02NPC.evp
+				fwvCybStrngPrisoner03NPC.evp
+				fwvCybStrngPrisoner04NPC.evp
+			
+				MessageEx "[Subjects released, Cyberconversion aborted]"
+			endif
+		endif
+		
+		if CombTarget.GetIsCreatureType 6 == 1 && CombTarget.getInFaction fwvCybermanFaction == 0 && CombTarget.getInFaction fwvDalekFaction == 0
+
+			;PlaySound sonicScrewShoot
+			CombTarget.setAV aggression 0
+			CombTarget.FriendDispositionBoost
+
+		endif
+
+		if CombTarget.getInFaction fwvCybermanFaction == 1 || CombTarget.getInFaction fwvDalekFaction == 1
+			MessageEx "[You cannot hack cyborgs as you can robots...]"
+		endif
+		
+	elseif fwvqWeaponQuest.laserMode == 3 ; ========== DISINTEGRATION MODE
+
+		set laser to Player.getequippedobject 5
+		;laser.SetWeaponNumProjectiles 1
+		;SetWeaponNumProjectiles 1
+		if sType == 42 || sType == 43 
+			if player.getav karma > -974
+				Player.RewardKarma -25
+			else
+				printc "bad karma limit hit"
+			endif
+		endif
+		;laser.SetWeaponProjectile BeamLaserProjectile
+
+	elseif fwvqWeaponQuest.laserMode == 4 ; ========== RAPID AGE MODE
+
+		if sType == 42 ; only works on NPC's
+			set sTargetAge to Call fwvFuncGetAge CombTarget
+			printc "age is %g" sTargetAge
+			if sTargetAge == 3
+				CombTarget.CastImmediateOnSelf DeathClawKnockback
+				CombTarget.KillActor Player
+			else
+				set sTargetAge to sTargetAge + 1
+				Call fwvFuncMatchAge CombTarget sTargetAge
+				set fEnemyScale to CombTarget.getScale * 0.95
+				CombTarget.setScale fEnemyScale
+				CombTarget.damageAV health 10
+				CombTarget.damageAV LeftAttackCondition 100
+				CombTarget.damageAV RightAttackCondition 100
+				CombTarget.damageAV LeftMobilityCondition 100
+				CombTarget.damageAV RightMobilityCondition 100
+				if player.getav karma > -974
+					Player.RewardKarma -25
+				else
+					printc "bad karma limit hit"
+				endif
+				CombTarget.CastImmediateOnSelf DeathClawKnockback
+			endif
+		endif
+
+	elseif fwvqWeaponQuest.laserMode == 5 ; ========== TCE MODE
+
+		if sType == 42 || (sType == 43 && CombTarget.GetIsCreatureType 6 == 0) ; is NPC or is a non-robot creature
+			if CombTarget.GetInFaction fwvLaserScrewdriverImmune == 1 
+			; if CombTarget.GetIsID fwvAngelMotel == 0 && CombTarget.GetIsID fwvSilenceOldManHologram == 0 && CombTarget.GetIsID fwvTardisVoiceInterface == 0 && CombTarget.GetIsID fwvCrNeverwereCazador == 0 && CombTarget.GetIsID fwvCrNeverwereDeathclawMother == 0
+				; also doesn't work on angels, TARDIS or Silence holograms, or neverwere
+				CombTarget.CastImmediateOnSelf fwvTissueCompressionSpell
+				if player.getav karma > -969
+					Player.RewardKarma -30
+				else
+					printc "bad karma limit hit"
+				endif
+			endif
+		endif
+
+	elseif fwvqWeaponQuest.laserMode == 6 ;
+
+	endif
+
+end

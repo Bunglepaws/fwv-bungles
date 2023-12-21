@@ -1,0 +1,57 @@
+scn fwvqGelthScript
+
+short sCurRefNum
+short sMaxRefs
+short sCurLimb
+short sCurrentGelth
+float fTimeWaited
+ref rCurRef
+ref fwvq
+
+begin GameMode
+
+	set fwvq to fwvQuests	
+
+	if GetQuestCompleted fwvq3a == 1 && fwvq3a.ending == 1
+		set fTimeWaited to fTimeWaited + GetSecondsPassed
+		if fTimeWaited > 5.0
+			set fTimeWaited to 0
+
+			set sCurRefNum to 1
+			set sMaxRefs to GetNumRefs 42 1 ; 42 = NPC, 1 = cell depth (0 = current cell.  1 = surrounding 4 included)
+			set rCurRef to GetFirstRef 42 1
+
+			;printToConsole "%.0f found" sMaxRefs
+			Label 0
+			if rCurRef.GetDead == 1 && sCurrentGelth < 3 && GetRandomPercent <= 10
+				;printToConsole "someone's dead!"
+				if rCurRef.GetTimeDead <= 1.0 && rCurRef.GetDistance Player < 500
+					;printToConsole "check limbs!"
+					set sCurLimb to 0
+					Label 1
+					if rCurRef.IsLimbGone sCurLimb == 1
+						; limb missing, don't resurrect
+						set sCurLimb to 14
+					else
+						if sCurLimb == 13 ; last limb intact, resurrect
+							rCurRef.ResurrectActor 2
+							;rCurRef.addSpell fwvCreatureGelth; may need to use AddSpell
+							rCurRef.pms GlowingOneFXShader
+						elseif sCurLimb < 13 ; still checking limbs, loop
+							set sCurLimb to sCurLimb + 1
+							Goto 1
+						endif
+					endif
+				endif
+			else
+				;printtoconsole "why, %n.  whyyy" rCurRef
+			endif
+
+			set sCurRefNum to sCurRefNum + 1
+			if sCurRefNum < sMaxRefs ; loop to next NPC
+				set rCurRef to GetNextRef
+				Goto 0
+			endif
+		endif
+	endif
+end

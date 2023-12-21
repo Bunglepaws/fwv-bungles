@@ -1,0 +1,21 @@
+scn fwvTARDISEffectIdleLibrarySCRIPT
+
+ref rTDesktopShipDoor
+ref rSelf
+
+
+begin ScriptEffectFinish
+	set fwvCompanion.sReqReturnType to 1
+	printc "return 1"
+	
+	set rTDesktopShipDoor to fwvq1.rTDesktopShipDoor
+	PlaySound DRSVaultVertical01Close
+	rSelf.moveto rTDesktopShipDoor
+
+	rSelf.RemoveScriptPackage
+	rSelf.evp
+	rSelf.AddScriptPackage fwvCompanionReqReturnGreetingPackage
+	rSelf.evp
+	
+	;rSelf.	RemoveSpell fwvTARDISEffectIdleLibrary
+end

@@ -1,0 +1,31 @@
+scn fwvFuncFindRandomRef
+
+short sRefType
+short sCellRadius
+short sRefCount
+short sRefCurrent
+short sRefDesired
+ref rRefCurrent
+ref rReturnValue
+
+begin function { sRefType, sCellRadius }
+	set sRefCurrent to 0
+	set sRefCount to GetNumRefs sRefType sCellRadius
+	set sRefDesired to 0 + GetRandomPercent * (sRefCount + 1) / 100
+	Label 0
+	
+	if sRefCount > 0
+		if sRefCurrent == 0
+			set rRefCurrent to GetFirstRef sRefType sCellRadius
+		elseif sRefCurrent < sRefCount
+			set rRefCurrent to GetNextRef
+		endif
+		if sRefCurrent == sRefDesired
+			set rReturnValue to rRefCurrent
+		else
+			set sRefCurrent to sRefCurrent + 1
+			GoTo 0
+		endif
+	endif
+	SetFunctionValue rReturnValue
+end

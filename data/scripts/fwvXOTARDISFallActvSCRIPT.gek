@@ -1,0 +1,22 @@
+scn fwvXOTARDISFallActvSCRIPT
+
+ref rFaller
+ref rDestination
+ref rTeleporter
+
+short sTeleGo
+
+begin onTriggerEnter
+	let rDestination := fwvq1.rTDesktopScannerPosRef
+	set rFaller to GetAR
+	set rTeleporter to GetSelf
+	set sTeleGo to 1
+	printc "rFaller is %n %i" rFaller rFaller
+	printc "rTeleporter is %n %i" rTeleporter rTeleporter
+	rFaller.ResetFallDamageTimer
+	printc "damagetimer reset"
+	rFaller.moveto rDestination
+	printc "%n moved to Console Room"
+end
+
+

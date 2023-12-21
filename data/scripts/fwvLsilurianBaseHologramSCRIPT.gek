@@ -1,0 +1,9 @@
+scn fwvLsilurianBaseHologramSCRIPT
+
+; written by Demeggy 9/3/13
+
+begin gamemode
+
+rotate x 50
+
+end

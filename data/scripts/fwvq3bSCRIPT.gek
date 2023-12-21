@@ -1,0 +1,54 @@
+scn fwvq3bSCRIPT
+
+short ending	; 0 - good, 1 - bad
+short transmitters
+short sDestruct
+float eTimer
+
+begin gamemode
+
+if getstage fwvq3b == 30
+	if player.getItemCount fwvq3bNestenePolymer == 1
+		ShowMessage fwvq3bStage40Message
+		fwvq3bSignal1Ref.enable
+		fwvq3bSignal2Ref.enable
+		fwvq3bSignal3Ref.enable
+		setStage fwvq3b 40
+	endif
+endif
+
+if getStage fwvq3b == 40
+	if transmitters == 3
+		setStage fwvq3b 50
+	endif
+endif
+
+if getStage fwvq3b == 80
+	set sDestruct to 1
+endif
+
+if sDestruct == 1
+	if eTimer < 20
+		set eTimer to eTimer + getsecondspassed
+		printc "countdown: %g" eTimer
+	else
+		if player.getInCell fwvAutonLair == 1
+			player.killActor
+		endif
+		;cause pod to explode
+		imod MegatonNukeISFX
+		;fwvq3bNestenePodRef.placeAtMe MegatonNuke
+		fwvq3bNestenePodRef.placeAtMe DLC03OrbitalStrikeExploRock
+		fwvq3bNestenePodRef.placeAtMe NellisMunitionsExplosion
+		fwvq3bNestenePodDoorRef.disable
+		fwvq3bNestenePodRef.disable
+		set sDestruct to 2
+		set fwvqComms.init to 0
+		setObjectiveCompleted fwvq3b 80 1
+		set ending to 0
+		setStage fwvq3b 100
+		player.rewardKarma 50
+	endif
+endif
+
+end

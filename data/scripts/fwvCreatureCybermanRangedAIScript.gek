@@ -1,0 +1,46 @@
+scn fwvCreatureCybermanRangedAIScript
+
+short doOnce
+short empOn
+float eTimer
+
+begin onActivate player
+
+	if player.getItemCount fwvWempBomb > 0
+		setAV Aggression 3
+		player.removeItem fwvWempBomb 1
+		PlaySound PHYVehicleMetalBodyH
+		set empOn to 1
+	endif
+
+end
+
+begin gamemode
+
+	if getDead == 0
+		if getDistance player < 500
+			if player.isSneaking == 0
+				if doOnce == 0
+					PlaySound fwvCreatureFXcybermanCry2
+					StartCombat player
+					set doOnce to 1
+				endif
+			endif
+		else
+			set doOnce to 0
+		endif
+	endif
+
+	if empOn == 1
+		if eTimer < 10.0
+			set eTimer to eTimer + getSecondsPassed
+		else
+			PlaySound WPNZapGlove3D
+			PlaceAtMe DLC03TeslaCannonExplosionSmall
+			KillActor
+			set empOn to 0
+		endif
+	endif
+
+end
+

@@ -1,0 +1,281 @@
+scn fwvqAutonMurderScript
+
+float timer
+short rndNpc
+short initialise
+short event
+short npcCount
+short aiRnd
+short listCnt
+short tDialogue
+short loc
+short act
+short murderLoc
+short murderAct
+short sIndex ; list LOS checking - index
+short sNewDialogueFlag
+short sGuilt
+short sKills
+short DoOnce
+short DoOnceTwo
+float fPause
+short sLeaveUnlock
+
+short exterior
+short dialogue
+short tutorial
+short init
+
+
+ref murderer
+ref victim
+ref npc
+ref rSuspect ; list LOS checking - NPC form
+Begin Gamemode
+
+	
+	set sNewDialogueFlag to 1
+	set npcCount to ListGetCount fwvqAutonMurderNPCs
+
+	if player.GetInCell fwvAutonAtomicWrangler == 1
+
+		if init == 0
+			set dialogue to 1
+			set init to 1
+			set sKills to 1
+		endif
+
+		if initialise == 1
+			;randomise the murderer
+			set rndNpc to getRandomPercent * npcCount /100
+			set murderer to ListGetNthForm fwvqAutonMurderNPCs rndNpc
+			ListRemoveNthForm fwvqAutonMurderNPCs rndNpc
+			;store that murderer as the murderer ref
+			set event to 2
+			set initialise to 2
+			set sGuilt to 9
+		endif
+
+		;if getStage fwvqAutonMurder < 10
+		;	setStage fwvqAutonMurder 10
+		;endif
+
+		if exterior == 0
+			ForceWeather fwvAutonMurderInteriorWeather 1
+			SetWeather fwvAutonMurderInteriorWeather 1		
+		else
+			if DoOnce == 0
+				murderer.resetHealth
+				ForceWeather NVWastelandClear 1
+				SetWeather NVWastelandClear 1
+				set DoOnce to 1
+			endif
+		endif
+		
+		;An attempt to fix revised dialogue
+		set npc to GetCrossHairRef
+		set loc to npc.GetVariable "lastLoc"
+		set act to npc.GetVariable "lastAct"
+		if npc != murderer
+			set sGuilt to 0
+		else
+			set loc to murderLoc
+			set act to murderAct
+			set sGuilt to 1
+		endif
+			
+	endif
+
+	if event == 0
+		if player.getInCell fwvAutonAtomicWrangler == 1
+			if getStage fwvqAutonMurder == 5
+				;setStage fwvqAutonMurder 10
+				set event to 1
+			endif
+		endif
+	elseif event == 1
+		fwvAutonMurderButlerRef.addScriptPackage fwvAutonMurderButlerPackage
+		fwvAutonMurderButlerRef.evp
+		set event to -1
+	elseif event == 2
+		if timer < 60.0
+			set timer to timer + getSecondsPassed
+		else
+			if npcCount > 1
+				set event to 3
+				set timer to 0.0
+			else
+				set event to 4
+			endif
+		endif
+	elseif event == 3
+		;randomise which npc to kill
+		set rndNpc to getRandomPercent * npcCount /100
+		printc "rndNpc is %g" rndNpc
+		set victim to ListGetNthForm fwvqAutonMurderNPCs rndNpc
+		
+		set sIndex to 0
+				
+		Label 0
+
+		set rSuspect to ListGetNthForm fwvqAutonMurderNPCs sIndex
+		if rSuspect.GetDead == 0
+			if Player.GetLOS rSuspect == 1
+				set sIndex to 100
+			endif
+		endif
+
+		set sIndex to sIndex + 1
+		if sIndex < ListGetCount fwvqAutonMurderNPCs
+			Goto 0
+		endif
+
+		if sIndex < 100 && Player.GetLOS victim == 0 ; no suspects are being seen, nor the victim
+			ListRemoveNthForm fwvqAutonMurderNPCs rndNpc
+			;kill the victim
+			MessageEx "There has been a murder..."
+			printc "%i has been killed" victim
+			set sKills to sKills + 1
+			;printc "Murders: %i" sKills
+			victim.killActor
+			player.rewardKarma -5
+			set murderLoc to 1 + getRandomPercent * 6 /100
+			set murderAct to 1 + getRandomPercent * 3 /100
+			set fwvAutonSuspect01Ref.aiStage to 1
+			set fwvAutonSuspect02Ref.aiStage to 1
+			set fwvAutonSuspect03Ref.aiStage to 1
+			set fwvAutonSuspect04Ref.aiStage to 1
+			set fwvAutonSuspect05Ref.aiStage to 1
+			set fwvAutonSuspect06Ref.aiStage to 1
+			set event to 2
+		else
+			set event to 3
+			set timer to 2
+		endif
+	elseif event == 4
+		MessageEx "The Murderer has fled..."
+		murderer.disable 0
+		setStage fwvqAutonMurder 200
+		set dialogue to 10
+		set event to -1
+	elseif event == 5
+		if timer < 5.0
+			set timer to timer + getSecondsPassed
+			murderer.resetHealth
+		else
+			imod FadeToBlackAndBackISFX
+			DisablePlayerControls 1 1 1 1 1 1 1
+			set event to 6
+			set timer to 0.0
+		endif
+	elseif event == 6
+		if timer < 2.0
+			set timer to timer + getSecondsPassed
+		else
+			murderer.moveTo fwvAutonMurderRoofRef
+			murderer.stopCombat
+			murderer.addScriptPackage fwvXOGreystoneStayWeaponsDrawn
+			set event to 7
+			set timer to 0.0
+		endif
+	elseif event == 7
+		if timer < 2.0
+			set timer to timer + getSecondsPassed
+		else
+			set dialogue to 6
+			fwvAutonMurderButlerRef.addScriptPackage fwvAutonMurderButlerPackage
+			fwvAutonMurderButlerRef.evp
+			EnablePlayerControls
+			SetStage fwvqAutonMurder 20
+			set event to -1
+			set timer to 0.0
+		endif
+	elseif event == 8
+		if DoOnceTwo == 0
+			if fPause < 3
+				set fPause to fPause + GetSecondsPassed
+			else
+				murderer.placeAtMe fwvAutonAshPile
+				murderer.PlaceAtMe fwvAntiPlasticExplosion 1
+				murderer.killActor
+				set dialogue to 9
+				showmessage fwvAutonMurderXmitterMSG
+				set DoOnceTwo to 1
+				set event to -1
+			endif
+		endif	
+	endif
+;****************************************
+	;1 - where? 2 - what? 3 - lie? 4 - accuse
+	if tDialogue == 1
+		set npc to GetCrossHairRef
+		set loc to npc.GetVariable "lastLoc"
+		set act to npc.GetVariable "lastAct"
+		if npc != murderer
+			set sGuilt to 0
+			if loc == 1
+				;MessageBoxEx "The suspect was in the Drawing Room at the time of the murder... Loc %g Act %g" loc act
+			elseif loc == 2
+				;MessageBoxEx "The suspect was in the Library at the time of the murder... Loc %g Act %g" loc act
+			elseif loc == 3
+				;MessageBoxEx "The suspect was in the Dining Room at the time of the murder... Loc %g Act %g" loc act
+			elseif loc >= 4
+				;MessageBoxEx "The suspect was in one of the Suites at the time of the murder... Loc %g Act %g" loc act
+			endif
+
+		elseif npc == murderer	;the below may be lies
+			set sGuilt to 1
+			if murderLoc == 1
+				;MessageBoxEx "The murderer was in the Drawing Room at the time of the murder... Loc %g Act %g" murderloc murderact
+			elseif murderLoc == 2
+				;MessageBoxEx "The murderer was in the Library at the time of the murder... Loc %g Act %g" murderloc murderact
+			elseif murderLoc == 3
+				;MessageBoxEx "The murderer was in the Dining Room at the time of the murder... Loc %g Act %g" murderloc murderact
+			elseif murderLoc == 4
+				;MessageBoxEx "The murderer was in one of the Suites at the time of the murder... Loc %g Act %g" murderloc murderact
+			endif			
+		endif
+		set tDialogue to 0
+
+	elseif tDialogue == 2
+		if npc != murderer
+			if act == 1
+				;MessageBoxEx "The suspect was reading at the time of the murder... Loc %g Act %g" loc act
+			elseif act == 2
+				;MessageBoxEx "The suspect was eating at the time of the murder... Loc %g Act %g" loc act
+			elseif act == 3
+				;MessageBoxEx "The suspect was resting at the time of the murder... Loc %g Act %g" loc act
+			endif
+
+		elseif npc == murderer	;the below may be lies
+			if murderAct == 1
+				;MessageBoxEx "The murderer was reading at the time of the murder... Loc %g Act %g" murderloc murderact
+			elseif murderAct == 2
+				;MessageBoxEx "The murderer was eating at the time of the murder... Loc %g Act %g" murderloc murderact
+			elseif murderAct == 3
+				;MessageBoxEx "The murderer was resting at the time of the murder... Loc %g Act %g" murderloc murderact
+			endif		
+		endif
+		set tDialogue to 0
+	
+	elseif tDialogue == 4
+		set npc to getCrosshairRef
+		if npc == murderer
+			MessageEx "You have identified the correct Murderer"
+			npc.addItem fwvWeapAutonWristgunNoLoop 1
+			npc.addItem AmmoSmallEnergyCell 100
+			npc.equipItem fwvWeapAutonWristgunNoLoop 1 1
+			npc.setav aggression 100
+			npc.startCombat Player
+			set timer to 0.0
+			set event to 5
+		elseif npc != murderer
+			MessageBoxEx "You have failed to identify the correct suspect. The Murderer has now become suspicious and has fled..."
+			setStage fwvqAutonMurder 200
+		endif
+		set tDialogue to 0
+	endif
+
+;*****************
+
+End

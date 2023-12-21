@@ -1,0 +1,39 @@
+scn fwvCautonDuplicateScript
+
+short sIsCounted
+ref rSelf
+ref Weap
+
+
+Begin GameMode
+
+	set rSelf to GetSelf
+
+	if rSelf.GetInWorldspace fwvWorldSmallTrenzalore == 1
+		
+
+		;if rSelf.GetEquipped fwvWeapAutonWristgun == 0
+			;set Weap to rSelf.GetEquippedObject 5
+			;rSelf.Drop Weap 1
+			;rSelf.EquipItem fwvWeapAutonWristgun 1 1
+		;endif
+	
+		EquipItem fwvWeapAutonWristgun 1
+			
+
+
+
+		if rSelf.getDead == 1 && sIsCounted == 0
+			set sIsCounted to 1
+			let fwvqTrenzalore.EDeaths[4] := fwvqTrenzalore.EDeaths[4] + 1
+			rSelf.placeAtMe fwvAutonAshPile
+			rSelf.PlaceAtMe fwvAntiPlasticExplosion 1
+			rSelf.disable 0
+			rSelf.MarkForDelete
+
+		
+		
+		endif
+	endif
+
+End

@@ -1,0 +1,7 @@
+scn fwvSkillJournal1Script
+
+ref rTDesktopRoom
+
+begin OnEquip Player
+	Player.AddSpell fwvSkillJournal1Effect
+end

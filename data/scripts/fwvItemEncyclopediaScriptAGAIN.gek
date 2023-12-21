@@ -1,0 +1,55 @@
+scn fwvItemEncyclopediaScriptAGAIN
+
+short frame
+float fTimer
+
+begin onActivate player
+
+	playsound fwvFXsonarPing
+	DisablePlayerControls
+	;imod FadeToWhiteAndBackQuickISFX
+	set frame to 1
+	set fTimer to 0.0
+
+end
+
+begin gamemode
+
+	if frame == 1
+		if fTimer < 2.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			if GetIsReference fwvbottle1Ref == 1
+				ShowMessage fwvItemEncyclopediaText01
+			elseif GetIsReference fwvbottle2Ref == 1
+				ShowMessage fwvItemEncyclopediaText02
+			elseif GetIsReference fwvbottle3Ref == 1
+				ShowMessage fwvItemEncyclopediaText03
+			elseif GetIsReference fwvbottle4Ref == 1
+				ShowMessage fwvItemEncyclopediaText04
+			elseif GetIsReference fwvbottle5Ref == 1
+				ShowMessage fwvItemEncyclopediaText05
+			elseif GetIsReference fwvbottle6Ref == 1
+				ShowMessage fwvItemEncyclopediaText06
+			elseif GetIsReference fwvbottle7Ref == 1
+				ShowMessage fwvItemEncyclopediaText07
+			elseif GetIsReference fwvbottle8Ref == 1
+				ShowMessage fwvItemEncyclopediaText08
+			elseif GetIsReference fwvbottle9Ref == 1
+				ShowMessage fwvItemEncyclopediaText09
+			elseif GetIsReference fwvbottle10Ref == 1
+				ShowMessage fwvItemEncyclopediaText10
+			elseif GetIsReference fwvbottle11Ref == 1
+				ShowMessage fwvItemEncyclopediaText11
+			elseif GetIsReference fwvbottle12Ref == 1
+				ShowMessage fwvItemEncyclopediaText12
+			elseif GetIsReference fwvbottle13Ref == 1
+				ShowMessage fwvItemEncyclopediaText13
+			endif
+			EnablePlayerControls
+			set frame to 0
+		endif
+	endif
+
+
+end

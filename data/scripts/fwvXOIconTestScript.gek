@@ -1,0 +1,6 @@
+scn fwvXOIconTestScript
+
+begin onadd player
+
+	messageboxex "hello"
+end

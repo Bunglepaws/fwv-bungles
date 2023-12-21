@@ -1,0 +1,39 @@
+scn fwvFuncGetClosestFromFormList
+
+ref rChosenRef
+ref rCurRef
+ref rMarker
+ref rFormList
+short sIndex
+short sExteriorOnly
+float fDist
+float fMinDist
+float fMx ; marker x/y
+float fMy 
+float fRx ; rCurRef x/y
+float fRy
+
+begin function { rMarker, rFormList, sExteriorOnly }
+	set fMinDist to -1
+	set rChosenRef to rMarker
+	set fMx to Call fwvFuncGetExteriorPosition rMarker 0
+	set fMy to Call fwvFuncGetExteriorPosition rMarker 1
+	
+	set sIndex to 0
+	Label 0
+	if sIndex < ListGetCount rFormList
+		set rCurRef to ListGetNthForm rFormList sIndex
+		if rCurRef != rMarker && (sExteriorOnly == 0 || rCurRef.IsInInterior == 0)
+			set fRx to Call fwvFuncGetExteriorPosition rCurRef 0
+			set fRy to Call fwvFuncGetExteriorPosition rCurRef 1
+			set fDist to Call fwvFuncGetDistanceFloat2D fMx fMy fRx fRy
+			if fDist < fMinDist || fMinDist == -1
+				set rChosenRef to rCurRef
+				set fMinDist to fDist
+			endif
+		endif
+		set sIndex to sIndex + 1
+		GoTo 0
+	endif
+	SetFunctionValue rChosenRef
+end

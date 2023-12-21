@@ -1,0 +1,36 @@
+scn fwvWeapAnimalHypnosisScript
+
+short frame
+float fTimer
+ref CombTarget
+short CurrAnFriendFacLev
+begin ScriptEffectStart
+	
+
+	set CombTarget to GetCrosshairRef
+	CombTarget.StopCombat 
+	ShowMessage fwvXOVenusianLullaby1
+	;ShowMessage fwvXOVenusianLullaby2
+	if player.hasperk AnimalFriend == 0 
+		player.rewardKarma 1
+		SetAlly PlayerFaction AnimalFriendFaction 1 1
+		set fTimer to 0.0
+		set frame to 1
+	else
+		MessageEx "Animals are already friendly to you..."
+	endif
+
+end
+
+begin ScriptEffectUpdate
+
+	if frame == 1
+		if fTimer < 30.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			SetEnemy PlayerFaction AnimalFriendFaction 1 1
+			Player.Dispel fwvAnimalHypnosisSpell
+		endif
+	endif
+
+end

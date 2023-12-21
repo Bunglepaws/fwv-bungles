@@ -1,0 +1,17 @@
+scn fwvItemAntiDepressantSCRIPT
+
+Begin ScriptEffectFinish
+
+	PlaySound NPCHumanUsingStimpak
+	if player.hasmagiceffect fwvTLdepressionEffect == 1
+		set fwvqTimeLord.tlPoints to 50
+		player.removeSpell fwvTLdepressionSpell
+		if fwvqTimeLord.brainPower < 1
+			set fwvqTimeLord.brainPower to 1
+		endif
+		set fwvqTimeLord.brainDead to 0
+		MessageEx "The pills have relieved your depression."
+	else
+		MessageEx "These pills only work on Timelord Depression."
+	endif
+end

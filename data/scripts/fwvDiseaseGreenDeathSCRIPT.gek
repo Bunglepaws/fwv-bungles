@@ -1,0 +1,57 @@
+scn fwvDiseaseGreenDeathSCRIPT
+
+short infected
+short phase (1 - green skin, 2 - wooziness & bloatfly lesions)
+float sChance
+float sTimer
+short spawn
+
+begin scripteffectstart
+
+	if phase == 0
+		MessageEx "You have been infected by The Green Death..."
+	endif
+	set infected to gamedayspassed
+	set phase to 1
+
+end
+
+begin scripteffectupdate
+
+	if phase == 1
+		if GameDaysPassed > infected + 0.5
+			if IsPC1stPerson == 1
+				TapControl 13
+			endif
+			MessageEx "The Infection has spread..."
+			player.pms fwvDiseaseGreenDeathSpellFX
+			set infected to gameDaysPassed
+			set phase to 2
+		endif
+	elseif phase == 2
+		if sTimer < 20.0
+			set sTimer to sTimer + getSecondsPassed
+		else
+			Player.damageAV health 25
+			PlaySound NPCBlowFlyDeath
+			player.placeAtMe fwvGreenDeathFly
+			set sTimer to 0.0
+		endif
+		if GameDaysPassed > infected + 0.5
+			set infected to gameDaysPassed
+			set phase to 2
+		endif
+	endif
+
+end
+
+begin scripteffectfinish
+
+	if fwvqregen.TimeLordTrue == 1
+		set fwvqregen.regenMode to 1
+		set infected to 0
+	else
+		player.killActor
+	Endif
+
+end

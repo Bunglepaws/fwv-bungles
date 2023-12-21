@@ -1,0 +1,39 @@
+scn fwvqCompanionScript
+
+short lPick
+short button
+
+ref combTarget
+
+short cCount
+
+short salaanHired
+
+begin gamemode
+
+	set combTarget to getcrosshairref
+	set button to getbuttonpressed
+	if combTarget.IsActor || combTarget.GetIsCreature
+		if combTarget.GetLocked == 1
+			if IsControlPressed 5 == 1
+				ShowMessage fwvTimeLordCompanionSpecialistMenu
+				set lPick to 0
+			endif
+		endif
+
+		if button == 0
+			printc "Select Companion to unlock door!"
+			fwvTLcompanionMarker1.moveTo Player
+			set lPick to 1
+		elseif button == 1
+			combTarget.activate
+		endif
+
+		if lPick == 2
+			combTarget.unlock
+			PlaySound UIKarmaUp
+			printc "door unlocked!"
+			set lPick to 0
+		endif
+	endif
+end

@@ -1,0 +1,23 @@
+scn fwvq3dAlarmControlScript
+
+short doOnce
+
+begin onActivate player
+
+	if getStage fwvq3d == 70
+		if doOnce == 0
+			player.rewardKarma 50
+			set fwvq3d.alarmSet to 1
+			set fwvq3d.ending to 0
+			fwvq3dAlarmSFXRef.enable
+			fwvq3dAlarmKlax1Ref.playGroup Left 1
+			fwvq3dAlarmKlax2Ref.playGroup Left 1
+			fwvq3dAlarmKlax3Ref.playGroup Left 1
+			fwvq3dAlarmKlax4Ref.playGroup Left 1
+			fwvq3dBottomLiftRef.setOpenState 0
+			fwvq3dBottomLiftRef.lock 100
+			set doOnce to 1
+		endif
+	endif
+
+end

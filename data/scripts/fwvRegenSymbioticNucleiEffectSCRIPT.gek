@@ -1,0 +1,89 @@
+scn fwvRegenSymbioticNucleiEffectSCRIPT
+
+float fxTimer
+float fTimer
+short frame
+short fxOn
+short DoOnceFX
+
+begin ScriptEffectStart
+	ShowMessage fwvTLdnaMutationMessage
+	player.pms GlowingOneFXShader
+	set frame to 1
+	set fxOn to 1
+end
+
+begin GameMode
+	
+	if frame == 1
+		if DoOnceFX == 0
+			PlaySound fwvFXregenLong
+			DisablePlayerControls
+			player.addSpell fwvRegenFX
+			set DoOnceFX to 1
+		endif
+	
+		if fTimer < 8.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			player.playIdle fwvAnimIdleRegen			
+			set fTimer to 0.0
+			set frame to 2
+		endif
+	elseif frame == 2
+		if fTimer < 3.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			if player.getAV Karma < 0
+				set fwvqTimeLord.tlPoints to -50
+				set fwvqRegen.tLordGood to 0
+				set fwvqRegen.tLordBad to 1
+				set fwvqRegen.tLordNeutral to 0
+				set fwvqRegen.TimeLordTrue to 1
+				player.addPerk fwvTLrassilonPerk
+				ShowMessage fwvRegenPathBadMessage				
+			else
+				set fwvqTimeLord.tlPoints to 50
+				set fwvqRegen.tLordGood to 1
+				set fwvqRegen.tLordBad to 0
+				set fwvqRegen.tLordNeutral to 0
+				set fwvqRegen.TimeLordTrue to 1
+				player.addPerk fwvTLrassilonPerk
+				ShowMessage fwvRegenPathGoodMessage
+			endif
+			set fwvTardisChameleonRef.hStr to player.getAv Strength		
+			set fwvTardisChameleonRef.hPer	 to player.getAv Perception			
+			set fwvTardisChameleonRef.hEnd	 to player.getAv Endurance			
+			set fwvTardisChameleonRef.hCha	 to player.getAv Charisma			
+			set fwvTardisChameleonRef.hInt to player.getAv Intelligence			
+			set fwvTardisChameleonRef.hAg to player.getAv Agility					
+			set fwvTardisChameleonRef.hLuck to player.getAv Luck					
+			set fwvTardisChameleonRef.hBarter to player.getAv Barter					
+			set fwvTardisChameleonRef.hBG to player.getAv BigGuns					
+			set fwvTardisChameleonRef.hEW to player.getAv EnergyWeapons		
+			set fwvTardisChameleonRef.hExp	to player.getAv Explosives				
+			set fwvTardisChameleonRef.hLock to player.getAv LockPick				
+			set fwvTardisChameleonRef.hMed to player.getAv Medicine				
+			set fwvTardisChameleonRef.hMW to player.getAv MeleeWeapons	
+			set fwvTardisChameleonRef.hRep to player.getAv Repair					
+			set fwvTardisChameleonRef.hSci to player.getAv Science					
+			set fwvTardisChameleonRef.hSG to player.getAv guns				
+			set fwvTardisChameleonRef.hSneak to player.getAv Sneak 				
+			set fwvTardisChameleonRef.hSp to player.getAv Speech					
+			set fwvTardisChameleonRef.hUA to player.getAv Unarmed			
+			;ShowMessage fwvManualTimeLordsMessage		
+			player.placeatme fwvRegenExplosion2
+			;player.sms fwvRegenEffect2
+			player.sms GlowingOneFXShader
+			;player.dispel fwvRegenFX
+			fwvTSchematicsRef.removeItem fwvItemSchemSymbioticNuclei 1
+			set fwvqRegen.tInit to 1
+			set fxOn to 0
+			set fxTimer to 0.0
+			set fTimer to 0.0
+			set frame to 0
+			EnablePlayerControls
+		endif
+	endif
+
+End

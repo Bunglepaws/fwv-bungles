@@ -1,0 +1,135 @@
+scn fwvZetanBossScript
+
+short sPlant1
+short sPlant2
+short sPlant3
+short sPlant4
+short sPlantsGone
+short sGrow
+float fScale
+short sDoOnceDead 
+short sDoOnceSplode
+
+Begin Gamemode
+
+	if sGrow < 1
+		if getDistance player <= 4000 
+			if sDoOnceSplode == 0
+				fwvZetaGeneratorSplodeFXREF.placeatme fwvdlc05effectsdlc05fxexplosionaliengenerator 1
+				fwvGorlaxGeneratorOKREF.disable
+				fwvGorlaxGeneratorWindow1.disable
+				fwvGorlaxGeneratorWindow2.disable
+				fwvGorlaxGeneratorWindow3.disable
+				fwvGorlaxGeneratorWindow4.disable
+				fwvGorlaxGeneratorWindow5.disable
+				fwvGorlaxGeneratorWindow6.disable
+				fwvGorlaxGeneratorWindow7.disable
+				fwvGorlaxGeneratorWindow8.disable
+				fwvGorlaxGeneratorBaseDeadREF.enable
+				fwvGorlaxGeneratorTopDeadREF.enable
+				fwvZetaGorlaxForcefieldREF.disable
+				fwvGorlaxGeneratorCoreGlowREF.disable
+				set sDoOnceSplode to 1
+			endif
+			
+			if getScale < 1.25
+				let fScale := getScale + 0.006
+				setScale fScale
+			else
+				PlaySound NPCSuperMutantBehemothAttack03
+				;setpos z -984
+				;EquipItem SporePlantSpitMissileVenomZeta 0 1
+				;printc "Equip Spit"
+				let sGrow := 2
+			endif
+		endif
+	elseif sGrow == 2
+		if player.getInWorldspace fwvZetonia == 1 && getDistance player <= 4000
+			if fwvqRooms.sShakeEnabled == 0
+				set fwvqRooms.sShakeEnabled to 1
+			endif
+		else
+			set fwvqRooms.sShakeEnabled to 0
+		endif
+	
+		if sPlantsGone > 3
+			set sGrow to 3
+		else
+			if fwvZetaPlant01Ref.getDestroyed == 1
+				if sPlant1 == 0
+					PlaySound NPCSuperMutantBehemothInjured01
+					fwvGorlaxBrainSparks03.disable
+					damageAV Health 2000
+					startcombat Player
+					printc "Gorlax attack Player!"
+					let sPlant1 := 1
+					let sPlantsGone := sPlantsGone + 1
+				endif
+			endif
+
+			if fwvZetaPlant02Ref.getDestroyed == 1
+				if sPlant2 == 0
+					PlaySound NPCSuperMutantBehemothInjured02
+					fwvGorlaxBrainSparks02.disable
+					damageAV Health 2000
+					startcombat Player
+					printc "Gorlax attack Player!"
+					let sPlant2 := 1
+					let sPlantsGone := sPlantsGone + 1
+				endif
+			endif
+
+			if fwvZetaPlant03Ref.getDestroyed == 1
+				if sPlant3 == 0
+					PlaySound NPCSuperMutantBehemothInjured03
+					fwvGorlaxBrainSparks01.disable
+					damageAV Health 2000
+					startcombat Player
+					printc "Gorlax attack Player!"
+					let sPlant3 := 1
+					let sPlantsGone := sPlantsGone + 1
+				endif
+			endif
+
+			if fwvZetaPlant04Ref.getDestroyed == 1
+				if sPlant4 == 0
+					PlaySound NPCSuperMutantBehemothInjured01
+					fwvGorlaxBrainSparks04.disable
+					damageAV Health 2000
+					startcombat Player
+					printc "Gorlax attack Player!"
+					let sPlant4 := 1
+					let sPlantsGone := sPlantsGone + 1
+				endif
+			endif
+		endif
+	elseif sGrow == 3
+			PlaySound NPCSuperMutantBehemothDeath02
+			fwvZetaDoorRef.disable
+			GorlaxKlaxonOnREF.disable
+			GorlaxKlaxonOffREF.enable
+			fwvGorlaxRumbleREF.disable
+			ZetaKlaxonSoundREF.disable
+			SetActorBaseFlagsHigh 15, fwvZetaPlantBoss
+			ZetaRightKlaxonActREF.activate ZetaRightKlaxonActREF 1
+			ZetaLeftKlaxonActREF.activate ZetaLeftKlaxonActREF 1
+			RightKlaxonLightREF.activate RightKlaxonLightREF 1
+			LeftKlaxonLightREF.activate LeftKlaxonLightREF 1			
+			fwvGorlaxKaxonLightRedREF.disable
+			RightKlaxonLightRedREF.disable
+			LeftKlaxonLightRedREF.disable
+
+			fwvZetaLabCapnREF.enable
+			fwvZetaLabScientist01REF.enable
+			fwvZetaLabScientist02REF.enable
+			set fwvqRooms.sShakeEnabled to 0			
+			damageAV Health 2000
+			fwvZetaGorlaxDeathSplodLocREF.placeatme fwvGorlaxExplode 1
+			printc "Gorlax Die Now!"
+			let sGrow := 4
+	endif
+end
+
+
+	
+	

@@ -1,0 +1,157 @@
+scn fwvFuncChangeFaderPoliceBoxSCRIPT
+
+; Written by Xoanon
+
+
+ref rCurRef
+short DmgLev
+
+Begin Function { rCurRef }
+
+
+		if GetQuestCompleted fwvq1a == 0 && fwvq1a.frame >= 13
+			set DmgLev to 3
+		elseif fwvqSystems.crashed == 1
+			set DmgLev to 4
+		elseif fwvq1.tHull >= 75
+			set DmgLev to 0
+		elseif fwvq1.tHull >= 50
+			set DmgLev to 1
+		elseif fwvq1.tHull >= 25
+			set DmgLev to 2
+		elseif fwvq1.tHull >= 0
+			set DmgLev to 3
+		endif
+
+
+		;rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\policeBoxRemakeFade.nif"
+		
+		;policeBoxRemakeFadeDmg1.nif
+		;policeBoxRemakeFadeDmg2.nif
+		;policeBoxRemakeFadeDmg3.nif
+		;policeBoxRemakeFadeDmg4.nif
+				
+		
+		if fwvq1.tTheme == 0 ; COPPER
+
+			if DmgLev == 0
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeFade.nif"
+				printc "Fader PB to 2014 Copper no Dmg" 						
+			elseif DmgLev == 1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeFadeDmg1.nif"
+				printc "Fader PB to 2014 Copper Dmg 1" 			
+			elseif DmgLev == 2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeFadeDmg2.nif"
+				printc "Fader PB to 2014 Copper Dmg 2" 			
+			elseif DmgLev == 3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeFadeDmg3.nif"
+				printc "Fader PB to 2014 Copper Dmg 3" 			
+			else
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeFadeDmg4.nif"
+				printc "Fader PB to 2014 Copper Dmg 4" 						
+			endif
+			
+			
+		elseif fwvq1.tTheme == 1 || fwvq1.tTheme == 5 ; CORAL OR GLITCH
+
+			if DmgLev == 0
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2005\policeBoxRemakeFade.nif"
+				printc "Fader PB to 2005 Coral or Glitch no Dmg"						
+			elseif DmgLev == 1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2005\policeBoxRemakeFadeDmg1.nif"
+				printc "Fader PB to 2005 Coral or Glitch Dmg 1"			
+			elseif DmgLev == 2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2005\policeBoxRemakeFadeDmg2.nif"
+				printc "Fader PB to 2005 Coral or Glitch Dmg 2"			
+			elseif DmgLev == 3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2005\policeBoxRemakeFadeDmg3.nif"
+				printc "Fader PB to 2005 Coral or Glitch Dmg 3"			
+			else
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2005\policeBoxRemakeFadeDmg4.nif"
+				printc "Fader PB to 2005 Coral or Glitch Dmg 4"						
+			endif
+		
+			
+		elseif fwvq1.tTheme == 2 || fwvq1.tTheme == 4 ; CLASSIC OR EDWARDIAN
+
+			if DmgLev == 0
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1983\policeBoxRemakeFade.nif"
+				printc "Fader PB to 1983 Classic or Edwardian no Dmg"						
+			elseif DmgLev == 1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1983\policeBoxRemakeFadeDmg1.nif"
+				printc "Fader PB to 1983 Classic or Edwardian Dmg 1"			
+			elseif DmgLev == 2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1983\policeBoxRemakeFadeDmg2.nif"
+				printc "Fader PB to 1983 Classic or Edwardian Dmg 2"			
+			elseif DmgLev == 3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1983\policeBoxRemakeFadeDmg3.nif"
+				printc "Fader PB to 1983 Classic or Edwardian Dmg 3"			
+			else
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1983\policeBoxRemakeFadeDmg4.nif"
+				printc "Fader PB to 1983 Classic or Edwardian Dmg 4"						
+			endif			
+			
+	
+			
+		elseif fwvq1.tTheme == 3 ; TOYOTA
+
+			if DmgLev == 0
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeFade.nif"
+				printc "Fader PB to 2014 TY no Dmg"						
+			elseif DmgLev == 1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeFadeDmg1.nif"
+				printc "Fader PB to 2014 TY Dmg 1"			
+			elseif DmgLev == 2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeFadeDmg2.nif"
+				printc "Fader PB to 2014 TY Dmg 2"			
+			elseif DmgLev == 3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeFadeDmg3.nif"
+				printc "Fader PB to 2014 TY Dmg 3"			
+			else
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeFadeDmg4.nif"
+				printc "Fader PB to 2014 TY Dmg 4"						
+			endif			
+			
+			
+		elseif fwvq1.tTheme == 6 ; RETRO
+
+			if DmgLev == 0
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeFade.nif"
+				printc "Fader PB to 1978 Retro no Dmg"						
+			elseif DmgLev == 1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeFadeDmg1.nif"
+				printc "Fader PB to 1978 Retro Dmg 1" 			
+			elseif DmgLev == 2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeFadeDmg2.nif"
+				printc "Fader PB to 1978 Retro Dmg 2"			
+			elseif DmgLev == 3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeFadeDmg3.nif"
+				printc "Fader PB to 1978 Retro Dmg 3"			
+			else
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeFadeDmg4.nif"
+				printc "Fader PB to 1978 Retro Dmg 4"						
+			endif			
+			
+			
+		else	; anything added by other mods just has to deal, it was broken before anyway
+
+			if DmgLev == 0
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeFade.nif"
+				printc "Fader PB to 1978 Additional no Dmg"						
+			elseif DmgLev == 1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeFadeDmg1.nif"
+				printc "Fader PB to 1978 Additional Dmg 1"			
+			elseif DmgLev == 2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeFadeDmg2.nif"
+				printc "Fader PB to 1978 Additional Dmg 2"			
+			elseif DmgLev == 3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeFadeDmg3.nif"
+				printc "Fader PB to 1978 Additional Dmg 3"			
+			else
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeFadeDmg4.nif"
+				printc "Fader PB to 1978 Additional Dmg 4"						
+			endif			
+			
+		endif
+
+End

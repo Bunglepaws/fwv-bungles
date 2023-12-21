@@ -1,0 +1,91 @@
+scn fwvItemEncyclopediaScript
+
+short frame
+float fTimer
+ref rSelf
+short effectOn
+
+begin onActivate player
+
+	if fwvqRegen.TimeLordTrue == 1
+		set fwvq1.bottle to fwvq1.bottle + 1
+		ShowMessage fwvItemEncyclopediaMessage fwvq1.bottle
+		printc "bottle is %g" fwvq1.bottle
+		playsound fwvFXsonarPing
+		DisablePlayerControls
+		imod FadeToWhiteAndBackISFX
+		set frame to 1
+		set fTimer to 0.0
+	else
+		ShowMessage fwvItemEncyclopediaFailMessage
+	endif
+
+end
+
+begin gamemode
+
+	if frame == 1
+		if fTimer < 8.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			printc "rewards triggered"
+			if fwvq1.bottle == 1
+				ShowMessage fwvItemEncyclopediaText01
+				fwvbottle1Ref.enable
+			elseif fwvq1.bottle == 2
+				ShowMessage fwvItemEncyclopediaText02
+				fwvbottle2Ref.enable
+			elseif fwvq1.bottle == 3
+				ShowMessage fwvItemEncyclopediaText03
+				fwvbottle3Ref.enable
+			elseif fwvq1.bottle == 4
+				ShowMessage fwvItemEncyclopediaText04
+				fwvbottle4Ref.enable
+			elseif fwvq1.bottle == 5
+				ShowMessage fwvItemEncyclopediaText05
+				fwvbottle5Ref.enable
+			elseif fwvq1.bottle == 6
+				ShowMessage fwvItemEncyclopediaText06
+				fwvbottle6Ref.enable
+			elseif fwvq1.bottle == 7
+				ShowMessage fwvItemEncyclopediaText07
+				fwvbottle7Ref.enable
+			elseif fwvq1.bottle == 8
+				ShowMessage fwvItemEncyclopediaText08
+				fwvbottle8Ref.enable
+			elseif fwvq1.bottle == 9
+				ShowMessage fwvItemEncyclopediaText09
+				fwvbottle9Ref.enable
+			elseif fwvq1.bottle == 10
+				ShowMessage fwvItemEncyclopediaText10
+				fwvbottle10Ref.enable
+			elseif fwvq1.bottle == 11
+				ShowMessage fwvItemEncyclopediaText11
+				fwvbottle11Ref.enable
+			elseif fwvq1.bottle == 12
+				ShowMessage fwvItemEncyclopediaText12
+				fwvbottle12Ref.enable	
+			elseif fwvq1.bottle == 13
+				ShowMessage fwvItemEncyclopediaText13
+				fwvbottle13Ref.enable	
+			endif
+			EnablePlayerControls
+			MarkForDelete
+			Disable
+			set frame to 0
+		endif
+	endif
+
+	let rSelf := GetSelf
+
+	if player.getEquipped fwvOutfit3DGlasses == 1 && rSelf.getDistance player <= 400
+		if effectOn == 0
+			rSelf.pms fwvHologramInterface
+			set effectOn to 1
+		endif
+	else
+		rSelf.sms fwvHologramInterface
+		set effectOn to 0
+	endif
+
+end

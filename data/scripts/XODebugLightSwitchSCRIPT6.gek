@@ -1,0 +1,10 @@
+scn XODebugLightSwitchSCRIPT6
+
+
+Begin OnFire
+
+MessageEx "cSys is %g" fwvqSystems.cSys
+
+set fwvqSystems.DematerializationCircuit to 0
+
+end

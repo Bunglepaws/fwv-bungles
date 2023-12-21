@@ -1,0 +1,44 @@
+scn fwvCyberLanderFleeScript
+
+float x
+float xPos
+float z
+float zPos
+float fTimer
+
+short LanderDoOnce
+ref rSelf
+
+begin GameMode
+	
+	set rSelf to GetSelf
+
+	if fwvqInvasions.LanderFlee == 1 
+
+		set xPos to rSelf.getPos x + fwvqInvasions.rLanderX
+		set zPos to rSelf.getPos z + 10
+		;set zPos to rSelf.getPos z + 20
+			
+		if fTimer < 20.0  ;was 15
+			if LanderDoOnce == 0
+				rSelf.pms DLC03TeslaFXShader
+				PlaySound fwvSkaroOBJVertibirdCrashFly
+				;MessageEx "The Cyberlander is escaping! Shoot it down!"
+				set LanderDoOnce to 1
+			endif
+			set fTimer to fTimer + getSecondsPassed
+			rSelf.setPos x xPos
+			rSelf.setPos z zPos
+		else
+			rSelf.sms DLC03TeslaFXShader
+			set fTimer to 0.0
+			set fwvqInvasions.LanderFlee to 0
+			set LanderDoOnce to 0
+			rSelf.disable 4
+			rSelf.MarkForDelete
+		endif
+	endif
+
+
+		
+End

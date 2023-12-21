@@ -1,0 +1,9 @@
+scn fwvAsylumExitFailCleanupSCRIPT
+
+Begin OnTriggerEnter Player
+
+	if getstage fwvDalekAsylum == 20
+		setstage fwvDalekAsylum 200
+		fwvAsylumAfterFailDoor.lock 255
+	endif
+End

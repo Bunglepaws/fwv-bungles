@@ -1,0 +1,33 @@
+scn fwvMoonCybermanAIScript
+
+short doOnce
+
+begin gamemode
+
+	;if getHealthPercentage >= 50
+		StopCombat Player
+	;elseif getHealthPercentage < 50
+	;	StartCombat Player
+	;	if doOnce == 0
+	;		equipItem fwvWcyberman
+	;		addItem AmmoSmallEnergyCell 10000
+	;		set doOnce to 1
+	;	endif
+	;endif
+
+	if getDead == 0
+		if getDistance player < 100
+			player.KillActor
+		endif
+	elseif getDead == 1
+		if getStage fwvqCybermanMoon == 60
+			fwvMoonDoorIntRef.unlock
+			fwvMoonCommsDoorRef.unlock
+			fwvMoonBunkDoorRef.unlock
+			fwvMoonBunkDoorRef.setOpenState 1
+			setObjectiveCompleted fwvqCybermanMoon 60 1
+			setStage fwvqCybermanMoon 100
+		endif
+	endif
+
+end

@@ -1,0 +1,17 @@
+scn fwvDalekSaucerDalekPatrolScript
+
+short alert		;if true, it has 'detected' the player
+
+Begin GameMode
+
+	if alert == 0
+		if getDistance player < 500 && GetHeadingAngle player < -90 || GetHeadingAngle player < 90 && player.isSneaking == 0
+			set alert to 1
+		else
+			set alert to 0
+		endif
+	else
+		StartCombat Player
+	endif
+
+End

@@ -1,0 +1,7 @@
+scn fwvqCompanionK9Item02Script
+
+begin OnAdd player
+
+	setObjectiveCompleted fwvqCompanionK9 30 1
+
+end

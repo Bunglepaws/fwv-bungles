@@ -1,0 +1,114 @@
+scn fwvFuncTardisModeToggle
+
+short sNumRoomsActive
+
+
+BEGIN FUNCTION { }
+
+		printc "MODE SWITCH ON"
+		if fwvqSystems.tAdvanced == 0   ; Switching to Advanced
+			MessageBoxEx "Advanced Mode has been activated"
+
+			if fwvq1.tNavOn == 1
+				set fwvqSystems.MainDrive to 1
+				set fwvqSystems.AuxiliaryDrive to 0
+			endif
+			if fwvq1.tArchitectureOn == 1
+				set fwvqSystems.ExponentialCrossField to 1
+				set fwvqSystems.OmegaConfiguration to 1
+			endif
+			if fwvq1.tLifeSupportOn == 1
+				set fwvqSystems.AutomaticOxygenSupply to 1
+			endif
+			if fwvq1.tCommsOn == 1
+				set fwvqSystems.InterstitialAntenna to 1
+				set fwvqSystems.ImageTranslator to 1
+			endif
+			if fwvq1.tHadsOn == 1
+				set fwvqSystems.ForcefieldPrisms to 1
+			endif
+			
+			;If Dampeners are on, leave on, and charge 2.5 power for them in Advanced - Xoanon - yeah, doesn't work, 
+			;if fwvqSystems.SpatialDampeners == 1
+				;set fwvq1.tPower to fwvq1.tPower - 2.5
+				;let fwvqSystems.tRoomPower := 5
+			;endif			
+
+			;If Dampeners are off, double charge for currently open rooms and set room charge to 10
+			if fwvqSystems.SpatialDampeners == 0
+				let sNumRoomsActive := Call fwvFuncTardisCountRooms
+				set fwvq1.tPower to fwvq1.tPower - (5 * sNumRoomsActive)
+				let fwvqSystems.tRoomPower := 10
+			endif			
+			
+			set fwvqSystems.tAdvanced to 1
+
+		else   ; Returning to Basic
+
+			;turn off axiomator
+			if fwvqSystems.axiomator == 1
+				set fwvqSystems.axiomator to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif
+			;turn off shield oscillators
+			if fwvqSystems.mandrelCondensers == 1
+				set fwvqSystems.mandrelCondensers to 0
+				set fwvq1.tPower to fwvq1.tPower + 5
+			endif
+			;turn off isomorphic sec sys					2.5
+			if fwvqSystems.isomorphicSecuritySystem == 1
+				set fwvqSystems.isomorphicSecuritySystem to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif
+			;turn off thermo-buffer								2.5
+			if fwvqSystems.thermobuffer == 1
+				set fwvqSystems.thermobuffer to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif
+			;turn off relative contiuum stabilisers			2.5
+			if fwvqSystems.RelativeContinuumStabilizer == 1
+				set fwvqSystems.RelativeContinuumStabilizer to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif
+			;turn off TemporalStabilizer 			2.5
+			if fwvqSystems.TemporalStabilizer == 1
+				set fwvqSystems.TemporalStabilizer to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif
+			
+			; turn off MolecularStabilizers - Xoanon     2.5
+			if fwvqSystems.MolecularStabilizers == 1
+				set fwvqSystems.MolecularStabilizers to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif			
+			
+			;If Dampeners are on, return power - Xoanon
+			if fwvqSystems.SpatialDampeners == 1
+				set fwvqSystems.SpatialDampeners to 0
+				set fwvq1.tPower to fwvq1.tPower + 2.5
+			endif
+
+
+			MessageBoxEx "Advanced Mode has been de-activated"
+			set fwvqSystems.tAdvanced to 0
+			set fwvqSystems.failsafe to 1
+		endif
+
+		if fwvqProtocols.biosignal == 1
+			setObjectiveDisplayed fwvqSystemsAdv 10 0
+			setObjectiveDisplayed fwvqSystemsAdv 20 0
+			setObjectiveDisplayed fwvqSystemsAdv 30 0
+			MessageEx "[Bio-Signal Cancelled]"
+			PlaySound UIRadioSignalLost
+			set fwvq1.tPower to fwvq1.tPower + 5
+			set fwvqProtocols.biosignal to 0
+		endif
+
+		if fwvq1.tBeaconOn == 1
+			MessageEx "[Homing Beacon Disabled]"
+			set fwvq1.tBeaconOn to 0
+			setObjectiveDisplayed fwvqSystems 20 0
+			set fwvq1.tPower to fwvq1.tPower + 5
+		endif
+
+END

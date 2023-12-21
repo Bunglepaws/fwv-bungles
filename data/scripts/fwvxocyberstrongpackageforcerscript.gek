@@ -1,0 +1,14 @@
+scn fwvxocyberstrongpackageforcerscript
+
+begin GameMode
+
+	if fwvqInvasions.CyberPrisoner01Uncrux == 0
+
+		fwvCybStrngPrisoner01NPC.addscriptpackage fwvCyberCaptiveCrux01Bak
+		fwvCybStrngPrisoner02NPC.addscriptpackage fwvCyberCaptiveCrux02Bak
+		fwvCybStrngPrisoner03NPC.addscriptpackage fwvCyberCaptiveCrux03Bak
+		fwvCybStrngPrisoner04NPC.addscriptpackage fwvCyberCaptiveCrux04Bak
+
+	endif
+
+End

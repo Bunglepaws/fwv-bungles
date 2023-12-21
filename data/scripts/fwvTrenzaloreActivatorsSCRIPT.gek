@@ -1,0 +1,25 @@
+scn fwvTrenzaloreActivatorsSCRIPT
+
+
+short sTriggered 
+
+Begin onActivate player
+	
+		if sTriggered == 0
+				PlaySound OBJForcefieldShutdown
+				fwvTrenzCatacombsFFGlow.disable
+				fwvTrenzCatacombsFFImpact.disable
+				MessageEx "[Catacomb Forcefield Disabled]"
+				let sTriggered := 1
+			else
+				fwvTrenzCatacombsFFGlow.enable
+				fwvTrenzCatacombsFFImpact.enable
+				MessageEx "[Catacomb Forcefield Enabled]"
+				let sTriggered := 0
+		endif
+		
+	
+end
+
+
+

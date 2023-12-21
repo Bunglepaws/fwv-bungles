@@ -1,0 +1,10 @@
+scn fwvq2Page4SCRIPT
+
+begin onactivate
+
+	ShowMessage fwvq2Page4Message
+	fwvq2ancientBookRef.enable
+	setStage fwvquestTwo 20
+	Disable 1
+
+end

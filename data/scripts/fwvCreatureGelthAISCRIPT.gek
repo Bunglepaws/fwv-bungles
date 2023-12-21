@@ -1,0 +1,9 @@
+scn fwvCreatureGelthAISCRIPT
+
+Begin Gamemode
+
+if getQR fwvq3a == 1
+	enable
+endif
+
+end

@@ -1,0 +1,24 @@
+scn fwvFuncResetPosition
+
+ref rObjectRef
+float fCalc
+
+begin Function { rObjectRef }
+	rObjectRef.Disable 0
+	rObjectRef.MoveTo rObjectRef
+	rObjectRef.Enable 0
+	set fCalc to rObjectRef.GetStartingPos X
+	rObjectRef.SetPos X fCalc
+	set fCalc to rObjectRef.GetStartingPos Y
+	rObjectRef.SetPos Y fCalc
+	set fCalc to rObjectRef.GetStartingPos Z
+	rObjectRef.SetPos Z fCalc
+	set fCalc to rObjectRef.GetStartingAngle X
+	rObjectRef.SetAngle X fCalc
+	set fCalc to rObjectRef.GetStartingAngle Y
+	rObjectRef.SetAngle Y fCalc
+	set fCalc to rObjectRef.GetStartingAngle Z
+	rObjectRef.SetAngle Z fCalc
+	Update3D
+	PlayGroup Idle 0
+end

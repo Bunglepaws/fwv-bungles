@@ -1,0 +1,141 @@
+scn fwvTCcontrolCSRAdvScript
+
+short pressed
+short sAnimType
+short animate
+short sDirection
+ref rBaseObject
+ref control
+
+ref curRef
+ref cursor
+ref self
+
+float hTimer
+float mTimer
+short hitCount
+
+float dTimer ; adds 1 second after pressed = 1 to stop mashing a button
+
+begin onActivate player
+
+	set control to fwvqCSRAdv.control
+	set rBaseObject to control.getBaseObject
+	set self to GetSelf
+	set cursor to getCrossHairRef
+
+	if fwvqSystems.tAdvanced == 1
+		if fwvqCSRAdv.path > 0 && dTimer <= 0.0
+			if getSelf == fwvqCSRAdv.control
+				if fwvqCSRAdv.rControlType == 1
+					Set pressed to 1
+				elseif fwvqCSRAdv.rControlType == 2 ;hold
+					Set pressed to 2
+				elseif fwvqCSRAdv.rControlType == 3 ;mash
+					if hitCount < 10
+						set hitCount to hitCount + 1
+						;printc "hit %g" hitCount
+					elseif hitCount >= 10 && hitCount < 15
+						set pressed to 3
+					else
+						Goto 10
+					endif
+				endif
+			else
+				Label 10
+				MessageEx "[Protocol Cancelled: Incorrect activation]"
+				control.sms fwvHologramProtocolSolidMarker
+				control.placeAtMe fwvTardisHullExplosion
+				Call fwvFuncDamageSystemsFunction
+				set hitCount to 0
+				set hTimer to 0.0
+				set fwvqCSRAdv.lastControl to 0
+				set fwvqCSRAdv.frame to 4
+				set fwvqCSRAdv.path to 0
+			endif
+		elseif dTimer > 0.0
+			; do nothing, mashing shouldn't be so hard
+		else
+			MessageEx "Nothing happens..."
+			set animate to 1
+		endif
+	else
+		MessageEx "Nothing happens..."
+		set animate to 1
+	endif
+	activate
+end
+
+begin gamemode
+
+	if pressed == 1
+		if fwvqCSRAdv.path < 4
+			Call fwvFuncRandomSFXFunction
+			control.sms fwvHologramProtocolSolidMarker
+			set fwvqCSRAdv.path to fwvqCSRAdv.path + 1
+			set fwvqCSRAdv.frame to 3
+			set hitCount to 0
+			set hTimer to 0.0
+			set mTimer to 0.0
+		else
+			MessageEx "[Protocol Loaded]"
+			if fwvq1.pxl < 15
+				set fwvq1.pxp to fwvq1.pxp + 25
+				MessageEx "[+25 Piloting XP]"
+			endif
+			PlaySound fwvFXProtocolReady
+			Call fwvFuncRandomSFXFunction
+			control.sms fwvHologramProtocolSolidMarker
+			set hitCount to 0
+			set hTimer to 0.0
+			set mTimer to 0.0
+			set fwvqProtocols.run to 1
+			set fwvqCSRAdv.lastControl to 0
+			set fwvqCSRAdv.frame to 4
+			set fwvqCSRAdv.path to 0
+		endif
+		set animate to 1
+		set pressed to 0
+	
+	elseif pressed == 2
+		if (isControlPressed 5 == 1) && (cursor == self)
+			;printc "KEY IS BEING HELD!"
+			set hTimer to hTimer + getSecondsPassed
+			if hTimer > 2.5
+				PlaySound fwvFXtardisLifeSupportBeep
+				set pressed to 1
+				set hTimer to 0.0
+			endif
+		endif
+	
+	elseif pressed == 3
+		if mTimer < 1.0
+			set mTimer to mTimer + getSecondsPassed
+		else
+			if hitCount < 20
+				set pressed to 1
+				set dTimer to getSecondsPassed * 0.0 + 1.0 ; give some time to stop mashing this button without exploding
+			else
+				Goto 10
+			endif
+			set mTimer to 0.0
+		endif
+	endif
+
+	if animate == 1
+		if sDirection == 1
+			PlayGroup Backward 1
+			set sDirection to 0
+		else
+			PlayGroup Forward 1
+			set sDirection to 1
+		endif
+		set animate to 0
+	endif
+
+	; mash timer
+	if dTimer >= 0.0
+		set dTimer to dTimer - getSecondsPassed
+	endif
+	
+end

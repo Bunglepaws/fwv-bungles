@@ -1,0 +1,8 @@
+scn fwvTardisSynthesiserSCRIPT
+
+begin onactivate player
+
+	player.showrecipemenu fwvTardisLabSynthesis
+	activate
+
+end

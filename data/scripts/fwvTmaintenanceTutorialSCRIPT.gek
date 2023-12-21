@@ -1,0 +1,10 @@
+scn fwvTmaintenanceTutorialSCRIPT
+
+begin onTriggerEnter player
+
+if fwvqTutorials.tutorial == 1 && fwvqTutorials.mTutOnce == 0
+	ShowTutorialMenu fwvTUTmaintenanceMessage
+	set fwvqTutorials.mTutOnce to 1
+endif
+
+end

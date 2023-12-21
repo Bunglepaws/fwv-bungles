@@ -1,0 +1,11 @@
+scn fwvItemAikidoBookScript
+
+short doOnce
+
+begin onAdd player
+	if doOnce == 0
+		ShowMessage fwvItemAikidoLearntMessage
+		set fwvq1.karateLvl to 1
+		set doOnce to 1
+	endif
+end

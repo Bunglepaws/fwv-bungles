@@ -1,0 +1,35 @@
+scn fwvXOCreatureDegredationAISCRIPT
+
+short killOnce
+;short destroy
+;float dTimer
+ref rSelf
+short sDead
+;short sModel
+;short random
+;short sIsCounted
+
+Begin GameMode
+
+	set rSelf to GetSelf
+
+	if getDead == 1
+		if killOnce == 0
+			if rSelf.getIsID fwvqDalekAttackSpecialWeaps == 1
+				rSelf.placeAtMe fwvSWDRemainsHavok
+				rSelf.disable
+				rSelf.MarkForDelete
+			elseif rSelf.getIsID fwvCrDalekDegredation == 1 
+				rSelf.placeAtMe fwvDegredationRemainsHavok
+				rSelf.disable
+				rSelf.MarkForDelete
+			else
+				rSelf.disable
+				rSelf.MarkForDelete
+			endif
+			PlaceAtMe fwvDalekExplosionSWD
+			let killOnce := 1
+		endif
+	endif
+
+End

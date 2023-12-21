@@ -1,0 +1,303 @@
+scn fwvWeapMedicalProbeSCRIPT
+
+ref targetCell
+ref CombTarget
+ref Weap
+ref rPoliceBox
+ref rPoliceBoxDoor
+int WeapSkill
+ref rConsoleRoom
+short sIsRobot
+short sType
+short sMode
+short sRefType
+short sLoops
+short sIndex
+short sMaxIndex
+float fLFHealthPerc
+
+;1 - Medi-Scan
+;2 - Restore HP		Restore
+;3 - Restore Limbs	Cell Surgery
+;4 - Remove Rads
+;5 - Remove Poison
+;6 - Anaesthatise
+;7 - Resuscitate
+;8 - Cell Sample
+
+ref rRace
+string_var rSpecies
+string_var rGender
+string_var rName
+short rHeal
+short rHP
+short active
+ref npcRef
+float hTimer
+
+short rCurLimb
+short sCurLimb
+short sScannable
+
+begin OnEquip Player
+	set fwvq1.fQuestDelayWeapon to 0.1
+end
+
+begin onFire
+
+	if active == 0
+		set CombTarget to GetCrosshairRef
+		if CombTarget != 0
+			set sType to GetObjectType CombTarget
+		else
+			set sType to 0
+		endif
+		
+		if sType == 42 && CombTarget.GetInFaction fwvWeepingAngelFaction != 1 && CombTarget.GetInFaction fwvRastonFaction != 1
+			set sScannable to 1
+			;let rName := CombTarget.GetName
+			set rHeal to 10 + getRandomPercent * 25/100
+			set rHP to CombTarget.GetActorValue Health
+			;let rRace := CombTarget.GetRace
+			;printc "rRace %n" rRace
+		
+			if CombTarget.GetRace ==  Ghoul															
+				let rSpecies := "Human - Severe Radiation Damage Detected"
+				printc "rSpecies %z" rSpecies
+			elseif CombTarget.GetRace == fwvRaceSilurian 
+				let rSpecies := "Silurian"
+				printc "rSpecies %z" rSpecies				
+			elseif CombTarget.GetRace == fwvRaceSilurianInfected
+				let rSpecies := "Silurian - Infection Detected"
+				printc "rSpecies %z" rSpecies								
+			else
+				let rSpecies := "Human"
+				printc "rSpecies %z" rSpecies								
+			endif
+			
+			if IsRefInList fwvKrotonRace CombTarget != -1
+				let rSpecies := "Cyborg"
+			endif
+
+			;printc "Check Silence"
+			
+			if CombTarget.GetInFaction fwvSilentCreatureFaction || CombTarget.GetInFaction fwvSilentCreatureFactionTruce || CombTarget.GetInFaction fwvWeepingAngelFaction
+				let rSpecies := "UNKNOWN"
+			endif
+			
+			;printc "check Sec"
+			
+			if CombTarget.GetIsReference fwvAsylumSec || CombTarget.GetIsReference fwvRassilonKarnBeastRef
+				let rSpecies := "Unrecognized Hybrid"
+			endif
+			
+			;printc "check Dav"
+			
+			if CombTarget.GetInFaction fwvDavrosFaction
+				let rSpecies := "Kaled"
+			endif
+				
+			;printc "check Auton"
+			
+			if CombTarget.GetInFaction fwvAutonFaction
+				let rSpecies := "Auton"
+			endif
+			
+			;printc "check Raston"
+			
+			;if CombTarget.GetInFaction fwvRastonFaction
+				;let rSpecies := "Android"
+			;endif
+			
+
+			
+			;printc "Check Cyborg Not Kroton NPC"
+			
+			if CombTarget.GetInFaction fwvCybermanFaction
+				let rSpecies := "Cyborg"
+			endif
+
+			;printc "Check Gelth"
+			
+			if CombTarget.GetInFaction fwvGelthFaction
+				let rSpecies := "ERROR - Multiple Lifesigns"
+			endif			
+			
+			;printc "Check Gall"
+			
+			if CombTarget.IsInList fwvTimelordsAndKarn == 1
+				let rSpecies := "Gallifreyan"
+			endif
+			
+			
+		elseif sType == 43 && CombTarget.GetCreatureType != 6
+			set sScannable to 1
+			let rName := CombTarget.GetName
+			set rHeal to 10 + getRandomPercent * 25/100
+			set rHP to CombTarget.GetActorValue Health
+
+			if CombTarget.GetCreatureType == 0  ;Animal
+				let rSpecies := "Animal"
+			elseif CombTarget.GetCreatureType == 1  ;Mutated Animal
+				let rSpecies := "Animal - Mutations Detected"
+			elseif CombTarget.GetCreatureType == 2  ;Mutated Insect
+				let rSpecies := "Arthropod - Mutations Detected"
+			elseif CombTarget.GetCreatureType == 3  ;Abomination
+				let rSpecies := "Artificial Genetic Chimera"
+			elseif CombTarget.GetCreatureType == 4  ;Super Mutant
+				let rSpecies := "Human - Extreme Genetic Modification"
+			elseif CombTarget.GetCreatureType == 5  ;Feral Ghoul
+				let rSpecies := "Human - Severe Radiation Damage Detected"
+			else
+				let rSpecies := "FAIL CREATURE"
+			endif
+			
+			if CombTarget.GetInFaction fwvZetanFaction || CombTarget.GetIsId fwvKrog
+				let rSpecies := "Zetan"
+			endif
+			
+			if CombTarget.GetInFaction SporePlantFaction || CombTarget.GetIsId fwvZetaPlantBoss
+				let rSpecies := "Plant"
+			endif			
+			
+			if CombTarget.GetInFaction fwvSeleniteFaction  ;Ant People in the MOON
+				let rSpecies := "Selenite"
+			endif				
+		
+			if CombTarget.GetInFaction fwvPlantGestaltFaction ; Spore Carriers and eventually Krynoids
+				let rSpecies := "Plant/Animal Gestalt"
+			endif
+
+			if CombTarget.GetInFaction fwvAutonFaction  ;this is for Nestene Tentacles
+				let rSpecies := "Nestene"
+			endif
+
+		else
+			set sScannable to 0
+		endif
+		
+		if sScannable == 1
+			if fwvqWeaponQuest.medicalMode == 1			; ========= MEDI-SCAN MODE
+				MessageBoxEx "**Medi-Scan Results**%r%rLifeform: %z%r%rHealth: %g HP%r" rSpecies rHP
+			
+				
+			elseif fwvqWeaponQuest.medicalMode == 2		; ========= HEAL MODE
+				if CombTarget.getDead == 0
+					PlaySound WPNEuclidFinderUplink
+					CombTarget.pms fwvNanoGlowShader 3
+					MessageEx "%gHP Restored..." rHeal
+					CombTarget.restoreAV health rHeal
+					let npcRef := CombTarget
+					set active to 1
+					if CombTarget == fwvFlatwoodRef && fwvqSilurianGasStation.sHealChance == 1
+						;printc "fwvFlatwoodRef Healed"
+						set fwvqSilurianGasStation.sFlatwoodHealed to 1
+						set fwvqSilurianGasStation.sHealChance to 2
+						;fwvFlatwoodref.startconversation player, GREETING
+					endif	
+				else
+					MessageEx "Target is deceased..."
+				endif
+
+			elseif fwvqWeaponQuest.medicalMode == 3		; ========= HEAL LIMBS MODE
+				if CombTarget.getDead == 0
+					PlaySound WPNEuclidFinderLaser
+					MessageEx "%z has been surgically healed..." rName
+					CombTarget.resetHealth
+					CombTarget.pms fwvNanoGlowShader 3
+					let npcRef := CombTarget
+					set active to 1
+				else
+					MessageEx "Target is deceased..."
+				endif
+
+			elseif fwvqWeaponQuest.medicalMode == 4		; ========= REMOVE RADS MODE
+				if CombTarget.getDead == 0
+					PlaySound NPCFeralGhoulRadiate
+					MessageEx "%z has been cleansed of Rads..." rName
+					CombTarget.restoreAV RadiationRads 1000
+					CombTarget.pms fwvNanoGlowShader 3
+					let npcRef := CombTarget
+					set active to 1
+				else
+					MessageEx "Target is deceased..."
+				endif
+
+			elseif fwvqWeaponQuest.medicalMode == 5		; ========= REMOVE POISON MODE
+				if CombTarget.getDead == 0
+					PlaySound WPNPlasmaPistolProjectileLP
+					MessageEx "%z has been cured of all known poisons..." rName
+					CombTarget.resetHealth
+					CombTarget.pms fwvNanoGlowShader 3
+				else
+					MessageEx "Target is deceased..."
+				endif
+
+			elseif fwvqWeaponQuest.medicalMode == 6		; ========= ANAESTHATISE MODE
+				if CombTarget.getDead == 0
+					MessageEx "%z has been anaesthatised..." rName
+					CombTarget.setUnconscious 1
+					CombTarget.pms fwvNanoGlowShader 3
+					let npcRef := CombTarget
+					set active to 1
+				else
+					MessageEx "Target is deceased..."
+				endif
+
+			elseif fwvqWeaponQuest.medicalMode == 7		; ========= RESUSCITATE MODE
+				if CombTarget.getDead == 1
+					if CombTarget.GetTimeDead <= 6.0
+						;printToConsole "check limbs!"
+						set sCurLimb to 0
+						Label 1
+						if CombTarget.IsLimbGone sCurLimb == 1
+							; limb missing, don't resurrect
+							MessageEx "%z cannot be revived..." rName
+							set sCurLimb to 14
+						else
+							if sCurLimb == 13 ; last limb intact, resurrect
+								MessageEx "%z has been resurrected..." rName
+								CombTarget.ResurrectActor 2
+								CombTarget.pms fwvNanoGlowShader 3
+							elseif sCurLimb < 13 ; still checking limbs, loop
+								set sCurLimb to sCurLimb + 1
+								Goto 1
+							endif
+						endif
+					endif
+				elseif CombTarget.getUnconscious == 1
+					MessageEx "%z has been revived..." rName
+					CombTarget.setUnconscious 0
+					CombTarget.pms fwvNanoGlowShader 3
+					let npcRef := CombTarget
+					set active to 1
+				else
+					MessageEx "Target cannot be resuscitated..."
+				endif
+			endif
+		else
+			MessageEx "ERROR: Inorganic, cybernetic, or no target"
+		endif
+	elseif active == 1
+		MessageEx "Medical Probe already in use..."
+	endif
+end
+
+begin gamemode
+
+	if player.getInCell fwvAutonAtomicWrangler == 1 && player.getEquipped fwvWeapMedicalProbe == 1
+		player.unequipitem fwvWeapMedicalProbe 1
+		MessageBoxEx "[Odd... something is jamming your Medical Probe...]"
+	endif
+	
+	if active == 1
+		if hTimer < 3.0
+			set hTimer to hTimer + getSecondsPassed
+		else
+			npcRef.sms fwvNanoGlowShader
+			npcRef.saa 1
+			set active to 0
+			set hTimer to 0.0
+		endif
+	endif
+end

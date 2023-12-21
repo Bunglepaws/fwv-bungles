@@ -1,0 +1,15 @@
+scn fwvSkaroForestWorldScript
+
+short DoOnce
+
+begin gamemode
+	;if player.getInWorldSpace fwvWorldSkaroForestWorld == 1
+		;if player.hasmagiceffect fwvSkaroRadiationPillsBaseEffect == 0
+			;if DoOnce == 0
+				;player.addSpell fwvSkaroRadiationEffect
+				;ShowMessage fwvSkaroRadiationMessage
+				;set DoOnce to 1
+			;endif
+		;endif	
+	;endif
+end

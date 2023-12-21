@@ -1,0 +1,63 @@
+scn fwvAngelMotelPushScript
+
+short gate
+short bookshelf
+short moveX
+short moveZ
+float x
+float y
+float z
+float bookPos
+float gatePos
+
+begin onActivate player
+
+	if getStage fwvqAngelMotel == 20
+		if getIsReference fwvAngelMotelBookshelfRef
+			if bookshelf == 0
+				PlaySound DRSLamplightBackOpen
+				set x to 4385.5723
+				set y to 1620.7325
+				set bookshelf to 1
+				set moveX to 1
+			endif
+		elseif getIsReference fwvAngelMotelGateControlRef
+			MessageEx "There's no need to do that right now..."
+		endif
+	elseif getStage fwvqAngelMotel == 50
+		if getIsReference fwvAngelMotelGateControlRef
+			if gate == 0
+				PlaySound DRSGateSlideOpen
+				set z to 6559.0322
+				set gate to 1
+				set moveZ to 1
+			endif
+		endif
+	endif
+
+end
+
+begin gamemode
+
+	set bookPos to fwvAngelMotelBookshelfRef.getPos X -0.5
+	set gatePos to fwvAngelMotelGateRef.getPos Z +1
+
+	if bookshelf == 1
+		if moveX == 1
+			if fwvAngelMotelBookshelfRef.getPos X > 4226.5127
+				fwvAngelMotelBookshelfRef.setPos X bookPos
+			else
+				set moveX to 0
+			endif
+		endif
+	elseif gate == 1
+		if moveZ == 1
+			if fwvAngelMotelGateRef.getPos Z < 6720.0000
+				fwvAngelMotelGateRef.setPos Z gatePos
+			else
+				set moveZ to 0
+			endif
+		endif
+	endif
+
+end

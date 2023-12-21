@@ -1,0 +1,156 @@
+scn fwvTClaboWorkStationSCRIPT
+
+;written by Demeggy 7/3/13
+
+short button
+short menu ; (1-main menu, 2-add to formula, 3-remove from formula)
+short mode ; (0- normal, 1-brewing)
+short day
+
+short Alkali
+short Acid
+short Gas
+short Liquid
+short Stabiliser
+float timer
+
+; begin onActivate player
+
+	; ShowMessage  fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+	; set menu to 1
+
+; end
+
+; begin gameMode
+
+	; set button to getbuttonpressed
+
+	; if mode == 0
+
+	; if menu == 1
+
+		; if button == 0
+
+			; ShowMessage fwvTCchemistryFormulaAddMessage
+			; set menu to 2
+
+		; elseif button == 1
+
+			; ShowMessage fwvTCchemistryFormulaRemoveMessage
+			; set menu to 3
+
+		; elseif button == 2
+
+			; set mode to 1
+
+		; elseif button == 3
+
+		; endif
+
+	; elseif menu == 2
+
+		; if button == 0
+
+			; set alkali to alkali + 10
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+			; set menu to 1
+
+		; elseif button == 1
+
+			; set acid to acid + 10
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+			; set menu to 1
+
+		; elseif button == 2
+
+			; set gas to gas + 10
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+			; set menu to 1
+
+		; elseif button == 3
+
+			; set liquid to liquid + 10
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser 
+			; set menu to 1
+
+		; elseif button == 4
+
+			; set stabiliser to stabiliser + 10
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+			; set menu to 1
+
+		; elseif button == 5
+
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+			; set menu to 1
+
+		; endif
+
+	; elseif menu == 3
+
+		; if button == 0
+
+			; set alkali to alkali - 10
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+			; set menu to 1
+
+		; elseif button == 1
+
+			; set acid to acid - 10
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+			; set menu to 1
+
+		; elseif button == 2
+
+			; set gas to gas - 10
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+			; set menu to 1
+
+		; elseif button == 3
+
+			; set liquid to liquid - 10
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+			; set menu to 1
+
+		; elseif button == 4
+
+			; set stabiliser to stabiliser - 10
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+			; set menu to 1
+
+		; elseif button == 5
+
+			; ShowMessage fwvTCchemistrySetMessage Alkali Acid Gas Liquid Stabiliser
+			; set menu to 1
+
+		; endif
+
+	; endif
+
+	; elseif mode == 1
+		; ShowMessage fwvTCchemistryBaseCompleteMessage
+		; if Alkali == 0 && Acid == 70 && Gas == 0 && Liquid == 20 && Stabiliser == 10			;create antiplastic base
+			; fwvTcompoundRef.addItem fwvItemBaseAntiPlastic 1
+		; elseif Alkali == 40 && Acid == 0 && Gas == 40 && Liquid == 10 && Stabiliser == 10	;create movellan strain base
+			; fwvTcompoundRef.addItem fwvItemBaseMovellanStrain 1
+		; elseif Alkali == 0 && Acid == 0 && Gas == 90 && Liquid == 0 && Stabiliser == 10		;create space plague base
+			; fwvTcompoundRef.addItem fwvItemBaseSpacePlague 1
+		; elseif Alkali == 10 && Acid == 0 && Gas == 0 && Liquid == 70 && Stabiliser == 20		;create spectrox antiviral base
+			; fwvTcompoundRef.addItem fwvItemBaseSpectroxAntiviral 1
+		; elseif Alkali == 10 && Acid == 20 && Gas == 20 && Liquid == 40 && Stabiliser == 10		;create elixir of life base
+			; fwvTcompoundRef.addItem fwvItemBaseElixirOfLife 1
+		; elseif Alkali == 50 && Acid == 0 && Gas == 20 && Liquid == 20 && Stabiliser == 10		;create silurian antiviral base
+			; fwvTcompoundRef.addItem fwvItemBaseSilurianAntiviral 1
+		; else																														;create a bad concoction
+
+		; endif
+		; PlaySound OBJZAXConsoleVialLeft
+		; set alkali to 0
+		; set acid to 0
+		; set gas to 0
+		; set liquid to 0
+		; set stabiliser to 0
+		; set mode to 0
+	; endif
+; end
+

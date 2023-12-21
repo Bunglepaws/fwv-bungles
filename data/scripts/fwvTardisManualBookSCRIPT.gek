@@ -1,0 +1,62 @@
+scn fwvTardisManualBookSCRIPT
+
+;written by Demeggy 9/3/13
+
+short button
+short page
+short open
+float oTimer
+
+short sDoOnce
+short sDirection
+short sNextAction
+ref rLastRef
+
+float timer
+
+begin onactivate player
+
+	ShowMessage fwvTardisManualMessage
+	set page to 1
+
+end
+
+begin gamemode
+	
+	set button to getbuttonpressed
+
+	;================================================================
+	;                                                TARDIS MANUAL
+	;================================================================
+	if page == 1
+		if button == 0
+			ShowTutorialMenu fwvManualFlightMessage
+			set page to 0
+		elseif button == 1
+			ShowTutorialMenu fwvManualMaintenanceMessage
+			set page to 0
+		elseif button == 2
+			ShowTutorialMenu fwvManualArchitectureMessage
+			set page to 0
+		elseif button == 3
+			ShowTutorialMenu fwvManualSkillsMessage
+			set page to 0
+		elseif button == 4
+			ShowTutorialMenu fwvManualTimeLordsMessage
+			set page to 0
+		elseif button == 5
+			ShowTutorialMenu fwvManualRiftsMessage
+			set page to 0
+		elseif button == 6
+			ShowTutorialMenu fwvManualSpaceflightMessage
+			set page to 0
+		elseif button == 7
+			ShowTutorialMenu fwvManualIndexMessage
+			set page to 0
+		elseif button == 8
+			set page to 0
+		endif
+	endif
+
+end
+

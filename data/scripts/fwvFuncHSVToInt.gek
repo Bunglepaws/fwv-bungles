@@ -1,0 +1,62 @@
+scn fwvFuncHSVToInt
+
+float red
+float green
+float blue
+
+float h
+float s
+float v
+
+short i
+float f
+float p
+float q
+float t
+
+
+int iReturnValue
+
+
+begin Function {h, s, v}
+	set i to h * 6
+	set i to floor i
+	set f to h * 6 - i
+	set p to v * (1 - s)
+	set q to v * (1 - f * 2)
+	set t to v * (1 - (1 - f) * s)
+
+	set i to fmod i 6
+	if i == 0
+		set red to v
+		set green to t
+		set blue to p
+	elseif i == 1
+		set red to q
+		set green to v
+		set blue to p
+	elseif i == 2
+		set red to p
+		set green to v
+		set blue to t
+	elseif i == 3
+		set red to p
+		set green to q
+		set blue to v
+	elseif i == 4 
+		set red to t
+		set green to p
+		set blue to v
+	elseif i == 5
+		set red to v
+		set green to p
+		set blue to q
+	endif
+
+	set red to red * 255
+	set green to green * 255
+	set blue to blue * 255
+	set iReturnValue to Call fwvFuncRGBToInt red green blue
+
+	SetFunctionValue iReturnValue
+end

@@ -1,0 +1,14 @@
+scn fwvqTardisManualQuestSCRIPT
+
+short page
+
+begin gamemode
+
+	if page >= 15 && getStage fwvqTardisManualQuest < 100
+		SetObjectiveCompleted fwvqTardisManualQuest 10 1
+		setStage fwvqTardisManualQuest 100
+	endif
+
+end
+
+

@@ -1,0 +1,20 @@
+scn fwvInspirationMessageEffectSCRIPT
+
+; effect's job is to simply give a message when the effect starts and ends
+
+begin ScriptEffectStart
+	MessageEx "You feel inspired..."
+	player.resetHealth		; completely heal the player and limbs
+
+	If HasPerk fwvInspirationPerk == 0						; Give the player the perk if he doesn't already have it.
+		AddPerk fwvInspirationPerk
+	EndIf
+end
+
+begin ScriptEffectFinish
+	MessageEx "The inspiration slowly fades..."
+	RemovePerk fwvInspirationPerk
+end
+
+
+

@@ -1,0 +1,9 @@
+scn fwvCrCybermanKarnAlmostDeadSCRIPT
+
+begin Gamemode
+
+if GetDead == 0
+	killactor
+endif
+
+end

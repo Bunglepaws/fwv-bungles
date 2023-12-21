@@ -1,0 +1,7 @@
+scn fwvCubicSilenceCrashEnterScript
+
+begin OnTriggerEnter Player
+	fwvSilenceHologramRef.Enable 0
+	fwvSilenceCrashDoorRef2.Lock 255
+	Disable
+end

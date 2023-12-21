@@ -1,0 +1,26 @@
+scn fwvFuncAppendForms
+
+ref rSourceFormList
+ref rTargetFormList
+ref rCurForm
+
+short sFormCount
+short sFormIndex
+
+begin function { rSourceFormList, rTargetFormList }
+	set sFormCount to ListGetCount rSourceFormList
+	set sFormIndex to 0
+	
+	Label 0
+	if sFormIndex < sFormCount
+	
+		set rCurForm to ListGetNthForm rSourceFormList sFormIndex
+		if ListGetFormIndex rTargetFormList rCurForm < 0
+			ListAddForm rTargetFormList rCurForm		
+		endif
+		set sFormIndex to sFormIndex + 1
+		Goto 0
+	endif
+	
+	SetFunctionValue 1
+end

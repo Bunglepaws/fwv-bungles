@@ -1,0 +1,97 @@
+scn fwvWeapTimescoopSCRIPT
+
+short sLoc
+short sScoopOn
+short sScoop
+
+ref rNpcTarget
+
+Begin OnHit
+
+	let rNpcTarget := GetOwnerLastTarget
+
+	If (rNpcTarget != PlayerRef)
+		MessageEx "Target Timescooped!"
+		rNpcTarget.RemoveAllPackages
+		rNpcTarget.addScriptPackage fwvDeathzoneWanderPackage
+		rNpcTarget.evp
+		rNpcTarget.resetHealth
+		rNpcTarget.placeAtMe fwvTimeScoopExplosion
+		let sScoop := 1
+	endif
+
+End
+
+Begin GameMode
+
+	if sScoop == 1
+		let sLoc := Rand 1,3
+		if fwvqWeaponQuest.timescoopMode == 1
+			if sLoc == 1
+				printc "Starting point"
+				rNpcTarget.moveTo fwvDZmountain01Ref
+			elseif sLoc == 2
+				printc "mountain ledge"
+				rNpcTarget.moveTo fwvDZmountain02Ref
+			elseif sLoc == 3
+				printc "mountain path"
+				rNpcTarget.moveTo fwvDZmountain03Ref
+			endif
+
+			;Ar_Insert fwvqGameOfRassilon.arNpcs,1,rNpcTarget
+			let fwvqGameOfRassilon.sMountainTaken := 1
+
+		elseif fwvqWeaponQuest.timescoopMode == 2
+			if sLoc == 1
+				printc "moorland gulley"
+				rNpcTarget.moveTo fwvDZmoorland01Ref
+			elseif sLoc == 2
+				printc "moorland path"
+				rNpcTarget.moveTo fwvDZmoorland02Ref
+			elseif sLoc == 3
+				printc "deathzone plains"
+				rNpcTarget.moveTo fwvDZmoorland03Ref
+			endif
+
+			;Ar_Insert fwvqGameOfRassilon.arNpcs,2,rNpcTarget
+			let fwvqGameOfRassilon.sMoorlandTaken := 1
+
+		elseif fwvqWeaponQuest.timescoopMode == 3
+			if sLoc == 1
+				printc "forest valley"
+				rNpcTarget.moveTo fwvDZforest01Ref
+			elseif sLoc == 2
+				printc "clearing"
+				rNpcTarget.moveTo fwvDZforest02Ref
+			elseif sLoc == 3
+				printc "scorched forest"
+				rNpcTarget.moveTo fwvDZforest03Ref
+			endif
+
+			;Ar_Insert fwvqGameOfRassilon.arNpcs,3,rNpcTarget
+			let fwvqGameOfRassilon.sForestTaken := 1
+
+		elseif fwvqWeaponQuest.timescoopMode == 4
+			if sLoc == 1
+				printc "Quarry hill"
+				rNpcTarget.moveTo fwvDZquarry01Ref
+			elseif sLoc == 2
+				printc "quarry area"
+				rNpcTarget.moveTo fwvDZquarry02Ref
+			elseif sLoc == 3
+				printc "quarry area 3"
+				rNpcTarget.moveTo fwvDZquarry02Ref
+			endif
+
+			;Ar_Insert fwvqGameOfRassilon.arNpcs,4,rNpcTarget
+			let fwvqGameOfRassilon.sQuarryTaken := 1
+
+		endif
+		let sScoop := 0
+		player.removeItem fwvWeapTimescoop 1 0
+		player.addItem fwvWeapTimescoopOff 1 0
+		player.equipItem fwvWeapTimescoopOff 1
+		let fwvqWeaponQuest.timescoopMode := 0
+	endif
+
+End

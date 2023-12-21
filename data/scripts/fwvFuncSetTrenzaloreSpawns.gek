@@ -1,0 +1,57 @@
+scn fwvFuncSetTrenzaloreSpawns
+
+begin Function {}
+
+	Ar_Append fwvqTrenzalore.ASpawn fwvTrMSpawnARef1
+	Ar_Append fwvqTrenzalore.ASpawn fwvTrMSpawnARef2
+	Ar_Append fwvqTrenzalore.ASpawn fwvTrMSpawnARef3
+	Ar_Append fwvqTrenzalore.ASpawn fwvTrMSpawnARef4
+	Ar_Append fwvqTrenzalore.ASpawn fwvTrMSpawnARef5
+	Ar_Append fwvqTrenzalore.ASpawn fwvTrMSpawnARef6
+	Ar_Append fwvqTrenzalore.ASpawn fwvTrMSpawnARef7
+	Ar_Append fwvqTrenzalore.ASpawn fwvTrMSpawnARef8
+	Ar_Append fwvqTrenzalore.ASpawn fwvTrMSpawnARef9
+	Ar_Append fwvqTrenzalore.ASpawn fwvTrMSpawnARef10
+	Ar_Append fwvqTrenzalore.BSpawn fwvTrMSpawnBRef1
+	Ar_Append fwvqTrenzalore.BSpawn fwvTrMSpawnBRef2
+	Ar_Append fwvqTrenzalore.BSpawn fwvTrMSpawnBRef3
+	Ar_Append fwvqTrenzalore.BSpawn fwvTrMSpawnBRef4
+	Ar_Append fwvqTrenzalore.BSpawn fwvTrMSpawnBRef5
+	Ar_Append fwvqTrenzalore.BSpawn fwvTrMSpawnBRef6
+	Ar_Append fwvqTrenzalore.BSpawn fwvTrMSpawnBRef7
+	Ar_Append fwvqTrenzalore.BSpawn fwvTrMSpawnBRef8
+	Ar_Append fwvqTrenzalore.BSpawn fwvTrMSpawnBRef9
+	Ar_Append fwvqTrenzalore.BSpawn fwvTrMSpawnBRef10
+	Ar_Append fwvqTrenzalore.CSpawn fwvTrMSpawnCRef1
+	Ar_Append fwvqTrenzalore.CSpawn fwvTrMSpawnCRef2
+	Ar_Append fwvqTrenzalore.CSpawn fwvTrMSpawnCRef3
+	Ar_Append fwvqTrenzalore.CSpawn fwvTrMSpawnCRef4
+	Ar_Append fwvqTrenzalore.CSpawn fwvTrMSpawnCRef5
+	Ar_Append fwvqTrenzalore.CSpawn fwvTrMSpawnCRef6
+	Ar_Append fwvqTrenzalore.CSpawn fwvTrMSpawnCRef7
+	Ar_Append fwvqTrenzalore.CSpawn fwvTrMSpawnCRef8
+	Ar_Append fwvqTrenzalore.CSpawn fwvTrMSpawnCRef9
+	Ar_Append fwvqTrenzalore.CSpawn fwvTrMSpawnCRef10
+	Ar_Append fwvqTrenzalore.DSpawn fwvTrMSpawnDRef1
+	Ar_Append fwvqTrenzalore.DSpawn fwvTrMSpawnDRef2
+	Ar_Append fwvqTrenzalore.DSpawn fwvTrMSpawnDRef3
+	Ar_Append fwvqTrenzalore.DSpawn fwvTrMSpawnDRef4
+	Ar_Append fwvqTrenzalore.DSpawn fwvTrMSpawnDRef5
+	Ar_Append fwvqTrenzalore.DSpawn fwvTrMSpawnDRef6
+	Ar_Append fwvqTrenzalore.DSpawn fwvTrMSpawnDRef7
+	Ar_Append fwvqTrenzalore.DSpawn fwvTrMSpawnDRef8
+	Ar_Append fwvqTrenzalore.DSpawn fwvTrMSpawnDRef9
+	Ar_Append fwvqTrenzalore.DSpawn fwvTrMSpawnDRef10
+	Ar_Append fwvqTrenzalore.ESpawns 0
+	Ar_Append fwvqTrenzalore.ESpawns 0
+	Ar_Append fwvqTrenzalore.ESpawns 0
+	Ar_Append fwvqTrenzalore.ESpawns 0
+	Ar_Append fwvqTrenzalore.ESpawns 0
+	Ar_Append fwvqTrenzalore.EDeaths 0
+	Ar_Append fwvqTrenzalore.EDeaths 0
+	Ar_Append fwvqTrenzalore.EDeaths 0
+	Ar_Append fwvqTrenzalore.EDeaths 0
+	Ar_Append fwvqTrenzalore.EDeaths 0
+
+end
+

@@ -1,0 +1,47 @@
+scn fwvTCchameleonArchSCRIPT
+
+; This script stores all of the players human stats before they become a Time Lord
+; written by Demeggy 12/3/13
+
+short button
+
+short hStr			;Strength
+short hPer		;Perception
+short hEnd		;Endurance
+short hCha		;Charisma
+short hInt			;Intelligence
+short hAg			;Agility
+short hLuck		;Luck
+
+short hBarter	;Bartering
+short hBG		;BigGuns
+short hEW		;EnergyWeaps
+short hExp		;Explosives
+short hLock		;LockPick
+short hMed		;Medicine
+short hMW		;MeleeWeaps
+short hRep		;Repair
+short hSci		;Science
+short hSG			;SmallGuns
+short hSneak	;Sneaking
+short hSp			;Speech
+short hUA			;Unarmed
+
+; spyduck-added
+short curStatBase
+short curStat
+short newMod
+short event
+
+begin onActivate player
+
+if fwvqRegen.timeLordTrue == 1
+	ShowMessage fwvTCchameleonArchMessage					;give the option to become human here
+	;copy timelord stats to the eyeRef
+	;replace player stats with the humanStats in the eyeRef
+	;set tardis piloting level to 1
+	;remove all timelord perks
+	;give the player the fob watch
+endif
+
+end

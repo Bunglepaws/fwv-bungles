@@ -1,0 +1,91 @@
+scn fwvqSilurianGasStationSCRIPT
+
+short sSilurianRead
+short sSilurian1stEnc
+float fDay
+short init
+short sCuredGecko
+short sFlatwoodHealed
+short sFlatwoodMove
+float fFlatwoodHealTimer
+short sHealChance
+short DoOnce
+short DoOnceTwo
+short sPDARead
+short sInitRecruit
+short sFlatwoodStay
+short sPlotCaptiveTied
+short sPlotCaptiveUntied
+short sPlotRun
+short sPlotOnce
+short sPlotHoldYourFire
+short sPlotFireAway
+short sGeckoMet
+short sFlatwoodTalked
+
+Begin GameMode
+
+	;Place to move Flatwood to is fwvFlatwoodOutpostREF
+
+	if getQuestCompleted fwvqCompanionTutorial == 1 ; && fwvqSilurianGasStation.sSilurian1stEnc == 1 
+		; Companion Tut done, Silurians encountered - I've now removed the requirement for Silurian 1st Enc
+		if init == 0
+			let fDay := GameDaysPassed
+			let init := 1
+		elseif init == 1
+			if GameDaysPassed > fDay + 1 ; day passed
+				set fwvqComms.sEventPhone to 20  ;Flatwood phonecall sets stage to 10
+				set sFlatwoodMove to 0
+				let init := 2
+			endif
+		endif
+	endif	
+	
+	if sFlatwoodStay == 1
+		fwvFlatwoodRef.setrestrained 1
+		printc "Flatwood Restrained"
+		set sFlatwoodStay to 0
+	endif
+	
+	if sHealChance == 1
+		if fFlatwoodHealTimer < 20.0
+			if DoOnce == 0
+				MessageEx "[Better be quick, he won't last much longer...]"
+				set DoOnce to 1
+			endif
+			set fFlatwoodHealTimer to fFlatwoodHealTimer + getSecondsPassed
+		else
+			fwvFlatwoodRef.kill
+			set sHealChance to 99
+		endif
+	endif
+	
+	if sFlatwoodHealed == 1
+		if DoOnceTwo == 0
+			MessageEx "[He should be out of danger now.]"
+			set DoOnceTwo to 1
+			fwvFlatwoodRef.Startconversation player, GREETING
+		endif
+	endif
+
+	if player.GetInCell RatCaveINT == 1 && getStage fwvqSilurianGasStation == 20
+		setStage fwvqSilurianGasStation 30
+		setObjectiveCompleted fwvqSilurianGasStation 20 1
+		fwvGeckoRef.enable
+		;fwvGeckoRef.addscriptpackage fwvGeckoSleepAlwaysLinkedRef
+		fwvGeckoRef.evp
+		if fwvFlatwoodREF.getdead == 0
+			fwvFlatwoodREF.moveto fwvFlatwoodOutpostREF
+			fwvFlatwoodREF.setrestrained 0
+			set sFlatwoodMove to 1
+		endif
+	endif
+	
+	if player.GetInCell fwvGeckoHideout == 1 && getStage fwvqSilurianGasStation == 40
+		setStage fwvqSilurianGasStation 50
+		setObjectiveCompleted fwvqSilurianGasStation 40 1
+	endif
+		
+	
+	
+End

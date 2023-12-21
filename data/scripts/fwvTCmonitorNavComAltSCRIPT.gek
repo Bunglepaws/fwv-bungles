@@ -1,0 +1,53 @@
+scn fwvTCmonitorNavComAltSCRIPT
+
+short activated
+short tutOnce
+ref rLinkedRef
+Begin OnActivate player
+
+	set rLinkedRef to GetLinkedRef
+	set activated to 1
+
+	;alter TARDIS Terminal Header
+	con_setgamesetting sComputersHeader1 "T.A.R.D.O.S"
+	con_setgamesetting sComputersHeader2 "Time And Relative Dimensional Operating System"
+	con_setgamesetting sHackingHeader "============================================"
+	con_setgamesetting shackingintro01 " "
+	con_setgamesetting shackingintro06 " "
+	con_setgamesetting shackingintro09 " "
+	
+	if fwvqGameOfRassilon.sRemote == 0
+		if fwvqSystems.core == 1 || fwvqGameOfRassilon.sRemote == 0
+			if GetQuestCompleted fwvq1a == 1 && (fwvq1.tFlightType == 2 || fwvq1.tFlightType == 3)
+				fwvTARDISNavComAlt.activate player 1
+			else
+				MessageEx "[Navigation Mode not selected]"
+			endif
+		elseif fwvqSystems.core != 1
+			MessageEx "[The TARDIS is without power]"
+		endif
+	
+	elseif fwvqGameOfRassilon.sRemote == 1
+		MessageBoxEx "[The Time Lords have control of the TARDIS]"
+	endif
+
+end
+
+Begin MenuMode
+  if activated == 1
+    set activated to 2
+  endif
+End
+
+Begin GameMode
+  if activated == 2
+    set activated to 0
+    ;On shutting down the terminal. Makes sure it doesn't show up on others.
+    con_setgamesetting sComputersHeader1 "ROBCO INDUSTRIES UNIFIED OPERATING SYSTEM"
+    con_setgamesetting sComputersHeader2 "COPYRIGHT 2075-2077 ROBCO INDUSTRIES "
+    con_setgamesetting sHackingHeader "ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL"
+    con_setgamesetting shackingintro01 "WELCOME TO ROBCO INDUSTRIES (TM) TERMLINK"
+    con_setgamesetting shackingintro06 "Initializing Robco Industries(TM) MF Boot Agent v2.3.0"
+    con_setgamesetting shackingintro09 "Copyright 2201-2203 Robco Ind."
+  endif
+End

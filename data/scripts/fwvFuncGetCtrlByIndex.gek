@@ -1,0 +1,33 @@
+scn fwvFuncGetCtrlByIndex
+
+ref rControl
+short sControl
+
+begin Function { sControl }
+	if sControl == 1
+		set rControl to fwvq1.rTChelmicRef1
+	elseif sControl == 2
+		set rControl to fwvq1.rTCnavicompRef1
+	elseif sControl == 3
+		set rControl to fwvq1.rTCproximityRef1
+	elseif sControl == 4
+		set rControl to fwvq1.rTCatomicRef1
+	elseif sControl == 5
+		set rControl to fwvq1.rTCgyroRef1
+	elseif sControl == 6
+		set rControl to fwvq1.rTCpointerRef1
+	elseif sControl == 7
+		set rControl to fwvq1.rTCzigzagRef1
+	elseif sControl == 8
+		set rControl to fwvq1.rTCvortexRef1
+	elseif sControl == 9
+		set rControl to fwvq1.rTClockdownRef1
+	elseif sControl == 10
+		set rControl to fwvq1.rTChandbrakeRef
+	elseif sControl == 11
+		set rControl to fwvq1.rTCdeepScanRef
+	elseif sControl == 12
+		set rControl to fwvq1.rTCthrottleRef1
+	endif
+	SetFunctionValue rControl
+end

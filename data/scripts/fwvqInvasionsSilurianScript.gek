@@ -1,0 +1,32 @@
+scn fwvqInvasionsSilurianScript
+
+short killOnce
+short checked
+
+Begin onActivate player
+		if fwvqSilurianGasStation.sSilurian1stEnc == 0
+			showmessage fwvXOSilurian1stEncMESG
+			set fwvqSilurianGasStation.sSilurian1stEnc to 1
+			MessageBoxEx "[You might be able to craft a modifiable version of the Silurian weapon...]"
+			player.additem fwvItemSchemModdableSilurian 1
+			;if fwvq1.SilurianGunLvl == 0
+				set fwvqWeaponQuest.SilurianGunLvl to 1
+			;endif
+			setStage fwvSilurianBook 10
+			;activate
+		else
+			activate
+		endif
+end
+
+
+
+Begin GameMode
+	if getDead == 1
+		if killOnce == 0
+			set fwvqInvasions.eKilled to fwvqInvasions.eKilled + 1
+			MessageEx "[%g Silurian(s) defeated]" fwvqInvasions.eKilled
+			let killOnce := 1
+		endif
+	endif
+End

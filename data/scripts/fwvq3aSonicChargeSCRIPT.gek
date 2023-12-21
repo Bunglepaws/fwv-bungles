@@ -1,0 +1,23 @@
+scn fwvq3aSonicChargeSCRIPT
+
+ref setCharge
+
+begin onActivate player
+
+set setCharge to GetLinkedRef
+
+if player.getItemCount fwvq3aSonicChargeWpn >= 1
+
+	set fwvq3a.Charges to fwvq3a.Charges +1
+	printc "%g charges planted" fwvq3a.charges
+	player.removeItem fwvq3aSonicChargeWpn 1
+	PlaySound WPNTimeBombSet
+	PlaySound PHYVehicleMetalSolidH
+	PlaySound WPNMineTick
+
+	SetCharge.enable
+	Disable
+
+endif
+
+end

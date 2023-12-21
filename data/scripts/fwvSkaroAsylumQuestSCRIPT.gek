@@ -1,0 +1,11 @@
+scn fwvSkaroAsylumQuestSCRIPT
+
+short sCommsOn
+short sFadeIn
+short sFadeOut
+
+Begin Gamemode
+
+
+
+end

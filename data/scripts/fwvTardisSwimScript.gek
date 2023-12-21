@@ -1,0 +1,50 @@
+scn fwvTardisSwimScript
+
+short init2
+short swimstrength
+short swimOn
+float swimmingCount
+float swimmingCountNext
+short swimLvl
+
+begin onTriggerEnter player
+
+	set swimOn to 1
+	if init2 == 0
+		set swimLvl to player.getAV strength
+		MessageEx "[Swimming is good exercise...]"
+		set swimmingCount to 0
+		set swimmingCountNext to swimLvl * 20
+		set init2 to 1
+	endif
+
+end
+
+begin gamemode
+
+	
+	
+	
+	if swimOn == 1 && swimLvl < 10
+		if player.getPos Z < 1261.1450 && isControlPressed 0 == 1 
+			set swimmingCount to swimmingCount + GetSecondsPassed
+			printc "swimmingCount is %g" swimmingCount
+			printc "swimlevel is %g" swimlvl
+			set swimmingCountNext to swimLvl * 20
+			printc "swimmingCountNext is %g" swimmingCountNext
+		endif
+
+		if swimmingCount >= swimLvl * 20
+			player.modAV Strength 1
+			set swimstrength to player.getAV strength
+			ShowMessage fwvTardisSwimmingMessage swimstrength
+			set swimLvl to swimLvl + 1
+			set swimmingCountNext to swimLvl * 20
+			;MessageBoxEx "SwimLvl is now %g. swimmingCount for next is %g seconds" swimLvl swimmingCountNext
+			set swimmingCount to 0
+		endif
+	else
+		set swimOn to 0
+	endif
+
+end

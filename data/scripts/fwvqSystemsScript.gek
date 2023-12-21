@@ -1,0 +1,680 @@
+scn fwvqSystemsScript
+
+ref rTChandbrakeRef
+ref rTChelmicRef1
+ref rTCatomicRef1
+ref rTCpointerRef1
+ref rTCvortexRef1
+ref rTCzigzagRef1
+ref rTCnavicompRef1
+ref rTCgyroRef1
+ref rTCmechanicalRef1
+ref rTCartronRef1
+ref rTCrepairRef1
+ref rTCtimeControllerRef1
+ref rTCengineRef1
+ref rTCthrottleRef1
+ref rTClockdownRef1
+ref rTCastronavRef1
+ref rTCdriftRef1
+ref rTCproximityRef1
+ref rLightBlue
+ref rLightRed
+ref rLightNormal
+ref rCloister
+ref rTDesktopRoom
+
+short sNumRoomsActive
+float fPotentialPower
+short init
+
+;short sFuelOnce				; triggers empty fuel effects once per outage
+float sTimer
+
+short navCtrls			;zigzag, vortex loop, navicomp, astronav, gyrostabiliser, space time throttle, atomic accelerator, helmic regulator 
+							;locking down mechanism, directional pointer, autopilot
+short commCtrls		;proximity sensor
+
+short crashed			;if true, has crashed and can only be repaired by refuelling
+short crashing
+float cTimer
+short crashStage
+short ctrlStage
+float fDamageMult ; multiplier to the system damage at crash (0.0-1.0) decided by how soon we finish the crashing CSR thing
+float fDamageTotal ; how much damage to do (10-100), and multiplied by fDamageMult
+ref rRandCtrlRef ; random control for explosions (as a ref)
+short sRandCtrl ; random control for explosions (as a short)
+float fRand ; random percent
+float fSecondsPassed
+
+float fCalc
+short sHullExploding
+float fHullExplodeTimer
+
+float rTimer
+float tTime
+float rExp
+
+float fSTimer
+short sRand
+
+ref rCRotorRef
+short iAlert
+
+short repairing
+
+;Advanced Mode Vars (temp var)
+short modeSwitch	;if true, switch between adv. and basic
+short tAdvanced
+short pMode
+short pProgram	; 1 - Complete Systems Shutdown, 2 - Systems Reset, 3 - Boost Shield Output
+short pPath
+short MainDrive
+short AuxiliaryDrive
+short AstralInducers
+short Axiomator
+short CoaxialStabilizers
+short CSBalance
+short ReferentialDifferencer
+short RelativeChronometer
+short RCSynch
+short ForcefieldPrisms
+short IsomorphicSecuritySystem
+short MandrelCondensers
+short ZonalComparator
+short ExponentialCrossField
+short OmegaConfiguration
+short TemporalTransducers
+short SpatialDampeners
+short TimeLapseCompressor
+short RelativeContinuumStabilizer
+short RelativeDimensionalComputer
+short RDCDebugged
+short TelepathicInductionCircuits
+short InterstitialAntenna
+short ImageTranslator
+short RDCdebugged
+short DynamorphicGeneratorI
+short DynamorphicGeneratorII
+short TemporalEnergyCore
+short TECejected
+short TemporalStabilizer
+short TemporalTransducers
+short ConditionalStates1to6
+short ConditionalStates7to17
+short ConditionalStates18to30
+short ULinkCouplers
+short Calibrators
+short MolecularStabilizers
+short ThermoBuffer
+short AutomaticOxygenSupply
+short distressBeacon
+
+;components
+
+short ForcefieldGenerator
+short WarpEllipseCutoutCircuit
+short TimeVectorGenerator
+short ArtronCapacitor
+short RelativeDimensionalStabiliser
+short PowerStacks							;if false, TARDIS is in shutdown
+short ChameleonCircuit
+short DematerializationCircuit
+short FluidLinks
+short ChronometricAstrometer
+short TemporalCircuits
+short QuantumAccelerator
+short RedThermocouplings
+short GreenThermocouplings
+short BlueThermocouplings
+short InterstitialBeamSynthesiser
+
+;core stats
+
+float mass
+short temperature
+float fluid
+float fLinks
+
+;event vars
+
+float tTime
+
+string_var sysRef
+short sysToggle
+short tempPower
+short sysBool
+short shutdown
+
+;shutdown vars
+short cSys		; 0 - tardis is off, 1 - tardis is on
+short cPower
+short cArchitecture
+short cLifesupport
+short cHads
+short cHomingBeacon
+short cComms
+short cNav
+
+short tPowerCap
+short patch
+short failsafe
+short core					;if true, TARDIS can be restarted
+short tRoomPower			;defines the cost to power room enabling
+short tRoomPowerTotal	;for checking if rooms can be enabled
+
+short coreCharge			;1 - charging Power Fragment
+float coreChargeDay		;stores the day you charge a power fragment
+
+begin GameMode
+	set fSecondsPassed to GetSecondsPassed
+	
+	if patch < 4
+		set core to 1
+		set failsafe to 1
+		set tPowerCap to 0
+		set tRoomPower to 5
+		set patch to 4
+	endif
+
+	if init < 2
+		set Temperature to 0
+		set DynamorphicGeneratorI to 1
+		set DynamorphicGeneratorII to 1
+		set ForcefieldGenerator to 100
+		set WarpEllipseCutoutCircuit to 100
+		set TimeVectorGenerator to 100
+		set ArtronCapacitor to 100
+		set RelativeDimensionalStabiliser to 100
+		set PowerStacks to 100
+		set ChameleonCircuit to 100
+		set DematerializationCircuit to 100
+		set FluidLinks to 100
+		set ChronometricAstrometer to 100
+		set TemporalCircuits to 100
+		set QuantumAccelerator to 100
+		set RedThermocouplings to 100
+		set GreenThermocouplings to 100
+		set BlueThermocouplings to 100
+		set InterstitialBeamSynthesiser to 100
+		set cSys to 1
+		set tAdvanced to 0
+		;printc "Systems Patched"
+		set init to 2
+	endif
+
+	if fwvq1.rTChandbrakeRef != 0 && fwvqThemeDefaults.sInit == 1 && fwvq1.init == 1
+		set rTChandbrakeRef to fwvq1.rTChandbrakeRef
+		set rTChelmicRef1 to fwvq1.rTChelmicRef1
+		set rTCatomicRef1 to fwvq1.rTCatomicRef1
+		set rTCpointerRef1 to fwvq1.rTCpointerRef1
+		set rTCvortexRef1 to fwvq1.rTCvortexRef1
+		set rTCzigzagRef1 to fwvq1.rTCzigzagRef1
+		set rTCnavicompRef1 to fwvq1.rTCnavicompRef1
+		set rTCgyroRef1 to fwvq1.rTCgyroRef1
+		set rTCmechanicalRef1 to fwvq1.rTCmechanicalRef1
+		set rTCartronRef1 to fwvq1.rTCartronRef1
+		set rTCrepairRef1 to fwvq1.rTCrepairRef1
+		set rTCtimeControllerRef1 to fwvq1.rTCtimeControllerRef1
+		set rTCengineRef1 to fwvq1.rTCengineRef1
+		set rTCthrottleRef1 to fwvq1.rTCthrottleRef1
+		set rTClockdownRef1 to fwvq1.rTClockdownRef1
+		set rLightNormal to fwvq1.rLightNormal
+		set rLightRed to fwvq1.rLightRed
+		set rLightBlue to fwvq1.rLightBlue
+		set rCloister to fwvq1.rCloister
+		set rTCastronavRef1 to fwvq1.rTCastronavRef1
+		set rTCdriftRef1 to fwvq1.rTCdriftRef1
+		set rTCproximityRef1 to fwvq1.rTCproximityRef1
+		set rTDesktopRoom to fwvq1.rTDesktopRoom
+		set rCRotorRef to fwvq1.rCRotorRef
+
+		if core == 1
+			fwvTardisEyeStarRef.enable
+		else
+			fwvTardisEyeStarRef.disable
+		endif
+
+		if tAdvanced == 0
+			if fwvq1.tPower <= 0
+				set fwvq1.tPower to 0
+				fwvTlightsCorridorRef.disable
+				fwvTlightsCorridorRefForDark.disable				
+			else
+				if crashed == 0
+					if fwvq1.tTheme == 1 || fwvq1.tTheme == 3 || fwvq1.tTheme == 5   ; 2005 or 2013a Dark
+						fwvTlightsCorridorRefForDark.enable   ; use the Darker Interior lights
+						fwvTlightsCorridorRef.disable         ; disable Light Interior lights
+						fwvTWardrobeLight01.Enable
+						fwvArtGalleryLight01.Enable
+					else
+						fwvTlightsCorridorRef.enable ; if not a darker interior, use default lights		
+						fwvTlightsCorridorRefForDark.disable      ; and turn the bigger lights off
+						fwvTWardrobeLight01.Enable
+						fwvArtGalleryLight01.Enable
+					endif
+				else
+					fwvTlightsCorridorRef.disable
+					fwvTlightsCorridorRefForDark.disable
+					fwvTWardrobeLight01.Disable
+					fwvArtGalleryLight01.Disable
+				endif
+			endif	
+		elseif tAdvanced == 1
+			if failsafe == 1
+				if fwvq1.tPower <= 0
+					set fwvq1.tPower to 0
+					fwvTlightsCorridorRef.disable
+					fwvTlightsCorridorRefForDark.disable
+				else
+					if crashed == 0
+						if fwvq1.tTheme == 1 || fwvq1.tTheme == 3 || fwvq1.tTheme == 5   ; 2005 or 2013a Dark
+							fwvTlightsCorridorRefForDark.enable   ; use the Darker Interior lights
+							fwvTlightsCorridorRef.disable         ; disable Light Interior lights
+							fwvTWardrobeLight01.Enable
+							fwvArtGalleryLight01.Enable
+						else
+							fwvTlightsCorridorRef.enable ; if not a darker interior, use default lights		
+							fwvTlightsCorridorRefForDark.disable      ; and turn the bigger lights off
+							fwvTWardrobeLight01.Enable
+							fwvArtGalleryLight01.Enable
+						endif
+					else
+						fwvTlightsCorridorRef.disable
+						fwvTlightsCorridorRefForDark.disable	
+						fwvTWardrobeLight01.Disable
+						fwvArtGalleryLight01.Disable
+					endif
+				endif
+			else
+				if crashed == 0
+					if fwvq1.tTheme == 1 || fwvq1.tTheme == 3 || fwvq1.tTheme == 5   ; 2005 or 2013a Dark
+						fwvTlightsCorridorRefForDark.enable   ; use the Darker Interior lights
+						fwvTlightsCorridorRef.disable         ; disable Light Interior lights
+						fwvTWardrobeLight01.Enable
+						fwvArtGalleryLight01.Enable
+					else
+						fwvTlightsCorridorRef.enable ; if not a darker interior, use default lights		
+						fwvTlightsCorridorRefForDark.disable      ; and turn the bigger lights off
+						fwvTWardrobeLight01.Enable
+						fwvArtGalleryLight01.Enable
+					endif
+				else
+					fwvTlightsCorridorRef.disable
+					fwvTlightsCorridorRefForDark.disable
+					fwvTWardrobeLight01.Disable
+					fwvArtGalleryLight01.Disable
+				endif
+			endif
+		endif
+
+		if sHullExploding == 1
+			set fHullExplodeTimer to fHullExplodeTimer + fSecondsPassed
+			if fHullExplodeTimer >= 10
+				ExitGame
+			elseif fHullExplodeTimer >= 4.0
+				imod WhiteISFX
+			endif
+		endif
+		
+		if fwvq1.tHull > 100
+			set fwvq1.tHull to 100
+			if eval fwvqProtocols.protocol[5] == 0
+				fwvT1CcloisterRef.disable
+			endif
+		elseif fwvq1.tHull <= 0
+			if sHullExploding == 0
+				set sHullExploding to 1
+				PlaySound FXExplosionNukeSmall2D
+				imod fwvTardisExplodeISFX
+				player.killActor
+			endif
+		elseif fwvq1.tHull <= 25
+			rLightNormal.disable
+			if fwvq1.tFuel > 0
+				if core == 1
+					fwvT1CcloisterRef.enable
+				endif
+				if iAlert == 0
+					set tTime to 1 + GetRandomPercent * 5 / 100
+					set iAlert to 1
+				endif
+				if eval (Call fwvFuncGetInTardis) == 1
+					if cSys == 1
+						if isImageSpaceActive fwvTardisRedISFX == 0
+							imod fwvTardisRedISFX
+						endif
+					endif
+				else
+					rimod fwvTardisRedISFX
+				endif
+			endif
+			if core == 1
+				fwvT1CcloisterRef.enable
+			else
+				fwvT1CcloisterRef.disable
+			endif
+			fwvTcontrolRoom1FireRef.enable
+			fwvTcontrolRoom2FireRef.enable
+			fwvTcontrolRoom3FireRef.enable
+		else
+			if fwvq1.tLifeSupport > 0 && fwvq1.tLifeSupportOn == 1 && crashed == 0
+				rLightNormal.enable
+			else
+				rLightNormal.disable
+			endif
+
+			if eval (Call fwvFuncGetInTardis) == 1
+				;if eval fwvqProtocols.protocol[5] == 0
+					fwvT1CcloisterRef.disable
+				;endif
+				rimod fwvTardisRedISFX
+			endif
+
+		endif
+
+		; fuel
+		if fwvq1.tFuel > 100
+			set fwvq1.tFuel to 100
+		elseif fwvq1.tFuel <= 0 && crashing == 0 && crashed == 0
+			set fwvq1.tFuel to 0
+			if fwvq1.tFlying == 1 && fwvq1.flightMode == 2 && (fwvq1.tFlightType == 3 || fwvq1.tFlightType == 4)
+				; drift mode is on, we're out of fuel, crash right now.
+				set crashing to 1
+			endif
+			;set fwvqDrift.drift to 0
+		elseif fwvq1.tFuel < 0
+			set fwvq1.tFuel to 0
+		endif
+		
+		; life support
+		if fwvq1.tLifeSupport <= 0 || fwvq1.tLifeSupportOn == 0
+			if fwvq1.tHull > 25
+				if eval (Call fwvFuncGetInTardis) == 1
+					if cSys == 1
+						if isImageSpaceActive fwvTardisBlueISFX == 0
+							imod fwvTardisBlueISFX 
+						endif
+					endif
+				else
+					rimod fwvTardisBlueISFX 
+					TARDISNo02HeartbeatREF.disable
+					fwvTARDISBreathingMaskLP.disable					
+				endif
+			else
+				rimod fwvTardisBlueISFX
+				TARDISNo02HeartbeatREF.disable
+				fwvTARDISBreathingMaskLP.disable				
+			endif
+			if fwvq1.tLifeSupport <= 0
+				set fwvq1.tLifeSupport to 0
+			endif
+			if eval (Call fwvFuncGetInTardis) == 1
+				if player.getEquipped fwvOutfitSB6suit == 1 && player.getEquipped fwvOutfitSB6Helmet == 1
+					fwvTARDISBreathingMaskLP.enable
+					TARDISNo02HeartbeatREF.disable
+				elseif player.getEquipped ArmorNVSpaceSuit == 1 && player.getEquipped HelmetNVSpaceSuit	== 1			
+					fwvTARDISBreathingMaskLP.enable
+					TARDISNo02HeartbeatREF.disable					
+				elseif player.getEquipped VMS15Rebreather == 1
+					fwvTARDISBreathingMaskLP.enable
+					TARDISNo02HeartbeatREF.disable					
+				elseif player.getEquipped fwvItemOxygenMask == 1	
+					fwvTARDISBreathingMaskLP.enable
+					TARDISNo02HeartbeatREF.disable					
+				else
+					MessageEx "Warning! O2 Levels Dangerous!"
+					player.damageAV health 0.25
+					TARDISNo02HeartbeatREF.enable
+					fwvTARDISBreathingMaskLP.disable					
+				endif
+			endif
+		else
+			if eval (Call fwvFuncGetInTardis) == 1
+				rimod fwvTardisBlueISFX 
+				TARDISNo02HeartbeatREF.disable
+				fwvTARDISBreathingMaskLP.disable
+			endif
+		endif
+		
+		; navigation
+		if fwvq1.tNav <= 0 && fwvq1.tNavOn == 0
+			if fwvq1.tNav <= 0
+				set fwvq1.tNav to 0
+			endif
+			if fwvq1.tFlying == 1 && crashing == 0
+				set crashing to 1
+				set crashStage to 0
+			endif
+		endif
+		
+		; architecture
+		if fwvq1.tArchitecture <= 0
+			set fwvq1.tArchitecture to 0
+		endif
+
+		; comms
+		if fwvq1.tComms <= 0 || fwvq1.tCommsOn == 0
+			set fwvq1.tComms to 0
+			set commCtrls to 0
+		endif
+
+		if fwvq1.tShields > 100.0
+			if eval fwvqProtocols.protocol[15] == 0		;if shield boost isnt enabled
+				printc "shields capped"
+				set fwvq1.tShields to 100
+			endif
+		elseif fwvq1.tShields > 0.0 && fwvq1.tShields < 98.5
+			if sTimer < 5.0
+				set sTimer to sTimer + fSecondsPassed
+			else
+				if tAdvanced == 0 || (tAdvanced == 1 && MandrelCondensers == 1)
+					;printc "shields regenerating"
+					set fwvq1.tShields to fwvq1.tShields + 2.5
+					set sTimer to 0.0
+				endif
+			endif
+		endif
+		
+		if fwvT1CcloisterRef.getDisabled == 0
+			if rTimer < tTime
+				set rTimer to rTimer + fSecondsPassed
+			else
+				rCRotorRef.placeAtMe fwvTardisHullExplosion
+				set tTime to 1 + GetRandomPercent * 5 / 100
+				set rTimer to 0
+			endif
+		endif
+
+		if crashing == 1
+			if crashStage == 0 ; first start
+				set cTimer to 10.0
+				ShowMessage fwvTardisEmergencyLandingMessage
+				set crashStage to 1
+				set fwvq1.done to 0
+				set ctrlStage to 0
+				set fwvq1.csrON to 0
+				
+			elseif crashStage == 1 ; psuedo-CSR
+				if fwvq1.done == 0
+					if ctrlStage == 0
+						set fwvq1.control to 12 ; throttle
+					elseif ctrlStage == 1
+						set fwvq1.control to 1 ; helmic
+					elseif ctrlStage == 2
+						set fwvq1.control to 9 ; locking down
+					elseif ctrlStage == 3
+						set fwvq1.control to 6 ; pointer
+					elseif ctrlStage == 4
+						set fwvq1.control to 5 ; gyro
+					endif
+					set fwvq1.csrON to 3
+				elseif fwvq1.done == 1
+					set ctrlStage to ctrlStage + 1
+					set fwvq1.done to 0
+					if ctrlStage == 5
+						set fDamageMult to (10.0 - cTimer) / 10.0
+						set crashStage to 2 ; psuedo-CSR is finished, just continue the crashing
+					endif
+					set fwvq1.csrON to 0
+				endif
+			endif
+			
+			set cTimer to cTimer - fSecondsPassed
+			if cTimer >= 0.0
+				if crashStage < 3 ; we're hurling toward the landing location
+					; calculate so there's more shaking which slowly dies down until we collide
+					set fCalc to (cTimer - 10.0) / 10.0
+					set fCalc to Call fwvFuncLerp 2.5 1.3 fCalc
+					
+					set fwvqRooms.fShakeMultiplier to fCalc
+					set fwvqRooms.sShakeEnabled to 1
+				elseif crashStage == 3 ; and now colliding with whatever planet is there so make lots of exploding happen
+					; tons of shaking all at once then slowing down over 4 seconds
+					set fCalc to (cTimer - 4.0) / 4.0
+					set fCalc to Call fwvFuncLerp 5.0 0.1 fCalc
+					
+					set fwvqRooms.fShakeMultiplier to fCalc
+					set fwvqRooms.sShakeEnabled to 1
+					
+					; randomly explode controls, more so at the start of the collision and less as time goes on
+					
+					set fRand to GetRandomPercent * 5.0 / 100.0
+					if fRand <= fCalc * (fSecondsPassed * cTimer)
+						
+						; control to explode
+						set sRandCtrl to GetRandomPercent * 8 / 100
+						if sRandCtrl == 0
+							set rRandCtrlRef to rTChelmicRef1
+						elseif sRandCtrl == 2
+							set rRandCtrlRef to rTCatomicRef1
+						elseif sRandCtrl == 3
+							set rRandCtrlRef to rTCpointerRef1
+						elseif sRandCtrl == 4
+							set rRandCtrlRef to rTCvortexRef1
+						elseif sRandCtrl == 5
+							set rRandCtrlRef to rTCzigzagRef1
+						elseif sRandCtrl == 6
+							set rRandCtrlRef to rTCnavicompRef1
+						elseif sRandCtrl == 7
+							set rRandCtrlRef to rTCgyroRef1
+						endif
+						
+						; just reuse sRandCtrl to get an explosion
+						set sRandCtrl to GetRandomPercent * 3 / 100
+						if sRandCtrl == 0
+							rRandCtrlRef.PlaceAtMe fwvExpControlExplosion 1
+						elseif sRandCtrl == 1
+							rRandCtrlRef.PlaceAtMe fwvExpControlExplosion2 1
+						elseif sRandCtrl == 2
+							rRandCtrlRef.PlaceAtMe fwvExpControlExplosion3 1
+						endif
+					endif
+				endif
+			elseif crashStage < 3
+				if crashStage == 1
+					set fDamageMult to 1.0
+				endif
+				set crashStage to 3
+				set cTimer to 4.0
+			elseif crashStage == 3
+				set crashStage to 4
+				set fwvqRooms.sShakeEnabled to 0
+				set crashing to 0
+				set crashed to 1
+				set fwvq1.tFlightType to 0 ; randomize
+				set fwvq1.FlightMode to 3 ; finish landing
+				
+				set fDamageTotal to fDamageMult * (10 + GetRandomPercent * (100-10+1) / 100)
+				
+				;if tAdvanced == 1
+					;if eval fwvqProtocols.protocol[9] == 0
+						;let fwvqProtocols.protocol[9] := 1
+						;let fwvqProtocols.frame[9] := 1
+					;endif
+				;endif
+
+				Call fwvFuncDamageSystemsFunction
+
+			endif
+		endif
+
+		if crashed == 1
+			fwvTlightsCorridorRef.disable
+			fwvTlightsCorridorRefForDark.disable
+		endif
+
+		if fwvq1.tRefuel == 1
+			rTCartronRef1.setDestroyed 1
+		else
+			rTCartronRef1.setDestroyed 0
+			rTCartronRef1.ClearDestruction
+		endif
+		
+		if fwvq1.tRepair == 1
+			rTCrepairRef1.setDestroyed 1
+		else
+			rTCrepairRef1.setDestroyed 0
+			rTCartronRef1.ClearDestruction
+		endif
+
+		if fwvq1.tFuel < 15 || fwvq1.tArchitecture <= 25 || fwvq1.tLifeSupport <= 25 || fwvq1.tNav <= 25 || fwvq1.tComms <= 25
+			set fwvq1.sWarningLightsOn to 1
+		else
+			set fwvq1.sWarningLightsOn to 0
+		endif
+		
+		;tardis HUD tracker
+		if fwvq1.tBeaconOn == 1
+			if Player.GetInCell rTDesktopRoom || eval (Call fwvFuncGetInTardis) == 1
+				setObjectiveDisplayed fwvqSystems 20 0
+			else
+				setObjectiveDisplayed fwvqSystems 20 1
+			endif
+		endif
+
+		if fwvq1.tSOSOn == 1
+			if fSTimer < 10.0
+				let fSTimer := fSTimer + getSecondsPassed
+			else
+				PlaySound fwvFXsonarPing
+				let sRand := Rand 1,10
+				if sRand < 7
+					MessageEx "[SOS: No response yet...]"
+					let fSTimer := 0.0
+				elseif sRand < 10
+					MessageBoxEx "SOS:%r%rA passing vessel generously donates a small percentage of its fuel for you to make at least 1 urgent trip..."
+					let fwvq1.tFuel := 10
+					let fwvq1.tSOSOn := 0
+					let fwvq1.tPower := fwvq1.tPower + 25
+				endif
+			endif
+		endif
+
+	endif
+
+	;core charging (via power fragment or emergency power cell)
+	if coreCharge == 1
+		if GameDaysPassed > coreChargeDay + 1
+			let fwvqEvents.systemEvent := 0
+			printc "system event is %g" fwvqEvents.systemEvent 
+			PlaySound3d fwvFXtardisLandingShort
+			MessageEx "[TARDIS Power restored...]"
+			if eval (Call fwvFuncGetInTardis) == 1
+				PlaySound3d fwvFXtardisPowerUp
+			endif
+			Call fwvFuncSystemShutdownFunction
+			if fwvqSystems.crashed == 1
+				set fwvqSystems.crashStage to 0
+				set fwvqSystems.crashed to 0
+			endif
+			let core := 1
+			let coreChargeDay := 0
+			let coreCharge := 0
+			let fwvqProtocols.frame[24] := -1
+			let fwvqProtocols.protocol[24] := 0
+			printc "system event is %g" fwvqEvents.systemEvent 
+		endif
+	endif
+
+end

@@ -1,0 +1,9 @@
+scn fwvWeapProjectileDebrisEffectScript
+
+begin scriptEffectStart
+
+	if getRandomPercent < 50
+		placeAtMe FXFireMed01
+	endif
+
+end

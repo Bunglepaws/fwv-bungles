@@ -1,0 +1,62 @@
+scn fwvqTutorialsSCRIPT
+
+short tutorial			; True if tutorial is on
+short aTutOnce			; antigrav tutorial
+short cTutorial			; cloister tutorial
+short lTutOnce			; laser screwdriver tutorial
+short sTutOnce			; sonic screwdriver tutorial
+short mTutOnce		; maintenance tutorial
+short scTutOnce		; schematics tutorial
+short conTutOnce		; console tutorial
+short rTutOnce			; randomsier tutorial
+short vTutOnce			; vortex tutorial
+short nTutOnce			; navigations tutorial
+
+short quickMenu		; controls the quick menu
+short button
+int isMpressed
+
+begin gamemode
+
+	set button to getbuttonpressed
+
+	if IsMPressed != IsKeyPressed 50
+		set IsMPressed to IsKeyPressed 50
+		if IsMPressed 
+
+		else
+			printc "Quickmenu Pressed..."
+			ShowMessage fwvModQuickrefMessage
+			set quickMenu to 1		
+		endif
+
+	endif
+
+	if quickMenu == 1
+
+		if button == 0
+			ShowMessage fwvTUTonMessage
+			set tutorial to 1
+			set quickMenu to 0
+		elseif button == 1
+			ShowMessage fwvTUToffMessage
+			set tutorial to 0
+			set quickMenu to 0
+		endif
+
+	endif
+
+	if lTutOnce == 2
+		set lTutOnce to 3
+	elseif lTutOnce == 3
+		set lTutOnce to 1
+		ShowTutorialMenu fwvTUTlaserScrewdriverMessage
+	endif
+	if sTutOnce == 2
+		set sTutOnce to 3
+	elseif sTutOnce == 3
+		set sTutOnce to 1
+		ShowTutorialMenu fwvTUTsonicScrewdriverMessage
+	endif
+
+end

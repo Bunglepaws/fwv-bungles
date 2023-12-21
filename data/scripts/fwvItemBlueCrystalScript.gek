@@ -1,0 +1,13 @@
+scn fwvItemBlueCrystalScript
+
+begin ScriptEffectStart
+
+	if fwvqRegen.TimeLordTrue == 1
+		MessageEx "The healing power of the Blue Metebelan Crystal has restored your mental energy."
+		set fwvqTimeLord.brainPower to 10
+		imod FadeInFromWhiteISFX
+		PlaySound UIHealthHeartbeatALP
+		PlaySound UIKarmaUp
+	endif
+
+end

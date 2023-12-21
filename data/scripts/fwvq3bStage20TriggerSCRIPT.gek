@@ -1,0 +1,11 @@
+scn fwvq3bStage20TriggerSCRIPT
+
+begin onTriggerEnter player
+
+	if getStage fwvq3b == 10
+		fwvq3bRaiderRef.enable
+		fwvq3bWaxAuton4Ref.startCombat fwvq3bRaiderRef
+		setstage fwvq3b 20
+	endif
+
+end

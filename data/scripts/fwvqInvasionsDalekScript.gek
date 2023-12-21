@@ -1,0 +1,44 @@
+scn fwvqInvasionsDalekScript
+
+short killOnce
+short destroy
+float dTimer
+ref rSelf
+short sDead
+short sModel
+short random
+
+Begin GameMode
+
+	set rSelf to GetSelf
+
+	if getDead == 1
+		if killOnce == 0
+
+			let random := getRandomPercent
+			if rSelf.getIsID fwvqDalekAttackDroneInv == 1
+				if random < 50
+					;rSelf.placeAtMe fwvDalekDroneRemains01
+					rSelf.placeAtMe fwvDalekDroneRemains01Havok
+				else
+					;rSelf.placeAtMe fwvDalekDroneRemains02
+					rSelf.placeAtMe fwvDalekDroneRemains02Havok
+				endif
+			elseif rSelf.getIsID fwvqDalekAttackParadigmInv == 1
+				if random < 50
+					rSelf.placeAtMe fwvDalekParadigmRemains01Havok
+				else
+					rSelf.placeAtMe fwvDalekParadigmRemains02Havok
+				endif
+			endif
+			PlaceAtMe fwvDalekExplosion
+			set fwvqInvasions.eKilled to fwvqInvasions.eKilled + 1
+			MessageEx "[%g Dalek(s) defeated]" fwvqInvasions.eKilled
+			rSelf.disable
+			rSelf.MarkForDelete
+			let killOnce := 1
+		endif
+	endif
+
+End
+

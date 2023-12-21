@@ -1,0 +1,120 @@
+scn fwvq3eScript
+
+short doOnce
+
+short frame
+float fTimer
+
+float sTime		; the timer for the defense minigame
+short dInit
+float sPoint		; randomised spawn point
+float dTimer		; standard time
+float tTime		; randomised time for each spawn
+
+short valve
+
+short ending	; 0 - good, 1 - bad
+
+float cTimer
+float cFrame
+
+begin gamemode
+
+	if player.getInCell EDSubstation == 1 && getStage fwvq3e == 20
+		if player.IsWeaponInList fwvWSonicList == 1 && IsControlPressed 4 == 1
+			if fwvq3eEldoradoTrapRef.getDisabled == 1
+				fwvq3eEldoradoConsole1Ref.placeAtMe EyebotExplosion
+				fwvq3eEldoradoConsole2Ref.placeAtMe EyebotExplosion				
+				fwvq3eEldoradoTrapRef.enable
+				set fTimer to 0.0
+				set frame to 1
+			endif
+		endif
+	endif
+
+	if frame == 1
+		if fTimer < 5.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			fwvq3eEldoradoTrapRef.disable
+			set fTimer to 0.0
+			set frame to 0
+		endif
+	endif
+
+	if fwvq3eEldoradoCyberRef.getDead == 1 && getStage fwvq3e == 20
+		setStage fwvq3e 30
+	endif
+
+	if player.getInCell 1ESteelMill && getStage fwvq3e == 40
+		if doOnce == 0
+			ShowMessage fwvq3eCeruleanTeleportMessage
+			set doOnce to 1
+		endif
+	endif
+
+	if player.getInCell fwvCybermenLair && getStage fwvq3e == 60
+		setStage fwvq3e 70
+	endif
+
+; ==== defense minigame
+
+	if getStage fwvq3e == 80
+
+		if sTime < 120.0
+			set sTime to sTime + getSecondsPassed
+
+			if dInit == 0
+				set sPoint to getRandomPercent
+				set tTime to getRandomPercent / 10 + 5
+				printc "Spawn :%g" sPoint
+				printc "Timer: %g" tTime
+				fwvq3eCyberSpawn1Ref.placeAtMe fwvq3eCybermanAttack
+				set dInit to 1
+			endif
+	
+			if dTimer < tTime
+				set dTimer to dTimer + getSecondsPassed
+			else
+				if sPoint < 33.3
+					fwvq3eCyberSpawn1Ref.placeAtMe fwvq3eCybermanAttack
+				elseif sPoint < 66.6
+					fwvq3eCyberSpawn2Ref.placeAtMe fwvq3eCybermanAttack
+				elseif sPoint < 100
+					fwvq3eCyberSpawn3Ref.placeAtMe fwvq3eCybermanAttack
+				endif
+				set sPoint to getRandomPercent
+				set tTime to getRandomPercent / 10 + 5
+				printc "Spawn :%g" sPoint
+				printc "Timer: %g" tTime
+				set dTimer to 0.0
+			endif
+		else
+			ShowMessage fwvq3eCyberSignalOffMessage
+			setStage fwvq3e 85
+		endif
+	endif
+
+; ===== VALVE COUNT
+
+	if valve == 6 && getObjectiveCompleted fwvq3e 92 == 0
+		setObjectiveCompleted fwvq3e 92 1
+	endif
+
+; ===== ending countdown
+
+	if getStage fwvq3e == 95
+		if player.getInCell fwvCybermenLair == 1
+			if cTimer < 60.0
+				set cTimer to cTimer + getSecondsPassed
+			else
+				player.killActor
+			endif
+		else
+			set fwvqComms.init to 0
+			setObjectiveCompleted fwvq3e 95 1
+			setStage fwvq3e 100
+		endif
+	endif
+
+end

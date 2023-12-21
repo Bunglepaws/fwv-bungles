@@ -1,0 +1,20 @@
+scn fwvFuncTardisRoomPreConfig
+
+short numRoomsActive
+short powerTotal 
+
+Begin Function { }
+
+;call chkrooms
+;set roomsactive to getlistsize of chkrooms
+;power total = powermod * roomsactive
+;power - power total
+
+	let numRoomsActive := Call fwvFuncTardisChkRooms rListSize
+	let powerTotal := numRoomsActive * fwvqSystems.tRoomPower
+	let fwvqSystems.tRoomPowerTotal := numRoomsActive * fwvqSystems.tRoomPower
+	printc "fwvFuncTardisRoomConfig: %g rooms are active at %g%%. Returning a total of %g%%" numRoomsActive fwvqSystems.tRoomPower powerTotal
+
+	let fwvq1.tPower := fwvq1.tPower + powerTotal
+
+End

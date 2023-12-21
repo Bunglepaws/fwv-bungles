@@ -1,0 +1,51 @@
+scn fwvFuncGetExteriorPosition
+
+ref rCurRef
+short sXOrY ; 0 = X, 1 = Y
+float fOffsetX ; X/Y offset of refs in a worldspace
+float fOffsetY
+float fScale ; scale of refs in worldspace
+float fReturnValue
+
+begin Function { rCurRef, sXOrY }
+
+	if rCurRef.GetInWorldspace BoulderCityWorld
+		set fOffsetX to 50000.0000
+		set fOffsetY to 10000.0000
+		set fScale to 1.0000
+	elseif rCurRef.GetInWorldspace FreesideFortWorld || rCurRef.GetInWorldspace FreesideNorthWorld || rCurRef.GetInWorldspace FreesideWorld 
+		set fOffsetX to -16000.0000
+		set fOffsetY to 103000.0000
+		set fScale to 0.7000
+	elseif rCurRef.GetInWorldspace GamorrahWorld
+		set fOffsetX to -23000.0000
+		set fOffsetY to 90000.0000
+		set fScale to 0.7000
+	elseif rCurRef.GetInWorldspace GreenhouseWorld01
+		set fOffsetX to -4800.0000
+		set fOffsetY to 88000.0000
+		set fScale to 1.0000
+	elseif rCurRef.GetInWorldspace Lucky38World
+		set fOffsetX to -16400.0000
+		set fOffsetY to 90000.0000
+		set fScale to 1.0000
+	elseif rCurRef.GetInWorldspace TheFortWorld
+		set fOffsetX to 86000.0000
+		set fOffsetY to 45000.0000
+		set fScale to 1.0000
+	elseif rCurRef.GetInWorldspace TheStripWorldNew
+		set fOffsetX to -20500.0000
+		set fOffsetY to 88000.0000
+		set fScale to 1.0000
+	else
+		set fOffsetX to 0.0
+		set fOffsetY to 0.0
+		set fScale to 1.0
+	endif
+	if sXOrY == 0 ; X
+		set fReturnValue to fOffsetX + (rCurRef.GetPos X * fScale)
+	elseif sXOrY == 1 ; X
+		set fReturnValue to fOffsetY + (rCurRef.GetPos Y * fScale)
+	endif
+	SetFunctionValue fReturnValue
+end

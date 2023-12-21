@@ -1,0 +1,6 @@
+scn fwvqSilenceCrashQuestScript
+
+short sSpeechPass
+short sSpeechFail
+short sTimerPause
+

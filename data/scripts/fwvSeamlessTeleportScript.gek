@@ -1,0 +1,130 @@
+scn fwvSeamlessTeleportScript
+
+ref rSelf
+ref rEnterSide
+ref rExitLocation
+ref rLinkedRef
+ref rExitOverrideRef ; set this via script to change the exit
+ref rTeleportToRef
+ref rTDHallCWExit
+ref rTDHallCCWExit
+
+short sTDRoomExitStyle
+short sInit
+
+float fAngle
+float fCosTheta
+float fSinTheta
+
+float fCalc
+float fNewX
+float fNewY
+
+begin OnTriggerEnter Player
+
+	if fwvqAngelMotel.rift == 1
+		fwvAngelTardisNpc1Ref.moveTo fwvCombatBoardingRef
+		fwvAngelTardisNpc2Ref.moveTo fwvCombatBoarding2Ref
+		fwvAngelTardisNpc3Ref.moveTo fwvCombatBoarding3Ref
+	endif
+
+	set sInit to 0
+	set sTDRoomExitStyle to fwvq1.sTDRoomExitStyle
+	set rTDHallCWExit to fwvq1.rTDHallCWExit
+	set rTDHallCCWExit to fwvq1.rTDHallCCWExit
+	if sInit == 0 && GetDisabled == 0
+		set rSelf to GetSelf
+		set rLinkedRef to rSelf.GetLinkedRef
+		if rSelf == fwvTardisCorridorCWTeleportExitRef || rSelf == rTDHallCWExit || rSelf == fwvTardisCorridorCCWTeleportExitRef || rSelf == rTDHallCCWExit || ListGetFormIndex fwvTardisTeleportCWList rSelf >= 0 || ListGetFormIndex fwvTardisTeleportCCWList rSelf >= 0
+			set sInit to 1
+		elseif rLinkedRef != 0
+			set rLinkedRef to rLinkedRef.GetLinkedRef
+			if rLinkedRef != 0
+				set rLinkedRef to rLinkedRef.GetLinkedRef
+				if rLinkedRef != 0
+					set sInit to 1
+				endif
+			endif
+		endif
+	endif
+	if sInit == 1 && GetDisabled == 0
+		set rSelf to GetSelf
+		set rEnterSide to rSelf.GetLinkedRef ;1
+		if rSelf == fwvTardisCorridorCWTeleportExitRef || rSelf == rTDHallCWExit || ListGetFormIndex fwvTardisTeleportCWList rSelf >= 0 ; going clockwise
+			if rSelf == fwvTardisCorridorCWTeleportExitRef && (sTDRoomExitStyle == 2 || sTDRoomExitStyle == 3)
+				set rLinkedRef to rTDHallCCWExit
+			elseif rSelf == rTDHallCWExit
+				set rLinkedRef to fwvTardisCorridorCCWTeleportExitRef
+			else
+				Label 0
+				set rLinkedRef to Call fwvFuncGetRandomForm fwvTardisTeleportCCWList
+				if rLinkedRef == rSelf
+					GoTo 0
+				endif
+				if fwvqRooms.rLastExited == rSelf ; retrace own steps
+					set rLinkedRef to fwvqRooms.rLastEntered
+				endif
+			endif
+		elseif rSelf == fwvTardisCorridorCCWTeleportExitRef || rSelf == rTDHallCCWExit || ListGetFormIndex fwvTardisTeleportCCWList rSelf >= 0 ; going counter-clockwise
+			if rSelf == fwvTardisCorridorCCWTeleportExitRef && (sTDRoomExitStyle == 1 || sTDRoomExitStyle == 3)
+				set rLinkedRef to rTDHallCWExit
+			elseif rSelf == rTDHallCCWExit
+				set rLinkedRef to fwvTardisCorridorCWTeleportExitRef
+			else
+				Label 1
+				set rLinkedRef to Call fwvFuncGetRandomForm fwvTardisTeleportCWList
+				if rLinkedRef == rSelf
+					GoTo 1
+				endif
+				if fwvqRooms.rLastExited == rSelf ; retrace own steps
+					set rLinkedRef to fwvqRooms.rLastEntered
+				endif
+			endif
+		else
+			set rLinkedRef to rEnterSide.GetLinkedRef ;2
+		endif
+		
+		set rTeleportToRef to rLinkedRef
+		set rExitLocation to rLinkedRef.GetLinkedRef ;3
+		
+		if rExitOverrideRef != 0
+			set rExitLocation to rExitOverrideRef
+			set rExitOverrideRef to 0
+		endif
+		
+		if fwvqRooms.rLastLoc == rEnterSide
+			; facing the right way
+			
+			set fAngle to -(rExitLocation.GetAngle Z - rSelf.GetAngle Z) ; order?
+			set fAngle to fmod fAngle 360.0 0.0 ;180
+			set fCosTheta to Cos fAngle
+			set fSinTheta to Sin fAngle
+			
+			set fNewX to fCosTheta * (Player.GetPos X - rSelf.GetPos X) - fSinTheta * (Player.GetPos Y - rSelf.GetPos Y) + rExitLocation.GetPos X
+			set fNewY to fSinTheta * (Player.GetPos X - rSelf.GetPos X) + fCosTheta * (Player.GetPos Y - rSelf.GetPos Y) + rExitLocation.GetPos Y
+		
+			
+			Player.SetPos X fNewX
+			Player.SetPos Y fNewY
+			set fCalc to (Player.GetPos Z - rSelf.GetPos Z) + rExitLocation.GetPos Z
+			Player.SetPos Z fCalc
+			
+			set fCalc to Player.GetAngle Z - fAngle ; might try subtraction
+			set fCalc to fmod fCalc 360.0 0.0 ;180
+			
+			Player.SetAngle Z fCalc
+
+			fwvCompanionTeleportMarker.MoveTo rTeleportToRef
+			set fCalc to rTeleportToRef.GetPos Z - 128
+			fwvCompanionTeleportMarker.SetPos Z fCalc
+			set fwvq1.rTeleportCompanionsRef to fwvCompanionTeleportMarker
+			set fwvq1.sTeleportCompanions to 1
+
+			set fwvqRooms.fFallImmunityTimer to 1.5
+			
+			set fwvqRooms.rLastExited to rTeleportToRef
+			set fwvqRooms.rLastEntered to rSelf
+		endif
+		set fwvqRooms.rNextLoc to GetSelf
+	endif
+end

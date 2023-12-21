@@ -1,0 +1,17 @@
+scn fwvDalekDoorByButtonSCRIPT
+
+; This script tells the door to only be activated by not the player
+ref activateRef
+
+Begin onActivate
+
+	set activateRef to getActionRef
+
+	if (IsActionRef player == 1)
+		ShowMessage GenericDoorActivatedElsewhereMsg
+	elseif (activateRef.isActor == 1)
+		;do nothing
+	else
+		activate
+	endif
+End

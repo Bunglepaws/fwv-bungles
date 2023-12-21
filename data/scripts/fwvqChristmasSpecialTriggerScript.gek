@@ -1,0 +1,18 @@
+scn fwvqChristmasSpecialTriggerScript
+
+ref PoliceBoxDoor
+ref PoliceBox
+short doOnce
+
+begin onTriggerEnter player
+
+	if getStage fwvqChristmasSpecial == 5
+		if doOnce == 0
+			fwvLyuleRef.PushActorAway Player 3
+			fwvqXmasForceFieldRef.enable
+			PlaySound OBJStealthBoyActivateDvce
+			set doOnce to 1
+		endif
+	endif
+
+end

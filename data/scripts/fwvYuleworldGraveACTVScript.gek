@@ -1,0 +1,37 @@
+scn fwvYuleworldGraveACTVScript
+
+begin onActivate player
+
+
+	if GetIsReference fwvYuleTombstone1 == 1
+		if player.hasperk WildWasteland == 1
+			showmessage fwvYuleGraveMesg1WW
+		else
+			showmessage fwvYuleGraveMesg1
+		endif
+	elseif GetIsReference fwvYuleTombstone2 == 1
+		if player.hasperk WildWasteland == 1
+			showmessage fwvYuleGraveMesg2WW
+		else
+			showmessage fwvYuleGraveMesg2
+		endif
+	elseif GetIsReference fwvYuleTombstone3 == 1
+		if player.hasperk WildWasteland == 1
+			showmessage fwvYuleGraveMesg4WW
+		else
+			showmessage fwvYuleGraveMesg4
+		endif
+	elseif GetIsReference fwvYuleTombstone4 == 1
+		if player.hasperk WildWasteland == 1
+			showmessage fwvYuleGraveMesg3WW
+		else
+			showmessage fwvYuleGraveMesg3
+		endif
+	elseif GetIsReference fwvYuleTombstone5 == 1
+			showmessage fwvYuleGraveMesg5
+	endif
+
+
+
+END
+

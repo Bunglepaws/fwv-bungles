@@ -1,0 +1,27 @@
+scn fwvq3eSewerControlScript
+
+short doOnce
+ref vCount
+
+begin onActivate player
+
+set vCount to 6 - fwvq3e.valve
+
+	if getStage fwvq3e == 90 || getStage fwvq3e == 92
+		if fwvq3e.valve == 6
+			setStage fwvq3e 95
+			PlaySound OBJBuzzerBell
+			PlaySound QSTV34WaterDraino
+			fwvq3eSewerFloodRef.enable
+			fwvq3eCyberControlDoorRef.lock 100
+		else
+			if doOnce == 0
+				ShowMessage fwvq3eSewerControlMessage 
+				setStage fwvq3e 92
+				set doOnce to 1
+			endif
+			ShowMessage fwvq3eSewerControlOffMessage vCount
+		endif
+	endif
+
+end

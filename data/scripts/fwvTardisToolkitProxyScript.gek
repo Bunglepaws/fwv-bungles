@@ -1,0 +1,12 @@
+scn fwvTardisToolkitProxyScript
+
+begin OnActivate Player
+	activate
+	fwvTtoolkitRef.Activate Player
+end
+
+begin GameMode
+	if GetOpenState == 1
+		SetOpenState 0
+	endif
+end

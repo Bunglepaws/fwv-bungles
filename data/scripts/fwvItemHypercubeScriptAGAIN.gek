@@ -1,0 +1,62 @@
+scn fwvItemHypercubeScriptAGAIN
+
+short frame
+float fTimer
+
+
+begin onActivate player
+
+	DisablePlayerControls
+	imod FadeToWhiteAndBackISFX
+	
+	if GetIsReference fwvCube1Ref == 1
+		PlaySound fwvDoctor01
+	elseif GetIsReference fwvCube2Ref == 1
+		PlaySound fwvDoctor02
+	elseif GetIsReference fwvCube3Ref == 1
+		PlaySound fwvDoctor03		
+	elseif GetIsReference fwvCube4Ref == 1
+		PlaySound fwvDoctor04		
+	elseif GetIsReference fwvCube5Ref == 1
+		PlaySound fwvDoctor05		
+	elseif GetIsReference fwvCube6Ref == 1
+		PlaySound fwvDoctor06
+	elseif GetIsReference fwvCube7Ref == 1
+		PlaySound fwvDoctor07		
+	elseif GetIsReference fwvCube8Ref == 1
+		PlaySound fwvDoctor08		
+	elseif GetIsReference fwvCube9Ref == 1
+		PlaySound fwvDoctor09			
+	elseif GetIsReference fwvCube10Ref == 1
+		PlaySound fwvDoctor10
+	elseif GetIsReference fwvCube11Ref == 1
+		PlaySound fwvDoctor11		
+	elseif GetIsReference fwvCube12Ref == 1
+		PlaySound fwvDoctor12
+		if player.getitemcount fwvItemSchemSonic12 > 0 || fwvTSchematicsRef.getitemcount fwvItemSchemSonic12 > 0 
+			printc "no schematic, player already got one"
+		else
+			player.additem fwvItemSchemSonic12 1
+			player.additem fwvItemSchemSonicShades 1
+		endif
+	elseif GetIsReference fwvCubeWarRef == 1
+		PlaySound fwvDoctorWar			
+	endif
+	
+	set frame to 1
+	set fTimer to 0.0
+	
+end
+
+begin GameMode
+
+	if frame == 1
+		if fTimer < 6
+			set fTimer to fTimer + GetSecondsPassed
+		else
+			EnablePlayerControls
+			set frame to 2
+		endif
+	endif
+
+END

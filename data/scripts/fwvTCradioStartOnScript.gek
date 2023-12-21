@@ -1,0 +1,18 @@
+scn fwvTCradioStartOnScript
+
+; spyduck was here
+; This'll start the radio activator as "on" and keep it that way FOREVER
+
+short sDoOnce 
+ref mySelf
+
+Begin GameMode
+	if (sDoOnce == 0 && GetDisabled == 0)
+		activate player 0
+		set sDoOnce to 1
+	endif
+End
+
+Begin onActivate Player
+	; leave this so it does nothin when the player clicks it manually (will break things otherwise)
+End

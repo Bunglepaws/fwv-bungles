@@ -1,0 +1,32 @@
+scn fwvItemHypercubeRedScriptAGAIN
+
+short destruct
+short frame
+float fTimer
+
+short effectOn
+ref rSelf
+
+begin onActivate player
+
+	DisablePlayerControls
+	imod FadeToWhiteAndBackISFX
+	PlaySound fwvMaster
+	set frame to 1
+
+end
+
+begin GameMode
+
+	if frame == 1
+		if fTimer < 6
+			set fTimer to fTimer + GetSecondsPassed
+		else
+			EnablePlayerControls
+			set frame to 2
+		endif
+	endif
+
+END
+
+

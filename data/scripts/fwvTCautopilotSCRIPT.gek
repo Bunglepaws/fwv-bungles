@@ -1,0 +1,39 @@
+scn fwvTCautopilotSCRIPT
+
+short sPatchVersion
+ref rSelf
+begin GameMode
+	if sPatchVersion < fwvPatchVersion
+		set sPatchVersion to fwvPatchVersion
+		set rSelf to GetSelf
+		Call fwvFuncResetPosition rSelf
+	endif
+end
+
+begin onActivate
+	activate
+	if fwvqGameOfRassilon.sRemote == 0
+		if fwvq1.tPowerAutopilot == 1 ; disable autopilot
+			if fwvq1.tFlying == 1 && fwvq1.csrOn == 0
+				;set fwvqRooms.sShakeEnabled to 1
+			endif
+			ShowMessage fwvTCautopilotOffMessage
+		else ; enable autopilot
+			if fwvq1.tFlying ==1 && fwvq1.csrOn == 1
+				;set fwvqRooms.sShakeEnabled to 0
+			endif
+			ShowMessage fwvTCautopilotOnMessage
+		endif
+		set fwvq1.tPowerAutopilot to 1 - fwvq1.tPowerAutopilot
+	else
+		MessageBoxEx "[The Time Lords have control of the TARDIS]"
+	endif
+end
+
+begin GameMode
+	if fwvq1.flightMode > 0 && (fwvq1.tPowerAutopilot == 1 ||  fwvq1.tFlightType >= 3)
+		if IsAnimPlaying == 0
+			PlayGroup Forward 0
+		endif
+	endif
+end

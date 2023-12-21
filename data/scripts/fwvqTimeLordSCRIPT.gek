@@ -1,0 +1,272 @@
+scn fwvqTimeLordSCRIPT
+
+;written by Demeggy 6/5/13
+
+short init
+
+short menu
+short button
+ref CombTarget
+short sType
+int tKey
+short sWearThinOnce
+short tPer
+short tCha
+short tInt
+short tMed
+short tRep
+short tSci
+short tSp
+
+short sAgeClass	; temp
+short tAge			; EasterEgg Time Lord Age
+float tAgeDay
+short tBodyAge
+float tBodyAgeDay
+
+short tlPoints		; 100 being Perfect, -100 being pure evil
+short gallifreya		; Encyclopedia Gallifreya collection
+
+short brainPower
+short brainDead
+
+ref pStat				; Player intelligence + perception
+ref tStat				; Target intelligence + perception
+
+short day
+short tlKarma		; Records previous days Karma activity
+short tlMurders		; Records previous days Murder count
+
+ref weapon
+short weapontype
+
+short cCount		; Companion counter
+
+; used for NPC companions
+short sDisposition
+ref rLastActor
+short sCompActivateNow
+
+short iDone
+short iChecked
+short curSStim
+short curStim
+short curHp
+
+begin menumode 1002
+
+	;Time Lord Poisoning (if player heals using stimpak, they will be injured)
+	; Note from Xoanon: Moved this to an effect on the items themselves for reliability of code
+	;if fwvqRegen.TimeLordTrue == 1
+		;if iChecked == 0
+			;set curSStim to player.getItemCount NVSuperStimpak
+			;set curStim to player.getItemCount Stimpak
+			;set curHp to player.getAV Health
+			;set iChecked to 1
+			;set iDone to 1
+		;endif
+	;endif
+
+end
+
+begin gamemode
+
+	set CombTarget to GetCrosshairRef
+	set sType to GetObjectType CombTarget
+
+	set tPer to CombTarget.getAv Perception
+	set tCha to CombTarget.getAv Charisma
+	set tInt to CombTarget.getAv Intelligence
+	set tMed to CombTarget.getAv Medicine
+	set tRep to CombTarget.getAv Repair
+	set tSci to CombTarget.getAv Science
+	set tSp to CombTarget.getAv Speech
+
+	if init == 0
+		set brainPower to 10
+		set day to gamedayspassed
+		set tlKarma to player.getAv Karma
+		set tlMurders to GetPcMiscStat "People Killed"
+		set tAgeDay to GameDaysPassed
+		set tAge to 30
+		set init to 1
+	elseif init == 1 && tAgeDay > GameDaysPassed
+		set tAgeDay to GameDaysPassed
+	endif
+
+	if fwvqRegen.TimeLordTrue == 1
+
+		;Time Lord Poisoning (if player heals using stimpak, they will be injured) 
+ 		;(Xoanon's Note - moved this to another method outside of script)
+
+		;set iChecked to 0
+		;if iDone == 1
+			;if player.getItemCount Stimpak < curStim || player.getItemCount NVSuperStimpak < curSStim
+				;if player.getAV health > curHP + 5
+					;MessageEx "Human Medicine harms you!"
+					;player.cios fwvTimeLordPoison
+					;set iDone to 0
+				;endif
+			;endif
+		;endif
+
+		;Time Lord aging (10 years every day)
+		if GameDaysPassed > tAgeDay + 1
+			set tAge to tAge + 10
+			set tBodyAge to tBodyAge + 10
+			set tAgeDay to GamedaysPassed
+		endif
+
+		if tBodyAge >= 300 && sWearThinOnce == 0
+			set sAgeClass to Call fwvFuncGetAge Player
+			if sAgeClass == 1
+				set sAgeClass to sAgeClass + 1
+				Call fwvFuncMatchAge Player sAgeClass
+				MessageEx "With time, you have aged..."
+				set tBodyAge to 0
+			elseif sAgeClass >= 2
+				if sWearThinOnce == 0
+					if fwvqRegen.regenVar < 12
+						showMessage fwvWearThinNormal
+						set sWearThinOnce to 1
+					elseif fwvqRegen.regenVar == 12
+						showMessage fwvWearThin12
+						set sWearThinOnce to 1
+					else
+						showMessage fwvWearThinFatal
+						set sWearThinOnce to 1
+					endif				
+					set fwvqRegen.regenMode to 2
+					;MessageEx "This old body is wearing a bit thin..."
+					;printc "fwvqRegen.regenMode %g" fwvqRegen.regenMode
+					;printc "fwvqRegen.rStaveEffect %g" fwvqRegen.rStaveEffect
+				endif
+				;set tBodyAge to 0
+			else
+				printc "Wrong age: %.0f" sAgeClass
+			endif
+		endif
+
+		if IsControlPressed 18 == 1 && player.isWeaponOut == 0
+			ShowMessage fwvTimeLordMentalProjectionMenu brainPower
+			set pStat to player.getAV Intelligence + player.getAV Perception
+			set tStat to combTarget.getAV Intelligence + combTarget.getAV Perception
+			set menu to 1
+		endif
+
+		if menu == 1 ;top level menu
+			set button to getbuttonpressed
+
+			;Telepathy
+			if button == 0 
+				if sType == 42 || CombTarget.GetIsCreature && pStat > tStat &&brainPower > 0
+					ShowMessage fwvTimeLordMentalTelepathyMessage tPer tCha tInt tMed tRep tSci tSp
+					set brainPower to brainPower - 1
+					set button to 0
+					set menu to 0
+				else
+					ShowMessage fwvTimeLordMentalFailMessage
+					combTarget.modDisposition player -5
+					set button to 0
+					set menu to 0
+				endif
+
+			;Trance
+			elseif button == 1
+				if sType == 42 && CombTarget.GetUnconscious == 0 && pStat > tStat
+					imod FireExtinguisherISFX
+					player.rewardKarma 1
+					CombTarget.addSpell fwvTLtranceSpell
+					set brainPower to brainPower - 1
+					set menu to 0
+				else
+					ShowMessage fwvTimeLordMentalFailMessage
+					combTarget.modDisposition player -5
+					set menu to 0
+				endif			
+
+			;Frenzy
+			elseif button == 2
+				if sType == 42 && CombTarget.GetUnconscious == 0 && pStat > tStat
+					imod FireExtinguisherISFX
+					player.rewardKarma -1
+					CombTarget.addSpell fwvTLfrenzySpell
+					set brainPower to brainPower - 1
+					set menu to 0
+				else
+					ShowMessage fwvTimeLordMentalFailMessage
+					combTarget.modDisposition player -5
+					set menu to 0
+				endif	
+
+			;Regenerate from staving
+			elseif button == 3
+				if fwvqRegen.regenMode == 2 && fwvqRegen.rStaveFrame == 2
+					if fwvqRegen.rTimer <= 180 && fwvqRegen.rTimer > 0		;Normal regen, basically, non-fatal, 3 mins
+						set fwvqRegen.staveLimit to fwvqRegen.rTimer - 5
+						set fwvqRegen.damageMode to 0 	; No bad effects on TARDIS
+					elseif fwvqRegen.rTimer <= 540 && fwvqRegen.rTimer > 180	; Up to 9 mins
+						set fwvqRegen.staveLimit to fwvqRegen.rTimer - 5
+						set fwvqRegen.damageMode to 1	;Minorly damages TARDIS components
+					elseif fwvqRegen.rTimer <= 900 && fwvqRegen.rTimer > 540		; Up to 15 mins
+						set fwvqRegen.staveLimit to fwvqRegen.rTimer - 5
+						;set fwvqRegen.damageMode to 2	;Majorly damages TARDIS components, sets fuel to 0 to force crash landing
+					endif
+				endif
+
+			;Divert Regeneration from staving
+			elseif button == 4
+				if fwvqRegen.regenMode == 2 && fwvqRegen.rStaveFrame == 2
+					set fwvqRegen.regenMode to 3
+				endif				
+				
+				
+				
+			; Animal Hypnosis / Venusian Lullaby
+			elseif button == 5
+				if sType == 43 || sType == 44
+					if CombTarget.GetIsCreatureType 0 == 1 || CombTarget.GetIsCreatureType 1 == 1
+						imod FireExtinguisherISFX
+						Player.addSpell fwvAnimalHypnosisSpell
+						set brainPower to brainPower - 1
+						set menu to 0
+					else
+						MessageEx "Some beasts resist hypnosis..."
+						set menu to 0
+					endif
+				else
+					ShowMessage fwvTimeLordMentalFailMessage
+					set menu to 0
+				endif					
+				
+			;Nothing
+			elseif button == 6
+				set menu to 0
+			endif
+		endif
+
+	;======== Mood System
+
+	if brainPower < 1
+		if brainDead == 0
+			if player.getAV Karma < 0
+				MessageBoxEx "You are suffering from mental fatigue and have triggered Insanity. Seek Zero Solitude or other healing methods immediately."
+				player.addSpell fwvTLinsanitySpell
+			elseif player.getAV Karma >= 0
+				MessageBoxEx "You are suffering from mental fatigue and have triggered Depression. Seek Zero Solitude or other healing methods immediately."
+				player.addSpell fwvTLdepressionSpell
+			endif
+			imod ImageSpaceConcussion
+			PlaySound FXCrippleHead
+			set brainPower to 1
+			set brainDead to 1
+		endif
+	endif
+
+	endif
+
+	;======== TimeLord Karma System
+
+	;removed for now
+
+end

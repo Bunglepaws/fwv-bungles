@@ -1,0 +1,22 @@
+scn fwvTCK2TScannerScript
+
+short sOpen
+ref rSelf
+ref rLinked
+
+Begin onActivate player
+
+	let rSelf := getSelf
+	let rLinked := rSelf.getLinkedRef
+
+	if rLinked.GetOpenState == 3
+		rLinked.SetOpenState 1
+		;playsound fwvFXT3control03
+	elseif rLinked.GetOpenState == 1
+		rLinked.SetOpenState 0
+		;playsound fwvFXT3control03
+	else
+
+	endif
+
+End

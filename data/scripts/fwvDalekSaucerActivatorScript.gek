@@ -1,0 +1,206 @@
+scn fwvDalekSaucerActivatorScript
+
+short iGloop
+short Gloop
+short menu
+short button
+
+float hTimer
+short hotwire
+short iHotwire
+short circuit
+short wire1
+short wire2
+short wire3
+short wire4
+short stage
+
+float rCamAngleZ 
+
+begin onActivate player
+
+	if getIsReference fwvDalekSaucerVentRef
+		if player.getItemCount fwvDalekSaucerGloop > 0 || fwvqDalekSaucer.vent == 1
+			if fwvqDalekSaucer.vent != 2
+				ShowMessage fwvDalekSaucerVentMessage
+				set menu to 1
+			else
+				MessageEx "The Circuit has been bypassed..."
+			endif
+		else
+			if fwvqDalekSaucer.ventBlow == 0
+				MessageEx "A small cooling vent..."
+			endif
+		endif
+
+	elseif getIsReference fwvDalekSaucerCameraRef
+		if fwvqDalekSaucer.cellCam == 0 && player.getItemCount fwvDalekSaucerGloop > 0
+			ShowMessage fwvDalekSaucerCameraMessage
+			set menu to 2
+		elseif fwvqDalekSaucer.cellCam == 1
+			MessageBoxEx "The Camera Lens has been covered with a thick Nutrient Gloop"
+		else
+			MessageBoxEx "A Cell Camera. The Daleks are always watching."
+		endif
+
+	elseif getIsReference fwvDalekSaucerGloopVendRef
+		PlaySound FXGooification
+		MessageBoxEx "The dispenser provides you with a gooey, nutrient sludge."
+		player.addItem fwvDalekSaucerGloop 1
+	;elseif getIsReference fwvDalekSaucerGloopRef
+	;	if iGloop == 0
+	;		set Gloop to 2
+	;		set iGloop to 1
+	;	endif
+	;	ShowMessage fwvDalekSaucerGloopMessage
+	;	set menu to 3
+
+	elseif getIsReference fwvDalekSaucerPlayerItemsRef == 1
+		if getStage fwvqDalekSaucer == 50
+			MessageBoxEx "You retrieve your equipment"
+			fwvDalekSaucerPlayerItemsRef.removeAllItems player 1 1
+			EnablePlayerControls 1 1 1 1 1 1 1
+			setStage fwvqDalekSaucer 75
+		else
+			MessageEx "You have no further use for that..."
+		endif
+	endif
+
+end
+
+begin gameMode
+
+	set button to getbuttonpressed
+
+	;Vent
+	if menu == 1
+		if button == 0
+			if fwvqDalekSaucer.cellCam == 0
+				player.removeItem fwvDalekSaucerGloop 1 0
+				MessageEx "Alarm Triggered!"
+			else
+				MessageEx "You clog the Vent with Nutrient Gloop..."
+				set fwvqDalekSaucer.VentBlow to 1
+				set fwvqDalekSaucer.vTimer to 0.0
+				player.removeItem fwvDalekSaucerGloop 1 0
+			endif
+		elseif button == 1
+			if iHotwire == 0
+				set wire1 to 1 + GetRandomPercent * 4/100
+				set wire2 to 1 + GetRandomPercent * 4/100
+				set wire3 to 1 + GetRandomPercent * 4/100
+				set wire4 to 1 + GetRandomPercent * 4/100
+				set stage to 0
+				printc "wire 1 is %g" wire1
+				printc "wire 2 is %g" wire2
+				printc "wire 3 is %g" wire3
+				printc "wire 4 is %g" wire4
+				set iHotwire to 1
+			endif
+			ShowMessage fwvDalekSaucerHotwireMessage stage
+			set hotwire to 1
+		endif
+		set menu to 0
+
+	;Camera
+	elseif menu == 2
+		if button == 0
+			player.removeItem fwvDalekSaucerGloop 1 0
+			MessageEx "You have covered the Camera Lens..."
+			set fwvqDalekSaucer.cellCam to 1
+		endif
+		set menu to 0
+
+	;Gloop
+	elseif menu == 3
+		if button == 0
+			set Gloop to Gloop - 1
+			player.addItem fwvDalekSaucerGloop 1
+		elseif button == 1
+			set Gloop to Gloop - 1
+			player.restoreAV hunger 10
+			player.restoreAV health 25
+		endif
+		if gloop <= 0
+			fwvDalekSaucerGloopRef.disable 0
+			fwvDalekSaucerGloopRef.disable 0
+		endif
+		set menu to 0
+	endif
+
+	if hotwire == 1
+		if button == 0
+			set circuit to 1
+			set hTimer to 0.0
+			set hotwire to 2
+		elseif button == 1
+			set circuit to 2
+			set hTimer to 0.0
+			set hotwire to 2
+		elseif button == 2
+			set circuit to 3
+			set hTimer to 0.0
+			set hotwire to 2
+		elseif button == 3
+			set circuit to 4
+			set hTimer to 0.0
+			set hotwire to 2
+		elseif button == 4
+			set stage to 0
+			set hotwire to 0
+		endif
+	elseif hotwire == 2
+		if hTimer < 0.5
+			set hTimer to hTimer + getSecondsPassed
+		else
+			if stage == 0
+				if circuit == wire1
+					set stage to stage + 1
+				else
+					set stage to 0
+				endif
+				set hotwire to 3
+			elseif stage == 1
+				if circuit == wire2
+					set stage to stage + 1
+				else
+					set stage to 0
+				endif
+				set hotwire to 3
+			elseif stage == 2
+				if circuit == wire3
+					set stage to stage + 1
+				else
+					set stage to 0
+				endif
+				set hotwire to 3
+			elseif stage == 3
+				if circuit == wire4
+					set stage to stage + 1
+				else
+					set stage to 0
+				endif
+				set hotwire to 3
+			endif
+		endif
+	elseif hotwire == 3
+		if stage < 4
+			ShowMessage fwvDalekSaucerHotwireMessage stage
+			set hTimer to 0.0
+			set hotwire to 1		
+		else
+			set fwvqDalekSaucer.vent to 2
+			MessageEx "The Cell Door controls short out..."
+			player.removeFromFaction fwvDalekFaction
+			fwvDalekSaucerCellDoorRef.setOpenState 1
+			setstage fwvqDalekSaucer 50
+			set hotwire to 0
+		endif
+	endif
+
+	if getIsReference fwvDalekSaucerCameraRef == 1
+		;set rCamAngleZ to player.getAngle Z
+		;fwvDalekSaucerCameraRef.setAngle z rCamAngleZ
+	endif
+
+end

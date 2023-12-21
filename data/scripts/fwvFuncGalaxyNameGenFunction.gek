@@ -1,0 +1,25 @@
+scn fwvFuncGalaxyNameGenFunction
+
+ref rGalaxy
+ref rPlanet
+
+Begin Function { }
+
+	let rGalaxy := fwvqDriftGalaxyRef
+
+	;PLANET NAMES
+	if fwvqDrift.gID == 1
+		rGalaxy.setName "Acteon Galaxy"
+	elseif fwvqDrift.gID == 2
+		rGalaxy.setName "Dundra System"
+	elseif fwvqDrift.gID == 3
+		rGalaxy.setName "Constellation of Kasterborous"
+	elseif fwvqDrift.gID == 4
+		rGalaxy.setName "Magellanic Clouds"
+	elseif fwvqDrift.gID == 5
+		rGalaxy.setName "Mutter's Spiral"
+	elseif fwvqDrift.gID == 6
+		rGalaxy.setName "Tremulus Three"
+	endif
+
+End

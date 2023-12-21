@@ -1,0 +1,29 @@
+scn fwvq2AncientBookLockedScript
+
+begin gameMode
+
+if getStage fwvquestTwo == 20
+	if getDistance player > 350
+		fwvq2whisperFarRef.enable
+		fwvq2whisperCloseRef.disable
+	elseif getDistance player <= 350
+		fwvq2whisperCloseRef.enable
+		fwvq2whisperFarRef.disable
+	endif
+endif
+
+end
+
+begin onActivate player
+
+	if getStage fwvquestTwo == 20
+		ShowMessage fwvq2ancientBookLockedMessage
+		fwvq2whisperFarRef.disable
+		fwvq2whisperCloseRef.disable
+		player.addItem fwvq2AncientBookLocked 1
+		setStage fwvquestTwo 25
+		MarkForDelete
+		Disable 1
+	endif
+
+end

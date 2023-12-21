@@ -1,0 +1,56 @@
+scn fwvAsylumEmperorHoloFunctionsSCRIPT
+
+short sDoEffect
+;short fwvDalekAsylum.sFadeIn
+;short fwvDalekAsylum.sFadeOut
+float fFadeTime
+
+;fwvEmperorHoloREF
+
+Begin Gamemode
+
+	if fwvDalekAsylum.sCommsOn == 0
+		if sDoEffect == 0
+			sms fwvHologramInterfaceNeutral
+			saa 0.0
+			setscale 0.7
+			set sDoEffect to 1
+		endif
+	elseif fwvDalekAsylum.sCommsOn == 1
+		;set sDoEffect to 0
+		pms fwvHologramInterfaceNeutral
+		saa 0.6
+		set fwvDalekAsylum.sFadeIn to 1
+		set fFadeTime to GetSecondsPassed
+		set fFadeTime to 0.05
+		PlaySound OBJForceFieldImpact
+		set fwvDalekAsylum.sCommsOn to 2
+	endif
+
+
+	if fwvDalekAsylum.sFadeIn == 1
+		set fFadeTime to fFadeTime + GetSecondsPassed * 10.0
+		SetScale fFadeTime
+		if fFadeTime >= 1.2
+			set fFadeTime to 0.0
+			SetScale 0.7
+			set fwvDalekAsylum.sFadeIn to 2
+		endif
+	elseif fwvDalekAsylum.sFadeout == 2
+		Startconversation Player, GREETING
+	elseif fwvDalekAsylum.sFadeOut == 3
+		if fFadeTime == 0.0
+			PlaySound OBJForceFieldImpact
+			set fFadeTime to 0.7
+		endif
+		set fFadeTime to fFadeTime - GetSecondsPassed * 10.0
+		SetScale fFadeTime
+		if fFadeTime <= 0.1
+			set fFadeTime to 0
+			set fwvDalekAsylum.sFadeIn to 0
+			set fwvDalekAsylum.sFadeOut to 0
+			Disable 0
+		endif
+	endif	
+
+end

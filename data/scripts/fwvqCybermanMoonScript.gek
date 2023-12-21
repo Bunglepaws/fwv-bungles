@@ -1,0 +1,77 @@
+scn fwvqCybermanMoonScript
+
+short interior
+
+short a1
+short a2
+short power
+short o2
+
+short sInTardis
+short sOnMoon
+
+
+
+
+begin gamemode
+
+	if player.getInWorldspace fwvWorldMoonCraterWorld == 1
+		if getStage fwvqCybermanMoon < 10
+			setStage fwvqCybermanMoon 10
+		endif
+		set sOnMoon to 1
+		if interior == 0 && player.GetInCell fwvTinterior1 == 0
+			set sInTardis to 0
+			sgtm 0.75
+			fwvMoonO2LoopRef.MoveTo Player 0 0 256
+			fwvMoonHeartbeatLoopRef.MoveTo Player 0 0 256
+			;ForceWeather fwvMoonWeather 1
+			;SetWeather fwvMoonWeather 1
+			ForceWeather fwvMoonWeatherXO 1
+			SetWeather fwvMoonWeatherXO 1
+			if player.getEquipped fwvOutfitSB6suit && player.getEquipped fwvOutfitSB6Helmet
+				fwvMoonO2LoopRef.enable
+				fwvMoonHeartbeatLoopRef.disable
+			elseif player.getEquipped ArmorNVSpaceSuit && player.getEquipped HelmetNVSpaceSuit
+				fwvMoonO2LoopRef.enable
+				fwvMoonHeartbeatLoopRef.disable
+			else
+				if o2 == 0
+					MessageEx "Warning! O2 Levels Dangerous!"
+					player.damageAV health 0.5
+					fwvMoonO2LoopRef.disable
+					fwvMoonHeartbeatLoopRef.enable
+				else
+					fwvMoonHeartbeatLoopRef.disable
+				endif
+			endif
+			fwvMoonBaseLPRef.disable
+			
+			
+		elseif interior == 1 && player.GetInCell fwvTinterior1 == 0
+			set sInTardis to 0
+			ForceWeather fwvTardisInteriorWeather 1
+			SetWeather fwvTardisInteriorWeather 1
+			sgtm 1
+			fwvMoonO2LoopRef.disable
+			fwvMoonHeartbeatLoopRef.disable
+			if getStageDone fwvqCybermanMoon 20 == 1
+				fwvMoonBaseLPRef.enable
+			endif
+		elseif player.GetInCell fwvTinterior1 && sInTardis == 0
+			set sInTardis to 1 ; prevent this from looping in the TARDIS, would break the lifts
+			sgtm 1
+			fwvMoonO2LoopRef.disable
+			fwvMoonHeartbeatLoopRef.disable
+		
+
+		endif
+	elseif sOnMoon == 1
+		set sOnMoon to 0
+		sgtm 1
+		fwvMoonO2LoopRef.disable
+		fwvMoonHeartbeatLoopRef.disable
+		
+
+	endif
+end

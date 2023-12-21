@@ -1,0 +1,28 @@
+scn fwvWeapPowerFragmentScript
+
+short sAgeClass
+
+Begin onFire player
+
+	if fwvqRegen.timeLordTrue == 1
+		set sAgeClass to Call fwvFuncGetAge Player
+		if sAgeClass < 3
+			if fwvqTimeLord.tBodyAge < 200
+				MessageEx "[Power Fragment will be charged in 24 hours]"
+				PlaySound3d UIHealthChemsWearOff
+				let fwvqSystems.coreCharge := 1
+				let fwvqSystems.coreChargeDay := GameDaysPassed
+				let fwvqTimeLord.tAge := fwvqTimeLord.tAge + 100
+				player.removeItem fwvWeapPowerFragment 1
+			else
+				MessageBoxEx "[You lack the lifeforce in your current body to charge this Fragment. Find another method to restore the TARDIS.]"
+			endif
+		else
+			MessageBoxEx "[You lack the lifeforce in your current body to charge this Fragment. Find another method to restore the TARDIS.]"
+		endif
+		
+	else
+		MessageEx "[Human lifeforce is not enough...]"
+	endif
+
+End

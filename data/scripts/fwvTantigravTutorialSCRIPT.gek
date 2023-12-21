@@ -1,0 +1,10 @@
+scn fwvTantigravTutorialSCRIPT
+
+begin onTriggerEnter player
+
+if fwvqTutorials.tutorial == 1 && fwvqTutorials.aTutOnce == 0
+	ShowTutorialMenu fwvTUTantigravMessage
+	set fwvqTutorials.aTutOnce to 1
+endif
+
+end

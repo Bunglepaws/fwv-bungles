@@ -1,0 +1,5 @@
+scn fwvMoonTriggerScript
+
+begin onTriggerEnter player
+
+end

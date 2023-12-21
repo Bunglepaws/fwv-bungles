@@ -1,0 +1,256 @@
+scn fwvq3dScript
+
+short ending	; 0 - good, 1 - bad
+short alarmSet
+
+float playerX
+float playerY
+float playerZ
+float playerR
+
+short qmZoneOff
+short qendMsg
+
+float fTimer
+short frame
+
+float tTimer
+short tCrack
+
+short cFrame
+float cTimer
+
+short addOnce
+
+short sector
+short init
+
+short paradoxTheme
+
+begin gamemode
+
+set playerX to player.getPos X
+set playerY to player.getPos Y
+set playerZ to player.getPos Z
+
+set playerR to player.getAngle Z
+
+if player.getInCell fwvUnitBasePast == 1
+	fwvq3dFutureRef.setPos x playerX
+	fwvq3dFutureRef.setPos y playerY
+	fwvq3dFutureRef.setPos z playerZ
+	fwvq3dFutureRef.setAngle z playerR
+
+	if getStage fwvq3d < 30
+		fwvq3dPastContainerRef.removeAllItems player		;Give back any items from the past to the player
+		player.equipItem fwvq3dQuantumManipulator 0 1
+	endif
+
+elseif player.getInCell fwvUnitBaseFuture == 1
+	fwvq3dPastRef.setPos x playerX
+	fwvq3dPastRef.setPos y playerY
+	fwvq3dPastRef.setPos z playerZ
+	fwvq3dPastRef.setAngle z playerR
+
+	if getStage fwvq3d < 30
+		fwvq3dFutureContainerRef.removeAllItems player	;Give back any items from the future to the player
+		player.equipItem fwvq3dQuantumManipulator 0 1
+	elseif getStage fwvq3d == 20 && fwvq3dTardisAlarmRef.getDisabled == 0
+		player.removeItem fwvq3dQuantumManipulator 10 1
+		player.addItem fwvq3dQuantumManipulatorBroken 1 1
+		ShowMessage fwvq3dQuantumManipulatorBrokenMessage
+		PlaySound OBJComputerTerminalArc
+		setStage fwvq3d 30
+	endif
+
+endif
+
+if player.getEquipped fwvq3dQuantumManipulator == 1
+	if isControlPressed 4 == 1
+		if qmZoneOff == 0
+			imod FadeInFromWhiteISFX
+			player.damageAV health 5
+			TriggerHitShader 5
+			PlaySound FXCrippleHead
+			PlaySound OBJComputerTerminalArc
+			if player.getInCell fwvUnitBasePast == 1
+				printc "Switching to Future"
+				player.removeAllItems fwvq3dPastContainerRef 1 1		;put the players stuff in a container in the past
+				player.moveTo fwvq3dFutureRef
+			elseif player.getInCell fwvUnitBaseFuture == 1
+				printc "Back to the Past"
+				player.removeAllItems fwvq3dFutureContainerRef 1 1
+				player.equipItem fwvq3dQuantumManipulator 0 1
+				if addOnce == 0													;Adds the QM to the player the very first time they jump
+					player.addItem fwvq3dQuantumManipulator 1
+					set addOnce to 1
+				endif
+				player.moveTo fwvq3dPastRef
+			endif
+		else
+			ShowMessage fwvq3dQmZoneOffMessage
+		endif
+	endif
+endif
+
+;=== quest scripting
+
+if frame == 0
+	if getStage fwvq3d == 10 && player.getInCell NovacMotelRoomTwin2 == 1
+		DisablePlayerControls
+		fwvq3dQuantumTravellerRef.enable
+		fwvq3dQuantumTravellerRef.addScriptPackage fwvq3dQuantumPackage
+		fwvq3dQuantumTravellerRef.evp
+		set frame to 1
+	endif
+elseif frame == 1
+	if fTimer < 5.0
+		set fTimer to fTimer + getsecondspassed
+	else
+		imod FadeInFromBlack2sISFX
+		fwvq3dAngelIntroRef.disable
+		fwvq3dAngelIntro2Ref.enable
+		set fTimer to 0.0
+		set frame to 2
+	endif
+elseif frame == 2
+	if fTimer < 2.5
+		set fTimer to fTimer + getsecondspassed
+	else
+		imod FadeInFromBlack2sISFX
+		fwvq3dAngelIntro2Ref.disable
+		fwvq3dAngelIntro3Ref.enable
+		set fTimer to 0.0
+		set frame to 3
+	endif
+elseif frame == 3
+	if fTimer < 2.5
+		set fTimer to fTimer + getsecondspassed
+	else
+		fwvq3dPlayerItemsRef.enable
+		player.removeAllItems fwvq3dPlayerItemsRef 1
+		fwvq3dAngelIntro3Ref.disable
+		EnablePlayerControls
+		player.moveTo fwvq3dStartRef
+		set fTimer to 0.0
+		set frame to 4
+	endif
+endif
+
+;=== timey wimey puzzles
+
+if init == 0
+	set sector to 1
+	set init to 1
+endif
+
+if player.getInCell fwvUnitBaseFuture == 1 && getStage fwvq3d == 10
+	setStage fwvq3d 20
+endif
+
+if fwvq3dLockerPastRef.getItemCount fwvq3dEBU == 1 && fwvq3dLockerFutureRef.getItemCount fwvq3dEBU == 0
+	fwvq3dLockerFutureRef.addItem fwvq3dEBU 1
+endif
+
+if paradoxTheme == 1
+	;place the Paradox Machine Mesh around whatever console is present, activate emergency lighting
+	setStage fwvq3d 50
+	set paradoxTheme to 0
+endif
+
+if getStage fwvq3d == 50 && player.IsWeaponInList fwvWSonicList == 1
+	if IsControlPressed 4 == 1
+		if tCrack == 0
+			set tCrack to 1
+		else
+
+		endif
+	endif
+
+	if tCrack == 1
+		if tTimer < 7.5
+			printc "Time Crack open"
+			fwvq3dTimeCrackRef.enable
+			fwvq3dTimeCrackSFXRef.enable
+			set tTimer to tTimer + getSecondsPassed
+		else
+			printc "Time crack sealed"
+			fwvq3dTimeCrackRef.disable
+			fwvq3dTimeCrackSFXRef.disable
+			set tTimer to 0.0
+			set tCrack to 0
+		endif
+	endif
+endif
+
+;=== cinematic
+
+	if cFrame == 1		; move player to the lab
+		if cTimer < 5.0
+			printc "time %g" cTimer
+			set cTimer to cTimer + getSecondsPassed
+		else
+			player.moveTo fwvq3dPos2Ref
+			set cTimer to 0.0
+			set cFrame to 2
+		endif
+	elseif cFrame == 2	; move player to the corridor
+		if cTimer < 3.5
+			set cTimer to cTimer + getSecondsPassed
+		else
+			player.moveTo fwvq3dPos3Ref
+			set cTimer to 0.0
+			set cFrame to 3
+		endif
+	elseif cFrame == 3	; slow time & detonate the bomb
+		if cTimer < 0.0
+			set cTimer to cTimer + getSecondsPassed
+		else
+			setglobaltimemultiplier 0.5
+			fwvq3dBombPosRef.placeAtMe fwvq3dLabExplosion
+			set cTimer to 0.0
+			set cFrame to 4
+		endif
+	elseif cFrame == 4
+		if cTimer < 7.0
+			set cTimer to cTimer + getSecondsPassed
+		else
+			setglobaltimemultiplier 1
+			imod FadeInFromWhiteISFX
+			player.moveTo fwvq3dPos4Ref
+			EnablePlayerControls
+			setStage fwvq3d 60
+			fwvq3dBombPlayerRef.enable
+			set cTimer to 0.0
+			set cFrame to 0
+		endif
+	endif
+
+;=== bomb triggering
+
+	if getStage fwvq3d == 70 && player.getInCell fwvUnitBasePast  == 1 && player.IsWeaponInList fwvWSonicList == 1
+		if IsControlPressed 4 == 1
+			if alarmSet == 0
+				player.rewardKarma -50
+				fwvq3dLabClutterRef.disable
+				fwvq3dBombPosRef.placeAtMe BusNukeExplosion
+				fwvq3dLabPastRubbleRef.enable
+				setStage fwvq3d 80		
+			else
+				fwvq3dLabClutterRef.disable
+				fwvq3dBombPosRef.placeAtMe BusNukeExplosion
+				fwvq3dLabPastRubbleRef.enable
+				setStage fwvq3d 80	
+			endif
+		endif
+	endif
+
+; quest ending
+
+	if getStage fwvq3d == 80 && fwvq1.tFlying == 1
+		setObjectiveCompleted fwvq3d 80 1
+		set fwvqComms.init to 0
+		setStage fwvq3d 100
+	endif
+
+end

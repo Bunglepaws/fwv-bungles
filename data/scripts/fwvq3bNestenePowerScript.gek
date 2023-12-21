@@ -1,0 +1,12 @@
+scn fwvq3bNestenePowerScript
+
+begin onActivate player
+	if getstage fwvq3b == 75
+		placeatme fwvExpControlExplosion
+		setstage fwvq3b 80
+		fwvq3bNesteneAlarmRef.enable
+		Disable
+	else
+		ShowMessage fwvq3bNestenePowerMessage
+	endif
+end

@@ -1,0 +1,27 @@
+scn fwvFuncGetAge
+
+short sTargetAge
+ref rTargetActor
+ref rAgeRace
+
+begin Function { rTargetActor }
+	set rAgeRace to rTargetActor.GetRace
+	
+	if rAgeRace == AfricanAmericanChild || rAgeRace == AsianChild || rAgeRace == CaucasianChild || rAgeRace == HispanicChild
+		set sTargetAge to 0
+	elseif rAgeRace == AfricanAmerican || rAgeRace == Asian || rAgeRace == Caucasian || rAgeRace == Hispanic
+		set sTargetAge to 1
+	elseif rAgeRace == AfricanAmericanRaider || rAgeRace == AsianRaider || rAgeRace == CaucasianRaider || rAgeRace == HispanicRaider
+		set sTargetAge to 1
+	elseif rAgeRace == AfricanAmericanOld || rAgeRace == AsianOld || rAgeRace == CaucasianOld || rAgeRace == HispanicOld
+		set sTargetAge to 2
+	elseif rAgeRace == AfricanAmericanOldAged || rAgeRace == AsianOldAged || rAgeRace == CaucasianOldAged || rAgeRace == HispanicOldAged
+		set sTargetAge to 3
+	elseif rAgeRace == Ghoul
+		set sTargetAge to 3
+	else
+		set sTargetAge to 1
+	endif
+	SetFunctionValue sTargetAge
+end
+

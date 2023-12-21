@@ -1,0 +1,21 @@
+scn fwvBookTardisRassilonSCRIPT
+
+;written by Demeggy 9/3/13
+
+short learnt
+
+begin onEquip player
+
+	if learnt == 0
+
+		if fwvq1.cxl > 5
+			ShowMessage fwvTLsymbioticSchemMessage
+			set learnt to 1
+		else
+			ShowMessage fwvTLrassilonBookMessage
+		endif
+	endif
+
+end
+
+

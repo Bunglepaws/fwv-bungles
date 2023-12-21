@@ -1,0 +1,12 @@
+scn fwvCreatureFacelessOneScript
+
+short gCount
+
+begin gamemode
+
+	if gCount < 10
+		PMS fwvRegenEffectShader
+		set gCount to gCount + 1
+	endif
+
+end

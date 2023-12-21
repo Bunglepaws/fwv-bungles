@@ -1,0 +1,12 @@
+scn fwvK9BoxActivatorScript
+
+Begin onActivate player
+
+	MessageBoxEx "The box contains a bulky looking, broken down K9 unit. On closer inspection, it looks like it requires a few spare parts to get up and running."
+	fwvCompanionK9Ref.enable
+	fwvCompanionK9Ref.killActor
+	;fwvItemSchemK9PlacedREF.enable
+	Disable
+	MarkForDelete
+
+End

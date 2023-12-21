@@ -1,0 +1,92 @@
+scn fwvT4LightingScript
+
+float fWaitTimer
+short sOnOff
+short sLightsDisabled
+short sNormalLightColor ; 0 = aqua, 1 = orange, 2 = green, 3 = purple, 4 = red
+short sNormalLightBrightness ; 0 = dim, 1 = normal, 2 = bright
+short sLastBright
+short sLastColor
+short sLastTheme
+begin GameMode
+	if sLastTheme != fwvq1.tTheme || sLastColor != sNormalLightColor || sLastBright != sNormalLightBrightness
+		if fwvq1.tTheme == 3
+			if fwvT4ClightNormalRef.GetDisabled == 0
+				if sNormalLightBrightness == 0
+					fwvT4baseDimLight.Enable 0
+					fwvT4baseMediumLight.Disable 0
+					fwvT4baseBrightLight.Disable 0
+				elseif sNormalLightBrightness == 1
+					fwvT4baseDimLight.Disable 0
+					fwvT4baseMediumLight.Enable 0
+					fwvT4baseBrightLight.Disable 0
+				elseif sNormalLightBrightness == 2
+					fwvT4baseDimLight.Disable 0
+					fwvT4baseMediumLight.Disable 0
+					fwvT4baseBrightLight.Enable 0
+				endif
+				if sNormalLightColor == 0 ; aqua
+					Call fwvFuncSetListIsDisabled fwvT4LightsOffList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsRedList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsOrangeList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsAquaList 0
+					Call fwvFuncSetListIsDisabled fwvT4LightsGreenList 1
+				elseif sNormalLightColor == 1 ; orange
+					Call fwvFuncSetListIsDisabled fwvT4LightsOffList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsRedList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsOrangeList 0
+					Call fwvFuncSetListIsDisabled fwvT4LightsAquaList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsGreenList 1
+				elseif sNormalLightColor == 2 ; green ; TODO
+					Call fwvFuncSetListIsDisabled fwvT4LightsOffList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsRedList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsOrangeList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsAquaList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsGreenList 0
+				elseif sNormalLightColor == 3 ; purple ; TODO
+					Call fwvFuncSetListIsDisabled fwvT4LightsOffList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsRedList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsOrangeList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsAquaList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsGreenList 1
+				elseif sNormalLightColor == 4 ; red ; TODO
+					Call fwvFuncSetListIsDisabled fwvT4LightsOffList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsRedList 0
+					Call fwvFuncSetListIsDisabled fwvT4LightsOrangeList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsAquaList 1
+					Call fwvFuncSetListIsDisabled fwvT4LightsGreenList 1
+				endif
+			else
+				fwvT4baseDimLight.Disable 0
+				fwvT4baseMediumLight.Disable 0
+				fwvT4baseBrightLight.Disable 0
+				Call fwvFuncSetListIsDisabled fwvT4LightsOffList 0
+				Call fwvFuncSetListIsDisabled fwvT4LightsRedList 1
+				Call fwvFuncSetListIsDisabled fwvT4LightsOrangeList 1
+				Call fwvFuncSetListIsDisabled fwvT4LightsAquaList 1
+				Call fwvFuncSetListIsDisabled fwvT4LightsGreenList 1
+			endif
+		else
+			fwvT4baseDimLight.Disable 0
+			fwvT4baseMediumLight.Disable 0
+			fwvT4baseBrightLight.Disable 0
+			Call fwvFuncSetListIsDisabled fwvT4LightsOffList 0
+			Call fwvFuncSetListIsDisabled fwvT4LightsRedList 1
+			Call fwvFuncSetListIsDisabled fwvT4LightsOrangeList 1
+			Call fwvFuncSetListIsDisabled fwvT4LightsAquaList 1
+			Call fwvFuncSetListIsDisabled fwvT4LightsGreenList 1
+		endif
+		set sLastTheme to fwvq1.tTheme
+		set sLastColor to sNormalLightColor
+		set sLastBright to sNormalLightBrightness
+	endif
+	if fwvq1.tTheme == 3 && fwvT4ClightNormalRef.GetDisabled == 1
+		if fwvT4CpsychicRef.IsAnimPlaying == 0
+			fwvT4CpsychicRef.PlayGroup Backward 0
+		endif
+	elseif fwvq1.tTheme == 3
+		if fwvT4CpsychicRef.IsAnimPlaying == 0
+			fwvT4CpsychicRef.PlayGroup Forward 0
+		endif
+	endif
+end

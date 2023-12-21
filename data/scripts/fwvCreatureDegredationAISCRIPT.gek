@@ -1,0 +1,62 @@
+scn fwvCreatureDegredationAISCRIPT
+
+float dday
+short doOnce
+float fAngle
+float fAngleTurned
+float fTimer
+float fTimePassed
+short sDirection
+
+begin onActivate
+
+	if getDead == 1
+		MessageEx "Best not to go poking around..."
+	endif
+	activate
+
+end
+
+begin GameMode
+	StopCombat
+	SetAV Aggression 0
+	if IsInCombat == 1 || GetDistance Player < 768
+		if sDirection == 0
+			set sDirection to 1
+			say Attack
+		elseif fAngleTurned > 530
+			if GetRandomPercent < 50
+				say Attack
+			endif
+			if GetRandomPercent < 20
+				set sDirection to sDirection * -1
+			endif
+			set fAngleTurned to 0
+		endif
+
+		set fTimer to fTimer + fTimePassed
+		if fTimer >= 0.25
+			FireWeapon fwvWdalekBig
+			set fTimer to 0.0
+		endif
+		set fTimePassed to GetSecondsPassed
+		set fAngle to 360 * sDirection
+		set fAngleTurned to fAngleTurned + 360 * fTimePassed
+		rotate Z fAngle
+	else
+		set fTimer to 0.0
+	endif
+
+	if getDead == 1
+		if doOnce == 0
+			set dDay to gameDaysPassed
+			set doOnce to 1
+		endif
+
+		if gameDaysPassed > dDay + 0.5
+			MarkForDelete
+			Disable
+		endif
+	endif
+
+end

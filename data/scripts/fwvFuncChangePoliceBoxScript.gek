@@ -1,0 +1,107 @@
+scn fwvFuncChangePoliceBoxScript
+
+; Written by Cookiemorph 11/4/15
+
+ref rPoliceBox
+ref rCurRef
+short sCount
+
+Begin Function { }
+
+	set sCount to 0
+
+	While sCount < ListGetCount fwvTardisPoliceBoxList
+		set rCurRef to ListGetNthForm fwvTardisPoliceBoxList sCount
+
+		if fwvq1.tTheme == 0 ; COPPER
+			if rCurRef.GetIsID fwvPoliceBoxDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg4
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeDoorBox.nif"
+			endif
+			;printc "onload ChangePoliceBox to 2014 for Copper"
+		elseif fwvq1.tTheme == 1 || fwvq1.tTheme == 5 ; CORAL OR GLITCH
+			if rCurRef.GetIsID fwvPoliceBoxDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2005\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2005\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2005\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2005\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg4
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2005\policeBoxRemakeDoorBox.nif"
+			endif
+			;printc "onload ChangePoliceBox to 2005 for Coral or Glitch"
+		elseif fwvq1.tTheme == 2 || fwvq1.tTheme == 4 ; CLASSIC OR EDWARDIAN
+			if rCurRef.GetIsID fwvPoliceBoxDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1983\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1983\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1983\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1983\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg4
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1983\policeBoxRemakeDoorBox.nif"
+			endif
+			;printc "onload ChangePoliceBox to 1983 for Classic or Edwardian"
+		elseif fwvq1.tTheme == 3 ; TOYOTA
+			if rCurRef.GetIsID fwvPoliceBoxDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg4
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p2014\policeBoxRemakeDoorBox.nif"
+			endif
+			;printc "onload ChangePoliceBox to 2014 for Toyota"
+		elseif fwvq1.tTheme == 6 ; RETRO
+			if rCurRef.GetIsID fwvPoliceBoxDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg4
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeDoorBox.nif"
+			endif
+			;printc "onload ChangePoliceBox to 1978 for Retro"
+		else  ; Fix for Rani and all others to set to a single one rather than whatever last was
+				; using 1978 since it only has 1 other, Copper and Toyota are the same actually
+			if rCurRef.GetIsID fwvPoliceBoxDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg1
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg2
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg3
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeDoorBox.nif"
+			elseif rCurRef.GetIsID fwvPoliceBoxDoorDmg4
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\policeBox\p1978\policeBoxRemakeDoorBox.nif"
+			endif		
+			;printc "onload ChangePoliceBox to 1978 for Others"
+		endif
+
+		set sCount to sCount + 1
+
+	Loop
+
+	set rPoliceBox to fwvq1.rPoliceBoxDoorRef
+	if fwvq1.sPoliceBoxIsUnspawned == 0
+		rPoliceBox.Update3D
+		;printc "Func finished"
+	endif
+
+End

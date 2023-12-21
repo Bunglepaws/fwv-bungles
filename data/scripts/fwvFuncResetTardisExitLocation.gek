@@ -1,0 +1,29 @@
+scn fwvFuncResetTardisExitLocation
+
+ref curRef
+float fPz
+float fMx
+float fMy
+float fMz
+
+begin function { }
+	; teleport the exterior TARDIS stuff
+	set curRef to fwvq1.rCRotorRef
+	fwvTmonitorRef.Activate curRef 1 ; don't activate as the player
+	
+	set curRef to fwvq1.enableDoor
+	
+	set fPz to curRef.GetAngle Z
+	set fMx to Sin fPz
+	set fMy to Cos fPz
+	set fMx to fMx * 96 + curRef.GetPos X
+	set fMy to fMy * 96 + curRef.GetPos Y
+	set fMz to curRef.GetPos Z
+
+	; where the player steps out at
+	PoliceBoxDoorExitRef.moveTo curRef
+	PoliceBoxDoorExitRef.SetPos X fMx
+	PoliceBoxDoorExitRef.SetPos Y fMy
+	PoliceBoxDoorExitRef.SetPos Z fMz
+	PoliceBoxDoorExitRef.SetAngle Z fPz
+end

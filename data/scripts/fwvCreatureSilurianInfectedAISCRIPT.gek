@@ -1,0 +1,54 @@
+scn fwvCreatureSilurianInfectedAISCRIPT
+
+short sfxOnce
+short standing
+short range
+ref sit
+
+short alerted
+
+begin gamemode
+
+damageAV RightMobilityCondition 100
+
+	set sit to getLinkedRef
+
+if getDead == 0
+	if getIsID fwvSilurianInfectedSitting
+		if getDistance player < 150
+			StartCombat player
+			if standing == 0
+				removeScriptPackage fwvSilurianInfectedSitPackage
+				addScriptPackage fwvSilurianInfectedPackage
+				evp
+				set standing to 1
+			endif
+			if sfxOnce == 0
+				PlaySound NPCGeckoScreamVox
+				set sfxOnce to 1
+			endif
+			set range to 0
+		else
+			if range == 0
+				PlaySound NPCGeckoInjured
+				StopCombat Player
+				set sfxOnce to 0
+				set range to 1
+			endif
+		endif
+	elseif getIsID fwvSilurianInfected
+		if getDistance player < 100
+			StartCombat Player
+			PlaySound NPCGeckoScreamVox
+			set range to 0
+		else
+			if range == 0
+				PlaySound NPCGeckoInjured
+				StopCombat Player
+				set range to 1
+			endif
+		endif
+	endif
+endif
+
+end

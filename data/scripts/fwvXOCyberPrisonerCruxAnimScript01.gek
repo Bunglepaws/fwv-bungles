@@ -1,0 +1,31 @@
+scn fwvXOCyberPrisonerCruxAnimScript01
+
+
+ref rSelf
+float fTimer
+short sDoOnce
+
+begin GameMode
+	
+	set rSelf to GetSelf
+
+
+	if fwvqInvasions.CyberPrisoner01Uncrux == 0 
+		;set sDoOnce to 0
+		if rSelf.GetSitting == 0
+			;set sDoOnce to 0
+			if fTimer < 3 
+				if sDoOnce == 0
+					rSelf.moveto fwvCybStrngPrisoner01Furn
+					set sDoOnce to 1
+				endif
+ 				set fTimer to fTimer + getSecondsPassed
+			else
+				set sDoOnce to 0
+			endif
+		endif
+	endif			
+
+	
+end
+

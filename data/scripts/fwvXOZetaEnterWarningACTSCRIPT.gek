@@ -1,0 +1,13 @@
+scn fwvXOZetaEnterWarningACTSCRIPT
+
+short sDoOnce
+
+
+begin onTriggerEnter Player
+
+	if sDoOnce == 0
+		ShowMessage fwvXOZetaEnterWarningMESG
+		set sDoOnce to 1
+	endif
+
+end

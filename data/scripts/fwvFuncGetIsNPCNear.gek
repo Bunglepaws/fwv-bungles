@@ -1,0 +1,49 @@
+scn fwvFuncGetIsNPCNear
+
+short sCurCount
+short sFindType
+short sFindNumber
+ref rCurRef
+ref rTarget
+ref rReturnValue
+short sTargetDist
+short sDistance
+
+begin Function { rTarget, sTargetDist }
+
+	set sFindType to 42
+
+	Label 0
+
+	set sCurCount to 0
+	set sFindNumber to GetNumRefs sFindType
+	if sFindNumber > 0
+		set rCurRef to GetFirstRef sFindType
+		Label 1
+		
+		set sCurCount to sCurCount + 1
+		
+		if rCurRef != 0
+			if rCurRef.GetDisabled == 0
+				if rCurRef.GetDead == 0
+					set sDistance to rTarget.GetDistance rCurRef
+					if sDistance <= sTargetDist
+						set rReturnValue to rCurRef
+					endif
+				endif
+			endif
+		endif
+		if sCurCount < sFindNumber && rReturnValue == 0
+			set rCurRef to GetNextRef
+			Goto 1
+		endif
+	endif
+
+	set sFindType to sFindType + 1
+
+	if sFindType <= 45
+		Goto 0
+	endif
+
+	SetFunctionValue rReturnValue
+end

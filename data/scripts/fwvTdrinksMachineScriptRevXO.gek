@@ -1,0 +1,75 @@
+scn fwvTdrinksMachineScriptRevXO
+
+short sAwaitingInput
+float DrinksDay
+short countDrinksLeft
+short button
+
+begin OnActivate Player
+	if countdrinksLeft > 0 
+		PlaySound3d fwvFXfoodProcessorBeep
+		ShowMessage fwvTARDISDrinksVendorXO countDrinksLeft
+		set sAwaitingInput to 1
+	else
+		if GameDaysPassed >= DrinksDay + 0.125 ; ready to serve
+			PlaySound3d fwvFXfoodProcessorBeep
+			set countDrinksLeft to 4
+			ShowMessage fwvTARDISDrinksVendorXO countDrinksLeft
+			set sAwaitingInput to 1
+		else
+			PlaySound3d fwvFXfoodProcessorBeep
+			MessageBoxEx "The Drinks Vendor must recharge for 3 hours after serving the maximum 4 orders."
+		endif
+	endif
+end	
+
+
+begin GameMode
+	if sAwaitingInput == 1
+		set button to GetButtonPressed	
+		if button == 0 ;water x2
+			player.additem WaterPurified 2
+			set countDrinksLeft to countDrinksLeft - 1
+			;set sAwaitingInput to 0
+		elseif button == 1 ;ginger beer x2
+			player.additem fwvFoodGingerBeer 2
+			set countDrinksLeft to countDrinksLeft - 1
+			;set sAwaitingInput to 0
+		elseif button == 2 ; Nuka
+			player.additem NukaCola 1
+			set countDrinksLeft to countDrinksLeft - 1
+			;set sAwaitingInput to 0
+		elseif button == 3 ; Nuka Quartz
+			player.additem NVNukaCOlaQuartz 1
+			set countDrinksLeft to countDrinksLeft - 1
+			;set sAwaitingInput to 0
+		elseif button == 4 ; Nuka Quantum
+			player.additem MS05NukaColaQtm 1
+			set countDrinksLeft to countDrinksLeft - 1
+			;set sAwaitingInput to 0
+		elseif button == 5 ; Nuka Victory 
+			player.additem NVNukaColaVictory 1
+			set countDrinksLeft to countDrinksLeft - 1
+			;set sAwaitingInput to 0
+		elseif button == 6 ; Sunset Sars
+			player.additem SSBottleFull 1
+			set countDrinksLeft to countDrinksLeft - 1
+			;set sAwaitingInput to 0
+		elseif button == 7 ; Cancel
+			set sAwaitingInput to 0
+		endif
+		PlaySound fwvFXfoodProcessorSpawn
+		
+			
+		if countDrinksLeft == 0
+			set DrinksDay to GameDaysPassed
+			printc "4 drinks served, now has to recharge"
+			MessageBoxEx "The Drinks Vendor must recharge for 3 hours after serving the maximum 4 orders."
+			set sAwaitingInput to 0
+		elseif button != 7 
+			ShowMessage fwvTARDISDrinksVendorXO countDrinksLeft
+		else
+			MessageEx "Share and Enjoy!" 
+		endif
+	endif
+end

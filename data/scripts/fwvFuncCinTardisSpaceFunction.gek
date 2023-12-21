@@ -1,0 +1,21 @@
+scn fwvFuncCinTardisSpaceFunction
+
+short sFrame
+float fTimer
+
+Begin Function { }
+
+	fwvCinPlayerRef.moveTo player
+	player.moveTo fwvCinCam1Ref
+	DisablePlayerControls 1 1 1 1 1 1 1
+
+	if sFrame == 0
+		if fTimer < 2.0
+			let fTimer := fTimer + getSecondsPassed
+		else
+			;player.moveTo fwvCinPlayerRef
+			let sFrame := 1
+		endif
+	endif
+
+End

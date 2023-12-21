@@ -1,0 +1,71 @@
+scn fwvXOJackFootlockersScript
+
+short effectOn
+short sUnlocked
+ref rSelf
+
+begin OnActivate Player
+	if GetIsReference fwvXOHarknessBox01REF == 1
+		set rSelf to GetSelf
+		if sUnlocked == 0
+			if rSelf.GetLocked == 1
+				MessageEx "It's locked, and the keyhole is jammed..."
+				PlaySound DRSLocked
+			else
+				set sUnlocked to 1
+				printc "sUnlocked = %g" sUnlocked
+				activate
+			endif
+		else
+			activate
+		endif
+	elseif GetIsReference fwvXOHarknessBox02REF == 1
+		set rSelf to GetSelf
+		if sUnlocked == 0
+			if rSelf.GetLocked == 1
+				MessageEx "It's locked, and the keyhole is jammed..."
+				PlaySound DRSLocked
+			else
+				set sUnlocked to 2
+				printc "sUnlocked = %g" sUnlocked
+				activate
+			endif
+		else
+			activate
+		endif
+	endif
+end
+
+
+
+Begin GameMode
+
+	if player.getEquipped fwvOutfit3DGlasses == 1 && getDistance player <= 400
+		if effectOn == 0
+			pms fwvHologramInterface
+			set effectOn to 1
+		endif
+	else
+		sms fwvHologramInterface
+		set effectOn to 0
+	endif
+
+	if sUnlocked == 1
+		printc "GM sUnlocked = %g" sUnlocked
+		fwvXOHarknessBox02REF.unlock
+		set sUnlocked to 2
+	endif
+	
+
+	if fwvXOHarknessBox01REF.getItemCount fwvOutfitJack == 0
+		fwvXOHarknessBox02REF.removeItem fwvOutfitJack 1
+	endif
+
+	if fwvXOHarknessBox01REF.getItemCount fwvItemSchemVortexManipulator == 0
+		fwvXOHarknessBox02REF.removeItem fwvItemSchemVortexManipulator 1
+	endif
+
+
+End
+
+

@@ -1,0 +1,19 @@
+scn fwvDalekMachineScript
+
+short doOnce
+
+begin onActivate player
+
+	player.showrecipemenu WorkbenchRecipes
+
+	if doOnce == 0
+		PlaySound OBJZAXConsoleVialForward
+		player.addItem fwvItemSchemDalekaniumBomb 1
+		set doOnce to 1
+		;fwvSkaroLabSaucerRef.Enable
+		;fwvSkaroAmbush01.enable
+		;fwvSkaroAmbush02.enable
+		;fwvSkaroAmbush03.enable
+	endif
+	activate
+end

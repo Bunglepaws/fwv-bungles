@@ -1,0 +1,20 @@
+scn fwvBookTardisTechnicalSCRIPT
+
+;written by Demeggy 9/3/13
+
+short learnt
+
+begin onActivate player
+
+if learnt == 0
+
+	ShowMessage fwvBookTechRead
+	PlaySound UILevelUp
+	PlaySound UILevelUpText
+	set fwvq1.tBookTech to 1
+	Disable
+	MarkForDelete
+
+endif
+
+end

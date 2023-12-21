@@ -1,0 +1,54 @@
+scn fwvSilurianBookActivatorScript
+
+short effectOn
+ref rSelf 
+begin gameMode
+
+	if getStage fwvSilurianBook == 20
+		if getDistance player > 350
+			fwvXOSilurianBookWhispersFarREF.enable
+			fwvXOSilurianBookWhispersCloseREF.disable
+		elseif getDistance player <= 350
+			fwvXOSilurianBookWhispersCloseREF.enable
+			fwvXOSilurianBookWhispersFarREF.disable
+		endif
+	endif
+
+
+	let rSelf := GetSelf
+
+	if player.getEquipped fwvOutfit3DGlasses == 1 && rSelf.getDistance player <= 400
+		if effectOn == 0
+			rSelf.pms fwvHologramInterface
+			set effectOn to 1
+		endif
+	else
+		rSelf.sms fwvHologramInterface
+		set effectOn to 0
+	endif
+
+
+
+
+end
+
+begin onActivate player
+
+	if getStage fwvSilurianBook == 20
+		ShowMessage fwvXOSilurianBookMESG01
+		ShowMessage fwvXOSilurianBookMESG02
+		ShowMessage fwvXOSilurianBookMESG03
+		fwvXOSilurianBookWhispersFarREF.disable
+		fwvXOSilurianBookWhispersCloseREF.disable
+		fwvSilurianLibraryGreenLightREF.disable
+		fwvSilurOfficerPlotREF.enable
+		fwvXOSilurNCRNPCPlotREF.enable
+		fwvSilurStrngPlotGuardREF.enable
+		;player.addItem fwvItemSchemCryoGun 1
+		SetObjectiveCompleted fwvSilurianBook 20 1
+		setStage fwvSilurianBook 100
+		MarkForDelete
+		Disable 1
+	endif
+
+end

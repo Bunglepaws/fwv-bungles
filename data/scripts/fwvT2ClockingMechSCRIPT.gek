@@ -1,0 +1,27 @@
+scn fwvT2ClockingMechSCRIPT
+
+; TARDIS Locking Down Mechanism script, written by Demeggy 21/2/13
+; edited by Spyduck for ANIMATIONS on Feb. 23
+; copied by Spyduck for single-animation use hurrah
+
+Begin OnActivate player
+
+	if IsAnimPlaying == 0
+		if fwvq1.tPath == 3
+			PlaySound UIHackingPassGood
+			set fwvq1.tPath to 4
+			
+		else
+
+			PlaySound UIHackingPassBad
+			set fwvq1.tPath to 0
+
+		endif
+		
+		PlayGroup Forward 0
+	endif
+	activate
+
+end
+
+

@@ -1,0 +1,38 @@
+scn fwvq3bRockHeapScript
+
+short button
+short event
+float eTimer
+
+begin onActivate player
+
+	if event == 0
+		ShowMessage fwvq3bRockHeapMessage
+	endif
+
+end
+
+begin gamemode
+
+set button to getbuttonpressed
+
+	if button == 0
+		player.removeItem fwvWeapNitro9 1
+		fwvq3bNitroRef.enable
+		set event to 1
+	else
+
+	endif
+
+	if event == 1
+		if eTimer < 5
+			set eTimer to eTimer + getSecondsPassed
+		else
+			placeatMe NellisMunitionsExplosion
+			fwvq3bNitroRef.disable
+			fwvq3bNestenePodDoorRef.enable
+			disable
+			set event to 0
+		endif
+	endif
+end

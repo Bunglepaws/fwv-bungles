@@ -1,0 +1,15 @@
+scn fwvSkaroCubicInteriorScript
+
+begin OnTriggerEnter Player
+	if fwvqRooms.sSkaroLastCubicTouched != 1
+		set fwvqRooms.sSkaroLastCubicTouched to 1
+	endif
+end
+
+begin OnTriggerLeave Player
+	if fwvqRooms.sSkaroIsInterior == 0 && fwvqRooms.sSkaroLastCubicTouched == 1
+		set fwvqRooms.sSkaroIsInterior to 1
+		printc "inside"
+	endif
+end
+

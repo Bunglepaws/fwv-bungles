@@ -1,0 +1,7 @@
+scn fwvSisterHoodExitTriggerSCRIPT
+
+begin onTriggerEnter player
+
+	player.moveTo fwvKarnTempleEntranceRef1
+
+end

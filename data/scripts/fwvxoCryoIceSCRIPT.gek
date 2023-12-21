@@ -1,0 +1,13 @@
+ScriptName fwvxoCryoIceSCRIPT
+
+Begin ScriptEffectStart
+;	SMS fwvxoCryoFX01
+	if (isSpellTarget fwvxoCryoOnce == 0)
+		PMS fwvxoCryoFX01
+		cios fwvxoCryoOnce
+	endif
+End
+
+Begin ScriptEffectFinish
+	SMS fwvxoCryoFX01
+End

@@ -1,0 +1,77 @@
+scn fwvTardisGardenAllotment1Script
+
+short button
+
+begin onActivate player
+
+	if fwvqCraft.growing1 == 0
+		printc "detected"
+		ShowMessage fwvTardisGardenPlantMessage
+	else
+		ShowMessage fwvTardisGardenPlantGrowingMessage
+	endif
+ 	printc "growing is %g" fwvqCraft.growing1 
+
+end
+
+begin gameMode
+
+	set button to getbuttonpressed
+
+	if button == 0 															;barrel cactus
+		player.removeItem NVFreshBarrelCactusFruit 1
+ 		set fwvqCraft.growing1Day to gameDaysPassed
+		set fwvqCraft.growing1Phase to 1
+ 		set fwvqCraft.growing1 to 1
+ 		set fwvqCraft.growing1Type to 1
+	elseif button == 1 																;nevada agave
+		player.removeItem NevadaAgaveFruit 1
+ 		set fwvqCraft.growing1Day to gameDaysPassed
+		set fwvqCraft.growing1Phase to 1
+ 		set fwvqCraft.growing1 to 1
+ 		set fwvqCraft.growing1Type to 2
+	elseif button == 2  																;banana yucca
+		player.removeItem NVFreshBananaYuccaFruit 1
+ 		set fwvqCraft.growing1Day to gameDaysPassed
+		set fwvqCraft.growing1Phase to 1
+ 		set fwvqCraft.growing1 to 1
+ 		set fwvqCraft.growing1Type to 3
+	elseif button == 3  																;buffalo gourd
+		player.removeItem BuffaloGourdSeed 1
+ 		set fwvqCraft.growing1Day to gameDaysPassed
+		set fwvqCraft.growing1Phase to 1
+ 		set fwvqCraft.growing1 to 1
+ 		set fwvqCraft.growing1Type to 4
+	elseif button == 4  																;pricky pear cactus
+		player.removeItem PricklyPearCactusFruit 1
+ 		set fwvqCraft.growing1Day to gameDaysPassed
+		set fwvqCraft.growing1Phase to 1
+ 		set fwvqCraft.growing1 to 1
+ 		set fwvqCraft.growing1Type to 5
+	elseif button == 5 																;teaplant
+		player.removeItem fwvItemTealeaf 1
+ 		set fwvqCraft.growing1Day to gameDaysPassed
+		set fwvqCraft.growing1Phase to 1
+ 		set fwvqCraft.growing1 to 1
+ 		set fwvqCraft.growing1Type to 6
+	elseif button == 6  																;demeter bush
+		player.removeItem fwvItemDemeterSeed 1
+ 		set fwvqCraft.growing1Day to gameDaysPassed
+		set fwvqCraft.growing1Phase to 1
+ 		set fwvqCraft.growing1 to 1
+ 		set fwvqCraft.growing1Type to 7
+	elseif button == 7  																;janis bush
+		player.removeItem fwvItemJanisThorn 1
+ 		set fwvqCraft.growing1Day to gameDaysPassed
+		set fwvqCraft.growing1Phase to 1
+ 		set fwvqCraft.growing1 to 1
+ 		set fwvqCraft.growing1Type to 8
+	elseif button == 8  																;Cave fungus
+		player.removeItem CaveFungus 1
+ 		set fwvqCraft.growing1Day to gameDaysPassed
+		set fwvqCraft.growing1Phase to 1
+ 		set fwvqCraft.growing1 to 1
+ 		set fwvqCraft.growing1Type to 9
+	endif
+	
+end

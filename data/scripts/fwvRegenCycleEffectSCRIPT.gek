@@ -1,0 +1,5 @@
+scn fwvRegenCycleEffectSCRIPT
+
+Begin ScriptEffectStart
+	player.pms fwvRegenEffectShader 
+End

@@ -1,0 +1,33 @@
+scn fwvTardisEmergencyHatchSCRIPT
+
+;written by Demeggy 9/3/13
+
+ref rLinkedRef
+short event
+float timer
+
+begin onActivate player
+	if 1 == 0 ;fwvq1.tPChp <= 0
+		PlaySound DRSSewerLadderExit
+		imod FadeToBlackAndBackISFX
+		set event to 1
+	else
+		ShowMessage fwvTinteriorHatchSealedMessage
+	endif
+	activate
+end
+
+begin gameMode
+	if event == 1
+		if timer < 2
+			set timer to timer + getsecondspassed
+		else
+			set rLinkedRef to GetLinkedRef
+			if rLinkedRef != 0
+				set timer to 0
+				set event to 0
+				Player.MoveTo rLinkedRef
+			endif
+		endif
+	endif
+end

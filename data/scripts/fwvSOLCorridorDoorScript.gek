@@ -1,0 +1,36 @@
+scn fwvSOLCorridorDoorScript
+
+
+float timer
+float fTimePassed
+
+begin OnActivate
+	set fTimePassed to 4.0
+	if getOpenState == 3
+		setOpenState 1
+	endif
+end
+
+begin GameMode
+	set fTimePassed to fTimePassed - GetSecondsPassed
+	if fTimePassed < 0.0
+		set fTimePassed to 0.0
+	endif
+	if GetOpenState == 3 && fTimePassed <= 0.0 ; closed, try to open
+		set fTimePassed to 0.5
+		if GetDistance Player <= 512
+			SetOpenState 1
+		endif
+	endif
+
+	if GetOpenState == 1 && fTimePassed <= 0.0 ; opened, try to close
+		if GetDistance Player <= 256
+			set fTimePassed to 1.0
+		else
+			set fTimePassed to 0.5
+			SetOpenState 0
+		endif
+	endif
+
+
+end

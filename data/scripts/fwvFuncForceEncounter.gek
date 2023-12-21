@@ -1,0 +1,24 @@
+scn fwvFuncForceEncounter
+
+ref rTempRef
+
+begin Function {}
+
+	set fwvq1.control to 3
+	set fwvq1.csrON to 2
+	set rTempRef to fwvq1.rTCproximityAlarmRef
+	set fwvq1.CsrTimer to 0
+	rTempRef.enable 0
+
+	set rTempRef to Call fwvFuncGetCtrlByIndex 3
+	set fwvq1.rCsrDestCtrl to rTempRef
+	set fwvq1.rCsrCtrlAttack to 0
+	set fwvq1.rCsrCtrlDefense to 0
+	set fwvq1.rCsrCtrlEvade to 0
+	set fwvq1.rCsrCtrlScan to 0
+	set fwvq1.rCsrCtrlSurf to 0
+	rTempRef.pms fwvHologramPsychicMarker
+	set fwvq1.csrShaderDone to 1
+
+	Call fwvFuncRandomWordGenCSR
+end

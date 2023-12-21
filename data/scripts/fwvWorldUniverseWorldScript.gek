@@ -1,0 +1,16 @@
+scn fwvWorldUniverseWorldScript
+
+float xRef
+float yRef
+
+Begin GameMode
+
+	set xRef to player.getPos x 
+	set yRef to player.getPos y + 100
+
+	if player.getInWorldspace fwvWorldUniverseWorld == 1
+		fwvUniverseTardisRef.setPos x xRef
+		fwvUniverseTardisRef.setPos y yRef
+	endif
+
+end

@@ -1,0 +1,29 @@
+scn fwvCreatureDalekSWDCorpseScript
+
+short init
+float fDay
+
+
+
+begin onActivate
+	MessageEx "Best not to go poking around..."
+
+end
+
+
+
+
+
+Begin GameMode
+
+	if init == 0
+		let fDay := GameDaysPassed
+		let init := 1
+	endif
+
+	if GameDaysPassed > fDay + 1
+		Disable
+		MarkForDelete
+	endif
+
+End

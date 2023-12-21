@@ -1,0 +1,29 @@
+scn fwvq3eCyberConvertScript
+
+short DoOnce
+short free
+
+begin GameMode
+
+	; restrain me once I'm in position
+	if ( DoOnce == 0 )
+		if ( GetSitting == 3 )
+			set DoOnce to 1
+			setRestrained 1
+			IgnoreCrime 1
+		endif
+	endif
+
+end
+
+
+begin onActivate player
+
+	if free == 0
+		player.rewardKarma 5
+		setRestrained 0
+		RemoveScriptPackage CrucifiedToLinkedPackage
+		set free to 1
+	endif
+
+end

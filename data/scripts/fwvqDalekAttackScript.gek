@@ -1,0 +1,137 @@
+scn fwvqDalekAttackScript
+
+short patch
+short random
+short stageDone
+short attackDay
+short attackState
+short exitSaucer
+short killCount			;how many to kill
+short killed				;track how many killed
+
+short tier
+
+float pZ
+float aTimer
+float xTimer
+float moveX
+
+ref drone
+ref paradigm
+ref sWeap
+ref saucer
+
+;tier 1 - single drone
+;tier 2 - 2 drones
+;tier 3 - 2 drones and paradigm
+;tier 4 - 1 drone, 1 paradigm, 1 special weaps
+;tier 5 - 1 paradigm, 2 special weaps
+
+Begin Gamemode
+
+if getQuestCompleted fwvqDalekSaucer == 1
+
+	if patch < 4
+		MessageBoxEx "Be prepared. The Daleks will relentlessly hunt you down across the Mojave."
+		set attackDay to gameDaysPassed
+		set attackState to 0
+		set tier to 1
+		set stageDone to 1
+		set patch to 4
+	endif
+
+	if attackState == 0
+		if player.getInWorldspace wastelandNv == 1 && stageDone == 1 && getStage fwvqDalekAttack < 60
+			if gameDaysPassed > attackDay + 1
+				set attackState to 1
+			endif
+		endif
+	elseif attackState == 1
+		;fwvqDAsaucerRef.enable
+		;fwvqDAsaucerRef.moveTo player
+		set pZ to player.getPos Z + 5000
+		;fwvqDAsaucerRef.setPos Z pZ
+		PlaySound fwvFXdalekSaucerWoosh
+		MessageEx "[You have been found by the Daleks]"
+		set attackState to 2
+	elseif attackState == 2
+		if aTimer < 10.0
+			set aTimer to aTimer + getSecondsPassed
+		else
+			PlaySound fwvFXdalekSaucerWoosh
+			set exitSaucer to 1
+			set drone to fwvqDalekAttackDrone
+			set paradigm to fwvqDalekAttackParadigm
+			set sWeap to fwvqDalekAttackSpecialWeaps
+			if tier == 1
+				set killCount to 1
+				setStage fwvqDalekAttack 10
+				fwvqDAsaucerMarker.placeAtMe drone
+			elseif tier == 2
+				set killCount to 2
+				setStage fwvqDalekAttack 20
+				fwvqDAsaucerMarker.placeAtMe paradigm
+				fwvqDAsaucerMarker.placeAtMe drone
+			elseif tier == 3
+				set killCount to 3
+				setStage fwvqDalekAttack 30
+				fwvqDAsaucerMarker.placeAtMe paradigm
+				fwvqDAsaucerMarker.placeAtMe drone
+				fwvqDAsaucerMarker.placeAtMe drone
+			elseif tier == 4
+				set killCount to 3
+				setStage fwvqDalekAttack 40
+				fwvqDAsaucerMarker.placeAtMe paradigm
+				fwvqDAsaucerMarker.placeAtMe drone
+				fwvqDAsaucerMarker.placeAtMe sWeap
+			elseif tier == 5
+				set killCount to 3
+				setStage fwvqDalekAttack 50
+				fwvqDAsaucerMarker.placeAtMe paradigm
+				fwvqDAsaucerMarker.placeAtMe sWeap
+				fwvqDAsaucerMarker.placeAtMe sWeap
+			endif
+			set killed to 0
+			set stageDone to 0
+			set tier to tier + 1
+			set attackDay to gameDaysPassed
+			set aTimer to 0.0
+			set attackState to 3
+		endif
+	elseif attackState == 3
+		if killed == killCount
+			if getStage fwvqDalekAttack == 10
+				setObjectiveCompleted fwvqDalekAttack 10 1
+			elseif getStage fwvqDalekAttack == 20
+				setObjectiveCompleted fwvqDalekAttack 20 1
+			elseif getStage fwvqDalekAttack == 30
+				setObjectiveCompleted fwvqDalekAttack 30 1
+			elseif getStage fwvqDalekAttack == 40
+				setObjectiveCompleted fwvqDalekAttack 40 1
+			elseif getStage fwvqDalekAttack == 50
+				setObjectiveCompleted fwvqDalekAttack 50 1
+				setStage fwvqDalekAttack 60
+			endif
+			set stageDone to 1
+			set attackState to 0
+		endif
+	endif
+
+	if exitSaucer == 1
+		;set moveX to fwvqDAsaucerRef.getPos X + 100
+		;if xTimer < 10.0
+		;	fwvqDAsaucerRef.setPos X moveX
+		;	set xTimer to xTimer + getSecondsPassed
+		;else
+		;	fwvqDAsaucerRef.disable
+		;	set exitSaucer to 0
+		;endif
+	endif
+
+	if getStage fwvqDalekAttack == 60 && fwvq1.tFlying == 1 && fwvq1.chosenDoor == fwvLskaroForestRef
+		setStage fwvqDalekAttack 100
+	endif
+
+endif
+
+End

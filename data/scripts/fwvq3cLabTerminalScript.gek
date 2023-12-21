@@ -1,0 +1,11 @@
+scn fwvq3cLabTerminalScript
+
+ref comp
+
+begin onActivate player
+	
+	set comp to GetLinkedRef
+
+	comp.activate player 1
+
+end

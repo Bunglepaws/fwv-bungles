@@ -1,0 +1,11 @@
+scn fwvKrogQueststage10triggerSCRIPT
+
+begin onTriggerEnter player
+
+printc "Entered Bad Triggerydooooooo"
+
+ ;  if getStage fwvKrogQuest < 10
+   ;   setStage fwvKrogQuest 10
+  ; endif
+
+end

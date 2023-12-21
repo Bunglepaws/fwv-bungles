@@ -1,0 +1,76 @@
+scn fwvRassilonTimescoopScript
+
+short sSpawn					;frame
+short sTargetNo				;target formlist index selected at random
+short sTargetCount			;number of target to loop through (max of 4)
+short sTargetsListCount 		;gets number of targets
+ref rTarget						;npc at formlist index
+float fDay
+short sLoc
+short Init
+
+Begin onActivate player
+
+	if gameDaysPassed > fDay + 1
+		if getStage fwvqGameOfRassilon >= 100
+			MessageBoxEx "The Time Scoop has been activated, pulling 4 contestants out of Space and Time, and dropping them at random locations across the Deathzone."
+		endif
+		set fDay to GameDaysPassed
+		set sSpawn to 1
+	else
+		if getStage fwvqGameOfRassilon >= 100
+			MessageBoxEx "The Time Scoop has placed all available contestants in the arena. Try again tomorrow."
+		endif
+		set sSpawn to 0
+	endif
+
+End
+
+Begin GameMode
+
+	if sSpawn == 1
+		if sTargetCount < 4
+			set sTargetsListCount to ListGetCount fwvRassilonTargetsList
+			set sTargetNo to Rand 0,sTargetsListCount
+			set rTarget to ListGetNthForm fwvRassilonTargetsList sTargetNo
+			printc "%g: ref is %n" sTargetCount rTarget
+			set sSpawn to 2
+		else
+			set sTargetCount to 0
+			MessageBoxEx "The Time Scoop has placed all available contestants in the arena. It will require 24 hours to recharge."
+			set sSpawn to 0
+		endif
+	elseif sSpawn == 2
+		let sLoc := Rand 1,12
+		if sLoc == 1
+			fwvDZmountain02Ref.placeAtMe rTarget
+		elseif sLoc == 2
+			fwvDZmountain02Ref.placeAtMe rTarget
+		elseif sLoc == 3
+			fwvDZmountain03Ref.placeAtMe rTarget
+		elseif sLoc == 4
+			fwvDZmoorland01Ref.placeAtMe rTarget
+		elseif sLoc == 5
+			fwvDZmoorland02Ref.placeAtMe rTarget
+		elseif sLoc == 6
+			fwvDZmoorland03Ref.placeAtMe rTarget
+		elseif sLoc == 7
+			fwvDZforest01Ref.placeAtMe rTarget
+		elseif sLoc == 8
+			fwvDZforest02Ref.placeAtMe rTarget
+		elseif sLoc == 9
+			fwvDZforest03Ref.placeAtMe rTarget
+		elseif sLoc == 10
+			fwvDZquarry01Ref.placeAtMe rTarget
+		elseif sLoc == 11
+			fwvDZquarry02Ref.placeAtMe rTarget
+		elseif sLoc == 12
+			fwvDZquarry02Ref.placeAtMe rTarget
+		endif
+		set sSpawn to 3
+	elseif sSpawn == 3
+		set sTargetCount to sTargetCount + 1
+		set sSpawn to 1
+	endif
+
+End

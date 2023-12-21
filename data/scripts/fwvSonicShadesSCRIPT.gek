@@ -1,0 +1,109 @@
+scn fwvSonicShadesSCRIPT
+
+short ShadesOn
+ref CombTarget
+short sType
+short targetCell
+short sFired
+
+Begin OnEquip Player
+	set ShadesOn to 1
+end
+
+Begin OnUnequip Player
+	set ShadesOn to 0
+end
+
+Begin GameMode
+	
+	if ShadesOn == 1	
+		if IsControlPressed 27 == 1 && sFired == 0; player hits the Grab button
+			set CombTarget to GetCrosshairRef
+			set sType to GetObjectType CombTarget
+			set targetCell to combtarget.getTeleportCell
+			
+			if sType == 28 || sType == 27
+				if CombTarget.GetLocked == 1
+					if CombTarget.GetLockLevel <= 100
+						PlaySound fwvFXWeaponSonicScrewdriverPlaceholder
+						imod fwvXOSonicShades
+						PlaySound UILockpickingUnlock
+						CombTarget.Unlock
+
+						if targetCell == 0
+
+							;CombTarget.Activate Player 1
+
+						else
+
+							CombTarget.setOpenState 1
+
+						endif
+						set sFired to 1
+					else
+						PlaySound fwvFXWeaponSonicScrewdriverPlaceholder
+						imod fwvXOSonicShades
+						MessageEx "[You cannot open a Deadlock Seal...]"
+						set sFired to 1
+					endif
+				elseif CombTarget.GetLocked == 0
+					PlaySound fwvFXWeaponSonicScrewdriverPlaceholder
+					PlaySound UILockpickingUnlock
+					imod fwvXOSonicShades
+					CombTarget.setOpenState 0
+					CombTarget.lock 100
+					set sFired to 1
+				endif
+			endif
+			
+			if sType == 23
+				if CombTarget.GetLockLevel <= 500
+						PlaySound fwvFXWeaponSonicScrewdriverPlaceholder
+						imod fwvXOSonicShades
+						PlaySound UIHackingPassGood
+						CombTarget.Unlock
+						set sFired to 1
+				endif
+			endif
+			
+			if CombTarget == fwvTelosSensor01 || CombTarget == fwvTelosSensor02 || CombTarget ==  fwvTelosSensor03 || CombTarget ==  fwvTelosSensor04 || CombTarget == fwvAutonMurderTransmitterRef
+				CombTarget.Activate Player 1
+				PlaySound fwvFXWeaponSonicScrewdriverPlaceholder
+				imod fwvXOSonicShades
+				set sFired to 1
+			endif
+			
+			if CombTarget == fwvCyberConversionMFREF
+				if fwvqInvasions.CyberPrisoner01Uncrux == 0
+					PlaySound fwvFXWeaponSonicScrewdriverPlaceholder
+					imod fwvXOSonicShades
+					PlaySound OBJForcefieldShutdown
+					set fwvqInvasions.CyberPrisoner01Uncrux to 1
+					
+					fwvCybStrngPrisoner01NPC.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage1
+					fwvCybStrngPrisoner02NPC.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage2
+					fwvCybStrngPrisoner03NPC.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage3
+					fwvCybStrngPrisoner04NPC.addscriptpackage fwvCyberStrongholdPrisonerFreeWaitPackage4
+					
+					fwvCybStrngPrisoner01NPC.moveto fwvCybStrngPrisoner01GoToPrep
+					fwvCybStrngPrisoner02NPC.moveto fwvCybStrngPrisoner02GoToPrep
+					fwvCybStrngPrisoner03NPC.moveto fwvCybStrngPrisoner03GoToPrep
+					fwvCybStrngPrisoner04NPC.moveto fwvCybStrngPrisoner04GoToPrep
+
+					fwvCybStrngPrisoner01NPC.evp
+					fwvCybStrngPrisoner02NPC.evp
+					fwvCybStrngPrisoner03NPC.evp
+					fwvCybStrngPrisoner04NPC.evp
+				
+					MessageEx "[Subjects released, Cyberconversion aborted]"
+					set sFired to 1
+				endif
+			endif
+		elseif IsControlPressed 27 == 0 && sFired == 1
+			set sFired to 0
+		else
+			; catch-all for IsControlPressed 27 == 1 && sFired == 0 and IsControlPressed 27 == 0 && sFired == 0
+		endif
+	endif
+end
+	

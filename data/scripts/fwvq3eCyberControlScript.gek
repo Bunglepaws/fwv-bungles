@@ -1,0 +1,33 @@
+scn fwvq3eCyberControlScript
+
+short button
+
+begin onActivate player
+
+	if getStage fwvq3e == 75
+		ShowMessage fwvq3eCyberControlMessage
+		setStage fwvq3e 80
+	endif
+
+	if getStage fwvq3e == 85
+		ShowMessage fwvq3eCyberSignalMessage
+	endif
+
+end
+
+begin gamemode
+
+	set button to getbuttonpressed
+
+	if button == 0
+		Player.addItem fwvq3eItemRevivalSignal 1
+		player.rewardKarma -10
+		set fwvq3e.ending to 1
+		setStage fwvq3e 90
+	elseif button == 1
+		player.rewardKarma 25
+		set fwvq3e.ending to 0
+		setStage fwvq3e 90
+	endif
+
+end

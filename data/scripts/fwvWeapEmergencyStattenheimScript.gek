@@ -1,0 +1,90 @@
+scn fwvWeapEmergencyStattenheimScript
+
+;script used for BOTH Emergency Recall and Stattenheim Control
+
+float fPz
+float fMx
+float fMy
+float fMz
+
+float fCalc
+float fCalc2
+short sFadeOutIn
+short sType
+
+ref targetCell
+ref CombTarget
+ref rConsoleRoom
+ref rPoliceBox
+ref rPoliceBoxDoor
+
+float DoorAngle
+
+ref FastRetRef
+ref FastRetTarget
+
+
+Begin OnFire
+
+	set rConsoleRoom to fwvq1.rTDesktopRoom
+
+	if fwvq1.tRepair != 2 && fwvq1.tRefuel != 2
+		if GameDaysPassed + 0.5 < fwvqWeaponQuest.tardisCooldown
+			set fwvqWeaponQuest.tardisCooldown to 0.0 ; reset incase count gets messed up
+		endif
+		if fwvqSystems.tAdvanced == 1
+			if GameDaysPassed > fwvqWeaponQuest.tardisCooldown + 0.5
+				if player.isSwimming == 0 && Player.GetInCell rConsoleRoom == 0 && Player.GetInCell fwvAngelMotel01 == 0 && Player.GetInCell fwvTinterior1 == 0 && fwvTardisRecallExtFadeInBox.fTimeFade <= 0.0 && fwvq1.sPoliceBoxIsUnspawned == 0
+					;imod FadeInFromWhiteISFX
+					set fwvqWeaponQuest.tardisCooldown to GameDaysPassed
+					
+					set rPoliceBox to fwvq1.rPoliceBoxRef
+					set rPoliceBoxDoor to fwvq1.rPoliceBoxDoorRef
+					
+					let FastRetRef := fwvFastReturnRef
+					let FastRetTarget := fwvq1.enableDoor 
+					FastRetRef.moveto FastRetTarget
+					set DoorAngle to FastRetTarget.GetAngle Z
+					FastRetRef.SetAngle Z DoorAngle
+					
+
+
+					;rPoliceBox.Disable 0
+					ShowMessage fwvWeapSonicRecallMessage
+					; teleport the exterior TARDIS stuff
+					set CombTarget to Player ;fwvq1.enableDoor
+					set fPz to CombTarget.GetAngle Z
+					set fMx to Sin fPz
+					set fMy to Cos fPz
+					set fMx to fMx * 96 + CombTarget.GetPos X
+					set fMy to fMy * 96 + CombTarget.GetPos Y
+					set fMz to CombTarget.GetPos Z
+					set fPz to fPz + 180
+			
+					PoliceBoxAltLocationRef.MoveTo Player
+					Call fwvFuncSetPosition { PoliceBoxAltLocationRef fMx fMy fMz }
+					PoliceBoxAltLocationRef.SetAngle Z fPz
+					
+					let fwvqWeaponQuest.sTardisRecallFrame := 1
+					if player.getEquipped fwvWeapEmergencyRemote == 1
+						player.removeItem fwvWeapEmergencyRemote 1 1
+					endif
+				else
+					PlaySound WPNRechargerFail
+					ShowMessage fwvWeapModeUnavailableMessage
+				endif
+			else
+				PlaySound WPNRechargerFail
+				ShowMessage fwvWeapModeUnavailableMessage
+			endif
+		else
+			PlaySound WPNRechargerFail
+			MessageEx "Not Available in Basic Mode"
+		endif
+	endif
+	
+
+
+
+
+End

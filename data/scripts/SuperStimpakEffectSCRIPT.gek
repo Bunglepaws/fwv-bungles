@@ -1,0 +1,9 @@
+scn SuperStimpakEffectSCRIPT
+
+begin ScriptEffectStart
+	CastImmediateOnSelf SuperStimpakDebuffEffect
+end
+
+begin ScriptEffectFinish
+	ApplyImageSpaceModifier Addiction01ISFX
+end

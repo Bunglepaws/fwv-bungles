@@ -1,0 +1,100 @@
+scn fwvqDalekSaucerQuestScript
+
+short cellCam
+short vent
+short ventBlow
+float vTimer
+short gloop
+
+float qTimer
+short questTimer
+short init
+short intro
+
+short frame
+float fTimer
+
+float pZ
+
+begin gamemode
+
+	if init == 0
+		set gloop to 2
+		set init to 1
+	endif
+
+	if frame == 0
+		if player.getInWorldspace WastelandNV && fwvqRegen.TimeLordTrue == 1 && player.isInCombat == 0
+			;fwvqDAsaucerRef.enable
+			;fwvqDAsaucerRef.moveTo player
+			set pZ to player.getPos Z + 5000
+			;fwvqDAsaucerRef.setPos Z pZ
+			DisablePlayerControls
+			PlaySound fwvFXdalekSaucerWoosh
+			set frame to 1
+			set fTimer to 0.0
+		endif
+	elseif frame == 1
+		if fTimer < 5.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			imod FadeToWhiteISFX
+			set frame to 2
+			set fTimer to 0.0
+		endif
+	elseif frame == 2
+		if fTimer < 4.5
+			set fTimer to fTimer + getSecondsPassed
+		else
+			;fwvqDAsaucerRef.disable
+			player.moveTo fwvDalekSaucerStarRef
+			imod fwvqDalekSaucerWakeFX
+			set frame to 3
+			set fTimer to 0.0
+		endif
+	elseif frame == 3
+		if fTimer < 10.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			player.damageAV LeftAttackCondition 1000
+			player.damageAV RightAttackCondition 1000
+			player.damageAV RightMobilityCondition 1000
+			player.damageAV LeftMobilityCondition 1000
+			set fwvqRegen.timeLordTrue to 0
+			player.addToFaction fwvDalekFaction 10			;make daleks friendly until player breaks out of cell...
+			set fwvqRegen.disableRegen to 1						;disable players ability to regenerate
+			set frame to 4
+		endif	
+	elseif frame == 4
+		MessageBoxEx "Your body is covered in scars and aches all over. You have no idea how long you've been here, but your captors have kept you a prisoner for long enough. It's time to find a way out..."
+
+		;Enable all controls except the pipboy
+		EnablePlayerControls 1 0 1 1 1 1 1
+
+		;move all inventory to dalek locker
+		player.removeAllItems fwvDalekSaucerPlayerItemsRef 1 1
+
+		;move TARDIS to dalek holding cell
+		set fwvq1.enableDoor to fwvDalekSaucerLocRef
+		Call fwvFuncDematTardis fwvDalekSaucerLocRef
+
+		setStage fwvqDalekSaucer 10
+		set frame to -1
+	endif
+
+	if ventBlow == 1
+		if vTimer < 5.0
+			set vTimer to vTimer + getSecondsPassed
+		else
+			MessageEx "The Vent plate has overheated, exposing the Cell Door wiring beneath..."
+			fwvDalekSaucerVentRef.placeAtMe EyebotExplosion
+			set ventBlow to 0
+			set vent to 1
+		endif
+	endif
+
+	if player.getInCell fwvTinterior1 == 1 && getStage fwvqDalekSaucer == 75 && fwvq1.tFlying == 1
+		setStage fwvqDalekSaucer 100
+	endif
+
+end

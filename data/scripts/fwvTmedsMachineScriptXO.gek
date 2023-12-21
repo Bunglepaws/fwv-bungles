@@ -1,0 +1,36 @@
+scn fwvTmedsMachineScriptXO
+
+;short doOnce
+short countTotal
+
+float StimpakDay
+
+begin OnActivate Player
+	if GameDaysPassed < StimpakDay
+		set StimpakDay to 0.0
+	endif
+
+	if GameDaysPassed > StimpakDay + 0.5
+		if countTotal == 0
+			;PlaySound3d fwvFXfoodProcessorBeep
+			set StimpakDay to GameDaysPassed
+			set countTotal to 2
+		endif
+		activate
+	else
+		MessageBoxEx "The Medbay Vendor must recharge until for 12 hours."
+		PlaySound3d fwvFXfoodProcessorBeep
+	endif
+	
+end
+
+begin GameMode
+	
+	if countTotal > 0
+		PlaySound fwvFXfoodProcessorSpawn
+		player.additem Stimpak 2	
+		set countTotal to 0
+		;set StimpakDay to GameDaysPassed
+	endif
+	
+end

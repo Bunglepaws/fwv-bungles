@@ -1,0 +1,14 @@
+scn fwvXORiverHoloSweetieSCRIPT
+
+ref rSelf
+
+begin OnActivate Player
+
+	showmessage fwvXORiverSongHelloSweetieMESG
+	
+	player.additem fwvItemSchemSonicRiver 1
+
+	set rSelf to GetSelf
+	rSelf.disable
+
+end

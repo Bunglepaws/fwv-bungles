@@ -1,0 +1,56 @@
+scn fwvSilenceVoiceInterfaceScript
+
+short init
+short holo
+short sLastSpot
+short sDisabledLast
+short sFadeIn
+short sFadeOut
+float fFadeTime
+
+begin gamemode
+	if init == 0
+		set init to 1
+	endif
+	if ((GetGameRestarted || GetGameLoaded) && GetDisabled == 0) || (sDisabledLast != GetDisabled && GetDisabled == 0)
+		sms fwvHologramInterfaceNeutral
+		pms fwvHologramInterfaceNeutral
+		saa 0.6
+		PlaySound OBJForceFieldImpact
+	elseif GetDistance Player < 230 && sFadeOut == 0 && sFadeIn == 0 && GetDisabled == 0
+		;StartConversation Player GREETING
+		Activate Player
+	endif
+	if (sDisabledLast != GetDisabled && GetDisabled == 0)
+		set sFadeIn to 1
+		set fFadeTime to GetSecondsPassed
+		set fFadeTime to 0.05
+	endif
+	if sFadeIn == 1
+		set fFadeTime to fFadeTime + GetSecondsPassed * 10.0
+		SetScale fFadeTime
+		if fFadeTime >= 1.2
+			set fFadeTime to 0.0
+			set sFadeIn to 0
+			SetScale 1.0
+		endif
+	elseif sFadeOut == 1
+		if fFadeTime == 0.0
+			PlaySound OBJForceFieldImpact
+			set fFadeTime to 1.2
+		endif
+		set fFadeTime to fFadeTime - GetSecondsPassed * 10.0
+		SetScale fFadeTime
+		if fFadeTime <= 0.2
+			set fFadeTime to 0
+			set sFadeOut to 0
+			Disable
+		endif
+	endif
+
+	set sDisabledLast to GetDisabled
+
+	StopCombat
+	ResetFallDamageTimer
+	ResetHealth
+end

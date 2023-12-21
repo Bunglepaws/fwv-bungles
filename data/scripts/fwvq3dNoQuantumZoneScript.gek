@@ -1,0 +1,13 @@
+scn fwvq3dNoQuantumZoneScript
+
+begin onTriggerEnter player
+
+	set fwvq3d.qmZoneOff to 1
+
+end
+
+begin onTriggerLeave player
+
+	set fwvq3d.qmZoneOff to 0
+
+end

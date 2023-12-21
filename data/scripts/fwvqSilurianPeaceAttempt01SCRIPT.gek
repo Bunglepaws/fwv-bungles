@@ -1,0 +1,139 @@
+scn fwvqSilurianPeaceAttempt01SCRIPT
+
+short sPlotInit
+short sPlotOfficertoPlayer
+short sGuardTalkOnce
+short sOfficerTalk
+short sOfficerTalkOnce
+short sPlotStage
+short sDoOnce123
+ref rWeap
+float fGSP
+ref rWeapNow
+short sPlotCaptiveUntied
+short sPlotOver
+short sUnarmed
+short sDoOnce
+short sFists
+short sKillNCRNPC
+float fWeapTimer
+short sWeapTimerOnce
+short sGeckoWaitStrng
+short sGeckoTalkOnce
+short sGuardDead
+short sKarmaPath
+short sGuardWrap
+short sNCRTalkNow
+short sGeckoRegretFlag
+
+begin GameMode   ;Xoanon admits that this script's turned to spaghetti to get it to work...
+
+	if player.getincell fwvsilurianstronghold == 1 && sPlotInit == 0 && GetQuestCompleted fwvSilurianBook == 1 && GetQuestCompleted fwvqSilurianPeaceAttempt01 == 0
+		if sDoOnce == 0
+			fwvXOSilurNCRNPCPlotREF.setrestrained 1	
+			SetAlly PlayerFaction fwvSilurianFaction 1 1 ;Truce
+			SetAlly fwvCompanionFaction fwvSilurianFaction 1 1 ;Companions, don't shoot please
+			if fwvGeckoRef.GetInCell fwvsilurianstronghold == 1 && sGeckoTalkOnce == 0
+				set sGeckoWaitStrng to 1
+				fwvGeckoRef.removescriptpackage
+				fwvGeckoRef.addscriptpackage fwvGeckoStrngWarning
+				fwvGeckoRef.evp
+			endif
+			set fWeapTimer to 0
+			SetStage fwvqSilurianPeaceAttempt01 15
+			SetObjectiveDisplayed fwvqSilurianPeaceAttempt01 15 1
+			set sDoOnce to 1
+		endif
+	endif
+
+	if sFists == 1
+		player.unequipitem rWeap
+		set sFists to 2
+	endif
+	
+	if getstage fwvqSilurianPeaceAttempt01 == 15
+		printc "15stage"
+		printc "sUNarmed %g" sUnarmed
+		if fWeapTimer < 4.0 
+			set fGSP to GetSecondsPassed
+			printc "fGSP %g" fGSP 
+			set fWeapTimer to fWeapTimer + fGSP
+			printc "fweaptimer %g" fweaptimer
+		else
+			set sUnarmed to 2
+			printc "2 fweaptimer %g" fweaptimer
+			printc "2 fGSP %g" fGSP
+			setstage fwvqSilurianPeaceAttempt01 20
+		endif
+	endif
+
+	if getstage fwvqSilurianPeaceAttempt01 == 20 && sDoOnce123 == 0
+		printc "20"
+		set sDoOnce123 to 1
+	endif
+	
+	
+	if sOfficerTalk == 1 && sOfficerTalkOnce == 0
+		printc "1 %g" sOfficerTalk
+		printc "added Officer Package"
+		set sOfficerTalkOnce to 1
+		printc "sOfficerTalkOnce %g" sOfficerTalkOnce
+		fwvSilurOfficerPlotREF.evp
+		fwvSilurOfficerPlotREF.startconversation player Greeting
+		printc "2 %g" sOfficerTalk
+	endif
+	
+
+	if sOfficerTalk == 3
+		printc "3 %g" sOfficerTalk
+		printc "removed Officer pkg"
+		set sOfficerTalk to 4
+		printc "4 %g" sOfficerTalk
+	endif
+	
+	if sPlotOver == 0 && sGuardtalkOnce == 1 && sUnarmed == 2
+		set rWeapNow to player.getequippedobject 5
+		if rWeapNow == 0 || rWeapNow == Fists
+			;printc "holstered"
+			;printc "rWeapNow %n" rWeapNow
+		else
+			set sPlotOver to 2
+			;printc "rWeapNow %n" rWeapNow	
+		endif
+	endif
+	
+	if sPlotOver == 2
+		if fwvXOSilurNCRNPCPlotREF.getdead == 0
+			fwvXOSilurNCRNPCPlotREF.kill
+		endif
+		SetEnemy PlayerFaction fwvSilurianFaction 0 0 
+		SetEnemy fwvCompanionFaction fwvSilurianFaction 0 0
+		if sKarmaPath == 1
+			showmessage fwvSilurianPlotHistory
+			rewardkarma 20
+			rewardXP 300
+			if fwvGeckoRef.GetInCell fwvsilurianstronghold == 1
+				set sGeckoRegretFlag to 1
+			endif
+			set sKarmaPath to 2
+		elseif sKarmaPath == 0
+			rewardkarma -20
+			MessageEx "[So much for diplomacy...]"
+			if fwvGeckoRef.GetInCell fwvsilurianstronghold == 1
+				MessageEx "[Gecko has turned against you in anger!]"
+				fwvGeckoRef.removefromfaction fwvCompanionFaction 
+				fwvGeckoRef.removefromfaction FollowerFaction
+				fwvGeckoRef.AddToFaction fwvSilurianFaction 1
+				set sKarmaPath to 2
+			endif
+			set sKarmaPath to 2
+		endif
+		setstage fwvqSilurianPeaceAttempt01 100		
+		set sPlotOver to 3
+	endif
+	
+End
+
+	
+
+	

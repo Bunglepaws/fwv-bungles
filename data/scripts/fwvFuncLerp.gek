@@ -1,0 +1,12 @@
+scn fwvFuncLerp
+
+float fMin
+float fMax
+float fValue
+float fReturnValue
+
+
+begin Function {fMin, fMax, fValue}
+	set fReturnValue to fMin + (fMax - fMin) * fValue
+	SetFunctionValue fReturnValue 
+end

@@ -1,0 +1,19 @@
+scn fwvq1TardisIntroScript
+
+float fTimer
+short doOnce
+
+begin onTriggerEnter player
+
+	if getStage fwvq1a == 10
+		PlaySound OBJForceFieldImpact
+		fwvTardisVoiceInterfaceRef.enable
+		fwvTardisVoiceInterfaceRef.MoveTo fwvq1aSpot1Ref
+		if fTimer < 2.0
+			let fTimer := fTimer + getSecondsPassed
+		else
+			player.startConversation fwvTardisVoiceInterfaceRef GREETING
+		endif
+	endif
+
+end

@@ -1,0 +1,93 @@
+scn fwvqDalekSaucer02Script
+
+short frame
+float fTimer
+short battleOnce
+ref rComms
+ref rConsole
+short intro
+short attackDialogue
+
+Begin GameMode
+
+	if getQuestCompleted fwvqDalekAttack == 1 && fwvq1.tFlying == 1 && fwvq1.csrON == 1 && getStage fwvqDalekSaucer02 < 10 && fwvq1.chosenDoor == fwvLskaroForestRef && intro == 0
+		;MessageBoxEx "The TARDIS HADS are being hacked and the Autopilot fails, then the communicator activates... a Dalek Saucer is homing in on the TARDIS. The Dalek Elite addresses you, and informs you that you will be captured, dead or alive!%r%rThe Dalek Saucer opens fire and begins its attack..."
+		set intro to 1
+	endif
+
+	if intro == 1
+		if fTimer < 3.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			set rConsole to fwvq1.rTDesktopScannerPosRef
+			set rComms to fwvq1.rTCcomms
+			;rComms.setTalkingActivatorActor fwvqDalekSaucerEliteRef
+			rConsole.placeAtMe fwvTardisMediumExplosion
+			imod ExplosionInFace
+			set fwvq1.tHull to 20
+			set fTimer to 0.0
+			set intro to 2
+		endif
+	elseif intro == 2
+		if fTimer < 1.5
+			set fTimer to fTimer + getSecondsPassed
+		else
+			set attackDialogue to 1
+			;rComms.startConversation player
+			MessageEx "[The TARDIS is under attack!]"
+			setStage fwvqDalekSaucer02 10
+			set fTimer to 0.0
+			set intro to -1
+		endif
+	endif
+
+	if getStage fwvqDalekSaucer02 == 10
+		if fwvqEncounter.encounter == 0
+			if battleOnce == 0
+				set fwvqEncounter.evasion to 1
+				set fwvqEncounter.playerDefensive to 0
+				set fwvqEncounter.turnCount to 0
+				set fwvqEncounter.encounter to 2
+				set fwvqEncounter.pTimer to 5
+				set fwvq1.csrON to 4
+				set fwvqEncounter.tLastAction to 0
+				set fwvqEncounter.tAction to 0
+				;trigger the dalek boss ship battle
+				set fwvqEncounter.encounter to 2
+				set fwvqEncounter.encounterType to 3
+				set fwvqEncounter.sSpecifiedType to 7
+				set battleOnce to 1
+			endif
+		endif
+		if fwvqEncounter.reward == 1
+			MessageBoxEx "[The TARDIS is now programmed to land on the wreckage of the Dalek Elite's Flagship]"
+			setStage fwvqDalekSaucer02 50
+			;set fwvqLocs.fwvLDalekSaucerCrashedVisited to 1
+			;fwvDalekSaucer02crashedRef.enable
+			set fwvq1.chosenDoor to fwvDalekSaucerLocRef
+		endif		
+	elseif getStage fwvqDalekSaucer02 == 85
+		if player.getInWorldspace fwvWorldSkaroForestWorld == 1
+			if frame == 0
+				fwvDalekSaucer02saucerRef.enable
+				imod FadeInFromBlack2sISFX
+				player.removeItem fwvDalekMutantTank 1
+				set frame to 1
+			elseif frame == 1
+				if fTimer < 5.0
+					set fTimer to fTimer + getSecondsPassed
+				else
+					MessageBoxEx "You hand the Dalek Elite mutant over to the Daleks. 'You are no longer an enemy of the Daleks, prepare. War is coming.'"
+					set frame to 2
+				endif
+			elseif frame == 2
+				PlaySound fwvFXdalekSaucerWoosh
+				imod FadeInFromBlack2sISFX
+				fwvDalekSaucer02saucerRef.disable
+				setStage fwvqDalekSaucer02 100
+				set frame to 0
+			endif			
+		endif
+	endif
+
+End

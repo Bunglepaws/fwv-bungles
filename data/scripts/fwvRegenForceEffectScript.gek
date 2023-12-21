@@ -1,0 +1,56 @@
+scn fwvRegenForceEffectScript
+
+begin ScriptEffectStart
+
+	if Player.IsSpellTarget fwvItemRegenElixerDebugGodmod
+		set fwvqRegen.fStatModStr to 1.0
+		set fwvqRegen.fStatModPer to 1.0
+		set fwvqRegen.fStatModEnd to 1.0
+		set fwvqRegen.fStatModCha to 1.0
+		set fwvqRegen.fStatModInt to 1.0
+		set fwvqRegen.fStatModAg to 1.0
+		set fwvqRegen.fStatModLuck to 1.0
+	elseif Player.IsSpellTarget fwvItemRegenElixerDebugLoser
+		set fwvqRegen.fStatModStr to 0.1
+		set fwvqRegen.fStatModPer to 0.1
+		set fwvqRegen.fStatModEnd to 0.1
+		set fwvqRegen.fStatModCha to 0.1
+		set fwvqRegen.fStatModInt to 0.1
+		set fwvqRegen.fStatModAg to 0.1
+		set fwvqRegen.fStatModLuck to 0.1
+	elseif Player.IsSpellTarget fwvItemRegenElixerGambler
+		set fwvqRegen.fStatModStr to 0.1
+		set fwvqRegen.fStatModPer to 1.0
+		set fwvqRegen.fStatModEnd to 0.1
+		set fwvqRegen.fStatModCha to 1.0
+		set fwvqRegen.fStatModInt to 0.5
+		set fwvqRegen.fStatModAg to 0.1
+		set fwvqRegen.fStatModLuck to 1.0
+	elseif Player.IsSpellTarget fwvItemRegenElixerMechanic
+		set fwvqRegen.fStatModStr to 1.0
+		set fwvqRegen.fStatModPer to 1.0
+		set fwvqRegen.fStatModEnd to 0.5
+		set fwvqRegen.fStatModCha to 0.1
+		set fwvqRegen.fStatModInt to 1.0
+		set fwvqRegen.fStatModAg to 0.1
+		set fwvqRegen.fStatModLuck to 0.1
+	elseif Player.IsSpellTarget fwvItemRegenElixerLeader
+		set fwvqRegen.fStatModStr to 0.1
+		set fwvqRegen.fStatModPer to 1.0
+		set fwvqRegen.fStatModEnd to 0.1
+		set fwvqRegen.fStatModCha to 1.0
+		set fwvqRegen.fStatModInt to 1.0
+		set fwvqRegen.fStatModAg to 0.1
+		set fwvqRegen.fStatModLuck to 0.5
+	elseif Player.IsSpellTarget fwvItemRegenElixerWarrior
+		set fwvqRegen.fStatModStr to 1.0
+		set fwvqRegen.fStatModPer to 0.1
+		set fwvqRegen.fStatModEnd to 0.5
+		set fwvqRegen.fStatModCha to 0.1
+		set fwvqRegen.fStatModInt to 1.0
+		set fwvqRegen.fStatModAg to 1.0
+		set fwvqRegen.fStatModLuck to 0.1
+	endif
+
+	Call fwvFuncForceRegen
+end

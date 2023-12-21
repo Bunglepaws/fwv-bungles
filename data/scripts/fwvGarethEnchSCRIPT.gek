@@ -1,0 +1,37 @@
+scn fwvGarethEnchSCRIPT
+
+short empOn
+float eTimer
+
+Begin ScriptEffectStart
+	set eTimer to 0.0
+	set empOn to 1		
+	pms DLC03TeslaFXShader
+End
+
+Begin ScriptEffectUpdate
+
+if empOn == 1
+	printc "EMP Effect is on"
+	if eTimer < 3.0
+		set eTimer to eTimer + getSecondsPassed
+	else
+		PlayIdle fwvAnimCyberMad
+		set eTimer to 0.0
+		set empOn to 2
+	endif
+elseif empOn == 2
+	if eTimer < 3.0
+		set eTimer to eTimer + getSecondsPassed
+	else
+		PlaySound WPNZapGlove3D
+		PlaceAtMe DLC03TeslaCannonExplosionSmall
+		KillActor
+		set empOn to 0
+	endif
+endif
+End
+
+Begin ScriptEffectFinish
+	printc "Script finished"
+End

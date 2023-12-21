@@ -1,0 +1,155 @@
+scn fwvTCeyeOfHarmonySCRIPT
+
+short button
+short event
+short doOnce
+float timer
+
+short arch
+short rEvent
+short rChoice
+
+begin onActivate player
+
+if player.hasPerk fwvTlrassilonPerk == 1 && doOnce == 0
+	DisablePlayerControls
+	PlaySound DRSElevatorAnimOpen
+	fwvTardisEyeRef.PlayGroup Forward 0
+	;fwvTardisVortexRedRef.enable
+	set fwvq1.sShakeEnabled to 1
+	set fwvq1.fShakeAngle to 250
+	set event to 1
+	set doOnce to 1
+endif
+
+if fwvqRegen.tLordNeutral == 1
+	set rChoice to getRandomPercent
+	set rEvent to 1
+endif
+
+end
+
+begin gamemode
+
+	set button to getbuttonpressed
+
+	if event == 1
+		if timer < 4
+			set timer to timer +getsecondspassed
+		else
+			imod FadeToWhiteISFX
+			PlaySound OBJComputerTerminalArc
+			
+			set timer to 0
+			set event to 2
+		endif
+	elseif event == 2
+		if timer < 3
+			set timer to timer +getsecondspassed
+		else
+			ShowMessage fwvq2pathChoiceMessage
+			set timer to 0
+			set event to 3
+		endif
+	elseif event == 3
+		if button == 0
+			imod FadeInFromWhiteISFX
+			enablePlayerControls
+			PlaySound DRSElevatorAnimOpen
+			fwvTardisEyeRef.PlayGroup Backward 0
+			;fwvTardisVortexRedRef.disable
+			set fwvqTimeLord.tlPoints to -50
+			set fwvqRegen.tLordGood to 0
+			set fwvqRegen.tLordBad to 1
+			set fwvqRegen.tLordNeutral to 0
+			set fwvqRegen.TimeLordTrue to 1
+			ShowMessage fwvRegenPathBadMessage
+			set event to 4
+		elseif button == 1
+			imod FadeInFromWhiteISFX
+			enablePlayerControls
+			PlaySound DRSElevatorAnimOpen
+			fwvTardisEyeRef.PlayGroup Backward 0
+			;fwvTardisVortexRedRef.disable
+			set fwvqTimeLord.tlPoints to 50
+			set fwvqRegen.tLordGood to 1
+			set fwvqRegen.tLordBad to 0
+			set fwvqRegen.tLordNeutral to 0
+			set fwvqRegen.TimeLordTrue to 1
+			ShowMessage fwvRegenPathGoodMessage
+			set event to 4
+		elseif button == 2
+			imod FadeInFromWhiteISFX
+			enablePlayerControls
+			PlaySound DRSElevatorAnimOpen
+			fwvTardisEyeRef.PlayGroup Backward 0
+			;fwvTardisVortexRedRef.disable
+			set fwvq1.sShakeEnabled to 0
+			set fwvqTimeLord.tlPoints to 0
+			set fwvqRegen.tLordGood to 0
+			set fwvqRegen.tLordBad to 0
+			set fwvqRegen.tLordNeutral to 1
+			set fwvqRegen.TimeLordTrue to 1
+			ShowMessage fwvRegenPathNeutralMessage
+			set event to 4
+		endif
+	elseif event == 4
+		set fwvTardisChameleonRef.hStr to player.getAv Strength				;Strength
+		set fwvTardisChameleonRef.hPer	 to player.getAv Perception			;Perception
+		set fwvTardisChameleonRef.hEnd	 to player.getAv Endurance			;Endurance
+		set fwvTardisChameleonRef.hCha	 to player.getAv Charisma			;Charisma
+		set fwvTardisChameleonRef.hInt to player.getAv Intelligence			;Intelligence
+		set fwvTardisChameleonRef.hAg to player.getAv Agility					;Agility
+		set fwvTardisChameleonRef.hLuck to player.getAv Luck					;Luck
+		set fwvTardisChameleonRef.hBarter to player.getAv Barter					;Bartering
+		set fwvTardisChameleonRef.hBG to player.getAv BigGuns					;BigGuns
+		set fwvTardisChameleonRef.hEW to player.getAv EnergyWeapons		;EnergyWeaps
+		set fwvTardisChameleonRef.hExp	to player.getAv Explosives				;Explosives
+		set fwvTardisChameleonRef.hLock to player.getAv LockPick				;LockPick
+		set fwvTardisChameleonRef.hMed to player.getAv Medicine				;Medicine
+		set fwvTardisChameleonRef.hMW	 to player.getAv MeleeWeapons		;MeleeWeaps
+		set fwvTardisChameleonRef.hRep to player.getAv Repair					;Repair
+		set fwvTardisChameleonRef.hSci to player.getAv Science					;Science
+		set fwvTardisChameleonRef.hSG to player.getAv guns				;Small Guns
+		set fwvTardisChameleonRef.hSneak to player.getAv Sneak 				;Sneaking
+		set fwvTardisChameleonRef.hSp to player.getAv Speech					;Speech
+		set fwvTardisChameleonRef.hUA to player.getAv Unarmed					;Unarmed
+		player.removeItem fwvArmourChameleonArch 1 1
+		;player.addItem fwvArmourChameleonArchPlayable 1 1
+		player.removeItem fwvWfobWatch 1 1
+		;player.addItem fwvWfobWatchPlayable 1 1
+		ShowMessage fwvRegenTimeLordMessage
+		fwvTardisChameleonRef.enable
+		Disable	
+		set event to 0
+	endif
+
+if rEvent == 1
+	if rChoice < 49
+		PlaySound DRSElevatorAnimOpen
+		fwvTardisEyeRef.PlayGroup Backward 0
+		;fwvTardisVortexRedRef.disable
+		set fwvqTimeLord.tlPoints to 50
+		set fwvqRegen.tLordGood to 1
+		set fwvqRegen.tLordBad to 0
+		set fwvqRegen.tLordNeutral to 0
+		ShowMessage fwvRegenPathGoodMessage
+		fwvTardisChameleonRef.enable
+		Disable		
+		set rEvent to 0
+	else
+		PlaySound DRSElevatorAnimOpen
+		fwvTardisEyeRef.PlayGroup Backward 0
+		;fwvTardisVortexRedRef.disable
+		set fwvqTimeLord.tlPoints to -50
+		set fwvqRegen.tLordGood to 0
+		set fwvqRegen.tLordBad to 1
+		set fwvqRegen.tLordNeutral to 0
+		ShowMessage fwvRegenPathBadMessage
+		fwvTardisChameleonRef.enable
+		Disable	
+		set rEvent to 0
+	endif
+endif
+
+end

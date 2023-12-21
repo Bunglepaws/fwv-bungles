@@ -1,0 +1,17 @@
+scn fwvq3dBombScript
+
+short doOnce
+
+begin onActivate player
+	
+	if doOnce == 0
+		fwvq3dLabRubbleRef.disable
+		fwvq3dTardisAlarmRef.enable
+		fwvTardisCloisterRef.enable
+		PlaySound WPNTimeBombSet
+		Disable
+		MarkForDelete
+		set doOnce to 1
+	endif
+
+end

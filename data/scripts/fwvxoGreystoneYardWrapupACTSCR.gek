@@ -1,0 +1,18 @@
+scn fwvxoGreystoneYardWrapupACTSCR
+
+short sDoOnce
+
+begin onTriggerEnter Player
+
+
+	if fwvqAutonMurder.dialogue == 9 && sDoOnce == 0
+
+		player.startconversation fwvAutonMurderButlerRef
+		set sDoOnce to 1
+
+	endif
+
+
+
+
+end

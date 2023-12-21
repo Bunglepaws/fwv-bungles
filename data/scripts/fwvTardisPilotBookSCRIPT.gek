@@ -1,0 +1,79 @@
+scn fwvTardisPilotBookSCRIPT
+
+;written by Demeggy 9/3/13
+
+short button
+short page
+
+short sDoOnce
+short sDirection
+short sNextAction
+ref rLastRef
+short sIncarnation
+
+float timer
+
+begin onactivate player
+
+if page == 0
+
+	if (IsAnimPlaying == 0 && sNextAction == 0) ; closed
+		PlayGroup Forward 0
+		set sDirection to 1
+		set sNextAction to 1 ; open
+		set rLastRef to GetActionRef
+		set timer to 0.0
+		set page to 1
+	elseif (IsAnimPlaying == 0 && sNextAction == 1) ; opened
+		PlayGroup Backward 0
+		set sDirection to 0
+		set sNextAction to 0 ; close
+set rLastRef to GetActionRef
+		activate rLastRef 0
+	endif
+
+endif
+
+end
+
+begin gamemode
+
+ref pxpCalc
+set pxpCalc to fwvq1.pxl * 60 - fwvq1.pxp
+
+ref txpCalc
+set txpCalc to fwvq1.txl * 100 - fwvq1.txp
+
+ref cxpCalc
+set cxpCalc to fwvq1.cxl * 100 - fwvq1.cxp
+
+if page == 1
+	if timer < 1
+		set timer to timer + getsecondspassed
+	else
+		if fwvqRegen.timeLordTrue == 0
+			if fwvq1.pxl < 15
+				ShowMessage fwvTardisPilotBookMessage fwvq1.pxl fwvq1.pxp pxpCalc fwvq1.txl fwvq1.cxl
+			else
+				ShowMessage fwvTardisPilotBookMessageLv10 fwvq1.pxl fwvq1.txl fwvq1.cxl
+			endif
+		else
+			set sIncarnation to fwvqRegen.regenVar + 1
+			ShowMessage fwvTardisPilotBookTimeLordMessage fwvqTimeLord.tAge sIncarnation
+			if fwvq1.pxl < 15
+				ShowMessage fwvTardisPilotBookMessage fwvq1.pxl fwvq1.pxp pxpCalc fwvq1.txl fwvq1.cxl
+			else
+				ShowMessage fwvTardisPilotBookMessageLv10 fwvq1.pxl fwvq1.txl fwvq1.cxl
+			endif
+		endif
+		PlayGroup Backward 0
+		set sDirection to 0
+		set sNextAction to 0 ; close
+		set rLastRef to GetActionRef
+		activate rLastRef 0
+		set timer to 0
+		set page to 0
+	endif
+endif
+
+end

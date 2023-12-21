@@ -1,0 +1,34 @@
+scn SilurianNightVizMaskSCRIPT
+
+
+Ref rSelf
+
+
+BEGIN ScriptEffectStart
+
+	set rSelf to GetSelf
+
+	If (rSelf == Player)
+		ApplyImageSpaceModifier fwvXONightScopeISFX02
+		PlaySound fwvFXT3control13
+		player.setav Nighteye 1
+		Player.AddPerk fwvXOSpotting
+	EndIf
+END
+
+
+BEGIN ScriptEffectFinish
+
+	set rSelf to GetSelf;
+
+	If (rSelf == Player)
+		RemoveImageSpaceModifier fwvXONightScopeISFX02
+		If ( IsImageSpaceActive CatEyeFadeOutISFX == 0 )
+			ApplyImageSpaceModifier CatEyeFadeOutISFX
+		Endif
+		player.setav Nighteye 0
+		PlaySound fwvFXT3control14
+		Player.RemovePerk fwvXOSpotting
+	EndIf
+
+END

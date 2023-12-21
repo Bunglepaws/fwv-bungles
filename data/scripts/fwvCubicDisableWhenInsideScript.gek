@@ -1,0 +1,17 @@
+scn fwvCubicDisableWhenInsideScript
+
+ref rLinkedRef
+short sIsDisabled
+
+begin OnTriggerEnter Player
+	set rLinkedRef to GetLinkedRef
+	set sIsDisabled to rLinkedRef.GetDisabled
+	rLinkedRef.Disable 0
+end
+
+begin OnTriggerLeave Player
+	set rLinkedRef to GetLinkedRef
+	if sIsDisabled == 0 ; if was enabled, enable (reset basically)
+		rLinkedRef.Enable 0
+	endif
+end

@@ -1,0 +1,78 @@
+scn fwvq3bNestenePodFxScript
+
+short frame
+float fTimer
+
+ref gsp
+
+begin ontriggerenter player
+	if getStage fwvq3b == 50
+		imod fwvq3bNestenePodISFX
+		DisablePlayerControls
+		set fTimer to 0.0
+		set frame to 1
+	endif
+end
+
+begin ontrigger player
+
+	if player.IsWeaponInList fwvWSonicList == 1 && IsControlPressed 4 == 1
+	printc "Sonic is firing"
+		if getStage fwvq3b == 75
+			fwvq3bnesteneSphere1Ref.placeAtMe EyebotExplosion
+			fwvq3bnesteneSphere2Ref.placeAtMe EyebotExplosion
+			fwvq3bnesteneSphere3Ref.placeAtMe EyebotExplosion
+			fwvq3bNesteneAlarmRef.enable
+			fwvq3bnestenePodArcRef.enable
+			;fwvq3bNesteneEyeRef.StartConversation player GREETING [headtrack=1]
+			setstage fwvq3b 80
+			;Disable
+		endif
+	endif
+
+	if getStage fwvq3b == 75
+		fwvq3bNesteneGasRef.enable
+		;imod PoisonLoopISFX
+		player.damageAv health 0.25
+	else
+		fwvq3bNesteneGasRef.disable
+		;rimod PoisonLoopISFX
+	endif
+
+	if getStage fwvq3b == 80 && player.getInCell fwvAutonLair == 1
+		if IsImageSpaceActive fwvq3bNesteneAlarmISFX == 0
+			imod fwvq3bNesteneAlarmISFX 
+		endif
+	else
+		rimod fwvq3bNesteneAlarmISFX
+	endif
+
+end
+
+begin gamemode
+
+set gsp to getsecondspassed
+
+	if frame == 1
+		if fTimer < 4.0
+			set fTimer to fTimer + gsp
+		else
+			PlaySound OBJSwitchLights2D
+			PlaySound NPCSuperMutantBehemothAttack03
+			fwvq3bNesteneFxRef.enable
+			set fTimer to 0.0
+			set frame to 2
+		endif
+	elseif frame == 2
+		if fTimer < 4.0
+			set fTimer to fTimer + gsp
+		else
+			EnablePlayerControls
+			fwvq3bNesteneEyeRef.SetTalkingActivatorActor fwvq3bNesteneRef
+			fwvq3bNesteneEyeRef.StartConversation player GREETING
+			set fTimer to 0.0
+			set frame to 0
+		endif
+	endif
+
+end

@@ -1,0 +1,77 @@
+scn fwvRaniCreadoutsDisplayScript2
+
+short sChoice
+short sCheck
+
+short f1
+short f2
+short f3
+short f4
+short f5
+short f6
+short f7
+short f8
+short f9
+short f10
+short f11
+short f12
+short f13
+
+short sPatchVersion
+ref rSelf
+begin GameMode
+	if sPatchVersion < fwvPatchVersion
+		set sPatchVersion to fwvPatchVersion
+		set rSelf to GetSelf
+		Call fwvFuncResetPosition rSelf
+	endif
+end
+
+begin GameMode
+	if sCheck == 1
+		set sChoice to GetButtonPressed
+		set sCheck to 0
+		if sChoice == 0 ; exit
+			; exit
+		elseif sChoice == 1 ; fuel
+			ShowMessage fwvTCReadoutFuelMessage fwvq1.tFuel
+		elseif sChoice == 2 ; hull
+			ShowMessage fwvTCReadoutShieldsMessage fwvq1.tShields fwvq1.tHull
+		elseif sChoice == 3 ; power
+			;ShowMessage fwvTCreadoutPowerMessage fwvq1.tPower
+			Call fwvFuncReadoutPowerUsage
+		elseif sChoice == 4 ; systems
+			;if fwvqSystems.tAdvanced == 1
+				set f1 to fwvqSystems.ForcefieldGenerator
+				set f2 to fwvqSystems.WarpEllipseCutoutCircuit
+				set f3 to fwvqSystems.TimeVectorGenerator
+				set f4 to fwvqSystems.ArtronCapacitor
+				set f5 to fwvqSystems.RelativeDimensionalStabiliser
+				set f6 to fwvqSystems.DematerializationCircuit
+				set f7 to fwvqSystems.ChronometricAstrometer
+				set f8 to fwvqSystems.TemporalCircuits
+				set f9 to fwvqSystems.QuantumAccelerator
+				set f10 to fwvqSystems.RedThermocouplings
+				set f11 to fwvqSystems.GreenThermocouplings
+				set f12 to fwvqSystems.BlueThermocouplings
+				set f13 to fwvqSystems.InterstitialBeamSynthesiser
+
+				ShowMessage fwvTCFaultLocator01Message f1 f3 f4 f5 f6 f7
+				;removed f2 because WarpEllipseCutoutCircuit is dummied out
+				ShowMessage fwvTCFaultLocator02Message f8 f9 f10 f11 f12 f13	
+				ShowMessage fwvTCReadoutComponentsAdvMessage fwvqSystems.Temperature			
+			;else
+				;ShowMessage fwvTCReadoutComponentsAdvMessage fwvqSystems.Temperature 
+			;endif
+		elseif sChoice == 5 ; refuel
+			raniRefuelRef02.Activate Player 1
+		elseif sChoice == 6 ; repair
+			raniRepairRef02.Activate Player 1
+		endif
+	endif
+end
+
+begin OnActivate
+	showMessage fwvRaniCsystemsScannerMessage
+	set sCheck to 1
+end

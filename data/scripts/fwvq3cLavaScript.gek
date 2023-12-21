@@ -1,0 +1,8 @@
+scn fwvq3cLavaScript
+
+begin ontriggerenter player
+
+	imod fwvq3cLavaDeathISFX
+	player.killActor
+
+end

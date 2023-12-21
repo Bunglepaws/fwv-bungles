@@ -1,0 +1,80 @@
+scn fwvFuncResetSystemsFunction
+
+begin function { }
+
+	fwvTcontrolRoom1FireRef.disable
+	fwvTcontrolRoom2FireRef.disable
+	fwvTcontrolRoom3FireRef.disable
+
+	set fwvq1.tShields to 100
+	set fwvq1.tHull to 100
+	set fwvq1.tSpeed to 90
+	set fwvq1.tFuel to 100
+	set fwvq1.tArchitecture to 100
+	set fwvq1.tLifeSupport to 100
+	set fwvq1.tNav to 100
+	set fwvq1.tComms to 100
+	set fwvq1.tArchitectureOn to 1
+	set fwvq1.tLifeSupportOn to 1
+	set fwvq1.tNavOn to 1
+	set fwvq1.tCommsOn to 1
+	set fwvq1.tHadsOn to 1
+	set fwvqSystems.Temperature to 0
+
+	fwvTardisLibraryRef.disable
+	fwvTardisGalleryRef.disable
+	fwvTardisObservatoryRef.disable
+	fwvTardisGardensRef.disable
+	fwvTardisBedroomRef.disable
+	fwvTardisGalleyRef.disable
+	fwvTardisSickbayRef.disable
+	fwvTardisWardrobeRef.disable
+	fwvTardisPoolRef.disable
+	fwvTardisWorkshopRef.disable
+	fwvTardisLabRef.disable
+	fwvTardisZeroRef.disable
+	fwvTardisGalleryRef.Disable
+	set fwvqRooms.tLibrary to 0
+	set fwvqRooms.tMuseum to 0
+	set fwvqRooms.tObservatory to 0
+	set fwvqRooms.tGardens to 0
+	set fwvqRooms.tBedroom to 0
+	set fwvqRooms.tGalley to 0
+	set fwvqRooms.tSickbay to 0
+	set fwvqRooms.tWardrobe to 0
+	set fwvqRooms.tPool to 0
+	set fwvqRooms.tWorkshop to 0
+	set fwvqRooms.tLab to 0
+	set fwvqRooms.tZeroRoom to 0
+	set fwvqRooms.tArtGallery to 0
+
+	;update library enabled status
+	set fwvqRooms.sLastLibrary to 1 - fwvqRooms.tLibrary
+	
+	;reenable all main controls
+	set fwvqSystems.navCtrls to 1
+	set fwvqSystems.commCtrls to 1
+
+	;calculates power based on given systems
+	set fwvqSystems.tAdvanced to 1
+	Call fwvFuncTardisModeToggle
+	set fwvqSystems.cSys to 1
+	set fwvqSystems.crashed to 0
+
+	if fwvXOTranspowerQuest.TranspowerOn > 0
+		set fwvXOTranspowerQuest.TranspowerAnimate to 50
+		set fwvXOTranspowerQuest.TranspowerOn to 0
+	endif		
+
+
+	set fwvqSystems.navCtrls to 1
+	set fwvqSystems.commCtrls to 1
+
+	;disables any active causal rifts
+	set fwvqAngelMotel.rTimer to 0.0
+	set fwvqAngelMotel.rift to 0
+
+	;finally set the power
+	set fwvq1.tPower to 25
+
+end

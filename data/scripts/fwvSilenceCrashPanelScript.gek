@@ -1,0 +1,55 @@
+scn fwvSilenceCrashPanelScript
+
+float fSecondsPassedLast
+float fTimePassedSmall
+float fTimePassedTotal
+short sSceneStep
+short sBloodAmount
+short sTimerPause
+
+begin GameMode
+	set fSecondsPassedLast to GetSecondsPassed
+
+	if GetStage fwvqSilenceCrash == 25 && sSceneStep == 1
+		set fTimePassedTotal to 0.0
+		set fTimePassedSmall to 0.0
+		DisablePlayerControls 1 1 1 0 0 1
+		SetStage fwvqSilenceCrash 30
+	endif
+
+	if sSceneStep > 0 && sSceneStep < 10
+		printc "%f" fTimePassedTotal
+		set fTimePassedSmall to fTimePassedSmall + fSecondsPassedLast
+		set fTimePassedTotal to fTimePassedTotal + fSecondsPassedLast
+
+		if fTimePassedSmall > 1.0
+			set sBloodAmount to 15 + (fTimePassedTotal * fwvqSilenceCrash.sSpeechFail)
+			TriggerScreenBlood sBloodAmount
+			set fTimePassedSmall to 0.0
+		endif
+
+		if sSceneStep <= 2
+			printc "%f" fTimePassedTotal
+			if fTimePassedTotal >= 3.0 && sSceneStep == 1
+				fwvDreamDocMitchellRef.enable 0
+				imod fwvqSilenceCrashDreamISFX
+				set sSceneStep to 2
+			elseif fTimePassedTotal >= 6.0 && sSceneStep == 2
+				fwvDreamDocMitchellRef.startConversation Player GREETING
+				set sSceneStep to 3
+				set fwvqSilenceCrash.sTimerPause to 1
+			endif
+		elseif sSceneStep == 3
+			EnablePlayerControls 1 1 1 0 0 1
+			set sSceneStep to 10
+			rimod fwvqSilenceCrashDreamISFX
+		endif
+	endif
+end
+
+begin OnActivate
+	if sSceneStep == 0
+		set sSceneStep to 1
+	endif
+	activate
+end

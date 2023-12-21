@@ -1,0 +1,21 @@
+scn fwvAutonMaskPlayableSpellSCRIPT
+
+float fAutonDisguiseTimer
+
+;puts the player into the Auton Faction so they don't attack him
+
+Begin OnEquip Player
+	setAlly playerFaction fwvAutonFaction 1 1		;FRIEND
+	setAlly fwvCompanionFaction fwvAutonFaction 1 1		;FRIEND
+	setAlly FollowerFaction fwvAutonFaction 1 1		;FRIEND
+
+End
+
+
+
+Begin OnUnEquip Player
+	setEnemy playerFaction fwvAutonFaction		;ENEMY
+	setEnemy fwvCompanionFaction fwvAutonFaction		;ENEMY
+	setEnemy FollowerFaction fwvAutonFaction		;ENEMY
+End
+

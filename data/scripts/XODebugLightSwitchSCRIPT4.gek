@@ -1,0 +1,41 @@
+scn XODebugLightSwitchSCRIPT4
+
+;short button
+;ref rRace
+
+short sNumRoomsActive
+float fPotentialPower
+
+;short sNewComp
+;short sComp
+
+Begin OnFire
+
+	messageex "tSpeed %g" fwvq1.tSpeed
+	messageex "tSpeedLvl %g" fwvq1.tSpeedlvl
+
+	;MessageEx "staveeff %g"  fwvqRegen.rStaveEffect
+	;MessageEx "sWearThinOnce %g"  fwvqTimeLord.sWearThinOnce
+	;MessageBoxEx "tBodyAge %g | WearThinOnce %g | staveeff %g" fwvqTimeLord.tBodyAge fwvqTimeLord.sWearThinOnce fwvqRegen.rStaveEffect	
+	;let rRace := GetRace player
+	;MessageBoxEx "The race of player is %n" rRace
+	;MessageBoxEx "fwvqSystemsAdv.fluidBroken == %g" fwvqSystemsAdv.fluidBroken	
+	;MessageBoxEx "Resin == %g" fwvqGameOfRassilon.sSpiridonResinOn
+	;MessageEx "Power: %.2f" fwvq1.tPower
+	;MEssageEx "Dampeners %g" fwvqSystems.SpatialDampeners
+	;set sNumRoomsActive to (fwvqRooms.tLibrary + fwvqRooms.tArtGallery + fwvqRooms.tGardens + fwvqRooms.tBedroom + fwvqRooms.tGalley + fwvqRooms.tSickbay + fwvqRooms.tWardrobe + fwvqRooms.tPool + fwvqRooms.tWorkshop + fwvqRooms.tLab + fwvqRooms.tZeroRoom)
+	;MessageEx "sNumRoomsActive: %g" sNumRoomsActive
+	;printc "Dampeners %g" fwvqSystems.SpatialDampeners
+	;set fPotentialPower to fwvq1.tPower - (5 * sNumRoomsActive)
+	;MessageEx "Power - Roomsx5: %.2f" fPotentialPower
+	;set fwvqSystems.TimeVectorGenerator to 0
+	;MessageEx "TVG Broken. Go Go Gadget Dimension Collapse!"
+	;MEssageEx "Rift is %g and Event is %g" fwvqAngelMotel.rift fwvqEvents.systemEvent  
+	;MEssageEx "Fuel %g" fwvq1.tFuel
+	;set fwvq1.tFuel to 10
+	;MEssageEx "Fuel Now %g" fwvq1.tFuel
+	
+	
+end
+
+

@@ -1,0 +1,90 @@
+scn fwvAngelMotelTriggerScript
+
+short scare1
+short scare2
+short scare3
+short scare4
+
+short stageNum
+
+begin onTriggerEnter player
+
+	set stageNum to getStage fwvqAngelMotel
+
+	if getIsReference fwvAngelMotelStartRef
+		if getStage fwvqAngelMotel < 10
+			setStage fwvqAngelMotel 10
+		endif
+	endif
+
+	;if getStage fwvqAngelMotel == 10
+		printc "Stage is %g" 
+		if getIsReference fwvAngelMotelScare01Ref == 1
+			if scare1 == 0 
+				fwvAngelMotelStatue01Ref.enable 0
+				imod fwvAngelMotelLightsISFX
+				PlaySound FXExplosionRobotBuzz
+				set scare1 to 1
+			endif
+		elseif getIsReference fwvAngelMotelScare02Ref == 1
+			if scare2 == 0 
+				fwvAngelMotelStatue02Ref.enable 0
+				imod fwvAngelMotelLightsISFX
+				PlaySound FXExplosionRobotBuzz
+				set scare2 to 1
+			endif
+		elseif getIsReference fwvAngelMotelScare03Ref == 1
+			if scare3 == 0 
+				fwvAngelMotelDoor2Ref.setOpenState 0
+				PlaySound FXExplosionRobotBuzz
+				set scare3 to 1
+			endif
+		elseif getIsReference fwvAngelMotelScare04Ref == 1
+			if scare4 == 0 
+				fwvAngelMotelDoor3Ref.setOpenState 0
+				set scare4 to 1
+			endif
+		endif
+	if getStage fwvqAngelMotel == 50
+		if getIsReference fwvAngelMotelSpawn2Ref == 1
+			fwvAngelMotelNpc2Ref.enable 0
+		elseif getIsReference fwvAngelMotelSpawn3Ref == 1
+			fwvAngelMotelNpc3Ref.enable 0
+		endif
+	endif
+
+end
+
+begin onTriggerLeave player
+
+	;if getStage fwvqAngelMotel == 10
+		if getIsReference fwvAngelMotelScare01Ref == 1
+			imod fwvAngelMotelLightsISFX
+			fwvAngelMotelStatue01Ref.disable 0
+			PlaySound FXExplosionRobotBuzz
+			fwvAngelMotelScare01Ref.disable
+		elseif getIsReference fwvAngelMotelScare02Ref == 1
+			imod fwvAngelMotelLightsISFX
+			fwvAngelMotelStatue02Ref.disable 0
+			fwvAngelMotelDoor1Ref.setOpenState 1
+			PlaySound FXExplosionRobotBuzz
+			if getStage fwvqAngelMotel == 10
+				setstage fwvqAngelMotel 20
+				fwvAngelMotelTelephoneRef.enable
+			endif
+			fwvAngelMotelScare02Ref.disable
+		elseif getIsReference fwvAngelMotelScare03Ref == 1
+			imod fwvAngelMotelLightsISFX
+			fwvAngelMotelScare03Ref.disable
+		elseif getIsReference fwvAngelMotelScare04Ref == 1
+			fwvAngelMotelScare04Ref.disable
+		endif
+	if getStage fwvqAngelMotel == 50
+		if getIsReference fwvAngelMotelSpawn2Ref == 1
+			fwvAngelMotelSpawn2Ref.disable 0
+		elseif getIsReference fwvAngelMotelSpawn3Ref == 1
+			fwvAngelMotelSpawn3Ref.disable 0
+		endif
+	endif
+
+end

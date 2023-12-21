@@ -1,0 +1,96 @@
+scn fwvTLinsanitySpellScript
+
+float sTimer  ; timer for the state of mind
+float iTimer  ; timer for the Insane Fugue State
+float pTimer ; timer to sync audio up
+float timePassed ; needed because GECK will freak out over everything
+short iOnce  ; shows the trigger once message
+short iOn   ; if Insane or not
+short pKarma ; determines player karma
+float rChance ; determines if player goes insane or not
+
+begin scripteffectstart
+ set rChance to getRandomPercent
+ set pKarma to player.getAV Karma
+ set iTimer to 0.0
+ set sTimer to 0.0
+ set pTimer to 0.0
+end
+
+begin scripteffectupdate
+ set timePassed to GetSecondsPassed
+ if iOn == 0
+  if sTimer < 30
+   set sTimer to sTimer + timePassed
+  else
+   if rChance < 50 ;go insane
+    printc "DEVTEST: GONE INSANE %g" rChance
+    set iOn to 1
+   else;reset the chances
+    printc "DEVTEST: STAYING SANE %g" rChance
+    set iOnce to 0
+    set iTimer to 0.0
+    set sTimer to 0.0
+    set pTimer to 0.0
+    set rChance to getRandomPercent
+   endif
+  endif
+ else
+  set pTimer to pTimer + timePassed
+  if pTimer >= 2.0
+   set pTimer to pTimer - 2.0
+   fwvSoundRef.moveTo player
+   fwvSoundRef.enable
+   fwvSoundRef.PlaySound fwvFXinsaneBeat
+  endif
+ 
+  if iTimer < 30
+   if iOnce == 0
+    ;fwvSoundRef.enable
+    ;fwvSoundRef.PlaySound3D fwvFXinsaneBeat
+    TriggerHitShader 5
+    ;SetCameraFOV 110
+    ShowMessage fwvTLinsaneStartMessage
+    imod fwvInsaneISFX2
+    PlaySound UIPopUpExperienceUp
+    set iOnce to 1
+   endif
+   fwvSoundRef.moveTo player
+   set iTimer to iTimer + timePassed
+   printc "DEV: Have %g seconds left" iTimer
+  else
+   if player.getAV Karma < pKarma
+    ;fwvSoundRef.disable
+    TriggerHitShader 5
+   ;SetCameraFOV 75
+    ShowMessage fwvTLinsaneEndGoodMessage
+    rimod fwvInsaneISFX2
+    set iOnce to 0
+    set iTimer to 0.0
+    set sTimer to 0.0
+    set rChance to getRandomPercent
+    set iOn to 0
+   elseif player.getAV Karma >= pKarma
+    ;fwvSoundRef.disable
+    TriggerHitShader 5
+    ;SetCameraFOV 75
+    ShowMessage fwvTLinsaneEndBadMessage
+    rimod fwvInsaneISFX2
+    player.damageAV perception 1
+    player.damageAV intelligence 1
+    player.damageAV charisma 1
+    set fwvqTimeLord.tlPoints to fwvqTimeLord.tlPoints + 1
+    set iOnce to 0
+    set iTimer to 0.0
+    set sTimer to 0.0
+    set rChance to getRandomPercent
+    set iOn to 0
+   endif
+  endif
+ endif
+end
+
+begin ScriptEffectFinish
+ fwvSoundRef.disable
+ ;SetCameraFOV 75
+end

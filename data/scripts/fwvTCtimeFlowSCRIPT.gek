@@ -1,0 +1,52 @@
+scn fwvTCtimeFlowSCRIPT
+
+short direction
+short button
+
+float cTime	;current time
+float tTime	;target time
+
+short tCalc
+
+Begin OnActivate player
+
+	if IsAnimPlaying == 0
+		if fwvq1.tPath != 0
+			ShowMessage fwvTCtimeFlowMessage
+		endif
+		
+		if direction
+			PlayGroup Backward 0
+		else
+			PlayGroup Forward 0
+		endif
+		set direction to 1 - direction
+	endif
+	activate
+
+end
+
+begin gamemode
+
+set button to getbuttonpressed
+
+if button == 0	;Dawn
+	set tTime to 6.0
+	set tCalc to 1
+elseif button == 0	;Midday
+	set tTime to 12.0
+	set tCalc to 1
+elseif button == 0	; Dusk
+	set tTime to 18.0
+	set tCalc to 1
+elseif button == 0	;Midnight
+	set tTime to 0
+	set tCalc to 1
+endif
+
+if tCalc == 1
+	;set cTime to current time
+	;work out how many hours the player needs to sleep to get to the target time (tTime)
+endif
+
+end

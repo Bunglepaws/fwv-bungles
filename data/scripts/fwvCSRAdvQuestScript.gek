@@ -1,0 +1,177 @@
+scn fwvCSRAdvQuestScript
+
+short patch
+short init
+
+short sAllHands
+
+short protocol
+float pTimer
+float AllHandsTimer
+short onlytap
+
+short frame
+short path
+short actionType
+float pmsTimer
+short rControl
+
+short rControlType
+string_var controlString
+string_var controlType
+string_var instruction
+
+ref control1
+ref control2
+ref control3
+ref control4
+ref control5
+ref control
+ref lastControl
+
+int iPos
+ref rComp
+ref rTDesktopShipDoor
+
+
+Begin Gamemode
+
+	; 0 = Nautical (2010)
+	; 1 = Coral (2005)
+	; 2 = Classical (1983)
+	; 3 = Neon (2013 a)
+	; 4 = Edwardian (1996)
+	; 5 = Glitch (2013 b)
+	; 6 = Key to Time (1977)
+
+	if patch < 1
+		set frame to 4
+		set patch to 1
+	endif
+
+	if fwvq1.tTheme == 0
+		set control1 to fwvTCpcontrol1Ref 
+		set control2 to fwvTCpcontrol2Ref 
+		set control3 to fwvTCpcontrol3Ref
+		set control4 to fwvTCpcontrol4Ref 
+		set control5 to fwvTCpcontrol5Ref 
+	elseif fwvq1.tTheme == 1
+		set control1 to fwvT2Cpcontrol1Ref 
+		set control2 to fwvT2Cpcontrol2Ref 
+		set control3 to fwvT2Cpcontrol3Ref
+		set control4 to fwvT2Cpcontrol4Ref 
+		set control5 to fwvT2Cpcontrol5Ref 
+	elseif fwvq1.tTheme == 2
+		set control1 to fwvT3Cpcontrol1Ref 
+		set control2 to fwvT3Cpcontrol2Ref 
+		set control3 to fwvT3Cpcontrol3Ref
+		set control4 to fwvT3Cpcontrol4Ref 
+		set control5 to fwvT3Cpcontrol5Ref
+	elseif fwvq1.tTheme == 3
+		set control1 to fwvT4Cpcontrol1Ref 
+		set control2 to fwvT4Cpcontrol2Ref 
+		set control3 to fwvT4Cpcontrol3Ref
+		set control4 to fwvT4Cpcontrol4Ref 
+		set control5 to fwvT4Cpcontrol5Ref 
+	elseif fwvq1.tTheme == 4
+		set control1 to fwvT5Cpcontrol1Ref 
+		set control2 to fwvT5Cpcontrol2Ref 
+		set control3 to fwvT5Cpcontrol3Ref
+		set control4 to fwvT5Cpcontrol4Ref 
+		set control5 to fwvT5Cpcontrol5Ref 
+	elseif fwvq1.tTheme == 5
+		set control1 to fwvT6Cpcontrol1Ref 
+		set control2 to fwvT6Cpcontrol2Ref 
+		set control3 to fwvT6Cpcontrol3Ref
+		set control4 to fwvT6Cpcontrol4Ref 
+		set control5 to fwvT6Cpcontrol5Ref 
+	elseif fwvq1.tTheme == 6
+		set control1 to fwvT7Cpcontrol1Ref 
+		set control2 to fwvT7Cpcontrol2Ref 
+		set control3 to fwvT7Cpcontrol3Ref
+		set control4 to fwvT7Cpcontrol4Ref 
+		set control5 to fwvT7Cpcontrol5Ref 
+	endif
+
+	;randomise control
+	if frame == 1
+		Label 1
+		
+		set rControl to 1 + getRandomPercent * 5 / 100
+		;printc "control is %g" rControl
+		if rControl == 1
+			set control to control1
+		elseif rControl == 2
+			set control to control2
+		elseif rControl == 3
+			set control to control3
+		elseif rControl == 4
+			set control to control4
+		elseif rControl == 5
+			set control to control5
+		endif
+
+		if control == lastControl
+			Goto 1
+			;printc "control was already used" rControl
+		else
+			set rControlType to 1 + getRandomPercent * 3 / 100
+			if onlytap == 1
+				set rControlType to 1
+				set onlytap to 0
+			endif
+			if rControlType == 1
+				set controlType to sv_construct "Tap:"
+			elseif rControlType == 2
+				set controlType to sv_construct "Hold:"
+			elseif rControlType == 3
+				set controlType to sv_construct "Mash:"
+			endif
+			set frame to 2
+		endif
+	elseif frame == 2
+		let instruction := Call fwvFuncRandomControlNameGenCSR "controlCmd"
+		let controlString := sv_construct "%z %z" controlType instruction
+		;printc "instruction: %z %z" controlType instruction
+		control.setName $controlString
+		control.pms fwvHologramProtocolSolidMarker
+		set frame to 0
+	elseif frame == 3
+		control.sms fwvHologramProtocolSolidMarker
+		set lastControl to control
+		set frame to 1
+	elseif frame == 4
+		;super secret frame used for renaming controls if protocols complete or fail
+		control1.setName "Miscellaeneous Controls"
+		control2.setName "Miscellaeneous Controls"
+		control3.setName "Miscellaeneous Controls"
+		control4.setName "Miscellaeneous Controls"
+		control5.setName "Miscellaeneous Controls"
+		set frame to 0
+	endif
+
+
+	if sAllHands == 1
+		set rTDesktopShipDoor to fwvq1.rTDesktopShipDoor
+		if AllHandsTimer < 5.0
+			set AllHandsTimer to AllHandsTimer + GetSecondsPassed
+		else
+			foreach fwvCompanion.Entry <- fwvCompanion.arCompanions
+				let iPos := fwvCompanion.Entry["key"]
+				let rComp := fwvCompanion.Entry["value"]
+				Print "Companion #" + $iPos + " is " + $rComp
+				if rComp.GetInCell fwvTinterior1 == 1
+					rComp.moveto rTDesktopShipDoor
+				endif
+				if rComp.IsSpellTarget fwvTARDISRoomReqTimerAE
+					rComp.removeitem fwvRoomReqFlag 1
+					printc "dispel roomreq"
+					rComp.Dispel fwvTARDISRoomReqTimerAE
+				endif
+			loop
+			PlaySound DRSVaultVertical01Close
+			set sAllHands to 0			
+		endif
+	Endif
+
+End

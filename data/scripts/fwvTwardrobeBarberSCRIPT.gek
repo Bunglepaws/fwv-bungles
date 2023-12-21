@@ -1,0 +1,6 @@
+scn fwvTwardrobeBarberSCRIPT
+
+begin OnActivate Player
+	ShowBarberMenu
+	activate
+end

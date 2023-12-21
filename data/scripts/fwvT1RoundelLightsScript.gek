@@ -1,0 +1,33 @@
+scn fwvT1RoundelLightsScript
+
+float fWaitTimer
+short sOnOff
+short sFlightLightsOn
+
+begin GameMode
+	if IsAnimPlaying == 0 && fwvq1.flightMode == 0
+		PlayGroup Forward 0
+	elseif IsAnimPlaying == 0
+		PlayGroup FastForward 0
+	endif
+
+	if fWaitTimer <= 0.0
+		if fwvq1.flightMode == 0
+			set fWaitTimer to 0.5
+		else
+			set fWaitTimer to 1.25
+		endif
+		if fwvT1ClightNormalRef.GetDisabled == 0 && fwvq1.flightMode > 0
+			if sFlightLightsOn == 0
+				set sOnOff to 1
+			else
+				set sOnOff to -1
+			endif
+		else
+			set sOnOff to 1
+		endif
+		Call fwvFuncSetListIsDisabled fwvT1LightBlinkList sOnOff
+	else
+		set fWaitTimer to fWaitTimer - GetSecondsPassed
+	endif
+end

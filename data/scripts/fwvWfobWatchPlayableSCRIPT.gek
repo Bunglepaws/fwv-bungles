@@ -1,0 +1,168 @@
+scn fwvWfobWatchPlayableSCRIPT
+
+; This script stores all of the players human stats into the Chameleon Arch and turns them into a Time Lord
+; written by Demeggy 12/3/13
+
+float hStr			;Strength
+float hPer		;Perception
+float hEnd		;Endurance
+float hCha		;Charisma
+float hInt			;Intelligence
+float hAg			;Agility
+float hLuck		;Luck
+
+float hBarter	;Bartering
+float hBG		;BigGuns
+float hEW		;EnergyWeaps
+float hExp		;Explosives
+float hLock		;LockPick
+float hMed		;Medicine
+float hMW		;MeleeWeaps
+float hRep		;Repair
+float hSci		;Science
+float hSG			;SmallGuns
+float hSneak	;Sneaking
+float hSp			;Speech
+float hUA			;Unarmed
+
+; spyduck-added
+short curStatBase
+short curStat
+short newMod
+
+begin onFire player
+
+	if fwvqRegen.tInit >= 1
+	if player.getAv perception >= 5
+
+		if fwvqRegen.TimeLordTrue == 0
+
+			PlaySound fwvFXregenLong
+			player.addSpell fwvRegenFX
+
+			set fwvqRegen.TimeLordTrue to 1
+
+			ShowMessage fwvRegenTimeLordMessage
+
+		player.setAV Strength fwvTardisChameleonRef.tStr
+		player.setAV Perception fwvTardisChameleonRef.tPer
+		player.setAV Endurance fwvTardisChameleonRef.tEnd
+		player.setAV Charisma fwvTardisChameleonRef.tCha
+		player.setAV Intelligence fwvTardisChameleonRef.tInt
+		player.setAV Agility fwvTardisChameleonRef.tAgi
+		player.setAV Luck fwvTardisChameleonRef.tLuck
+
+		; do barter
+		set curStatBase to player.getbaseav barter
+		set curStat to player.getav barter
+		set newMod to curStat - curStatBase
+		player.modav barter newMod
+		set newMod to fwvTardisChameleonRef.tBarter - curStatBase
+		player.modav barter newMod
+
+		; do BIGGUNS
+		set curStatBase to player.getbaseav BigGuns
+		set curStat to player.getav BigGuns
+		set newMod to curStat - curStatBase
+		player.modav BigGuns newMod
+		set newMod to fwvTardisChameleonRef.tBG - curStatBase
+		player.modav BigGuns newMod
+
+		; do EnergyWeapons 
+		set curStatBase to player.getbaseav EnergyWeapons
+		set curStat to player.getav EnergyWeapons
+		set newMod to curStat - curStatBase
+		player.modav EnergyWeapons newMod
+		set newMod to fwvTardisChameleonRef.tEW - curStatBase
+		player.modav EnergyWeapons newMod
+
+		; do Explosives 
+		set curStatBase to player.getbaseav Explosives 
+		set curStat to player.getav Explosives 
+		set newMod to curStat - curStatBase
+		player.modav Explosives newMod
+		set newMod to fwvTardisChameleonRef.tExp - curStatBase
+		player.modav Explosives newMod
+
+		; do Lockpicking 
+		set curStatBase to player.getbaseav Lockpick
+		set curStat to player.getav Lockpick
+		set newMod to curStat - curStatBase
+		player.modav Lockpick newMod
+		set newMod to fwvTardisChameleonRef.tLock - curStatBase
+		player.modav Lockpick newMod
+
+		; do Medicine 
+		set curStatBase to player.getbaseav Medicine 
+		set curStat to player.getav Medicine 
+		set newMod to curStat - curStatBase
+		player.modav Medicine newMod
+		set newMod to fwvTardisChameleonRef.tMed - curStatBase
+		player.modav Medicine newMod
+
+		; do Repair 
+		set curStatBase to player.getbaseav Repair  
+		set curStat to player.getav Repair  
+		set newMod to curStat - curStatBase
+		player.modav Repair newMod
+		set newMod to fwvTardisChameleonRef.tRep - curStatBase
+		player.modav Repair newMod
+
+		; do Science  
+		set curStatBase to player.getbaseav Science  
+		set curStat to player.getav Science  
+		set newMod to curStat - curStatBase
+		player.modav Science newMod
+		set newMod to fwvTardisChameleonRef.tSci - curStatBase
+		player.modav Science newMod
+
+		; do Small Guns
+		set curStatBase to player.getbaseav Guns   
+		set curStat to player.getav Guns 
+		set newMod to curStat - curStatBase
+		player.modav Guns newMod
+		set newMod to fwvTardisChameleonRef.tSG - curStatBase
+		player.modav Guns newMod
+
+		; do Sneak
+		set curStatBase to player.getbaseav Sneak 
+		set curStat to player.getav Sneak 
+		set newMod to curStat - curStatBase
+		player.modav Sneak newMod
+		set newMod to fwvTardisChameleonRef.tSneak - curStatBase
+		player.modav Sneak newMod
+
+		; do speech
+		set curStatBase to player.getbaseav speech
+		set curStat to player.getav speech
+		set newMod to curStat - curStatBase
+		player.modav speech newMod
+		set newMod to fwvTardisChameleonRef.tSp - curStatBase
+		player.modav speech newMod
+		
+		; do unarmed
+		set curStatBase to player.getbaseav unarmed
+		set curStat to player.getav unarmed
+		set newMod to curStat - curStatBase
+		player.modav unarmed newMod
+		set newMod to fwvTardisChameleonRef.tUA - curStatBase
+		player.modav unarmed newMod
+
+		PlaySound fwvFXregenLong
+		
+		set fwvq1.pxl to fwvTardisChameleonRef.tlpxl
+		printc "TL PXL reset to %g" fwvq1.pxl
+		set fwvq1.pxp to fwvTardisChameleonRef.tlpxp
+		printc "TL PXP reset to %g" fwvq1.pxp
+		
+		set fwvqRegen.TimeLordTrue to 1
+		player.addPerk fwvTLrassilonPerk
+
+		endif
+
+	endif
+	else
+		MessageEx "Nothing happens... the Fobwatch seems tightly sealed"
+	endif
+
+end

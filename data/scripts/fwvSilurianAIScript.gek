@@ -1,0 +1,37 @@
+scn fwvSilurianAIScript
+
+short awake
+
+begin gamemode
+
+;puts the silurian into its sleep state
+
+if getStage fwvq3c >= 40
+	if awake == 0
+		setActorsAI 0
+	else
+		setActorsAI 1
+	endif
+endif
+
+if getDistance player < 75
+	set awake to 1
+elseif getDistance player < 300
+	if fwvq3c.hint1 == 0
+		ShowMessage fwvq3cHintMessage
+		set fwvq3c.hint1 to 1
+	endif
+
+	if player.isSneaking == 0
+		printc "silurian has detected you!"
+		set awake to 1
+	endif
+
+endif
+
+;if getItemCount fwvWsilurianRifle == 0
+;	PlaySound FXPoisonStinger
+;	disable
+;endif
+
+end

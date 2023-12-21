@@ -1,0 +1,41 @@
+scn fwvTardisSickbayBioscannerScript
+
+short button
+
+begin onActivate player
+
+	if getStage fwvq3c == 20
+		ShowMessage fwvq3cSickbayScanMessage
+		fwvq3cGSSilurianDeadRef.addItem fwvq3cHomingBeacon 1
+		setStage fwvq3c 30
+	else
+		ShowMessage fwvTardisSickbayScannerMessage
+	endif
+
+end
+
+begin gamemode
+
+	set button to getbuttonpressed
+
+	if button == 2
+		;printc "curing virus"
+		RemoveSpell BarkScorpionPoison
+		RemoveSpell CazadorPoison
+		RemoveSpell DeathClawPoison
+		RemoveSpell DLC03FeralGhoulPoison
+		RemoveSpell DLC03RadScorpion3Poison
+		RemoveSpell NightstalkerPoison
+		RemoveSpell RadScorpion1Poison
+		RemoveSpell RadScorpion2Poison
+		ShowMessage PoisonRemovalMsg
+
+	elseif button == 3
+		player.resetHealth
+	elseif button == 4
+
+	elseif button == 5
+
+	endif
+
+end

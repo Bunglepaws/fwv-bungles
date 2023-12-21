@@ -1,0 +1,30 @@
+scn fwvSilurianGeckoQuestACTVScript
+
+short sPDARead
+
+Begin onActivate Player
+
+	if getisReference fwvXOSilurGeckoPDA == 1
+		if getStage fwvqSilurianGasStation >= 30			
+			if sPDARead == 0
+				if fwvqSilurianGasStation.sSilurianRead == 0
+					ShowMessage fwvXOSilurianLanguageMESG
+					set fwvqSilurianGasStation.sSilurianRead to 1
+				endif
+				ShowMessage fwvXOSilurianPDAMESG3
+				setStage fwvqSilurianGasStation 40
+				setObjectiveCompleted fwvqSilurianGasStation 30 1				
+				set sPDARead to 1
+			else	
+				MessageEx "[The PDA holds no more information for you.]"			
+			endif
+		else
+			if fwvqSilurianGasStation.sSilurianRead == 0
+				ShowMessage fwvXOSilurianLanguageMESG
+				set fwvqSilurianGasStation.sSilurianRead to 1
+			endif
+			ShowMessage fwvXOSilurianPDAMESG4
+		endif
+	endif
+
+end

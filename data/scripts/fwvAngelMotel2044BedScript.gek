@@ -1,0 +1,44 @@
+scn fwvAngelMotel2044BedScript
+
+short button
+short awaitingInput
+float fTimer
+float fTimer2
+float fTimer3 
+short sFuture
+
+Begin OnActivate Player
+	ShowMessage fwvAngelMotelBedMessage
+	set awaitingInput to 1
+End
+
+Begin GameMode
+	if awaitingInput == 1
+		set button to GetButtonPressed
+		if button == 0 	; Sleepytime
+			set sFuture to 1
+			set awaitingInput to 0
+		elseif button == 1	; Cancel
+			set awaitingInput to 0
+		endif
+	endif
+
+End
+
+Begin Gamemode
+	if sFuture == 1
+		imod FadeToBlack2sISFX
+		set sFuture to 2
+		set fwvqAngelMotel.sWentToPast to 1
+	elseif sFuture == 2	
+		if fTimer < .85
+			set fTimer to fTimer + GetSecondsPassed
+		else
+			player.moveto fwvAngelMotel01BedRef
+			set sFuture to 3
+		endif
+	endif
+end	
+
+
+

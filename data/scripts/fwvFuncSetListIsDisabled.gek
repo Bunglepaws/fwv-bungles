@@ -1,0 +1,33 @@
+scn fwvFuncSetListIsDisabled
+
+ref rList
+ref rCurRef
+
+short sFCount
+short sFIndex
+short sDisabled
+; sDisabled = 0, 1 (or -1 for random)
+
+begin Function { rList, sDisabled }
+	set sFCount to ListGetCount rList
+	set sFIndex to 0
+	Label 0
+	if sFIndex < sFCount
+		set rCurRef to ListGetNthForm rList sFIndex
+		if (sDisabled == -1 && GetRandomPercent < 50)
+			if rCurRef.GetDisabled == 1
+				rCurRef.Enable 0
+			else
+				rCurRef.Disable 0
+			endif
+		else
+			if sDisabled
+				rCurRef.Disable 0
+			else
+				rCurRef.Enable 0
+			endif
+		endif
+		set sFIndex to sFIndex + 1
+		Goto 0
+	endif
+end

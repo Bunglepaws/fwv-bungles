@@ -1,0 +1,61 @@
+scn fwvqTardisManualQuestActivatorSCRIPT
+
+;written by Demeggy 9/3/13
+
+short button
+short page
+short open
+float oTimer
+
+short doOnce
+short sDoOnce
+short sDirection
+short sNextAction
+ref rLastRef
+
+float timer
+
+begin onactivate player
+
+	if (IsAnimPlaying == 0 && sNextAction == 0) ; closed
+		PlayGroup Forward 0
+		set sDirection to 1
+		set sNextAction to 1 ; open
+		set rLastRef to GetActionRef
+		set otimer to 0.0
+		set page to 1
+		set open to 1
+	endif
+
+end
+
+begin gamemode
+	
+	if open == 1
+		if oTimer < 1.0
+			set oTimer to oTimer + getSecondsPassed
+		else
+			if getStage fwvqTardisManualQuest < 10
+				MessageBoxEx "The TARDIS Manual was retrieved from the event horizon of a Black Hole and now appears to have had a number of important pages torn from within...%r%rMight be worth searching the Library for the missing contents...%r"
+			endif
+			set open to 2
+		endif
+	elseif open == 2
+		if (IsAnimPlaying == 0 && sNextAction == 1) ; opened
+			if doOnce == 0
+				fwvqTardisManualProtocolsRef.enable
+				setStage fwvqTardisManualQuest 10
+				set doOnce to 1
+			endif
+			PlayGroup Backward 0
+			set sDirection to 0
+			set sNextAction to 0 ; close
+			set rLastRef to GetActionRef
+			activate rLastRef 0
+		endif
+		set page to 0
+	endif
+
+end
+
+

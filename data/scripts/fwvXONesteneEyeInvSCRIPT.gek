@@ -1,0 +1,12 @@
+scn fwvXONesteneEyeInvSCRIPT
+
+ref rSelf
+
+begin Gamemode
+
+	set rSelf to GetSelf	
+	;rSelf.Rotate Z 30
+
+	rSelf.SetActorAlpha 0.2
+
+end

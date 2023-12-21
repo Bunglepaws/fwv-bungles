@@ -1,0 +1,78 @@
+scn fwvAutonMurderActivatorScriptXO
+
+short checked
+ref murderer
+float sPause
+short DoOnce
+
+Begin onActivate player
+
+	if getIsReference fwvAutonMurderCorpseRef
+		if checked == 0
+			MessageBoxEx "The victim was murdered by a powerful blast to the abdomen with some form of high intensity energy projectile..."
+			set fwvqAutonMurder.dialogue to 5
+			fwvAutonMurderButlerRef.startConversation player GREETING
+			set checked to 1
+		else
+			MessageEx "You have already investigated the corpse..."
+		endif
+	elseif getIsReference fwvAutonMurderPlansRef
+		MessageBoxEx "These are highly detailed plans for some form of Supra-Galactic Transmitter beam. They require a large open area, high up to function correctly."
+		fwvAutonMurderPlansRef.MarkForDelete
+		fwvAutonMurderPlansRef.Disable 1
+		set fwvqAutonMurder.dialogue to 8
+		fwvAutonMurderButlerRef.startConversation player GREETING
+	elseif getIsReference fwvAutonMurderIntDoorRefXO
+		if isActionRef player == 1
+			if player.getItemCount fwvAutonMurderKey == 1
+				set fwvqAutonMurder.exterior to 1
+				fwvAutonMurderSignalRef.enable
+			endif
+			Activate
+		endif
+	elseif getIsReference fwvAutonMurderExtDoorRefXO
+		set fwvqAutonMurder.exterior to 0
+		Activate
+	elseif getIsReference fwvAutonMurderTransmitterRef
+		if getStage fwvqAutonMurder == 30
+			set fwvqAutonMurder.event to 8
+			PlaySound OBJForceFieldDeactivate
+			fwvAutonMurderTransmitterRef.PlaceAtMe EyebotExplosion
+			fwvAutonMurderSignalRef.disable 1
+			setStage fwvqAutonMurder 40
+			fwvAutonSuspect01Ref.disable
+			fwvAutonSuspect02Ref.disable
+			fwvAutonSuspect03Ref.disable
+			fwvAutonSuspect04Ref.disable
+			fwvAutonSuspect05Ref.disable
+			fwvAutonSuspect06Ref.disable
+		endif
+	endif
+
+end
+
+begin GameMode
+	if getIsReference fwvAutonMurderTransmitterRef
+		if fwvAutonMurderTransmitterRef.GetDestroyed == 1
+			if DoOnce == 0
+				set fwvqAutonMurder.event to 8
+				printc "Destroyed, 8"
+				PlaySound OBJForceFieldDeactivate
+				fwvAutonMurderTransmitterRef.PlaceAtMe EyebotExplosion
+				fwvAutonMurderSignalRef.disable 1
+				setStage fwvqAutonMurder 40
+				fwvAutonSuspect01Ref.disable
+				fwvAutonSuspect02Ref.disable
+				fwvAutonSuspect03Ref.disable
+				fwvAutonSuspect04Ref.disable
+				fwvAutonSuspect05Ref.disable
+				fwvAutonSuspect06Ref.disable
+				set DoOnce to 1
+			endif
+		endif
+	endif
+
+End
+	
+	
+

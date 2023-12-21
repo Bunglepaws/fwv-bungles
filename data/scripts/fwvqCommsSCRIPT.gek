@@ -1,0 +1,59 @@
+scn fwvqCommsSCRIPT
+
+short qDays		; Used to track how many days until the next Quest triggers
+short qActive	; used to progress to the next quest
+float day			; used to track when the current day is
+short init			; initialises the first quest
+short quest		; which quest is active
+short qStart		; fires up the first quest
+
+;tardis wreckage
+float fTimer
+short mode
+short wreck
+
+short sRinging
+short sEvent
+short sEventPhone 
+
+short qLoad
+short button
+ref dest
+ref rTCcomms
+
+;Quest List
+;1 - Xmas, 2 - Angels, 3 - Skaro, 4 - Cyberman, 5 - Auton
+
+BEGIN GAMEMODE
+
+if fwvq1.tCommsOn == 1 || fwvq1.tComms > 0
+	if qActive == 0
+		set day to GameDaysPassed
+		set qDays to 1 + getRandomPercent * 2.0/100.0
+		set qActive to 1
+	elseif qActive == 1
+		if GameDaysPassed > day + qDays
+			set qActive to 2
+		endif
+	elseif qActive == 2 && sEventPhone == 0 ; start quests via the phone
+		if getQuestRunning fwvqChristmasSpecial == 0
+			set sEventPhone to -1
+		elseif getQuestRunning fwvqAngelMotel == 0
+			set sEventPhone to 1
+		elseif getQuestRunning fwvqDalekSkaro == 0
+			set sEventPhone to 2
+		elseif getQuestRunning fwvqCybermanMoon == 0
+			set sEventPhone to 3
+		elseif getQuestRunning fwvqAutonMurder == 0
+			set sEventPhone to 4
+		;elseif getQuestRunning fwvqSilenceCrash == 0
+		;	set sEventPhone to 5
+		else
+			printc "fwvqCommsSCRIPT off"
+			;set sEventPhone to 0 ; no quests, turn off quest comms
+			set qActive to -1
+		endif
+	endif
+endif
+
+END

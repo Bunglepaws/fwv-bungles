@@ -1,0 +1,7 @@
+scn fwvTnanoCloudSCRIPT
+
+begin gamemode
+
+pms GlowingOneFXShader
+
+end

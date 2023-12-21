@@ -1,0 +1,376 @@
+scn fwvTCupgradesWorkbenchSCRIPT
+
+;written by Demeggy 9/3/13
+
+short button
+short menu
+
+begin onActivate Player
+
+	activate
+	ShowMessage fwvTCupgradeMessage fwvq1.txl
+	set menu to 1
+
+end
+
+begin gamemode
+
+set button to getbuttonpressed
+
+if menu == 1	; the main upgrades menu
+	if button == 0
+		ShowMessage fwvTCupgradeSonicMessage fwvq1.sonicLvl
+		set menu to 2
+	elseif button == 1
+		ShowMessage fwvTCupgradeLaserMessage fwvq1.laserLvl
+		set menu to 3
+	elseif button == 2
+		ShowMessage fwvTCupgradeAlphaMessage fwvq1.alphaLvl
+		set menu to 4
+	elseif button == 3
+		ShowMessage fwvTCupgradeVortexMessage fwvq1.vortexLvl
+		set menu to 6
+	elseif button == 4
+		ShowMessage fwvTCupgradeDefabricatorMessage fwvq1.defabLvl
+		set menu to 7
+	elseif button == 5
+		if GetQuestCompleted fwvSilurianBook == 1
+			ShowMessage fwvTCupgradeSilurianMessage02 fwvqWeaponQuest.SilurianGunLvl 
+			set menu to 9		
+		else
+			ShowMessage fwvTCupgradeSilurianMessage01 fwvqWeaponQuest.SilurianGunLvl 
+			set menu to 8		
+		endif
+	else
+		set menu to 0
+	endif
+elseif menu == 2	; the sonic upgrade level
+	if button == 0
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.sonicLvl to 2
+	elseif button == 1
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.sonicLvl to 3
+	elseif button == 2
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.sonicLvl to 4
+	elseif button == 3
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.sonicLvl to 5
+	elseif button == 4
+		set menu to 5
+		ShowMessage fwvTCupgradeSonicCasingsMessage1 fwvq1.sonicLvl
+	elseif button == 5
+		set menu to 10
+		ShowMessage fwvTCupgradeSonicCasingsMessage2 fwvq1.sonicLvl		
+	endif
+elseif menu == 3	; the laser upgrade level
+	if button == 0
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.laserLvl to 2
+	elseif button == 1
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.laserLvl to 3
+	elseif button == 2
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.laserLvl to 4
+	elseif button == 3
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.laserLvl to 5
+	else
+
+	endif
+elseif menu == 4	; the alpha upgrade level
+	if button == 0
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.alphaLvl to 2
+	elseif button == 1
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.alphaLvl to 3
+	else
+	endif
+elseif menu == 5; sonic casings menu #1
+	if button == 0		;troughton
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		player.removeItem fwvWsonicScrewdriver1972 1 0
+		player.removeItem fwvWsonicScrewdriver1974 1 0
+		player.removeItem fwvWsonicScrewdriver1979 1 0
+		player.removeItem fwvWsonicScrewdriver1996 1 0
+		player.removeItem fwvWsonicScrewdriver2006 1 0
+		player.removeItem fwvWsonicScrewdriver2010 1 0
+		player.removeItem fwvWsonicScrewdriver2013 1 0
+		player.removeItem fwvWsonicScrewdriverBF 1 0
+		player.removeItem fwvWsonicScrewdriverRiver 1 0
+		player.removeItem fwvWsonicScrewdriver2015 1 0
+		player.addItem fwvWsonicScrewdriver1968 1
+	elseif button == 1		;pertwee
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		player.removeItem fwvWsonicScrewdriver1968 1
+		player.removeItem fwvWsonicScrewdriver1974 1 0
+		player.removeItem fwvWsonicScrewdriver1979 1 0
+		player.removeItem fwvWsonicScrewdriver1996 1 0
+		player.removeItem fwvWsonicScrewdriver2006 1 0
+		player.removeItem fwvWsonicScrewdriver2010 1 0
+		player.removeItem fwvWsonicScrewdriver2013 1 0
+		player.removeItem fwvWsonicScrewdriverBF 1 0
+		player.removeItem fwvWsonicScrewdriverRiver 1 0
+		player.removeItem fwvWsonicScrewdriver2015 1 0
+		player.addItem fwvWsonicScrewdriver1972 1
+	elseif button == 2		;baker
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		player.removeItem fwvWsonicScrewdriver1968 1
+		player.removeItem fwvWsonicScrewdriver1972 1 0
+		player.removeItem fwvWsonicScrewdriver1979 1 0
+		player.removeItem fwvWsonicScrewdriver1996 1 0
+		player.removeItem fwvWsonicScrewdriver2006 1 0
+		player.removeItem fwvWsonicScrewdriver2010 1 0
+		player.removeItem fwvWsonicScrewdriver2013 1 0
+		player.removeItem fwvWsonicScrewdriverBF 1 0
+		player.removeItem fwvWsonicScrewdriverRiver 1 0
+		player.removeItem fwvWsonicScrewdriver2015 1 0		
+		player.addItem fwvWsonicScrewdriver1974 1
+	elseif button == 3		;romana
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		player.removeItem fwvWsonicScrewdriver1968 1
+		player.removeItem fwvWsonicScrewdriver1972 1 0
+		player.removeItem fwvWsonicScrewdriver1974 1 0
+		player.removeItem fwvWsonicScrewdriver1996 1 0
+		player.removeItem fwvWsonicScrewdriver2006 1 0
+		player.removeItem fwvWsonicScrewdriver2010 1 0
+		player.removeItem fwvWsonicScrewdriver2013 1 0
+		player.removeItem fwvWsonicScrewdriverBF 1 0
+		player.removeItem fwvWsonicScrewdriverRiver 1 0
+		player.removeItem fwvWsonicScrewdriver2015 1 0		
+		player.addItem fwvWsonicScrewdriver1979 1
+	elseif button == 4		;mcgann
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		player.removeItem fwvWsonicScrewdriver1968 1
+		player.removeItem fwvWsonicScrewdriver1972 1 0
+		player.removeItem fwvWsonicScrewdriver1974 1 0
+		player.removeItem fwvWsonicScrewdriver1979 1 0
+		player.removeItem fwvWsonicScrewdriver2006 1 0
+		player.removeItem fwvWsonicScrewdriver2010 1 0
+		player.removeItem fwvWsonicScrewdriver2013 1 0
+		player.removeItem fwvWsonicScrewdriverBF 1 0
+		player.removeItem fwvWsonicScrewdriverRiver 1 0
+		player.removeItem fwvWsonicScrewdriver2015 1 0		
+		player.addItem fwvWsonicScrewdriver1996 1
+	elseif button == 5		;mcgann big finish
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		player.removeItem fwvWsonicScrewdriver1968 1
+		player.removeItem fwvWsonicScrewdriver1972 1 0
+		player.removeItem fwvWsonicScrewdriver1974 1 0
+		player.removeItem fwvWsonicScrewdriver1979 1 0
+		player.removeItem fwvWsonicScrewdriver1996 1 0
+		player.removeItem fwvWsonicScrewdriver2006 1 0
+		player.removeItem fwvWsonicScrewdriver2010 1 0
+		player.removeItem fwvWsonicScrewdriver2013 1 0
+		player.removeItem fwvWsonicScrewdriverRiver 1 0
+		player.removeItem fwvWsonicScrewdriver2015 1 0		
+		player.addItem fwvWsonicScrewdriverBF 1
+	elseif button == 6		;hurt
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		player.removeItem fwvWsonicScrewdriver1968 1
+		player.removeItem fwvWsonicScrewdriver1972 1 0
+		player.removeItem fwvWsonicScrewdriver1974 1 0
+		player.removeItem fwvWsonicScrewdriver1979 1 0
+		player.removeItem fwvWsonicScrewdriver1996 1 0
+		player.removeItem fwvWsonicScrewdriver2006 1 0
+		player.removeItem fwvWsonicScrewdriver2010 1 0
+		player.removeItem fwvWsonicScrewdriverBF 1 0
+		player.removeItem fwvWsonicScrewdriverRiver 1 0
+		player.removeItem fwvWsonicScrewdriver2015 1 0
+		player.addItem fwvWsonicScrewdriver2013 1
+	elseif button == 7		;tennant
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		player.removeItem fwvWsonicScrewdriver1968 1
+		player.removeItem fwvWsonicScrewdriver1972 1 0
+		player.removeItem fwvWsonicScrewdriver1974 1 0
+		player.removeItem fwvWsonicScrewdriver1979 1 0
+		player.removeItem fwvWsonicScrewdriver1996 1 0
+		player.removeItem fwvWsonicScrewdriver2010 1 0
+		player.removeItem fwvWsonicScrewdriver2013 1 0
+		player.removeItem fwvWsonicScrewdriverBF 1 0
+		player.removeItem fwvWsonicScrewdriverRiver 1 0
+		player.removeItem fwvWsonicScrewdriver2015 1 0		
+		player.addItem fwvWsonicScrewdriver2006 1 
+	elseif button == 8		;smith
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		player.removeItem fwvWsonicScrewdriver1968 1
+		player.removeItem fwvWsonicScrewdriver1972 1 0
+		player.removeItem fwvWsonicScrewdriver1974 1 0
+		player.removeItem fwvWsonicScrewdriver1979 1 0
+		player.removeItem fwvWsonicScrewdriver1996 1 0
+		player.removeItem fwvWsonicScrewdriver2006 1 0
+		player.removeItem fwvWsonicScrewdriver2013 1 0
+		player.removeItem fwvWsonicScrewdriverBF 1 0
+		player.removeItem fwvWsonicScrewdriverRiver 1 0
+		player.removeItem fwvWsonicScrewdriver2015 1 0		
+		player.addItem fwvWsonicScrewdriver2010 1 
+	elseif button == 9		;return to previous
+		ShowMessage fwvTCupgradeSonicMessage fwvq1.sonicLvl
+		set menu to 2		
+	endif
+elseif menu == 6	; the vortex upgrade level
+	if button == 0
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.vortexLvl to 2
+	elseif button == 1
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.vortexLvl to 3
+	else
+	endif
+elseif menu == 7	; the defab upgrade level
+	if button == 0
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		set menu to 0
+		set fwvq1.defabLvl to 2
+	else
+	endif
+
+elseif menu == 8	; Sonic Rifle without Cryo Option
+	if button == 0
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		if GetHasNote fwvXOAntiSilurianGunGuide == 0
+			AddNote fwvXOAntiSilurianGunGuide
+		endif
+		set menu to 0
+		set fwvqWeaponQuest.SilurianGunLvl to 2
+	else
+	endif	
+	
+elseif menu == 9	; Sonic Rifle with Cryo Option
+	if button == 0
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		if GetHasNote fwvXOAntiSilurianGunGuide == 0
+			AddNote fwvXOAntiSilurianGunGuide
+		endif
+		set menu to 0
+		set fwvqWeaponQuest.SilurianGunLvl to 2
+	elseif button == 1
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	
+		if GetHasNote fwvXOCryoGunGuide == 0
+			AddNote fwvXOCryoGunGuide
+		endif
+		set menu to 0
+		set fwvqWeaponQuest.SilurianGunLvl to 3
+	else
+	endif	
+	
+	;endif
+elseif menu == 10; sonic casings menu #2
+	if button == 0		;River Song
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		player.removeItem fwvWsonicScrewdriver1972 1 0
+		player.removeItem fwvWsonicScrewdriver1974 1 0
+		player.removeItem fwvWsonicScrewdriver1979 1 0
+		player.removeItem fwvWsonicScrewdriver1996 1 0
+		player.removeItem fwvWsonicScrewdriver2006 1 0
+		player.removeItem fwvWsonicScrewdriver2010 1 0
+		player.removeItem fwvWsonicScrewdriver2013 1 0
+		player.removeItem fwvWsonicScrewdriverBF 1 0
+		player.removeItem fwvWsonicScrewdriver2015 1 0
+		player.removeItem fwvWsonicScrewdriver1968 1 0		
+		player.addItem fwvWsonicScrewdriverRiver 1
+	elseif button == 1		;capaldi
+		PlaySound UIRepairWeapon
+		PlaySound NPCRobotMrHandyAttackSaw
+		PlaySound PHYGenericMetalHollowSmall
+		player.removeItem fwvWsonicScrewdriver1968 1
+		player.removeItem fwvWsonicScrewdriver1974 1 0
+		player.removeItem fwvWsonicScrewdriver1979 1 0
+		player.removeItem fwvWsonicScrewdriver1996 1 0
+		player.removeItem fwvWsonicScrewdriver2006 1 0
+		player.removeItem fwvWsonicScrewdriver2010 1 0
+		player.removeItem fwvWsonicScrewdriver2013 1 0
+		player.removeItem fwvWsonicScrewdriverBF 1 0
+		player.removeItem fwvWsonicScrewdriverRiver 1 0
+		player.removeItem fwvWsonicScrewdriver1972 1 0		
+		player.addItem fwvWsonicScrewdriver2015 1
+	elseif button == 2		;return to previous
+		ShowMessage fwvTCupgradeSonicMessage fwvq1.sonicLvl
+		set menu to 2		
+	endif
+	
+	endif
+end

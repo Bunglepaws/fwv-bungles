@@ -1,0 +1,180 @@
+scn fwvqThemeRaniQuestScript
+
+
+; =======================
+; Do not remove the below variable names; it will break fwvq1
+
+ref rThemeName
+ref rTChandbrakeRef
+ref rTChelmicRef
+ref rTCatomicRef
+ref rTCpointerRef
+ref rTCvortexRef
+ref rTCzigzagRef
+ref rTCnavicompRef
+ref rTCgyroRef
+ref rTCartronRef
+ref rTCthrottleRef
+ref rTClockdownRef
+ref rLightNormalRef
+ref rLightRedRef
+ref rLightBlueRef
+ref rTCrotorRef
+ref rTCrepairRef
+ref rTCproximityRef
+ref rTCproximityAlarmRef
+ref rTCdeepScanRef
+ref rRadioDialRef
+ref rDesktopRoom
+ref rDesktopInteriorDoor
+ref rDesktopShipDoor
+ref rPoliceBoxView
+ref rTCcomms
+ref rDesktopScannerPosRef
+ref rDesktopWeatherRef
+ref rDesktopDisableList
+ref rDesktopCWExit
+ref rDesktopCCWExit
+short sRoomExitStyle 
+float fShakeMultiplier
+; =======================
+
+short sInit
+ref rBaseObject
+ref rLinkParent
+float fHue
+float fDesHue
+
+float fStayTime
+float fChangeTimer
+float fHues
+array_var arLinkedRefs
+array_var arLights
+ref rLight
+
+
+begin GameMode
+	if GetGameLoaded || GetGameRestarted || sInit == 0
+		; Reference (not base object) that is named what this theme should be called in the terminal
+		; The desktop theme selection menu will use this object's name
+		set rThemeName to raniNameActRef
+		
+		;;; CSR controls
+		; Time Rotor Handbrake
+		set rTChandbrakeRef to raniHandbrakeRef
+		; Helmic Regulator
+		set rTChelmicRef to raniHelmicRef
+		; Atomic Accelerator
+		set rTCatomicRef to raniAtomAccelRef
+		; Directional Pointer
+		set rTCpointerRef to raniPointerRef
+		; Vortex Loop
+		set rTCvortexRef to raniVortexRef
+		; Zigzag Plotter
+		set rTCzigzagRef to raniZigzagRef
+		; Navigational Computer
+		set rTCnavicompRef to raniNavicompRef
+		; Gyroscopic Stabiliser
+		set rTCgyroRef to raniGyroRef
+		; Space-Time Throttle
+		set rTCthrottleRef to raniThrottleRef
+		; Locking-Down Mechanism
+		set rTClockdownRef to raniLockdownRef
+		; Proximity Sensor
+		set rTCproximityRef to raniProximityRef
+		; Deep-Scan
+		set rTCdeepScanRef to raniDeepScanRef
+		; set Communications
+		set rTCcomms to fwvTCRaniCommsREF
+		;;; Misc. objects
+		; Time Rotor
+		set rTCrotorRef to raniRotorRef
+		; Artron Banks (Refuel)
+		set rTCartronRef to raniRefuelRef02
+		; Self-Repair System
+		set rTCrepairRef to raniRepairRef02
+		; Exterior-to-interior TARDIS view
+		set rPoliceBoxView to fwvPoliceBoxRani		
+		; Radio dial
+		set rRadioDialRef to raniRadioDialRef
+
+		; Audiovisual Effects
+		; Lights -- all power on
+		set rLightNormalRef to raniNormalLightsRef
+		; Lights -- Emergency lighting
+		set rLightRedRef to raniRedLightsRef
+		; Lights -- Life-Support offline
+		set rLightBlueRef to raniBlueLightsRef
+		; Sound -- Proximity Sensor effect
+		set rTCproximityAlarmRef to raniProximityAlarmRef 
+		; How shakey the room is
+		set fShakeMultiplier to 0.2
+		; Formlist of objects to be disabled when console room is inactive, enabled when active. Not important if in its own cell but still has to be set to a formlist
+		set rDesktopDisableList to fwvRaniConsoleRoomObjectList
+
+
+		;;; Exit hallways and door flags
+		; Exit style of the room.
+		; - 0 is only an exit door
+		; - 1 is a counterclockwise exit from the room through a corridor
+		; - 2 is a clockwise exit from the room
+		; - 3 is exit door and both corridors
+		; Only set to 0 if not in the main cell
+		set sRoomExitStyle to 0
+		; The clockwise and counter-clockwise exits from the console room.
+		; This gets a bit tricker to explain. These all deal with the "seamless" hallway transitions, if enabled for the console.
+		; For a console room (for example) with one exit, where you leave the console room traveling clockwise into the interior,
+		; you'll set rDesktopCCWExit to the teleporter in the console room. Think of it as a target for a counter-clockwise turn.
+		; Leave these at 0 if they're not needed
+		set rDesktopCCWExit to 0
+		set rDesktopCWExit to 0
+
+		
+		;;; Ship markers
+		; Console room cell
+		set rDesktopRoom to fwvTinterior1 ;fwvTinterior1
+		; Console room entrance marker from outside the policebox, where you teleport to when entering
+		set rDesktopInteriorDoor to raniInteriorDoorRef
+		; Console room entrance marker, to teleport in from outside the console room when using the doors
+		set rDesktopShipDoor to raniShipDoorRef
+		; Standing in front of the console scanner to teleport when console is changed
+		set rDesktopScannerPosRef to raniScannerPosRef
+		; Weather for the room (may not be used but keep it at fwvTardisInteriorWeather if not)
+		set rDesktopWeatherRef to fwvTardisInteriorWeather ;fwvTardisConsoleRaniWeather
+
+		;;; Formlist additions to enable room; do not change these formlists directly in GECK
+		; Add this quest to console room list
+		AddFormToFormList fwvAdditionalConsoleRooms fwvqThemeRani
+		; "Forward" animation CSR controls
+		AddFormToFormList fwvControlAnimation1List fwvTCRaniAtomic
+		AddFormToFormList fwvControlAnimation1List fwvTCRaniControlDeepScan
+		AddFormToFormList fwvControlAnimation1List fwvTCRaniHandbrake
+		AddFormToFormList fwvControlAnimation1List fwvTCRaniControlLockdown
+		AddFormToFormList fwvControlAnimation1List fwvTCRaniControlProximity
+		AddFormToFormList fwvControlAnimation1List fwvTCRaniZigzag
+		; "Forward" and "Backward" animation CSR controls
+		;AddFormToFormList fwvControlAnimation2List fwvHexRefuel
+		
+		set sInit to 1
+		
+		let rBaseObject := fwvTRaniColoredLight
+		let rLinkParent := raniLightsLinkRef
+		let sInit := 1
+		let arLinkedRefs := rLinkParent.GetLinkedChildren
+		let fStayTime := 3.0
+		let fHues := 8.0
+	elseif fwvq1.tThemeQuest == fwvqThemeRani 
+		; Scanner position (above: rDesktopScannerPosRef)
+		let fwvqProtocols.consoleRef := rDesktopScannerPosRef 
+		; Policebox landing position during "space loop" events
+		let fwvqProtocols.interiorRef := raniInteriorRef
+		let fwvqEvents.interiorRef := raniInteriorRef
+
+		; Protocol controls
+		let fwvqCSRAdv.control1 := raniControl1Ref
+		let fwvqCSRAdv.control2 := raniControl2Ref 
+		let fwvqCSRAdv.control3 := raniControl3Ref
+		let fwvqCSRAdv.control4 := raniControl4Ref 
+		let fwvqCSRAdv.control5 := raniControl5Ref
+	endif
+end

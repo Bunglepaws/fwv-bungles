@@ -1,0 +1,13 @@
+scn fwvTrenzCatDisarmSCRIPT
+
+short sOnce
+
+begin onTriggerEnter player
+
+	if sOnce == 0
+		DisablePlayerControls 0 1 1 0 0 0 0
+		set sOnce to 1
+		set fwvqTrenzalore.sSilenceMove to 1
+	endif
+
+end

@@ -1,0 +1,44 @@
+scn fwvFuncToggleSpatialDampeners
+
+short sNumRoomsActive
+float fCost
+
+begin Function { }
+	let fCost := 2.5
+	let sNumRoomsActive := Call fwvFuncTardisCountRooms
+	if fwvqSystems.tAdvanced == 1
+		let fwvqSystems.tRoomPower := 5 + ( (1 - fwvqSystems.SpatialDampeners) * 5 )
+	else
+		let fwvqSystems.tRoomPower := 5
+	endif
+	
+	if fwvqSystems.SpatialDampeners == 1 ; on, turning off
+		if (fwvq1.tPower + fCost) - (5 * sNumRoomsActive) < 0 && fwvqSystems.failsafe == 1
+			ShowMessage fwvTpowerFailMessage02
+			ForceTerminalBack
+			ForceTerminalBack
+			ForceTerminalBack
+			ForceTerminalBack
+		else
+			let fwvq1.tPower := (fwvq1.tPower + fCost) - (5 * sNumRoomsActive)
+			let fwvqSystems.SpatialDampeners := 0
+		endif
+	else ; off, turning on
+		if (fwvq1.tPower - fCost) < 0 && fwvqSystems.failsafe == 1
+			ShowMessage fwvTpowerFailMessage
+			ForceTerminalBack
+			ForceTerminalBack
+			ForceTerminalBack
+			ForceTerminalBack
+		else
+			let fwvq1.tPower := (fwvq1.tPower - fCost) + (5 * sNumRoomsActive)
+			let fwvqSystems.SpatialDampeners := 1
+		endif
+	endif
+	
+	let fwvqSystems.tRoomPower := 5 + (1 - fwvqSystems.SpatialDampeners) * 5
+	if fwvq1.tPower <= 0
+		MessageBoxEx "Power requirements exceed tolerance"
+	endif
+	SetFunctionValue fwvqSystems.SpatialDampeners
+end

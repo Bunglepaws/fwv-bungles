@@ -1,0 +1,18 @@
+scn fwvZetanBrainPlantSCRIPT
+
+short sDestroyed
+ref rSelf
+
+Begin Gamemode
+
+	set rSelf to GetSelf
+	if rSelf.getDestroyed == 1
+	;if getDestroyed == 1
+		if sDestroyed == 0
+			PlaySound NPCSuperMutantBehemothInjured01
+			fwvZetaGorlaxRef.damageAV Health 2000
+			let sDestroyed := 1
+		endif
+	endif
+
+end

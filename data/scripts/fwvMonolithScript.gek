@@ -1,0 +1,38 @@
+scn fwvMonolithScript
+
+;float x
+float xPos
+;float y
+float yPos
+float fTimer
+
+short GoNow
+short sDoOnce
+
+ref rSelf
+
+begin onActivate Player
+	set GoNow to 1
+end
+
+begin Gamemode
+	
+	if GoNow == 1	
+		set rSelf to GetSelf
+		if sDoOnce == 0
+			playsound DRSRockDrawerOpen
+			set sDoOnce to 1
+		endif
+		set xPos to rSelf.getPos x + .75
+		set yPos to rSelf.getPos y - .25
+		
+		if fTimer < 3.0
+			set fTimer to fTimer + getSecondsPassed
+			rSelf.setPos x xPos
+			rSelf.setPos y yPos
+		else
+			rself.Disable 3
+		endif
+	endif		
+
+End

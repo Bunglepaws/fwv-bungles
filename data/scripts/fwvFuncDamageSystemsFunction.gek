@@ -1,0 +1,58 @@
+scn fwvFuncDamageSystemsFunction
+
+float randDmg
+short randVar
+
+begin function { }
+
+	if fwvqSystems.tAdvanced == 0
+		set randVar to getrandompercent / (4 - fwvqCSR.sMissedControls) + 1
+		set fwvq1.tArchitecture to fwvq1.tArchitecture - randVar 
+		set randVar to getrandompercent / (4 - fwvqCSR.sMissedControls) + 1
+		set fwvq1.tLifeSupport to fwvq1.tLifeSupport - randVar 
+		set randVar to getrandompercent / (4 - fwvqCSR.sMissedControls) + 1
+		set fwvq1.tNav to fwvq1.tNav - randVar 
+		set randVar to getrandompercent / (4 - fwvqCSR.sMissedControls) + 1
+		set fwvq1.tComms to fwvq1.tComms - randVar 
+		set randVar to getrandompercent / (4 - fwvqCSR.sMissedControls) + 1
+		set fwvq1.tHull to fwvq1.tHull - randVar
+	else
+		;damage components here
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.ForcefieldGenerator to fwvqSystems.ForcefieldGenerator - randVar / 4
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.WarpEllipseCutoutCircuit to fwvqSystems.WarpEllipseCutoutCircuit - randVar / 4
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.TimeVectorGenerator to fwvqSystems.TimeVectorGenerator - randVar / 4
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.ArtronCapacitor to fwvqSystems.ArtronCapacitor - randVar / 4
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.RelativeDimensionalStabiliser to fwvqSystems.RelativeDimensionalStabiliser - randVar / 4
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.DematerializationCircuit to fwvqSystems.DematerializationCircuit - randVar / 4
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.ChronometricAstrometer to fwvqSystems.ChronometricAstrometer - randVar / 4
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.TemporalCircuits to fwvqSystems.TemporalCircuits - randVar / 4
+		;set randVar to 1 + getRandomPercent
+		;set fwvqSystems.QuantumAccelerator to fwvqSystems.QuantumAccelerator - randVar / 4
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.RedThermocouplings to fwvqSystems.RedThermocouplings - randVar / 4
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.GreenThermocouplings to fwvqSystems.GreenThermocouplings - randVar / 4
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.BlueThermocouplings to fwvqSystems.BlueThermocouplings - randVar / 4
+		set randVar to 1 + getRandomPercent
+		set fwvqSystems.InterstitialBeamSynthesiser to fwvqSystems.InterstitialBeamSynthesiser - randVar / 4
+		if fwvqLocs.fwvLskaroForestExtVisited == 1 ; only allow Fluid Links damage if Skaro is available for Mercury
+			set randVar to 1 + getRandomPercent
+			set fwvqSystems.FluidLinks to fwvqSystems.FluidLinks - randVar / 4
+			printc "FL damage, mercury source reachable"
+		else	
+			printc "no damage to FL, no mercury source"
+		endif
+		set randVar to 1 + getRandomPercent * 7.5 / 100
+		set fwvq1.tHull to fwvq1.tHull - randVar
+	endif
+
+end

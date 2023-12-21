@@ -1,0 +1,655 @@
+scn fwvFuncLocationDistanceCheck
+
+float fMaxRange
+short sNamedLocation
+string_var strName
+ref rCompare
+
+begin Function {}
+	set fMaxRange to 1024.0
+	set rCompare to Player
+	if eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLgibsonRef )
+		if fwvqLocs.fwvLgibsonVisited == 0
+			set fwvqLocs.fwvLgibsonVisited to 1
+			let strName := "Gibson's Scrapyard"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLgoodspringsExtRef )
+		if fwvqLocs.fwvLgoodspringsExtVisited == 0
+			set fwvqLocs.fwvLgoodspringsExtVisited to 1
+			let strName := "Goodsprings"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLtopsWorldExtRef )
+		if fwvqLocs.fwvLtopsWorldExtVisited == 0
+			set fwvqLocs.fwvLtopsWorldExtVisited to 1
+			let strName := "The Tops Courtyard"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLgamorrahWorldExtRef )
+		if fwvqLocs.fwvLgamorrahWorldExtVisited == 0
+			set fwvqLocs.fwvLgamorrahWorldExtVisited to 1
+			let strName := "Gomorrah exterior"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLboulderWorldExtRef )
+		if fwvqLocs.fwvLboulderWorldExtVisited == 0
+			set fwvqLocs.fwvLboulderWorldExtVisited to 1
+			let strName := "Boulder City [2]"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLfreesideKingsExtRef )
+		if fwvqLocs.fwvLfreesideKingsExtVisited == 0
+			set fwvqLocs.fwvLfreesideKingsExtVisited to 1
+			let strName := "Freeside [2]"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLfreesideRobotExtRef )
+		if fwvqLocs.fwvLfreesideRobotExtVisited == 0
+			set fwvqLocs.fwvLfreesideRobotExtVisited to 1
+			let strName := "Freeside [3]"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLfreesideCentralExtRef )
+		if fwvqLocs.fwvLfreesideCentralExtVisited == 0
+			set fwvqLocs.fwvLfreesideCentralExtVisited to 1
+			let strName := "Freeside"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLmormonFortExtRef )
+		if fwvqLocs.fwvLmormonFortExtVisited == 0
+			set fwvqLocs.fwvLmormonFortExtVisited to 1
+			let strName := "Old Mormon Fort"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLtopsExtRef )
+		if fwvqLocs.fwvLtopsExtVisited == 0
+			set fwvqLocs.fwvLtopsExtVisited to 1
+			let strName := "The Tops Exterior"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLlucky38ExtRef )
+		if fwvqLocs.fwvLlucky38ExtVisited == 0
+			set fwvqLocs.fwvLlucky38ExtVisited to 1
+			let strName := "Lucky 38 Exterior"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLjacobstownLodgeExtRef )
+		if fwvqLocs.fwvLjacobstownLodgeExtVisited == 0
+			set fwvqLocs.fwvLjacobstownLodgeExtVisited to 1
+			let strName := "Jacobstown Lodge Exterior"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLhuntersFarmExtRef )
+		if fwvqLocs.fwvLhuntersFarmExtVisited == 0
+			set fwvqLocs.fwvLhuntersFarmExtVisited to 1
+			let strName := "Hunter's Farm"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLcrescentCanyonExtRef )
+		if fwvqLocs.fwvLcrescentCanyonExtVisited == 0
+			set fwvqLocs.fwvLcrescentCanyonExtVisited to 1
+			let strName := "Crescent Canyon"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLniptonExtRef )
+		if fwvqLocs.fwvLniptonExtVisited == 0
+			set fwvqLocs.fwvLniptonExtVisited to 1
+			let strName := "Nipton"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLwestsideParkExtRef )
+		if fwvqLocs.fwvLwestsideParkExtVisited == 0
+			set fwvqLocs.fwvLwestsideParkExtVisited to 1
+			let strName := "Westside"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLtumbleweedRanchExtRef )
+		if fwvqLocs.fwvLtumbleweedRanchExtVisited == 0
+			set fwvqLocs.fwvLtumbleweedRanchExtVisited to 1
+			let strName := "Brooks Tumbleweed Branch"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLdevilsThroatExtRef )
+		if fwvqLocs.fwvLdevilsThroatExtVisited == 0
+			set fwvqLocs.fwvLdevilsThroatExtVisited to 1
+			let strName := "The Devil's Throat"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLnuclearTestsiteExtRef )
+		if fwvqLocs.fwvLnuclearTestsiteExtVisited == 0
+			set fwvqLocs.fwvLnuclearTestsiteExtVisited to 1
+			let strName := "Old Nuclear Test Site"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLrockcrushingPlantExtRef )
+		if fwvqLocs.fwvLrockcrushingPlantExtVisited == 0
+			set fwvqLocs.fwvLrockcrushingPlantExtVisited to 1
+			let strName := "Rock Crushing Plant"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLrepconFacExtRef )
+		if fwvqLocs.fwvLrepconFacExtVisited == 0
+			set fwvqLocs.fwvLrepconFacExtVisited to 1
+			let strName := "REPCONN"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLredrockCanyonExtRef )
+		if fwvqLocs.fwvLredrockCanyonExtVisited == 0
+			set fwvqLocs.fwvLredrockCanyonExtVisited to 1
+			let strName := "Red Rock Canyon"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLpumpEastExtRef )
+		if fwvqLocs.fwvLpumpEastExtVisited == 0
+			set fwvqLocs.fwvLpumpEastExtVisited to 1
+			let strName := "East Pump Station Exterior"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLpumpWestExtRef )
+		if fwvqLocs.fwvLpumpWestExtVisited == 0
+			set fwvqLocs.fwvLpumpWestExtVisited to 1
+			let strName := "West Pump Station Exterior"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLprimmHousesExtRef )
+		if fwvqLocs.fwvLprimmHousesExtVisited == 0
+			set fwvqLocs.fwvLprimmHousesExtVisited to 1
+			let strName := "Primm Houses"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLprimmExtRef )
+		if fwvqLocs.fwvLprimmExtVisited == 0
+			set fwvqLocs.fwvLprimmExtVisited to 1
+			let strName := "Primm"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLnovacExtRef )
+		if fwvqLocs.fwvLnovacExtVisited == 0
+			set fwvqLocs.fwvLnovacExtVisited to 1
+			let strName := "Novac"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLnorthvegasSquareExtRef )
+		if fwvqLocs.fwvLnorthvegasSquareExtVisited == 0
+			set fwvqLocs.fwvLnorthvegasSquareExtVisited to 1
+			let strName := "North Vegas Square"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLnewvegasSteelExtRef )
+		if fwvqLocs.fwvLnewvegasSteelExtVisited == 0
+			set fwvqLocs.fwvLnewvegasSteelExtVisited to 1
+			let strName := "New Vegas Steel"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLnellisArrayExtRef )
+		if fwvqLocs.fwvLnellisArrayExtVisited == 0
+			set fwvqLocs.fwvLnellisArrayExtVisited to 1
+			let strName := "Nellis Array"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLnellisAfbExtRef )
+		if fwvqLocs.fwvLnellisAfbExtVisited == 0
+			set fwvqLocs.fwvLnellisAfbExtVisited to 1
+			let strName := "Nellis Air Force Base"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLmontecarloSuitesExtRef )
+		if fwvqLocs.fwvLmontecarloSuitesExtVisited == 0
+			set fwvqLocs.fwvLmontecarloSuitesExtVisited to 1
+			let strName := "Monte Carlos Suites"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLmojaveOutpostRef )
+		if fwvqLocs.fwvLmojaveOutpostVisited == 0
+			set fwvqLocs.fwvLmojaveOutpostVisited to 1
+			let strName := "Mojave Outpost"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLmojaveDriveinExtRef )
+		if fwvqLocs.fwvLmojaveDriveinExtVisited == 0
+			set fwvqLocs.fwvLmojaveDriveinExtVisited to 1
+			let strName := "Mojave Drive-In"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLlegateCampExtRef )
+		if fwvqLocs.fwvLlegateCampExtVisited == 0
+			set fwvqLocs.fwvLlegateCampExtVisited to 1
+			let strName := "Legate's Camp"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLlakeLasvegasExtRef )
+		if fwvqLocs.fwvLlakeLasvegasExtVisited == 0
+			set fwvqLocs.fwvLlakeLasvegasExtVisited to 1
+			let strName := "Lake Las Vegas"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLjacobstownExtRef )
+		if fwvqLocs.fwvLjacobstownExtVisited == 0
+			set fwvqLocs.fwvLjacobstownExtVisited to 1
+			let strName := "Jacobstown"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLivanpahExtRef )
+		if fwvqLocs.fwvLivanpahExtVisited == 0
+			set fwvqLocs.fwvLivanpahExtVisited to 1
+			let strName := "Ivanpah Dry Lake"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLhooverPlantExtRef )
+		if fwvqLocs.fwvLhooverPlantExtVisited == 0
+			set fwvqLocs.fwvLhooverPlantExtVisited to 1
+			let strName := "Hoover Dam Exterior"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLheliosExtRef )
+		if fwvqLocs.fwvLheliosExtVisited == 0
+			set fwvqLocs.fwvLheliosExtVisited to 1
+			let strName := "HELIOS One"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLgypsumExtRef )
+		if fwvqLocs.fwvLgypsumExtVisited == 0
+			set fwvqLocs.fwvLgypsumExtVisited to 1
+			let strName := "Gypsum Train Yard"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLgoodspringsCemeteryExtRef )
+		if fwvqLocs.fwvLgoodspringsCemeteryExtVisited == 0
+			set fwvqLocs.fwvLgoodspringsCemeteryExtVisited to 1
+			let strName := "Goodsprings Cemetary"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLeldoradoSubExtRef )
+		if fwvqLocs.fwvLeldoradoSubExtVisited == 0
+			set fwvqLocs.fwvLeldoradoSubExtVisited to 1
+			let strName := "El Dorado Substation"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLcallvilleBayExtRef )
+		if fwvqLocs.fwvLcallvilleBayExtVisited == 0
+			set fwvqLocs.fwvLcallvilleBayExtVisited to 1
+			let strName := "Callville Bay"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLboulderCityExtRef )
+		if fwvqLocs.fwvLboulderCityExtVisited == 0
+			set fwvqLocs.fwvLboulderCityExtVisited to 1
+			let strName := "Boulder City"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLboulderbeachExtRef )
+		if fwvqLocs.fwvLboulderbeachExtVisited == 0
+			set fwvqLocs.fwvLboulderbeachExtVisited to 1
+			let strName := "Boulder Beach Campground"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLbonnieSpringsExtRef )
+		if fwvqLocs.fwvLbonnieSpringsExtVisited == 0
+			set fwvqLocs.fwvLbonnieSpringsExtVisited to 1
+			let strName := "Bonnie Springs"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLblackmountainExtRef )
+		if fwvqLocs.fwvLblackmountainExtVisited == 0
+			set fwvqLocs.fwvLblackmountainExtVisited to 1
+			let strName := "Black Mountain"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLbitterspringsExtRef )
+		if fwvqLocs.fwvLbitterspringsExtVisited == 0
+			set fwvqLocs.fwvLbitterspringsExtVisited to 1
+			let strName := "Bitter Springs"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLantmoundExtRef )
+		if fwvqLocs.fwvLantmoundExtVisited == 0
+			set fwvqLocs.fwvLantmoundExtVisited to 1
+			let strName := "Ant Mound"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLaerotechExtRef )
+		if fwvqLocs.fwvLaerotechExtVisited == 0
+			set fwvqLocs.fwvLaerotechExtVisited to 1
+			let strName := "Aerotech"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLjacobstownLodgeRef )
+		if fwvqLocs.fwvLjacobstownLodgeVisited == 0
+			set fwvqLocs.fwvLjacobstownLodgeVisited to 1
+			let strName := "Jacobstown Lodge"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLsilverpeakMineRef )
+		if fwvqLocs.fwvLsilverpeakMineVisited == 0
+			set fwvqLocs.fwvLsilverpeakMineVisited to 1
+			let strName := "Silver Peak Mine"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLvikkivanceCasinoRef )
+		if fwvqLocs.fwvLvikkivanceCasinoVisited == 0
+			set fwvqLocs.fwvLvikkivanceCasinoVisited to 1
+			let strName := "Vikki and Vance Casino"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLvault74Ref )
+		if fwvqLocs.fwvLvault74Visited == 0
+			set fwvqLocs.fwvLvault74Visited to 1
+			let strName := "Vault 74"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLvault3Ref )
+		if fwvqLocs.fwvLvault3Visited == 0
+			set fwvqLocs.fwvLvault3Visited to 1
+			let strName := "Vault 3"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLvault34Ref )
+		if fwvqLocs.fwvLvault34Visited == 0
+			set fwvqLocs.fwvLvault34Visited to 1
+			let strName := "Vault 34"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLvault22Ref )
+		if fwvqLocs.fwvLvault22Visited == 0
+			set fwvqLocs.fwvLvault22Visited to 1
+			let strName := "Vault 22"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLvault11Ref )
+		if fwvqLocs.fwvLvault11Visited == 0
+			set fwvqLocs.fwvLvault11Visited to 1
+			let strName := "Vault 11"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLultraluxeCasinoRef )
+		if fwvqLocs.fwvLultraluxeCasinoVisited == 0
+			set fwvqLocs.fwvLultraluxeCasinoVisited to 1
+			let strName := "The Ultra-Luxe"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLtopsCasinoRef )
+		if fwvqLocs.fwvLtopsCasinoVisited == 0
+			set fwvqLocs.fwvLtopsCasinoVisited to 1
+			let strName := "The Tops"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLbasincreekRef )
+		if fwvqLocs.fwvLbasincreekVisited == 0
+			set fwvqLocs.fwvLbasincreekVisited to 1
+			let strName := "Basincreek Building"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLsecuritronVaultRef )
+		if fwvqLocs.fwvLsecuritronVaultVisited == 0
+			set fwvqLocs.fwvLsecuritronVaultVisited to 1
+			let strName := "Securitron Vault"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLrsFoxtrotRef )
+		if fwvqLocs.fwvLrsFoxtrotVisited == 0
+			set fwvqLocs.fwvLrsFoxtrotVisited to 1
+			let strName := "Ranger Station Foxtrot"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLrsFoxtrotExtRef )
+		if fwvqLocs.fwvLrsFoxtrotExtVisited == 0
+			set fwvqLocs.fwvLrsFoxtrotExtVisited to 1
+			let strName := "Ranger Station Foxtrot"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLrsDeltaRef )
+		if fwvqLocs.fwvLrsDeltaVisited == 0
+			set fwvqLocs.fwvLrsDeltaVisited to 1
+			let strName := "Ranger Station Delta"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLrsCharlieRef )
+		if fwvqLocs.fwvLrsCharlieVisited == 0
+			set fwvqLocs.fwvLrsCharlieVisited to 1
+			let strName := "Ranger Station Charlie"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLrepconBaseRef )
+		if fwvqLocs.fwvLrepconBaseVisited == 0
+			set fwvqLocs.fwvLrepconBaseVisited to 1
+			let strName := "REPCONN Basement"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLbrocCaveRef )
+		if fwvqLocs.fwvLbrocCaveVisited == 0
+			set fwvqLocs.fwvLbrocCaveVisited to 1
+			let strName := "Broc Flower Cave"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLthornRef )
+		if fwvqLocs.fwvLthornVisited == 0
+			set fwvqLocs.fwvLthornVisited to 1
+			let strName := "The Thorn"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLnorthSewerRef )
+		if fwvqLocs.fwvLnorthSewerVisited == 0
+			set fwvqLocs.fwvLnorthSewerVisited to 1
+			let strName := "North Sewer"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLcentralSewerRef )
+		if fwvqLocs.fwvLcentralSewerVisited == 0
+			set fwvqLocs.fwvLcentralSewerVisited to 1
+			let strName := "Central Sewers"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLhhRef )
+		if fwvqLocs.fwvLhhVisited == 0
+			set fwvqLocs.fwvLhhVisited to 1
+			let strName := "H&H Tools Factroy"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLniptonTownhallRef )
+		if fwvqLocs.fwvLniptonTownhallVisited == 0
+			set fwvqLocs.fwvLniptonTownhallVisited to 1
+			let strName := "Nipton Town Hall"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLnellisTunnelRef )
+		if fwvqLocs.fwvLnellisTunnelVisited == 0
+			set fwvqLocs.fwvLnellisTunnelVisited to 1
+			let strName := "Nellis Train Tunnel"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLnellisHangarRef )
+		if fwvqLocs.fwvLnellisHangarVisited == 0
+			set fwvqLocs.fwvLnellisHangarVisited to 1
+			let strName := "Nellis Hangars"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLlucky38BasementRef )
+		if fwvqLocs.fwvLlucky38BasementVisited == 0
+			set fwvqLocs.fwvLlucky38BasementVisited to 1
+			let strName := "Lucky 38 Basement"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLcharlestonCaveRef )
+		if fwvqLocs.fwvLcharlestonCaveVisited == 0
+			set fwvqLocs.fwvLcharlestonCaveVisited to 1
+			let strName := "Charleston Cave"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLhooverPlantRef )
+		if fwvqLocs.fwvLhooverPlantVisited == 0
+			set fwvqLocs.fwvLhooverPlantVisited to 1
+			let strName := "Hoover Dam"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLheliosDeckRef )
+		if fwvqLocs.fwvLheliosDeckVisited == 0
+			set fwvqLocs.fwvLheliosDeckVisited to 1
+			let strName := "HELIOS One Observation Deck"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLgoodspringsSaloonRef )
+		if fwvqLocs.fwvLgoodspringsSaloonVisited == 0
+			set fwvqLocs.fwvLgoodspringsSaloonVisited to 1
+			let strName := "Goodsprings Prospector Saloon"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLgomorrahMainRef )
+		if fwvqLocs.fwvLgomorrahMainVisited == 0
+			set fwvqLocs.fwvLgomorrahMainVisited to 1
+			let strName := "Gomorrah"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLvangraffWarehouseRef )
+		if fwvqLocs.fwvLvangraffWarehouseVisited == 0
+			set fwvqLocs.fwvLvangraffWarehouseVisited to 1
+			let strName := "Abandoned Warehouse"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLceruleanRoboticsRef )
+		if fwvqLocs.fwvLceruleanRoboticsVisited == 0
+			set fwvqLocs.fwvLceruleanRoboticsVisited to 1
+			let strName := "Cerulean Robotics"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLkingsSchoolRef )
+		if fwvqLocs.fwvLkingsSchoolVisited == 0
+			set fwvqLocs.fwvLkingsSchoolVisited to 1
+			let strName := "The King's School of Impersonation"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLatomicWranglerRef )
+		if fwvqLocs.fwvLatomicWranglerVisited == 0
+			set fwvqLocs.fwvLatomicWranglerVisited to 1
+			let strName := "Atomic Wrangler"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLcrimsonCaravanRef )
+		if fwvqLocs.fwvLcrimsonCaravanVisited == 0
+			set fwvqLocs.fwvLcrimsonCaravanVisited to 1
+			let strName := "Crimson Caravan Main Office"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLfirestationRef )
+		if fwvqLocs.fwvLfirestationVisited == 0
+			set fwvqLocs.fwvLfirestationVisited to 1
+			let strName := "Fire Station"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLmccarranConcourseRef )
+		if fwvqLocs.fwvLmccarranConcourseVisited == 0
+			set fwvqLocs.fwvLmccarranConcourseVisited to 1
+			let strName := "Camp McCarren Concourse"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLguardianCaveRef )
+		if fwvqLocs.fwvLguardianCaveVisited == 0
+			set fwvqLocs.fwvLguardianCaveVisited to 1
+			let strName := "Camp Guardian Cave"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLforlornCommandRef )
+		if fwvqLocs.fwvLforlornCommandVisited == 0
+			set fwvqLocs.fwvLforlornCommandVisited to 1
+			let strName := "Camp Forlorn Hope Command Center"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLblackStorageRef )
+		if fwvqLocs.fwvLblackStorageVisited == 0
+			set fwvqLocs.fwvLblackStorageVisited to 1
+			let strName := "Black Mountain Storage Building"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLbisonSteveRef )
+		if fwvqLocs.fwvLbisonSteveVisited == 0
+			set fwvqLocs.fwvLbisonSteveVisited to 1
+			let strName := "The Bison Steve"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLbcStationRef )
+		if fwvqLocs.fwvLbcStationVisited == 0
+			set fwvqLocs.fwvLbcStationVisited to 1
+			let strName := "Boulder City Train Station"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLbigHornRef )
+		if fwvqLocs.fwvLbigHornVisited == 0
+			set fwvqLocs.fwvLbigHornVisited to 1
+			let strName := "Big Horn Saloon"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLaero300Ref )
+		if fwvqLocs.fwvLaero300Visited == 0
+			set fwvqLocs.fwvLaero300Visited to 1
+			let strName := "Aerotech Suite 300"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLvault21Ref )
+		if fwvqLocs.fwvLvault21Visited == 0
+			set fwvqLocs.fwvLvault21Visited to 1
+			let strName := "Vault 21"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLangeloWorkshopRef )
+		if fwvqLocs.fwvLangeloWorkshopVisited == 0
+			set fwvqLocs.fwvLangeloWorkshopVisited to 1
+			let strName := "Angelo's Workshop"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLvbStationRef )
+		if fwvqLocs.fwvLvbStationVisited == 0
+			set fwvqLocs.fwvLvbStationVisited to 1
+			let strName := "Las Vegas Boulevard Station"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLwestPumpRef )
+		if fwvqLocs.fwvLwestPumpVisited == 0
+			set fwvqLocs.fwvLwestPumpVisited to 1
+			let strName := "West Pump Station"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLzappsRef )
+		if fwvqLocs.fwvLzappsVisited == 0
+			set fwvqLocs.fwvLzappsVisited to 1
+			let strName := "Zapp's Neon Signs"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLeastPumpRef )
+		if fwvqLocs.fwvLeastPumpVisited == 0
+			set fwvqLocs.fwvLeastPumpVisited to 1
+			let strName := "East Pump Station"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLdesertCraterRef )
+		if fwvqLocs.fwvLkarnVisited == 0
+			set fwvqLocs.fwvLkarnVisited to 1
+			let strName := "Karn - Sisterhood Temple Entrance"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLcreepyHouseRef )
+		if fwvqLocs.fwvLcreepyHouseVisited == 0
+			set fwvqLocs.fwvLcreepyHouseVisited to 1
+			let strName := "Abandoned Home"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLskaroForestRef )
+		if fwvqLocs.fwvLskaroForestExtVisited == 0
+			set fwvqLocs.fwvLskaroForestExtVisited to 1
+			let strName := "Skaro - The Petrified Forest"
+			set sNamedLocation to 1
+		endif
+	elseif eval (Call fwvFuncGetWithinRange2D 0, fMaxRange, 1, rCompare, fwvLSearchlightREF )
+		if fwvqLocs.fwvLSearchlightVisited == 0
+			set fwvqLocs.fwvLSearchlightVisited to 1
+			let strName := "Searchlight Outskirts"
+			Call fwvFuncDisplayLocationFound strName
+		endif
+	endif
+	if sNamedLocation == 1
+		if fwvDebugMode == 1
+			printc "Found: %z" strName
+		endif
+		Call fwvFuncDisplayLocationFound strName
+	endif
+	sv_Destruct strName
+end

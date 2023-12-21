@@ -1,0 +1,13 @@
+scn fwvItemFlaskOfTeaSCRIPT
+
+Begin ScriptEffectFinish
+
+if player.hasMagicEffect fwvRegenCycleEffect == 1
+	MessageEx "[Tannin and free radicals... a good cure for regeneration sickness.]"
+	PlaySound UIPopUpExperienceUp
+	player.dispel fwvRegenCycle
+	player.sms fwvRegenEffectShader
+	EnableControl 15
+endif
+
+end

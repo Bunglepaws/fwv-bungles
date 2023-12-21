@@ -1,0 +1,31 @@
+scn fwvAngelMotelActivatorScript
+
+short ageToDeath
+short button
+float aTimer
+
+begin onActivate player
+
+	;if getStage fwvqAngelMotel < 5
+	;	if fwvAngelMotelPayphoneFXRef.getDisabled == 0
+	;		fwvAngelMotelPayphoneFXRef.disable
+	;		set fwvqLocs.fwvLangelMotelVisited to 1
+	;		imod FadeToWhiteAndBackQuickISFX
+	;		MessageEx "The Motel Los Angeles... Space/Time Coordinates added..."
+	;		PlaySound UIHealthChemsAddicted
+	;		setStage fwvqAngelMotel 5
+	;	else
+	;		MessageEx "A dead payphone..."
+	;	endif
+	;else
+	if getStage fwvqAngelMotel == 20
+		if getIsReference fwvAngelMotelTelephoneActivatorRef
+			fwvAngelMotelTelephoneRef.disable
+			fwvAngelMotelPcRef.enable
+			SetTalkingActivatorActor fwvAngelMotelPcRef
+			activate
+		endif
+	endif
+
+end
+

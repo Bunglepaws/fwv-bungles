@@ -1,0 +1,34 @@
+scn fwvq3eCyberstasisScript
+
+float chance
+short init
+short active
+short fxOnce
+
+begin gamemode
+
+	if init == 0
+		set chance to getRandomPercent
+		set init to 1
+	endif
+
+	if chance > 75
+
+		if fxOnce == 0
+			pms NightkinCloakFXShader
+		endif
+
+		if getDistance player < 100
+			if player.isSneaking == 0
+				PlaySound fwvCreatureFXcybermanLeftFoot
+				PlaySound fwvCreatureFXcybermanCry2
+				Disable
+				MarkForDelete
+				PlaceAtMe fwvq3eCybermanRanged
+				set chance to 0
+			endif
+		endif
+
+	endif
+
+end

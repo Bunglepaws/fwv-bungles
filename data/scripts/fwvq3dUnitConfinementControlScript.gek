@@ -1,0 +1,17 @@
+scn fwvq3dUnitConfinementControlScript
+
+ref ffield
+
+begin onActivate player
+
+	set ffield to getLinkedRef
+
+	if ffield.getDisabled == 0
+		PlaySound OBJForceFieldImpact
+		ffield.disable 0
+	else
+		PlaySound OBJForceFieldImpact
+		ffield.enable 0
+	endif
+
+end

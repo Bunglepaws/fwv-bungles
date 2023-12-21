@@ -1,0 +1,11 @@
+scn fwvTLadderScript
+
+ref linkRef
+begin OnActivate player
+	set linkRef to GetLinkedRef
+	if player.GetPos Z >= linkRef.GetPos Z - 64
+		set linkRef to linkRef.GetLinkedRef
+	endif
+	Player.moveTo linkRef
+	activate
+end

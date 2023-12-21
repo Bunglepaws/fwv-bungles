@@ -1,0 +1,71 @@
+scn fwvGeckoScriptRevSCRIPT
+
+short button
+short sMenu
+short sCured
+short sKill
+float sDay
+ref rSelf
+
+Begin onActivate player
+	if getisReference fwvGeckoRef == 1 && fwvqSilurianGasStation.sCuredGecko == 0 && player.getInCell fwvGeckoHideout == 1
+		if player.GetItemCount fwvWeapMedicalProbe > 0
+			ShowMessage fwvGeckoMessage03
+		else
+			ShowMessage fwvGeckoMessage03NoProbe
+		endif
+		set sMenu to 1
+	else
+		Activate
+	endif
+
+End
+
+Begin GameMode
+
+	if sMenu == 1  ; Heal, Kill, or Leave
+		set button to getbuttonpressed
+		if button == 0
+			player.removeItem stimpak 2 1
+			player.rewardKarma 5
+			set fwvqSilurianGasStation.sCuredGecko to 1
+			if sKill == 1
+				set sKill to 0
+			endif
+			set sCured to 1
+			set fwvqSilurianGasStation.sCuredGecko to 1
+			fwvGeckoRef.addscriptpackage fwvGeckoSandboxCurrentLocation256
+			;ShowMessage fwvGeckoCuredMessage
+			set sMenu to 2
+			setObjectiveCompleted fwvqSilurianGasStation 50 1
+			setStage fwvqSilurianGasStation 100
+			fwvGeckoRef.evp
+			fwvGeckoref.startconversation player GREETING
+		elseif button == 1
+			killactor
+			rewardkarma -5
+			fwvGeckoHideoutKnife.disable
+			player.additem WeapKnifeAssassin 1
+			setObjectiveCompleted fwvqSilurianGasStation 50 1
+			setStage fwvqSilurianGasStation 100
+		else
+			set sDay to GameDaysPassed
+			set sKill to 1
+			set sMenu to 0
+		endif
+	endif
+
+	if sCured == 0 && sKill == 1
+		if GameDaysPassed > sDay + 1
+			KillActor
+			MessageBoxEx "The injured Silurian outcast has died."
+			setObjectiveCompleted fwvqSilurianGasStation 50 1
+			setStage fwvqSilurianGasStation 100
+			set sKill to 2
+		endif
+	endif
+
+End
+
+
+

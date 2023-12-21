@@ -1,0 +1,45 @@
+scn fwvFuncTardisChkRooms
+
+short rListSize
+
+Begin Function { }
+
+		if fwvqRooms.tLibrary == 1
+			fwvTardisLibraryRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tArtGallery == 1
+			fwvTardisGalleryRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tGardens == 1
+			fwvTardisGardensRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tBedroom == 1
+			fwvTardisBedroomRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tGalley == 1
+			fwvTardisGalleyRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tSickbay == 1
+			fwvTardisSickbayRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tWardrobe == 1
+			fwvTardisWardrobeRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tPool == 1
+			fwvTardisPoolRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tWorkshop == 1
+			fwvTardisWorkshopRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tLab == 1
+			fwvTardisLabRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tZeroRoom == 1
+			fwvTardisZeroRmRef.ListAddReference fwvTardisActiveRooms
+		endif
+		let rListSize := ListGetCount fwvTardisActiveRooms
+		SetFunctionValue rListSize
+		;ListClear fwvTardisActiveRooms
+
+End
+

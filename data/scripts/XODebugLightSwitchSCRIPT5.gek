@@ -1,0 +1,16 @@
+scn XODebugLightSwitchSCRIPT5
+
+
+Begin OnFire
+
+	if fwvq1.pxl <> 5
+		set fwvq1.pxl to 5
+		MessageBoxEx "PXL 5"
+	else
+		set fwvq1.pxl to 10
+		MessageBoxEx "PXL 10"
+	endif
+
+end
+
+

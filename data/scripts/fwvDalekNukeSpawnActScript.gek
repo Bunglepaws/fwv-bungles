@@ -1,0 +1,41 @@
+scn fwvDalekNukeSpawnActScript
+
+ref rSelf
+ref rNukeRef
+ref rSpawnerLoc
+ref rNukeSpawnType
+short sDoOnce
+float fWaitTime
+float fNukeScale
+float fNukeAngle
+
+begin OnTriggerEnter Player
+	set rSelf to GetSelf
+	if rSelf == fwvq3fBigNukeSpawnerRef
+		set rSpawnerLoc to fwvq3fBigNukeSpawnRef
+		set rNukeSpawnType to fwvNuke2Explosion
+		fwvq3fLucky38TopRef.Disable 1
+	else
+		set rSpawnerLoc to GetLinkedRef
+		set rNukeSpawnType to SmallNukeExplosionNoKD
+	endif
+	set sDoOnce to 1
+end
+
+begin GameMode
+	if sDoOnce == 1
+		if rSelf == fwvq3fBigNukeSpawnerRef && 1 == 0
+			rSpawnerLoc.FireWeapon fwvDalekNukeTest
+			set sDoOnce to 3
+		else
+			set sDoOnce to 2
+			set rNukeRef to rSpawnerLoc.PlaceAtMe rNukeSpawnType 1
+		endif
+	elseif sDoOnce == 2
+		set sDoOnce to 3
+		set fNukeScale to rSpawnerLoc.GetScale
+		set fNukeAngle to rSpawnerLoc.GetAngle Z
+		rNukeRef.SetScale fNukeScale 
+		rNukeRef.SetAngle Z fNukeAngle
+	endif
+end

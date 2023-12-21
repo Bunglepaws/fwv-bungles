@@ -1,0 +1,18 @@
+scn fwvTardisConsoleScript
+
+; public variables
+float fShakeAngle
+float fShakeSeconds
+short sShakeEnabled
+
+short tutOnce
+
+begin GameMode
+
+	if getDistance player < 500
+		if fwvqTutorials.tutorial == 1 && fwvqTutorials.conTutOnce == 0
+			ShowTutorialMenu fwvTUTconsoleMessage
+			set fwvqTutorials.conTutOnce to 1
+		endif
+	endif
+end

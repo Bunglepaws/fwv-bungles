@@ -1,0 +1,14 @@
+scn fwvDoctor10SuitcaseTARDISscript
+
+begin OnActivate Player
+
+	if fwvq1.cube < 10
+		showmessage Doctor10SuitcaseTARDISMesg
+	
+	else
+		activate
+	
+	endif
+
+end
+

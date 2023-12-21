@@ -1,0 +1,29 @@
+scn fwvRassilonTombActivatorScript
+
+ref rLinkedRef
+
+Begin OnActivate player
+
+	let rLinkedRef := getLinkedRef
+
+	if getIsReference fwvRassilonSecretButton01Ref == 1
+		if rLinkedRef.getDisabled == 0
+			rLinkedRef.disable
+		else
+			rLinkedRef.enable
+		endif
+	elseif getIsReference fwvRassilonSecretButton02Ref == 1
+		if fwvRassilonTransmatRef.getDisabled == 0
+			fwvRassilonTransmatRef.disable
+		else
+			fwvRassilonTransmatRef.enable
+		endif
+	elseif getIsReference fwvRassilonTombKeyRef == 1
+		MessageBoxEx "To achieve Rassilon's prize is as easy as Pi..."
+	elseif getIsReference fwvRassilonTransmatRef == 1
+		MessageBoxEx "You'll need to make repairs to this to get it working again..."
+	elseif getIsReference fwvRassilonOldTARDISRef == 1
+		MessageBoxEx "You cannot enter an older version of the TARDIS..."
+	endif
+
+End

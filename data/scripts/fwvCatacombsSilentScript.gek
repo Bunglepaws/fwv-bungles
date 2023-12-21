@@ -1,0 +1,15 @@
+scn fwvCatacombsSilentScript
+
+ref rSelf
+
+begin gamemode
+
+
+	if fwvqTrenzalore.sSilenceMet == 1
+		setenemy PlayerFaction fwvSilentCreatureFactionTruce
+		set fwvqTrenzalore.sSilenceMet to 2
+	endif
+
+
+
+end

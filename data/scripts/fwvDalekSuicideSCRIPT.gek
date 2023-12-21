@@ -1,0 +1,40 @@
+scn fwvDalekSuicideSCRIPT
+
+
+short killOnce
+ref rSelf
+short sDead
+short sModel
+short random
+short sIsCounted
+float fTimer
+short sDoOnce
+
+Begin GameMode
+
+	set rSelf to GetSelf
+
+	if getDead == 0
+		if getDistance player < 500
+			if fTimer < 2.0
+				if sDoOnce == 0
+					playsound fwvCreatureMadDalek
+					set sDoOnce to 1
+				endif
+				set fTimer to fTimer + GetSecondsPassed
+			else
+				rSelf.KillActor
+			endif
+		endif
+	elseif getDead == 1
+		if killOnce == 0
+			rSelf.placeAtMe fwvDegredationRemainsHavok
+			rSelf.disable
+			rSelf.MarkForDelete
+			placeAtMe FusionCarBatteryExplosion
+			;PlaceAtMe fwvDalekExplosion
+			let killOnce := 1
+		endif
+	endif
+
+End

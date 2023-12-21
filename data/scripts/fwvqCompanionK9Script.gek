@@ -1,0 +1,251 @@
+scn fwvqCompanionK9Script
+
+float fK9Health
+short sK9HealthRound 
+short sRepairs
+short sScrapElectronics
+
+short sLevel
+short sUpgrade
+short sWeaponType	;0- Stun, 1-Kill
+
+short sK9FollowFlag
+
+short sScavenge
+short sRewardListCount
+short sRewardListRand
+short sRewardCount
+float fScavengeDay
+float fTimer
+float fTimerTarget
+ref rReward
+
+short sPlayGame
+short sK9Choice		;1 - rock, 2 - paper, 3 - scissors
+short sPlayerChoice	;1 - rock, 2 - paper, 3 - scissors
+short sK9Score
+short sPlayerScore
+short sRound
+float fWaitForApplause
+
+short sInit
+short sButtonPressed 
+short sPatch
+
+Begin GameMode
+
+	if sPatch == 0
+		if fwvCompanionK9Ref.getDead == 1
+			fwvCompanionK9Ref.resurrectActor
+		endif
+		let sPatch := 1
+	endif
+
+	if sInit == 0
+		let fScavengeDay := GameDaysPassed
+		let sWeaponType := 1
+		let sLevel := 1
+		let sInit := 1
+	endif
+		
+	if sRepairs == 1
+		let fK9Health := fwvCompanionK9Ref.getHealthPercentage
+		let sK9HealthRound := fK9Health * 100
+		if fK9Health > 0.75
+			let sScrapElectronics := 1
+		elseif fK9Health > 0.50
+			let sScrapElectronics := 2
+		elseif fK9Health > 0.25
+			let sScrapElectronics := 3
+		elseif fK9Health > 0.1
+			let sScrapElectronics := 4
+		endif
+		let sRepairs := 2
+	elseif sRepairs == 2
+	MessageBoxEx "K9's Diagnostics report varying levels of wear and tear to his systems (%g%% Health). It will require a Temporal Engineering skill of 25 (%g) or more, and %g x Scrap Electronics to restore his health to full|Make Repairs|Leave Him alone|" sK9HealthRound fwvq1.txl sScrapElectronics
+		let sRepairs := 3
+	elseif sRepairs == 3
+		let sButtonPressed := getButtonPressed
+		if sButtonPressed == 0
+			if fwvq1.txl >= 25 && (player.getItemCount ScrapElectronics >= sScrapElectronics)
+				fwvCompanionK9Ref.resetHealth
+				PlaySound UIRepairWeapon
+				PlaySound NPCRobotEdELaugh
+			MessageBoxEx "K9 has been repaired"
+				If GetPCIsSex Female
+     				PlaySound fwvK9ThxMisRepCom
+				else
+     				PlaySound fwvK9AllSysFuncNorm
+				endif
+				player.removeItem ScrapElectronics sScrapElectronics 0
+			elseif fwvq1.txl < 25
+				MessageBoxEx "Your Temporal Engineering Skill is not High enough (%g)" fwvq1.txl
+			elseif player.getItemCount ScrapElectronics < sScrapElectronics
+				MessageBoxEx "You do not have enough Scrap Electronics"
+			endif
+			let sRepairs := 0
+		elseif sButtonPressed == 1
+			let sRepairs := 0			
+		endif
+	endif
+
+	if sUpgrade == 1
+		if sLevel == 1
+			if fwvq1.txl >= 2
+				MessageBoxEx "Inventory Upgrade:%r%rYou have managed to reconfigure some of K9's internal circuitry, allowing you to retrofit a Dimensionally Transcendental lockbox."
+				let sLevel := 2
+			else
+				MessageBoxEx "You require a Temporal Engineering Skill of 2 (%g) or more to upgrade K9" fwvq1.txl
+			endif
+		elseif sLevel == 2
+			if fwvq1.txl >= 25
+				MessageBoxEx "Crafting Upgrade:%r%rBy jury-rigging a Block-Transfer-Computer to K9's Defensive Laser, you're now able to access the TARDIS Workbench from anywhere."
+				let sLevel := 3
+			else
+				MessageBoxEx "You require a Temporal Engineering Skill of 25 (%g) or more to upgrade K9" fwvq1.txl
+			endif
+		elseif sLevel == 3
+			if fwvq1.txl >= 50
+				MessageBoxEx "Repairs Upgrade:%r%rYou have included a frequency modulator with K9's Defensive Laser, allowing him to cauterize fabricated materials."
+				let sLevel := 4
+			else
+				MessageBoxEx "You require a Temporal Engineering Skill of 50 (%g) or more to upgrade K9" fwvq1.txl
+			endif
+		elseif sLevel == 4
+			if fwvq1.txl >= 75
+				MessageBoxEx "Scavenge Upgrade:%r%rBy jacking K9's sensors into his reserve power modulator, you can now send him on scavenger hunts to fetch back random loot."
+				let sLevel := 5
+			else
+				MessageBoxEx "You require a Temporal Engineering Skill of 75 (%g) or more to upgrade K9" fwvq1.txl
+			endif
+		elseif sLevel == 5
+			if fwvq1.txl >= 100
+				MessageBoxEx "Rock, Paper, Scissors:%r%rYou've bypassed some of K9's AI firewalls to customise his personality circuits. He is now capable of playing you in a friendly game of Rock, Paper, Scissors."
+				let sLevel := 6
+			else
+				MessageBoxEx "You require a Temporal Engineering Skill of 100 (%g) to upgrade K9" fwvq1.txl
+			endif
+		endif
+		let sUpgrade := 0
+	endif
+
+	if sScavenge == 1
+		if fScavengeDay < GameDaysPassed + 1
+			MessageEx "K9 will return shortly"
+			fwvCompanionK9Ref.disable
+			let fTimer := 0.0
+			let fTimerTarget := 60.0 + (1+ getRandomPercent * 60 / 100)
+			let fScavengeDay := GameDaysPassed
+			let sScavenge := 2
+		else
+			MessageBoxEx "K9's batteries will only allow him to Scavenge once per day. Try again in 24 hours."
+			let sScavenge := 0
+		endif
+	elseif sScavenge == 2
+		if fTimer <  fTimerTarget
+			let fTimer := fTimer + getSecondsPassed
+		else
+			fwvCompanionK9Ref.moveTo Player
+			fwvCompanionK9Ref.enable
+			let sScavenge := 3
+		endif
+	elseif sScavenge == 3
+		While sRewardCount < 3
+			let sRewardListCount := ListGetCount fwvCompanionK9Loot
+			let sRewardListRand := 1 + getRandomPercent * sRewardListCount / 100
+			let rReward := ListGetNthForm fwvCompanionK9Loot sRewardListRand
+			fwvCompanionK9InventoryCloneREF.addItem rReward 1
+			let sRewardCount := sRewardCount + 1
+		Loop
+		MessageBoxEx "K9 has returned with scavenged loot stored in his lockbox"
+		let sScavenge := 0
+		let sRewardCount := 0
+	endif
+
+	if sPlayGame == 1
+		if sPlayerScore < 3 || sK9Score < 3
+			MessageBoxEx "Make a choice!%r%r|Choose Rock|Choose Paper|Choose Scissors|"
+			let sPlayGame := 2
+		elseif sPlayerScore >= 3
+			MessageBoxEx "You win!"
+			let sPlayGame := 0
+		elseif sK9Score >= 3
+			MessageBoxEx "K9 wins!"
+			let sPlayGame := 0
+		endif
+	elseif sPlayGame == 2
+		let sButtonPressed := GetButtonPressed
+		if sButtonPressed == 0
+			MessageBoxEx "You chose 'Rock'"
+			let sPlayerChoice := 1
+			let sPlayGame := 3
+		elseif sButtonPressed == 1
+			MessageBoxEx "You chose 'Paper'"
+			let sPlayerChoice := 2
+			let sPlayGame := 3
+		elseif sButtonPressed == 2
+			MessageBoxEx "You chose 'Scissors'"
+			let sPlayerChoice := 3
+			let sPlayGame := 3
+		endif
+	elseif sPlayGame == 3
+		if fTimer < 2.0
+			let fTimer := fTimer + getSecondsPassed
+		else
+			let sK9Choice := 1 + getRandomPercent * 3 / 100
+
+			printc "K9 chose %g & Player chose %g" sK9Choice sPlayerChoice
+
+			;If Rock beats Scissors
+			if sK9Choice == 1 && sPlayerChoice == 3
+				let sK9Score := sK9Score + 1
+				MessageBoxEx "You: %g - K9: %g%r%rK9 chose Rock!%rRock crushes Scissors%r%rYou lose this round" sPlayerScore sK9Score
+			elseif sK9Choice == 3 && sPlayerChoice == 1
+				let sPlayerScore := sPlayerScore + 1
+				MessageBoxEx "You: %g - K9: %g%r%rK9 chose Scissors!%rRock crushes Scissors%r%rYou win this round" sPlayerScore sK9Score
+			endif
+
+			;If Scissors cut Paper
+			if sK9Choice == 3 && sPlayerChoice == 2
+				let sK9Score := sK9Score + 1
+				MessageBoxEx "You: %g - K9: %g%r%rK9 chose Scissors!%rScissors cuts Paper%r%rYou lose this round" sPlayerScore sK9Score
+			elseif sK9Choice == 2 && sPlayerChoice == 3
+				let sPlayerScore := sPlayerScore + 1
+				MessageBoxEx "You: %g - K9: %g%r%rK9 chose Paper!%rScissors cuts Paper%r%rYou win this round" sPlayerScore sK9Score
+			endif
+
+			;If Paper wraps Rock
+			if sK9Choice == 2 && sPlayerChoice == 1
+				let sK9Score := sK9Score + 1
+				MessageBoxEx "You: %g - K9: %g%r%rK9 chose Paper!%rPaper wraps around Rock%r%rYou lose this round" sPlayerScore sK9Score
+			elseif sK9Choice == 1 && sPlayerChoice == 2
+				let sPlayerScore := sPlayerScore + 1
+				MessageBoxEx "You: %g - K9: %g%r%rK9 chose Rock!%rPaper wraps around Rock%r%rYou win this round" sPlayerScore sK9Score
+			endif
+
+			;Or if a draw
+			if sK9Choice == sPlayerChoice
+				MessageBoxEx "You: %g - K9: %g%r%rStalemate! You both made the same choice!" sPlayerScore sK9Score
+			endif
+
+			if sPlayerScore < 3 && sK9Score < 3
+				let fTimer := 0.0
+				let sPlayGame := 1
+			elseif sK9Score >= 3
+				MessageBoxEx "K9 wins!"
+				let sPlayerScore := 0
+				let sK9Score := 0
+				let sPlayGame := 0
+			elseif sPlayerScore >= 3
+				let sPlayerScore := 0
+				let sK9Score := 0
+				PlaySound GAMEBlackJackWin
+				MessageBoxEx "You win!"
+				PlaySound fwvK9Silliness
+				let sPlayGame := 0
+			endif			
+		endif
+
+	endif
+
+End

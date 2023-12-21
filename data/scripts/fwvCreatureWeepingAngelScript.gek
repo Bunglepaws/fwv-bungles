@@ -1,0 +1,26 @@
+scn fwvCreatureWeepingAngelScript
+
+;29/7/13 - demeggy
+
+BEGIN GameMode
+
+	;SAA 0.0
+
+	;if getDetectionLevel player < 3
+	;	;move towards the player
+	;else
+	;	PlaceAtMe fwvq3dWeepingAngelStatue3
+	;	setRestrained 1
+	;endif
+;
+	if getDistance player < 100
+		MessageEx "Chronospatial Displacement..."
+		set fwvqWeepingAngel.curHealth to player.getAV Health / 2
+		player.damageAV Health fwvqWeepingAngel.curHealth
+		fwvWeepingAngelRef.disable 0
+		set fwvqWeepingAngel.encounter to 0
+		set fwvqWeepingAngel.cTimer to 0.0
+		set fwvqWeepingAngel.eTimer to 0.0
+	endif
+
+END

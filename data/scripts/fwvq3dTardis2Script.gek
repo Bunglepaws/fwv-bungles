@@ -1,0 +1,10 @@
+scn fwvq3dTardis2Script
+
+short doOnce
+
+begin onTriggerEnter player
+	if doOnce == 0
+		fwvq3dLiftDoorRef.setOpenState 1
+		set doOnce to 1
+	endif
+end

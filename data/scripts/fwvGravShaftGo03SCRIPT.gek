@@ -1,0 +1,31 @@
+scn fwvGravShaftGo03SCRIPT
+
+float zPos
+float fTimer
+
+short DoOnce
+ref rSelf
+
+begin GameMode
+	
+	if fwvqInvasions.GravGo03 == 1 
+		set rSelf to GetSelf
+		set zPos to rSelf.getPos z + 10
+			
+		if fTimer < 10.0
+			;if DoOnce == 0
+				;PlaySound fwvFXdalekSaucerWoosh
+				;set DoOnce to 1
+			;endif
+			set fTimer to fTimer + getSecondsPassed
+			rSelf.setPos z zPos
+		else
+			set fTimer to 0.0
+			set fwvqInvasions.GravGo03 to 0
+			;set DoOnce to 0
+			rSelf.disable 1
+			rSelf.MarkForDelete
+		endif
+	endif
+		
+End

@@ -1,0 +1,25 @@
+scn fwvTardisFireplaceSCRIPT
+
+short doOnce
+
+begin onActivate player
+
+if fwvTardisFireplaceRef.getDisabled == 1
+
+	PlaySound UIPipBoyLightOn
+	fwvTardisFireplaceRef.enable
+
+	if doOnce == 0
+		PlaySound ITMKeyDown
+		fwvMasterKeyRef.enable
+		set doOnce to 1
+	endif
+
+else
+
+	PlaySound DRSVaultGearOpenSteam02
+	fwvTardisFireplaceRef.disable
+
+endif
+
+end

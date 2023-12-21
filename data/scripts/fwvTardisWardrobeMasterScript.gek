@@ -1,0 +1,52 @@
+scn fwvTardisWardrobeMasterScript
+
+short frame
+float fTimer
+
+begin onActivate player
+	if player.getItemCount fwvMasterKey == 1
+		if fwvTardisWreckCubeRef.destruct == 0
+			PlaySound DRSWoodSingleLight01Open
+			PlaySound fwvFXtardisExteriorDoor
+			player.moveTo fwvTardisWreckInteriorRef
+		endif
+	else
+		ShowMessage MQ07BoxLockedMessage
+		PlaySound DRSLocked
+	endif
+end
+
+begin gamemode
+
+	if fwvTardisWreckCubeRef.destruct == 1
+
+		if frame == 0
+			PlaySound fwvFXtardisCrashLanding
+			pms LaserCritGlowFXShader
+			set frame to 1
+		elseif frame == 1
+			if fTimer < 20.0
+				set fTimer to fTimer + getSecondsPassed
+			else
+				sgtm 0.5
+				imod ExplosionInFace
+				PlaceAtMe fwvVortexManipulatorExplosion
+				PlaySound FXExplosionNukeSmall2D
+				sms effectAlienDisintegration
+				set frame to 2
+				set fTimer to 0.0
+			endif
+		elseif frame == 2
+			if fTimer < 2
+				set fTimer to fTimer + getSecondsPassed
+			else
+				sgtm 1
+				fwvTardisWardrobeMasterRef.MarkForDelete
+				fwvTardisWardrobeMasterRef.Disable
+				set frame to 3
+				set fTimer to 0.0
+			endif
+		endif
+	endif
+
+end

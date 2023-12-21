@@ -1,0 +1,43 @@
+scn fwvFuncDriftPlanetsFunction
+
+short galaxy
+short x
+short y
+
+Begin Function { }
+
+let x := fwvqDrift.gcX
+let y := fwvqDrift.gcY
+let galaxy := fwvqDrift.gID
+
+if Galaxy == 1
+	if x == 1 && y == 8
+		let fwvq1.chosenDoor := fwvLspiridonRef
+	endif
+elseif Galaxy == 2
+	if x == 7 && y == 6
+		let fwvq1.chosenDoor := fwvLzetaRef
+	endif
+elseif Galaxy == 3
+	if x == 5 && y == 5
+		let fwvq1.chosenDoor := fwvLgallifreyRef
+	elseif x == 2 && y == 2
+		let fwvq1.chosenDoor := fwvLdesertCraterRef
+	endif
+elseif Galaxy == 4
+	if x == 2 && y == 6
+		let fwvq1.chosenDoor := fwvLskaroForestRef
+	endif
+elseif Galaxy == 5
+	if x == 3 && y == 3
+		let fwvq1.chosenDoor := fwvLgibsonRef
+	endif
+elseif Galaxy == 6
+	if x == 6 && y == 8
+		let fwvq1.chosenDoor := fwvLtelosCaveRef
+	elseif x == 3 && y == 7
+		let fwvq1.chosenDoor := fwvLcyberFleetRef
+	endif
+endif
+
+End

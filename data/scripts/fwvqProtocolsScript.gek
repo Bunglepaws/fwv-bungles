@@ -1,0 +1,502 @@
+scn fwvqProtocolsScript
+
+short patch
+array_var protocol		;stores all protocols
+short curProtocol		;pulls current Protocol from array
+float pmsTimer
+array_var timer
+array_var frame
+array_var tVal			;array to store temporary values for each protocol
+array_var protocolFound		;stores found arrays
+short init
+
+short shader
+short button
+short menu
+
+short path
+short actionType
+float shaderTimer
+float SiegeDays
+
+short chosenProtocol
+short run
+
+short curShield
+short tempPower
+short bioSignal
+ref companion1
+ref companion2
+ref companion3
+
+ref PoliceBoxDoor
+ref PoliceBox
+ref consoleRef
+ref interiorRef
+
+Begin Gamemode
+
+	set button to getbuttonpressed
+
+	if patch < 4
+		let protocol := ar_range 1, 50
+		let timer := ar_range 1, 50
+		let frame := ar_range 1, 50
+		let tVal := ar_range 1, 50
+		let protocolFound := ar_range 1, 50
+		;printc "protocols initialised"
+		set patch to 4
+	endif
+
+	;Set References
+
+	set PoliceBoxDoor to fwvq1.rPoliceBoxDoorRef
+	set PoliceBox to fwvq1.rPoliceBoxRef
+
+		if fwvq1.tTheme == 0
+			set consoleRef to fwvTinteriorScanner1Ref
+			set interiorRef to fwvTinterior1Ref
+		elseif fwvq1.tTheme == 1
+			set consoleRef to fwvTinteriorScanner2Ref
+			set interiorRef to fwvTinterior2Ref
+		elseif fwvq1.tTheme == 2
+			set consoleRef to fwvTinteriorScanner3Ref
+			set interiorRef to fwvTinterior3Ref
+		elseif fwvq1.tTheme == 3
+			set consoleRef to fwvTinteriorScanner4Ref
+			set interiorRef to fwvTinterior4Ref
+		elseif fwvq1.tTheme == 4
+			set consoleRef to fwvTinteriorScanner5Ref
+			set interiorRef to fwvTinterior5Ref
+		elseif fwvq1.tTheme == 5
+			set consoleRef to fwvTinteriorScanner6Ref
+			set interiorRef to fwvTinterior6Ref
+		elseif fwvq1.tTheme == 6
+			set consoleRef to fwvTinteriorScanner7Ref
+			set interiorRef to fwvTinterior7Ref
+		endif
+
+	;PROTOCOLS ============================================
+
+	if run == 1
+		let protocol[chosenProtocol] := 1
+		let run := 0
+	endif
+
+	;=============
+	;Emergency Power Mode
+	if eval Protocol[2]==1
+		MessageEx "[TARDIS Systems Deactivated]"
+		if eval Protocol[5]==1
+			MessageBoxEx "[Complete Systems Overload cancelled]"
+			fwvT1CcloisterRef.disable
+			let Protocol[5] := 0
+		endif
+		PlaySound fwvFXtardisPowerDown
+		Call fwvFuncSystemShutdownFunction
+		let protocol[2] := 0
+	endif
+	;=============
+	;Systems Reboot
+	if eval Protocol[3]==1
+		MessageEx "[TARDIS Systems Reactivated]"
+		PlaySound fwvFXtardisPowerUp
+		Call fwvFuncSystemShutdownFunction	
+		let protocol[3] := 0
+	endif
+	;=============
+	;Systems Reset
+	if eval Protocol[4]==1
+		MessageEx "[Systems Reset Initiated... Leave the ship to start]"
+		set fwvq1.tReset to 1
+		let protocol[4] := 0	
+	endif
+	;=============
+	;Systems Overload
+	if eval Protocol[5]==1
+		if eval frame[5] == 0
+			MessageEx "[Destruction assured in 30 seconds]"
+			fwvT1CcloisterRef.enable
+			let timer[5] := 0.0
+			let frame[5] := 1
+		elseif eval frame[5] == 1
+			if eval timer[5] < 30.0
+				let timer[5] := timer[5] + getSecondsPassed			
+			else
+				;if psychic pollen is active
+					;free player from alt. reality
+				;else
+					PlaySound FXExplosionNukeSmall3D
+					imod WhiteISFX
+					player.killActor
+					let timer[5] := 0.0
+					let frame[5] := 0
+					let Protocol[5] := 0
+				;endif
+			endif
+		endif
+	endif
+	;=============
+	;Extrapolate Forcefield
+	if eval Protocol[8]==1
+		if eval frame[8] == 0
+			let fwvq1.tPower := fwvq1.tPower - 15
+			MessageEx "[TARDIS Forcefield Extrapolated]"
+			;PoliceBox.placeAtMe fwvTardisForcefield
+			let timer[8] := 0.0
+			let frame[8] := 1
+		elseif eval frame[8] == 1
+			if eval timer[8] < 30.0
+				if pmsTimer < 2.0
+					let pmsTimer := pmsTimer + getSecondsPassed
+				else
+					PoliceBoxDoor.pms fwvShieldGlowShader
+					PoliceBox.pms fwvShieldGlowShader
+					let pmsTimer := 0.0
+				endif
+				let timer[8] := timer[8] + getSecondsPassed
+				if player.getDistance PoliceBoxDoorExitRef < 250
+					player.resetHealth
+				endif
+			else
+				MessageEx "[TARDIS Forcefield Normalised]"
+				PoliceBoxDoor.sms fwvShieldGlowShader
+				PoliceBox.sms fwvShieldGlowShader
+				let fwvq1.tPower := fwvq1.tPower + 15
+				let timer[8] := 0.0
+				let frame[8] := 0
+				let Protocol[8] := 0
+			endif
+		endif
+	endif
+	;=============
+	;Siege Mode
+	if eval Protocol[9]==1
+		if eval frame[9] == 0
+			if fwvq1.tFlying == 1
+					let fwvq1.tPower := fwvq1.tPower - 25
+					;MessageEx "[Siege Mode Activated]"
+					MessageEx "[Emergency Rematerialisation Initiated]"
+					let fwvq1.hbTimerWait := 0.0
+					set fwvq1.FlightMode to 3 ;landing
+					set fwvq1.tFlightType to 0 ;random
+					set fwvqFlight.sMethod to 1 ;complete randomization
+					set fwvqDrift.sDrift to 0 ; Not Drifting
+					let frame[9] := 1
+			else
+				MessageEx "[Siege Mode Activated]"
+				let frame[9] := 2
+			endif
+		elseif eval frame[9] == 1
+			if fwvq1.tFlying == 1
+				;nothing
+			else
+				MessageEx "[Siege Mode Activated]"
+				let frame[9] := 2
+			endif
+		elseif eval frame[9] == 2
+			let SiegeDays := GameDaysPassed
+			printc "SiegeDays %g" SiegeDays
+			PlaySound fwvFXtardisPowerDown
+			Call fwvFuncSystemSiegeFunction
+			set fwvqEncounter.aTimer to 0.0
+			set fwvqEncounter.pTimer to 0.0
+			set fwvq1.csrON to 0
+			set fwvq1.csrTimer to fwvq1.csrMaxTime
+			set fwvqEncounter.anomaly to 0
+			set fwvqEncounter.combat to 0
+			set fwvqEncounter.tAction to 0
+			set fwvqEncounter.encounter to 0			
+			set fwvqRooms.sNeverwereExist to 0
+			let frame[9] := 3
+		elseif eval frame[9] == 3
+			if eval gameDaysPassed >= SiegeDays + 1
+				MessageEx "[Siege Mode Deactivated]"
+				PlaySound fwvFXtardisPowerUp
+				Call fwvFuncSystemSiegeFunction
+				let fwvq1.tPower := fwvq1.tPower + 25
+				let frame[9] := -1
+				let protocol[9] := 0
+			endif
+		endif
+	
+	endif
+	;=============
+	;Time Loop
+	if eval Protocol[10]==1
+		if eval frame[10] == 0
+			if fwvqEncounter.combat == 1
+				MessageEx "[Enemy craft has been Time Looped]"
+				let timer[10] := 0.0
+				let frame[10] := 1	
+			else
+				MessageEx "[Error: No viable target for Time Loop found]"
+				let protocol[10] := 0
+			endif
+		elseif eval frame[10] == 1
+			if eval timer[10] < 10.0
+				let timer[10] := timer[10] + getSecondsPassed
+			else
+				if fwvq1.tPower > 0
+					printc "power drained, %g left" fwvq1.tPower
+					set fwvq1.tPower to fwvq1.tPower - 5
+					set tempPower to tempPower + 5
+					let timer[10] := 0.0
+				else
+					MessageEx "[Insufficient power to sustain Time Loop]"
+					let protocol[10] := 0
+				endif
+			endif
+		endif
+	endif
+	;=============
+	;Chameleon Programme
+	if eval Protocol[11]==1
+		if eval frame[11] == 0
+			;toggle on chameleon circuit
+		endif
+	endif
+	;=============
+	;Oxygen Corridor
+	if eval Protocol[12]==1
+		if eval frame[12] == 0
+			MessageEx "[Oxygen Corridor established]"
+			let timer[12] := 0.0
+			let frame[12] := 1
+		elseif eval frame[12] == 1
+			if eval timer[12] < 120.0
+				let timer[12] := timer[12] + getSecondsPassed
+				if player.getInWorldspace fwvWorldMoonCraterWorld
+					;if player.getDistance PoliceBoxDoorExitRef < 250
+						let fwvqCybermanMoon.o2 := 1
+					;else
+						;let fwvqCybermanMoon.o2 := 0
+					;endif
+				endif
+			else
+				MessageEx "[Oxygen Corridor collapsing]"
+				;fwvMoon02Corr01.disable
+				;fwvMoon02Corr02.disable
+				let fwvqCybermanMoon.o2 := 0
+				let timer[12] := 0.0
+				let frame[12] := 0
+				let Protocol[12] := 0
+			endif
+		endif
+	endif
+	;=============
+	;Balance Stabilizers
+	if eval Protocol[13]==1
+		MessageEx "[Coaxial Stabilizers have been balanced]"
+		Call fwvFuncRandomSFXFunction
+		let fwvqSystems.CSBalance := GameDaysPassed
+		let Protocol[13]:=0
+	endif
+	;=============
+	;Debug Computer
+	if eval Protocol[14]==1
+		MessageEx "[Relative Dimensional Computer has been debugged]"
+		Call fwvFuncRandomSFXFunction
+		let fwvqSystems.RDCDebugged := GameDaysPassed
+		let Protocol[14]:=0
+	endif
+	;=============
+	;Shield Boost
+	if eval Protocol[15]==1
+		if eval frame[15] == 0
+			let fwvq1.tPower := fwvq1.tPower - 15
+			MessageEx "[TARDIS Shields Boosted]"
+			let curShield := fwvq1.tShields
+			let fwvq1.tShields := 200
+			let timer[15] := 0.0
+			let frame[15] := 1
+		elseif eval frame[15] == 1
+			if eval timer[15] < 30.0
+				let timer[15] := timer[15] + getSecondsPassed
+			else
+				MessageEx "[TARDIS Shields Normalised]"
+				let fwvq1.tShields := curShield
+				printc "shields are now %g" curShield
+				let fwvq1.tPower := fwvq1.tPower + 15
+				let timer[15] := 0.0
+				let frame[15] := 0
+				let Protocol[15] := 0
+			endif
+		endif
+	endif
+	;=============
+	;Controlled Temporal Implosion
+	if eval Protocol[16]==1
+		if eval frame[16] == 0
+			PlaySound FXExplosionGrenadeConcussionPulse
+			MessageEx "[Temporal Implosion Detonated]"
+			DisablePlayerControls
+			imod FadeToWhiteAndBackISFX
+			let timer[16] := 0.0
+			let frame[16] := 1
+		elseif eval frame[16] == 1
+			if eval timer[16] < 4.0
+				let timer[16] := timer[16] + getSecondsPassed
+			else
+				PlaySound FXExplosionThermite
+				let tVal[16] := fwvqEvents.tempVar[10]
+				let timer[16] := 0.0
+				let frame[16] := 2
+			endif
+		elseif eval frame[16] == 2
+			if eval timer[16] < 4.0
+				let timer[16] := timer[16] + getSecondsPassed
+			else
+				PlaySound UIHealthChemsAddicted
+				MessageEx "[Space Loop nullified]"
+				EnablePlayerControls
+				let fwvqEvents.event[10] := 0
+				let fwvqEvents.frame[10] := 0
+				let fwvqEvents.systemEvent := 0
+				let fwvqSystems.navCtrls := 1
+				let timer[16] := 0.0
+				let frame[16] := 0
+				let Protocol[16] := 0
+				Call fwvFuncDematTardis fwvxoSpaceLoopResetLocREF
+				;Call fwvFuncDematTardis tVal[16]
+				set fwvqEvents.sTARDISRefSetOnce to 0
+			endif
+		endif
+	endif
+	;=============
+	;Vent the Thermobuffers
+	if eval Protocol[17] == 1
+		if eval frame[17] == 1
+			set fwvqSystems.temperature to 0
+			Playsound FXFireGasLow
+			PlaySound DRSVaultGearOpenSteam01
+			MessageEx "[Thermobuffers vented]"
+			let Protocol[17] := 0
+			let frame[17] := 0
+		endif
+	endif
+	;=============
+	;Bio-Locate
+	if eval Protocol[19]==1
+		if eval frame[19] == 0
+			let fwvq1.tPower := fwvq1.tPower - 5
+			printc "protocol running"
+			if eval Ar_HasKey fwvCompanion.arCompanions 0
+				printc "Companion 1 detected"
+				let companion1 := fwvCompanion.arCompanions[0]
+				setObjectiveDisplayed fwvqSystemsAdv 10 1
+			endif
+			if eval Ar_HasKey fwvCompanion.arCompanions 1
+				printc "Companion 2 detected"
+				let companion2 := fwvCompanion.arCompanions[1]
+				setObjectiveDisplayed fwvqSystemsAdv 20 1
+			endif
+			if eval Ar_HasKey fwvCompanion.arCompanions 2
+				printc "Companion 3 detected"
+				let companion3 := fwvCompanion.arCompanions[2]
+				setObjectiveDisplayed fwvqSystemsAdv 30 1
+			endif
+			if fwvCompanion.cCount > 0
+				let frame[19] := 2
+			else
+				MessageEx "[No Bio-Signal Found...]"
+				PlaySound UIRadioSignalLost
+				printc "No companion found in slot 1"
+				let frame[19] := 0
+				let protocol[19] := 0
+			endif
+		elseif eval frame[19]==2
+				PlaySound fwvFXsonarPing
+				MessageEx "[Bio-Signal Traced...]"
+				set fwvq1.tPower to fwvq1.tPower - 5
+				set biosignal to 1
+				let frame[19] := 3
+		elseif eval frame[19] == 3
+			fwvCompMarker1Ref.moveTo companion1
+			fwvCompMarker2Ref.moveTo companion2
+			fwvCompMarker3Ref.moveTo companion3
+		endif
+	endif
+	;=============
+	;Emergency Dematerialisation
+	if eval Protocol[21]==1
+		MessageEx "[Emergency Dematerialisation initiated]"
+		set fwvq1.enableDoor to Call fwvFuncGetClosestFromFormList fwvq1.enableDoor fwvLocations 1
+		Call fwvFuncResetTardisExitLocation
+		PlaySound fwvFXTardisCrashLanding
+		let Protocol[21]:=0
+	endif
+	;=============
+	;Course Correction
+	if eval Protocol[23]==1
+		if fwvqFlight.drifted == 1
+			MessageEx "[TARDIS is back on course]"
+			Call fwvFuncRandomSFXFunction
+			;set fwvq1.tFlightType to 2
+			let fwvqEvents.flightEvent := 0
+			let fwvqEvents.event[20] := 0
+			let protocol[23] := 0
+		endif
+	endif
+	;=============
+	;Time Core Jettison
+	if eval Protocol[24]==1
+		if eval frame[24] == 0
+			MessageEx "[Eye Jettisoned]"
+			fwvTCcoreAlarmRef.disable
+			let fwvqEvents.event[1] := 0
+			let fwvqSystems.crashStage := 0
+			let fwvqSystems.crashing := 1
+			let frame[24] := 1
+		elseif eval frame[24] == 1
+			if fwvq1.tFlying == 0
+				PlaySound fwvFXtardisPowerDown
+				Call fwvFuncSystemShutdownFunction
+				MessageEx "[TARDIS has entered 'State of Death']"
+				set fwvqEncounter.aTimer to 0.0
+				set fwvq1.csrON to 0
+				set fwvq1.csrTimer to fwvq1.csrMaxTime
+				set fwvqEncounter.anomaly to 0
+				set fwvqEncounter.encounter to 0			
+				set fwvqRooms.sNeverwereExist to 0
+				let fwvqSystems.core := 0
+				if fwvqSystems.axiomator == 1
+					set fwvqSystems.axiomator to 0
+					set fwvq1.tPower to fwvq1.tPower + 2.5
+				endif
+				if fwvqSystems.mandrelCondensers == 1
+					set fwvqSystems.mandrelCondensers to 0
+					set fwvq1.tPower to fwvq1.tPower + 5
+				endif
+				if fwvqSystems.isomorphicSecuritySystem == 1
+					set fwvqSystems.isomorphicSecuritySystem to 0
+					set fwvq1.tPower to fwvq1.tPower + 2.5
+				endif
+				if fwvqSystems.thermobuffer == 1
+					set fwvqSystems.thermobuffer to 0
+					set fwvq1.tPower to fwvq1.tPower + 2.5
+				endif
+				if fwvqSystems.RelativeContinuumStabilizer == 1
+					set fwvqSystems.RelativeContinuumStabilizer to 0
+					set fwvq1.tPower to fwvq1.tPower + 2.5
+				endif
+				consoleRef.placeAtMe fwvWeapPowerFragment
+				let frame[24] := 0
+				let protocol[24] := 0
+			endif
+		endif
+	endif
+	;=============
+	;SOS
+	if eval Protocol[25]==1
+		if eval frame[25] == 0
+			MessageEx "[SOS Signal activated]"
+			PlaySound fwvFXsonarPing
+			let timer[25] := 0.0
+			let frame[25] := 1
+		endif
+	endif
+
+
+
+End

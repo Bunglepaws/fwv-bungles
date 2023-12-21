@@ -1,0 +1,20 @@
+scn fwvq3dBombPlayerScript
+
+short doOnce
+
+begin onActivate player
+	
+	if player.getItemCount fwvq3dExplosive >= 1
+		player.removeItem fwvq3dExplosive 1
+		PlaySound WPNTimeBombSet
+		PlaySound PHYGenericMetalHollowSmall
+		fwvq3dBombRef.enable
+		setStage fwvq3d 70
+		Disable
+		MarkForDelete
+		set doOnce to 1
+	else
+		ShowMessage fwvq3dBombPlayerMessage
+	endif
+
+end

@@ -1,0 +1,11 @@
+scn fwvxoAutonRoofEnterSCRIPT
+
+short DoOnce
+
+Begin onTriggerEnter Player
+
+	if DoOnce == 0 
+		ShowMessage AutonRoofHint
+		set DoOnce to 1
+	endif
+End

@@ -1,0 +1,47 @@
+scn fwvMoonDirtPileSCRIPT
+
+
+short sFadeNow
+float fTimer
+short bRunTimer
+short nEvent
+
+
+Begin OnActivate Player
+	set bRunTimer to 1
+end
+
+begin GameMode
+
+; Timer for Fadeout
+
+	if (bRunTimer)
+		if (fTimer > 0)
+			set fTimer to fTimer - GetSecondsPassed
+		else
+			if (nEvent == 0)
+				;Fade Out
+				set nEvent to nEvent + 1
+				ApplyImageSpaceModifier FadeToBlackAndBackQuickExtendedISFX
+				set fTimer to 2.0
+				DisablePlayerControls
+			elseif (nEvent == 1)
+				;Run this on Faded Out
+				Set GameHour to Gamehour + 1
+				set nEvent to nEvent + 1
+				set fTimer to 3.0
+				fwvMoonMonolithStat.disable
+				fwvMoonMonolithActv.enable
+				fwvMoonDirtPileActv01.disable
+			elseif (nEvent == 2)
+				;Run this on Faded In
+				set nEvent to nEvent + 1
+				set bRunTimer to 0
+				EnablePlayerControls
+				printc "Dirt gone. Woo."
+			endif
+		endif
+	endif
+
+
+end ;GameMode

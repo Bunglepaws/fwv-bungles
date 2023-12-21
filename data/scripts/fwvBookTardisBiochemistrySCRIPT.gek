@@ -1,0 +1,21 @@
+scn fwvBookTardisBiochemistrySCRIPT
+
+;written by Demeggy 9/3/13
+
+short bXp
+short dispose
+
+begin onEquip player
+
+	player.rewardXp 5
+	set bXp to getRandomPercent / fwvq1.cxl	;reward the player with engineering xp
+	set fwvq1.cxp to fwvq1.cxp + bXp
+	ShowMessage fwvBookChemistryMessage bXp
+	if dispose == 0
+		RemoveMe
+		set dispose to 1
+	endif
+
+end
+
+

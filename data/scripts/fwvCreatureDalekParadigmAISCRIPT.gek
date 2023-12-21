@@ -1,0 +1,42 @@
+scn fwvCreatureDalekParadigmAISCRIPT
+
+short killOnce
+short destroy
+float dTimer
+ref rSelf
+short sDead
+short sModel
+short random
+short sIsCounted
+
+Begin GameMode
+
+	set rSelf to GetSelf
+
+;	if rSelf.GetInWorldspace fwvWorldSmallTrenzalore == 1
+
+;		if rSelf.getDead == 1 && sIsCounted == 0
+;			set sIsCounted to 1
+;			let fwvqTrenzalore.EDeaths[0] := fwvqTrenzalore.EDeaths[0] + 1
+;		endif
+
+;	endif
+
+	if getDead == 1
+		if killOnce == 0
+			let random := getRandomPercent
+				if random < 50
+					rSelf.placeAtMe fwvDalekParadigmRemains01Havok
+					rSelf.disable
+					rSelf.MarkForDelete
+				else
+					rSelf.placeAtMe fwvDalekParadigmRemains02Havok
+					rSelf.disable
+					rSelf.MarkForDelete
+				endif
+			PlaceAtMe fwvDalekExplosion
+			let killOnce := 1
+		endif
+	endif
+
+End

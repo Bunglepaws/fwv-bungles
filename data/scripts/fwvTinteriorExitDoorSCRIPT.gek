@@ -1,0 +1,14 @@
+scn fwvTinteriorExitDoorSCRIPT
+
+ref rTDesktopShipDoor
+float dRand
+
+begin OnActivate Player
+	set rTDesktopShipDoor to fwvq1.rTDesktopShipDoor
+	imod fwvFadeFromBlackFastISFX
+	PlaySound DRSVaultVertical01Close
+	set fwvqRooms.sConsoleWeather to 2
+	set fwvqRooms.sFixWeather to 1
+	player.moveto rTDesktopShipDoor
+	activate
+end

@@ -1,0 +1,41 @@
+scn fwvRassilonInvisibleDalekSCRIPT
+
+short killOnce
+short destroy
+float dTimer
+ref rSelf
+short sDead
+short sModel
+short random
+short sInvisible 
+
+Begin GameMode
+
+	set rSelf to GetSelf
+
+	if player.getEquipped fwvOutfit3DGlasses == 0
+		if sInvisible == 0
+			addSpell StealthboyInvisibilitySpell
+			let sInvisible := 1
+		endif
+	else
+		if sInvisible == 1
+			removeSpell StealthboyInvisibilitySpell
+			let sInvisible := 0
+		endif
+	endif
+
+	if getDead == 1
+		if killOnce == 0
+
+			let random := getRandomPercent
+			rSelf.placeAtMe fwvDalekInvisibleRemainsHavok
+			PlaceAtMe fwvDalekExplosion
+			rSelf.disable
+			rSelf.MarkForDelete
+			let killOnce := 1
+		endif
+	endif
+
+End
+

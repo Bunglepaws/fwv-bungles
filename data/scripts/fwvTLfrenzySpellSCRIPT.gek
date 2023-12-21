@@ -1,0 +1,27 @@
+scn fwvTLfrenzySpellSCRIPT
+
+;written by Demeggy 6/5/13
+
+short iAggro
+float timer
+
+begin scripteffectstart
+	
+	pms fwvTLfrenzy
+	set iAggro to getAv aggression
+	setAV aggression 3
+end
+
+begin scripteffectupdate
+
+if timer < 10
+	set timer to timer+getsecondspassed
+else
+	sms fwvTLfrenzy
+	setAV aggression iAggro
+	StopCombat
+	set timer to 0
+	Dispel fwvTLfrenzySpell
+endif
+
+end

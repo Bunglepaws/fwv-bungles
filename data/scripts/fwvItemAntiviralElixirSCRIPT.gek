@@ -1,0 +1,17 @@
+scn fwvItemAntiviralElixirSCRIPT
+
+;written by Demeggy 9/3/13
+
+begin ScriptEffectStart
+	printc "Elixir Drunk! Regen Cycle is 0.%f" fwvqRegen.rCycle
+end
+
+begin ScriptEffectUpdate
+
+end
+
+begin ScriptEffectFinish
+	printc "Regen Cycle over 0.%f" fwvqRegen.rCycle
+	ShowMessage fwvRegenCycleEndMessage
+	set fwvqRegen.rCycle to 0
+end

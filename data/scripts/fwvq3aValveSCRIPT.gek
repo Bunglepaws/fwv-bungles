@@ -1,0 +1,39 @@
+scn fwvq3aValveSCRIPT
+
+short done
+ref klaxon
+
+begin onActivate player
+	
+	if getstage fwvq3a == 50
+		if done == 0
+			set klaxon to getLinkedRef
+
+			if fwvq3aGas1Ref.getDisabled == 0
+				fwvq3aGas1Ref.Disable
+			elseif fwvq3aGas2Ref.getDisabled == 0
+				fwvq3aGas2Ref.Disable
+			elseif fwvq3aGas3Ref.getDisabled == 0
+				fwvq3aGas3Ref.Disable
+			elseif fwvq3aGas4Ref.getDisabled == 0
+				fwvq3aGas4Ref.Disable
+			elseif fwvq3aGas5Ref.getDisabled == 0
+				fwvq3aGas5Ref.Disable
+			endif
+	
+			PlaySound NPCHumanDrinkingWaterValve
+			PlaySound DRSVaultGearOpenSteam01
+			PlaySound DRSVaultGearOpenSteam02
+			PlaySound HVSelfDestructKlaxon
+
+			klaxon.PlayGroup Left 1
+
+			set fwvq3a.valves to fwvq3a.valves + 1
+			printc "%g Valves closed off" fwvq3a.valves
+			set done to 1
+		endif
+	else
+		ShowMessage fwvq3aValveMessage
+	endif
+
+end

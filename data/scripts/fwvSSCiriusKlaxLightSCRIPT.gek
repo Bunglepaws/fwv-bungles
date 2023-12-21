@@ -1,0 +1,32 @@
+scn fwvSSCiriusKlaxLightSCRIPT
+
+short state		; 0 = off, 1 = flashing
+
+begin OnLoad
+	if fwvqCompanionTutorial.countdown == 1 
+		playgroup left 0
+	endif
+end
+
+begin onActivate
+	if state == 1
+		set state to 0
+		playgroup backward 0
+	else
+		set state to 1
+		playgroup forward 1
+	endif
+end
+
+begin gamemode
+	if fwvqCompanionTutorial.countdown == 1
+		if isAnimPlaying == 0
+			playgroup left 0
+		endif
+	else
+		if isAnimPlaying == 0
+			playgroup backward 0
+		endif
+	endif
+end
+

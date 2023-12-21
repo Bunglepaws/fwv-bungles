@@ -1,0 +1,41 @@
+scn fwvTLdepressionSpellScript
+
+ref CombTarget
+int activateKey
+short sType
+short sDispo
+short sTHS
+float fTimerTHS
+
+begin scripteffectstart
+	imod fwvDepressedISFX2
+end
+
+begin scripteffectupdate
+	set CombTarget to GetCrosshairRef
+	set sType to GetObjectType CombTarget
+	;set activateKey to GetControl 5
+	set sDispo to CombTarget.getDisposition player
+	;printc "Target Disposition: %g" sDispo
+
+	if CombTarget.IsActor == 1 && CombTarget.GetIsCreature != 1 && CombTarget.getPlayerTeammate != 1  ;Target is NPC, not Creature, and is not FNV Teammate
+		if eval (Ar_Find CombTarget, fwvCompanion.arCompanions) == Ar_BadNumericIndex || eval (Ar_Find CombTarget, fwvCompanion.arOldCompanions) == Ar_BadNumericIndex  ;check if they're not in companion list - allow talking to FWV companions though
+			if isControlPressed 5
+				if sDispo < 90
+					set sTHS to 1
+					ShowMessage fwvTLdepressedConversationMessage
+					con_CloseAllMenus 
+				endif
+			endif
+		endif
+	endif
+
+	if sTHS == 1
+		imod fwvXODepressionISFX
+		set sTHS to 0
+	endif
+end
+
+begin scripteffectfinish
+	rimod fwvDepressedISFX2
+end

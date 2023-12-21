@@ -1,0 +1,211 @@
+scn fwvRegenNPCSpellScript
+short sIncarnation
+short sDoRegen
+ 
+ref rTemplate
+ 
+; Mostly appearance
+short sAgeCur
+short sAgeTo
+short sAgeAmount
+int iRGB ; hair RGB (65536 * r + 256 * g + b)
+float fHue
+float fSat
+float fLight
+float fLerpValue
+float fSatMult
+float fLightMult
+ref rRace
+ref rHairForm
+ 
+short fxCount
+ 
+short sEvent
+ 
+; How many SPECIAL points total
+short sSPECIALPoints
+ref rSelf
+float fAnimTimer
+short sCalc
+short sLimb
+ 
+short sIsRegenerating
+ 
+begin ScriptEffectStart
+        if sIsRegenerating == 1
+                set sIsRegenerating to 2
+                set sEvent to 1
+                rSelf.pms GlowingOneFXShader ;fwvRegenEffectShader
+                PlayIdle fwvAnimIdleRegen
+        elseif sIncarnation == 0
+                set sIncarnation to GetRandomPercent * 12 / 100
+                ;printc "Incarnation: %.0f" sIncarnation
+                ;rSelf.SetTokenValue fwvRegeneratingToken, sIncarnation
+        endif
+end
+ 
+begin ScriptEffectUpdate
+        set rSelf to GetSelf
+        if GetDead == 1 && sDoRegen == 1
+                set sLimb to 0
+                while sLimb <= 13
+                        if IsLimbGone sLimb == 1
+                                Break
+                        else
+                                set sLimb to sLimb + 1
+                        endif
+                loop
+                if sLimb >= 14 && IsSpellTarget AlienDisintegrationFXSpell == 0 && IsSpellTarget LaserDisintegrationFXSpell == 0
+                        ResurrectActor 1
+                        set sDoRegen to 1
+                else
+                        sms GlowingOneFXShader ;fwvRegenEffectShader
+                        set sDoRegen to 0
+                endif
+        elseif GetDead == 0
+                set sDoRegen to 1
+        endif
+        if sDoRegen == 1
+                if (GetHealthPercentage <= 0.30) && sEvent == 0
+                        set sIsRegenerating to 1
+                        rSelf.pms GlowingOneFXShader ;fwvRegenEffectShader
+						rSelf.additem fwvRegenOutfitFx 1 1
+						rSelf.equipItem fwvRegenOutfitFx 1 1
+                        SetRestrained 1
+                        PlayIdle fwvAnimIdleRegen
+                        set sEvent to 1
+                elseif sEvent == 1 ; Run the regen animation, ending with explosion
+                        if GetDead == 1
+                                set sDoRegen to 0
+                                set sEvent to 0
+                                SetRestrained 0
+                        else
+                                ;set sIncarnation to rSelf.GetTokenValue fwvIncarnationToken
+                                if sIncarnation > 12
+                                        set sEvent to 3
+                                else
+                                        if fAnimTimer < 4
+                                                set fAnimTimer to fAnimTimer + getsecondspassed
+                                        else
+                                                rSelf.PlaceAtMe fwvRegenExplosion2
+                                                rSelf.sms GlowingOneFXShader ;fwvRegenEffectShader
+												rSelf.unequipItem fwvRegenOutfitFx 1 1
+												rSelf.removeitem fwvRegenOutfitFx 1 1
+                                                set fAnimTimer to 0
+                                                set sEvent to 2
+                                        endif
+                                endif
+                        endif
+                elseif sEvent == 2 ; reset face to default
+ 
+                        set sEvent to 3
+                       
+                elseif sEvent == 3                              ; Begin the randomising of stats
+                        if sIncarnation <= 13
+                                set sAgeCur to Call fwvFuncGetAge rSelf
+                                set sAgeTo to GetRandomPercent
+                                ;if sAgeTo < 45
+                                        set sAgeTo to 0
+                                ;elseif sAgeTo < 80
+                                        ;set sAgeTo to 1
+                                ;else
+                                        ;set sAgeTo to 2
+                                ;endif
+                                set sAgeAmount to sAgeTo - sAgeCur
+                                Call fwvFuncMatchAge rSelf sAgeTo
+                                set rTemplate to Call fwvFuncGetRandomForm fwvRegenTemplateNPC
+                                rSelf.MatchFaceGeometry rTemplate 70
+                                set fSatMult to 1.0
+                                set fLightMult to 1.0
+                               
+                                ; for generic/modded races
+                                if sAgeTo == 1
+                                        set fSatMult to 0.7
+                                        set fLightMult to 1.1
+                                elseif sAgeTo == 2
+                                        set fSatMult to 0.4
+                                        set fLightMult to 1.4
+                                endif
+                               
+                                ; attempt natural haircolor (badly)
+                                set rRace to rSelf.GetRace
+                               
+                                if IsRefInList rRace fwvRaceAfricanAmericanList
+                                        set fSatMult to 0.9
+                                        set fLightMult to 0.5
+                                        if sAgeTo == 2
+                                                set fSatMult to 0.85
+                                                set fLightMult to 0.5
+                                        elseif sAgeTo == 3
+                                                set fSatMult to 0.6
+                                                set fLightMult to 0.6
+                                        endif
+                                elseif IsRefInList rRace fwvRaceAsianList
+                                        set fSatMult to 0.7
+                                        set fLightMult to 0.5
+                                        if sAgeTo == 2
+                                                set fSatMult to 0.85
+                                                set fLightMult to 0.6
+                                        elseif sAgeTo == 3
+                                                set fSatMult to 0.6
+                                                set fLightMult to 0.65
+                                        endif
+                                elseif IsRefInList rRace fwvRaceCaucasianList
+                                        set fSatMult to 0.8
+                                        set fLightMult to 1.0
+                                        if sAgeTo == 2
+                                                set fSatMult to 0.85
+                                                set fLightMult to 1.0
+                                        elseif sAgeTo == 3
+                                                set fSatMult to 0.6
+                                                set fLightMult to 1.0
+                                        endif
+                                elseif IsRefInList rRace fwvRaceHispanicList
+                                        set fSatMult to 0.8
+                                        set fLightMult to 0.8
+                                        if sAgeTo == 1
+                                                set fSatMult to 0.75
+                                                set fLightMult to 1.0
+                                        elseif sAgeTo == 2
+                                                set fSatMult to 0.85
+                                                set fLightMult to 1.0
+                                        elseif sAgeTo == 3
+                                                set fSatMult to 0.6
+                                                set fLightMult to 1.0
+                                        endif
+                                endif
+                               
+                                set iRGB to Call fwvFuncRandomHairColorRange 0.0 0.15 fSatMult fLightMult
+                               
+                                if GetPCIsSex Male
+                                        set rHairForm to Call fwvFuncGetRandomForm fwvRegenMaleHairList
+                                else
+                                        set rHairForm to Call fwvFuncGetRandomForm fwvRegenFemaleHairList
+                                endif
+                                ;rSelf.SetHair rHairForm
+                               
+                                ;rSelf.SetHairColor iRGB
+                               
+                                ;rSelf.Update3D
+                               
+                        elseif sIncarnation > 13
+                                rSelf.killActor
+                        endif
+ 
+                        ; ============== INITIATE STATS CHANGE ==============
+ 
+
+                        rSelf.sms GlowingOneFXShader ;fwvRegenEffectShader
+ 
+                        set sIncarnation to sIncarnation + 1
+                        rSelf.ResetHealth
+                        set sDoRegen to 0
+                       
+                        set sEvent to 0
+ 
+                        SetRestrained 0
+                       
+                        ;rSelf.SetTokenValue fwvIncarnationToken, sIncarnation
+                endif
+        endif
+end

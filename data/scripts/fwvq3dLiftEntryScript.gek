@@ -1,0 +1,13 @@
+scn fwvq3dLiftEntryScript
+
+begin onTriggerEnter player
+
+	if fwvq3dTopLiftRef.getOpenState == 0
+		fwvq3dTopLiftRef.setOpenState 1
+	endif
+
+	if fwvq3dBottomLiftRef.getOpenState == 0
+		fwvq3dBottomLiftRef.setOpenState 1
+	endif
+
+end

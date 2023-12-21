@@ -1,0 +1,62 @@
+scn fwvCaveLightFlickerScript
+
+ref rSelf
+float fDistance
+float fSecondsPassed
+float fPauseTime
+float fDistancePercent
+float fImodFadingTime
+short sPauseStage
+
+begin GameMode
+	set fSecondsPassed to GetSecondsPassed
+	if GetInSameCell Player
+		set fDistance to GetDistance Player
+		if fDistance > 1000
+			set fDistancePercent to (fDistance - 1000) / 750
+			if sPauseStage == 0 && fPauseTime <= 0.0   ; Player.IsSpellTarget PipBoyLight 
+				if GetRandomPercent < fDistancePercent * 20.0
+					;Player.Dispel PipBoyLight
+					imod fwvFadeToBlackFastISFX
+					set fImodFadingTime to 0.25
+					set fPauseTime to 0.1 + 0.75 * fDistancePercent 
+					set sPauseStage to 1
+				endif
+			elseif sPauseStage == 1 && fDistancePercent >= 0.90
+				set sPauseStage to 2
+				set fPauseTime to 2.2
+				set fwvqRooms.sAbandonedHouseExit to 1
+				set fwvq1.sMoveBoxNow to 2
+				Player.MoveTo fwvCreepyCaveTeleportMarker
+				imod FadeInFromBlack2sISFX
+			endif
+		endif
+	endif
+	
+	if fImodFadingTime <= 0.0 && IsImageSpaceActive fwvFadeToBlackFastISFX
+		set fImodFadingTime to 0.0
+		rimod fwvFadeToBlackFastISFX
+		imod fwvBlackISFX
+	endif
+	
+	if fPauseTime >= 0.0
+		set fPauseTime to fPauseTime - fSecondsPassed
+	endif
+	if sPauseStage == 1
+		if fPauseTime <= 0.0
+			;Player.AddSpell PipBoyLight
+			set fPauseTime to 0.1
+			set sPauseStage to 0
+			rimod fwvFadeToBlackFastISFX
+			rimod fwvBlackISFX
+		endif
+	elseif sPauseStage == 2
+		if fPauseTime <= 0.0
+			;Player.AddSpell PipBoyLight
+			rimod fwvFadeToBlackFastISFX
+			rimod fwvBlackISFX
+			set fPauseTime to 0.5
+			set sPauseStage to 0
+		endif
+	endif
+end

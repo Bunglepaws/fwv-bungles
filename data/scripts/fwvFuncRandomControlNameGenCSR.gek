@@ -1,0 +1,75 @@
+scn fwvFuncRandomControlNameGenCSR		
+
+short sRandomPerc
+string_var strWord1
+string_var strWord2
+string_var strWord3
+string_var strPhrase
+string_var controlCmd
+
+begin function { controlCmd }
+	set sRandomPerc to getRandomPercent / 10
+
+	if sRandomPerc < 1
+		set strWord1 to sv_construct "Set the"
+	elseif sRandomPerc < 2
+		set strWord1 to sv_construct "Adjust the"
+	elseif sRandomPerc < 3
+		set strWord1 to sv_construct "Compute the" 
+	elseif sRandomPerc < 4
+		set strWord1 to sv_construct "Vent the"
+	elseif sRandomPerc < 5
+		set strWord1 to sv_construct "Disable the"
+	elseif sRandomPerc < 6
+		set strWord1 to sv_construct "Enable the"
+	elseif sRandomPerc < 7
+		set strWord1 to sv_construct "Programme the"
+	elseif sRandomPerc < 8
+		set strWord1 to sv_construct "Correct the"
+	elseif sRandomPerc < 9
+		set strWord1 to sv_construct "Balance the"
+	elseif sRandomPerc < 10
+		set strWord1 to sv_construct "Recharge the"
+	endif
+
+	set sRandomPerc to getRandomPercent / 10
+	
+	if sRandomPerc < 1
+		set strWord2 to sv_construct "Omega Configuration"
+	elseif sRandomPerc < 2
+		set strWord2 to sv_construct "Zeiton Crystals"
+	elseif sRandomPerc < 3
+		set strWord2 to sv_construct "Binary Fragments"
+	elseif sRandomPerc < 4
+		set strWord2 to sv_construct "Thermobuffers"
+	elseif sRandomPerc < 5
+		set strWord2 to sv_construct "Quantum Foam Manipulators"
+	elseif sRandomPerc < 6
+		set strWord2 to sv_construct "Dimensional Threshold"
+	elseif sRandomPerc < 7
+		set strWord2 to sv_construct "Temporal Conduits"
+	elseif sRandomPerc < 8
+		set strWord2 to sv_construct "Matter Streams"
+	elseif sRandomPerc < 9
+		set strWord2 to sv_construct "Artron Cross-feeds"
+	elseif sRandomPerc < 10
+		set strWord2 to sv_construct "Spatial Comparator"
+	endif
+
+	set sRandomPerc to GetRandomPercent
+	if sRandomPerc < 33
+		set strWord3 to sv_Construct "%z..." strWord3
+	elseif sRandomPerc < 66
+		set strWord3 to sv_Construct "%z!" strWord3
+	else
+		set strWord3 to sv_Construct "%z." strWord3
+	endif
+	set strPhrase to sv_Construct "[%z %z]" strWord1 strWord2
+	
+	SetFunctionValue strPhrase
+	let controlCmd := strPhrase
+	sv_Destruct strPhrase
+	sv_Destruct strWord1
+	sv_Destruct strWord2
+	sv_Destruct strWord3
+end

@@ -1,0 +1,10 @@
+scn fwvItemStimpakScript
+
+begin ScriptEffectStart
+
+	;if fwvqRegen.TimeLordTrue == 1
+		;player.damageAV health 25
+		;MessageEx "Time Lord's are allergic to aspirin..."
+	;endif
+
+end

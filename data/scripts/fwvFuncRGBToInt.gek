@@ -1,0 +1,13 @@
+scn fwvFuncRGBToInt
+
+short red
+short green
+short blue
+int iTemp
+
+begin Function {red, green, blue}
+	;set iTemp to 65536 * red + 256 * green + blue
+	set iTemp to 65536 * blue + 256 * green + red
+
+	SetFunctionValue iTemp
+end

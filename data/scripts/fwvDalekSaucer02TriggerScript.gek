@@ -1,0 +1,44 @@
+scn fwvDalekSaucer02TriggerScript
+
+short frame
+float fTimer
+
+Begin onTriggerEnter Player
+
+	if getIsReference fwvDalekSaucer02tardisLabTriggerRef == 1
+		if getStage fwvqDalekSaucer02 == 95
+			imod FadeToBlackAndBackISFX
+			DisablePlayerControls 1 1 1 1 1 1 1
+			set frame to 1
+			set fTimer to 0.0
+		endif
+	endif
+
+End
+
+Begin GameMode
+
+	if frame == 1
+		if fTimer < 2.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			PlaySound UIRepairWeapon
+			fwvDalekSaucerMutantPetRef.enable
+			set frame to 2
+			set fTimer to 0.0
+		endif
+	elseif frame == 2
+		if fTimer < 2.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			MessageBoxEx "The mutant of the Dalek Elite is now secure in the TARDIS Laboratory... they won't be coming for you anytime soon."
+			setStage fwvqDalekSaucer02 100
+			EnablePlayerControls
+			set frame to 0
+			set fTimer to 0.0
+			;fwvDalekSaucer02tardisLabTriggerRef.markForDelete
+			;fwvDalekSaucer02tardisLabTriggerRef.disable
+		endif
+	endif
+
+End

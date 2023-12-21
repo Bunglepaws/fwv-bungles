@@ -1,0 +1,62 @@
+scn fwvBookJohnSmithSCRIPT
+
+short button
+short page
+
+short sDoOnce
+short sOneTime
+short sDirection
+short sNextAction
+ref rLastRef
+short sIncarnation
+
+float timer
+
+begin onactivate player
+
+if page == 0
+
+	if (IsAnimPlaying == 0 && sNextAction == 0) ; closed
+		PlayGroup Forward 0
+		set sDirection to 1
+		set sNextAction to 1 ; open
+		set rLastRef to GetActionRef
+		set timer to 0.0
+		set page to 1
+	elseif (IsAnimPlaying == 0 && sNextAction == 1) ; opened
+		PlayGroup Backward 0
+		set sDirection to 0
+		set sNextAction to 0 ; close
+set rLastRef to GetActionRef
+		activate rLastRef 0
+	endif
+
+endif
+
+end
+
+begin gamemode
+
+
+
+if page == 1
+	if timer < 1
+		set timer to timer + getsecondspassed
+	else
+		ShowMessage fwvBookJohnSmithMESG
+		;if sOneTime == 0
+			player.CastImmediateOnSelf fwvInspiration
+			;set sOneTime to 1
+		;endif
+		PlayGroup Backward 0
+		set sDirection to 0
+		set sNextAction to 0 ; close
+		set rLastRef to GetActionRef
+		activate rLastRef 0
+		set timer to 0
+		set page to 0
+	endif
+endif
+
+end
+

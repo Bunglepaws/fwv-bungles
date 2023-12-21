@@ -1,0 +1,29 @@
+scn fwvT5ClightBulbScript
+
+short sIsOn
+float fTimeWaited
+
+begin GameMode
+	if fwvq1.tActive == 1
+		set fTimeWaited to fTimeWaited + GetSecondsPassed
+		if IsAnimPlaying == 0 && fTimeWaited >= 1.6
+			set fTimeWaited to 0
+			if GetRandomPercent < 50
+				if sIsOn == 0
+					PlayGroup Forward 0
+				else
+					PlayGroup Backward 0
+				endif
+				set sIsOn to 1 - sIsOn
+			endif
+		endif
+	else
+		if sIsOn == 1
+			if IsAnimPlaying == 0
+				PlayGroup Backward 0
+			endif
+			set sIsOn to 0
+		endif
+		set fTimeWaited to 0
+	endif
+end

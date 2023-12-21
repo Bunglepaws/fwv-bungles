@@ -1,0 +1,16 @@
+scn fwvCubicSilenceCrashStartScript
+
+short sPushDone
+
+begin OnTriggerEnter Player
+	if GetStage fwvqSilenceCrash == 10 && fwvq1.enableDoor == fwvL188TradingPostExtRef && fwvq1.sPoliceBoxIsUnspawned == 0 && sPushDone == 0
+		fwvL188TradingPostExtRef.PushActorAway Player 5
+		set sPushDone to 1
+	endif
+end
+
+begin OnTriggerLeave Player
+	if sPushDone == 1
+		SetStage fwvqSilenceCrash 15
+	endif
+end

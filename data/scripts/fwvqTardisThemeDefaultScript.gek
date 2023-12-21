@@ -1,0 +1,312 @@
+scn fwvqTardisThemeDefaultScript
+
+; =======================
+; Do not remove the below variable names; it will break fwvq1
+
+ref rThemeName
+ref rTChandbrakeRef
+ref rTChelmicRef
+ref rTCatomicRef
+ref rTCpointerRef
+ref rTCvortexRef
+ref rTCzigzagRef
+ref rTCnavicompRef
+ref rTCgyroRef
+ref rTCartronRef
+ref rTCthrottleRef
+ref rTClockdownRef
+ref rLightNormalRef
+ref rLightRedRef
+ref rLightBlueRef
+ref rTCrotorRef
+ref rTCrepairRef
+ref rTCproximityRef
+ref rTCproximityAlarmRef
+ref rTCdeepScanRef
+ref rRadioDialRef
+ref rTCcomms
+ref rDesktopRoom
+ref rDesktopInteriorDoor
+ref rDesktopShipDoor
+ref rPoliceBoxView
+ref rDesktopScannerPosRef
+ref rDesktopWeatherRef
+ref rDesktopDisableList
+ref rDesktopCWExit
+ref rDesktopCCWExit
+short sRoomExitStyle 
+float fShakeMultiplier
+; =======================
+
+short sLastTheme
+
+begin GameMode
+	short sInit
+	short sLastTheme
+	if fwvq1.tSwitchTheme != 0 || GetGameRestarted || GetGameLoaded || fwvq1.tTheme != sLastTheme || sInit == 0
+		set sInit to 1
+		if fwvq1.tTheme == 0
+			set fwvq1.strThemeName to sv_Construct "Copper"
+			set rTChandbrakeRef to fwvTChandbrakeRef1
+			set rTChelmicRef to fwvTChelmicRef1
+			set rTCatomicRef to fwvTCatomicRef1
+			set rTCpointerRef to fwvTCpointerRef1
+			set rTCvortexRef to fwvTCvortexRef1
+			set rTCzigzagRef to fwvTCzigzagRef1
+			set rTCnavicompRef to fwvTCnavicompRef1
+			set rTCgyroRef to fwvTCgyroRef1
+			set rTCartronRef to fwvTCartronRef1
+			;set rTCtimeControllerRef to fwvTCtimeControllerRef1
+			;set rTCengineRef to fwvTCengineRef1
+			set rTCthrottleRef to fwvTCthrottleRef1
+			set rTClockdownRef to fwvTClockdownRef1
+			set rLightNormalRef to fwvT1ClightNormalRef
+			set rLightRedRef to fwvT1ClightRedRef
+			set rLightBlueRef to fwvT1ClightBlueRef
+			;set rTCastronavRef to fwvT1Castronav
+			;set rTCdriftRef to fwvTCdrift
+			set rTCrotorRef to fwvTconsoleRef
+			set rTCrepairRef to fwvTCrepairRef
+			set rTCproximityRef to fwvTCproximityRef
+			set rTCproximityAlarmRef to fwvTCproximityAlarmRef1
+			set rTCdeepScanRef to fwvTCscanRef
+			set rRadioDialRef to fwvTCradioDialRef
+			set rTCcomms to fwvTCcommsRef
+			set rDesktopRoom to fwvTinterior1
+			set rDesktopInteriorDoor to fwvTinteriorDoor1Ref
+			set rDesktopShipDoor to fwvTinteriorNauticalShipDoor2Ref
+			set rDesktopScannerPosRef to fwvTinteriorScanner1Ref
+			set fShakeMultiplier to 1.0
+			
+			set rPoliceBoxView to fwvPoliceBoxNautical
+			set rDesktopWeatherRef to fwvTardisConsole1Weather
+			set rDesktopDisableList to fwvTconsoleRoom1ObjectList
+			set sRoomExitStyle to 3
+			set rDesktopCWExit to fwvT1CCWTeleportExitRef
+			set rDesktopCCWExit to fwvT1CWTeleportExitRef
+		elseif fwvq1.tTheme == 1
+			set fwvq1.strThemeName to sv_Construct "Coral"
+			set rTChandbrakeRef to fwvT2ChandbrakeRef
+			set rTChelmicRef to fwvT2ChelmicRef1
+			set rTCatomicRef to fwvT2CatomicRef1
+			set rTCpointerRef to fwvT2CpointerRef1
+			set rTCvortexRef to fwvT2CvortexRef1
+			set rTCzigzagRef to fwvT2CzigzagRef1
+			set rTCnavicompRef to fwvT2CnavicompRef1
+			set rTCgyroRef to fwvT2CgyroRef1
+			set rTCartronRef to fwvT2CartronRef
+			;set rTCtimeControllerRef to fwvTCtimeControllerRef1
+			;set rTCengineRef to fwvT2CengineRef
+			set rTCthrottleRef to fwvT2CthrottleRef
+			set rTClockdownRef to fwvT2ClockdownRef
+			set rLightNormalRef to fwvT2ClightNormalRef
+			set rLightRedRef to fwvT2ClightRedRef
+			set rLightBlueRef to fwvT2ClightBlueRef
+			;set rTCastronavRef to fwvT2CastroRef
+			;set rTCdriftRef to fwvT2CdriftRef
+			set rTCrotorRef to fwvT2rotorRef
+			set rTCrepairRef to fwvT2CrepairRef
+			set rTCproximityRef to fwvT2CproximityRef
+			set rTCproximityAlarmRef to fwvT2CproximityAlarmRef
+			set rTCdeepScanRef to fwvT2CscanRef
+			set rRadioDialRef to fwvT2CradioDialRef
+			set rTCcomms to fwvT2CcommsRef
+			set rDesktopRoom to fwvTinterior1
+			set rDesktopInteriorDoor to fwvTinteriorDoor2Ref
+			set rDesktopShipDoor to fwvTinteriorShipDoor2Ref
+			set rDesktopScannerPosRef to fwvTinteriorScanner2Ref
+			set fShakeMultiplier to 1.3
+
+			set rPoliceBoxView to fwvPoliceBoxCoral
+			set rDesktopWeatherRef to fwvTardisConsole2Weather
+			set rDesktopDisableList to fwvTconsoleRoom2ObjectList
+			set sRoomExitStyle to 0
+		elseif fwvq1.tTheme == 2
+			set fwvq1.strThemeName to sv_Construct "Classic"
+			set rTChandbrakeRef to fwvT3ChandbrakeRef
+			set rTChelmicRef to fwvT3ChelmicRef1
+			set rTCatomicRef to fwvT3CatomicRefTemp
+			set rTCpointerRef to fwvT3CpointerRef
+			set rTCvortexRef to fwvT3CvortexRefTemp
+			set rTCzigzagRef to fwvT3CzigzagRef
+			set rTCnavicompRef to fwvT3CnavicompRef
+			set rTCgyroRef to fwvT3CgyroRefTemp
+			;set rTCartronRef to fwvT2CartronRef
+			;set rTCtimeControllerRef to fwvTCtimeControllerRef1
+			;set rTCengineRef to fwvT2CengineRef
+			set rTCthrottleRef to fwvT3CthrottleRef
+			set rTClockdownRef to fwvT3ClockdownRef
+			set rLightNormalRef to fwvT3ClightNormalRef
+			set rLightRedRef to fwvT3ClightRedRef
+			set rLightBlueRef to fwvT3ClightBlueRef
+			;set rTCastronavRef to fwvT3CastroRef
+			;set rTCdriftRef to fwvT3CdriftRef
+			set rTCrotorRef to fwvT3rotorRef
+			set rTCrepairRef to fwvT3CrepairRef
+			set rTCproximityRef to fwvT3CproximityRef
+			set rTCproximityAlarmRef to fwvTCproximityRef3
+			set rTCdeepScanRef to fwvT3CscanRef
+			set rRadioDialRef to fwvT3CradioDialRef
+			set rTCcomms to fwvT3CcommsRef
+			set rDesktopRoom to fwvTinterior1
+			set rDesktopInteriorDoor to fwvTinteriorDoor3Ref
+			set rDesktopShipDoor to fwvTinteriorShipDoor3Ref
+			set rDesktopScannerPosRef to fwvTinteriorScanner3Ref
+			set fShakeMultiplier to 0.2
+
+			set rPoliceBoxView to fwvPoliceBoxClassic
+			set rDesktopWeatherRef to fwvTardisConsole3Weather
+			set rDesktopDisableList to fwvTconsoleRoom3ObjectList
+			set sRoomExitStyle to 0
+		elseif fwvq1.tTheme == 3 ; Neon
+			set fwvq1.strThemeName to sv_construct "Toyota"
+			
+			set rTChelmicRef to fwvT4helmicRef
+			set rTCnavicompRef to fwvT4CnavicompRef
+			set rTCproximityRef to fwvT4CproximityRef
+			set rTCproximityAlarmRef to fwvT4CproximityAlarmRef
+			set rTCatomicRef to fwvT4CatomicRef
+			set rTCgyroRef to fwvT4CgyroRef
+			set rTCpointerRef to fwvT4CpointerRef
+			set rTCzigzagRef to fwvT4CzigzagRef
+			set rTCvortexRef to fwvT4CvortexRef
+			set rTClockdownRef to fwvT4ClockdownRef
+			set rTChandbrakeRef to fwvT4ChandbrakeRef
+			set rTCdeepScanRef to fwvT4CscanRef
+			set rTCthrottleRef to fwvT4CthrottleRef
+			
+			set rTCrepairRef to fwvT4CrepairRef
+			set rTCartronRef to fwvT4CrefuelRef
+			
+			set rTCrotorRef to fwvT4rotorRef
+			
+			set rLightNormalRef to fwvT4ClightNormalRef
+			set rLightRedRef to fwvT4ClightRedRef
+			set rLightBlueRef to fwvT4ClightBlueRef
+			set rRadioDialRef to fwvT4CradioDialRef
+			set rDesktopRoom to fwvTinterior1
+			set rDesktopInteriorDoor to fwvTinteriorDoor4Ref
+			set rDesktopShipDoor to fwvTinteriorShipDoor4Ref
+			set rDesktopScannerPosRef to fwvTinteriorScanner4Ref
+			set fShakeMultiplier to 0.5
+
+			set rPoliceBoxView to fwvPoliceBoxToyota
+			set rDesktopWeatherRef to fwvTardisConsole4Weather
+			set rDesktopDisableList to fwvTconsoleRoom4ObjectList
+			set sRoomExitStyle to 0
+		elseif fwvq1.tTheme == 4 ; Edwardian
+			set fwvq1.strThemeName to sv_construct "Edwardian"
+			
+			set rTChelmicRef to fwvT5ChelmicRef
+			set rTCnavicompRef to fwvT5CnavicompRef
+			set rTCproximityRef to fwvT5CproximityRef
+			set rTCproximityAlarmRef to fwvT5CproximityAlarmRef
+			set rTCatomicRef to fwvT5CatomicRef
+			set rTCgyroRef to fwvT5CgyroRef
+			set rTCpointerRef to fwvT5CpointerRef
+			set rTCzigzagRef to fwvT5CzigzagRef
+			set rTCvortexRef to fwvT5CvortexRef
+			set rTClockdownRef to fwvT5ClockdownRef
+			set rTChandbrakeRef to fwvT5ChandbrakeRef
+			set rTCdeepScanRef to fwvT5CscanRef
+			set rTCthrottleRef to fwvT5CthrottleRef
+			set rTCcomms to fwvT5CcommsRef
+			
+			set rTCrepairRef to fwvT5CrepairRef
+			set rTCartronRef to fwvT5CfuelRef
+			
+			set rTCrotorRef to fwvT5rotorRef
+			
+			set rLightNormalRef to fwvT5ClightNormalRef
+			set rLightRedRef to fwvT5ClightRedRef
+			set rLightBlueRef to fwvT5ClightBlueRef
+			set rRadioDialRef to fwvT5CradioDialRef
+			set rDesktopRoom to fwvTinterior1
+			set rDesktopInteriorDoor to fwvTinteriorDoor5Ref
+			set rDesktopShipDoor to fwvTinteriorShipDoor5Ref
+			set rDesktopScannerPosRef to fwvTinteriorScanner5Ref
+			set fShakeMultiplier to 0.5
+
+			set rPoliceBoxView to fwvPoliceBoxEdwardian
+			set rDesktopWeatherRef to fwvTardisConsole5Weather
+			set rDesktopDisableList to fwvTconsoleRoom5ObjectList
+			set sRoomExitStyle to 2
+			set rDesktopCCWExit to fwvT5CWTeleportExitRef
+		elseif fwvq1.tTheme == 5 ; Classical Coral (War Doctor)
+			set fwvq1.strThemeName to sv_construct "Glitch"
+			set rTChandbrakeRef to fwvT6ChandbrakeRef
+			set rTChelmicRef to fwvT6ChelmicRef
+			set rTCatomicRef to fwvT6CatomicRef
+			set rTCpointerRef to fwvT6CpointerRef
+			set rTCvortexRef to fwvT6CvortexRef
+			set rTCzigzagRef to fwvT6CzigzagRef
+			set rTCnavicompRef to fwvT6CnavicompRef
+			set rTCgyroRef to fwvT6CgyroRef
+			set rTCartronRef to fwvT6CartronRef
+			;set rTCtimeControllerRef to fwvTCtimeControllerRef1
+			;set rTCengineRef to fwvT2CengineRef
+			set rTCthrottleRef to fwvT6CthrottleRef
+			set rTClockdownRef to fwvT6ClockdownRef
+			set rLightNormalRef to fwvT6ClightNormalMarkerRef
+			set rLightRedRef to fwvT6ClightRedRef
+			set rLightBlueRef to fwvT6ClightBlueRef
+			;set rTCastronavRef to fwvT2CastroRef
+			;set rTCdriftRef to fwvT2CdriftRef
+			set rTCrotorRef to fwvT6rotorRef
+			set rTCrepairRef to fwvT6CrepairRef
+			set rTCproximityRef to fwvT6CproximityRef
+			set rTCproximityAlarmRef to fwvT6CproximityAlarmRef
+			set rTCdeepScanRef to fwvT6CscanRef
+			set rRadioDialRef to fwvT6CradioDialRef
+			set rTCcomms to fwvT6CcommsRef
+			set rDesktopRoom to fwvTinterior1
+			set rDesktopInteriorDoor to fwvTinteriorDoor6Ref
+			set rDesktopShipDoor to fwvTinteriorShipDoor6Ref
+			set rDesktopScannerPosRef to fwvTinteriorScanner6Ref
+			set fShakeMultiplier to 0.8
+
+			set rPoliceBoxView to fwvPoliceBoxClassicalCoral
+			set rDesktopWeatherRef to fwvTardisConsole6Weather
+			set rDesktopDisableList to fwvTconsoleRoom6ObjectList
+			set sRoomExitStyle to 0
+		elseif fwvq1.tTheme == 6 ; Key to Time (theme name needed)
+			set fwvq1.strThemeName to sv_construct "Retro"
+			
+			set rTChelmicRef to fwvT7ChelmicRef
+			set rTCnavicompRef to fwvT7CnavicompRef
+			set rTCproximityRef to fwvT7CproximityRef
+			set rTCproximityAlarmRef to fwvT7CproximityAlarmRef
+			set rTCatomicRef to fwvT7CatomicRef
+			set rTCgyroRef to fwvT7CgyroRef
+			set rTCpointerRef to fwvT7CpointerRef
+			set rTCzigzagRef to fwvT7CzigzagRef
+			set rTCvortexRef to fwvT7CvortexRef
+			set rTClockdownRef to fwvT7ClockdownRef
+			set rTChandbrakeRef to fwvT7ChandbrakeRef
+			set rTCdeepScanRef to fwvT7CscanRef2
+			set rTCthrottleRef to fwvT7CthrottleRef
+			
+			set rTCrepairRef to fwvTCK2TrepairRef
+			set rTCartronRef to fwvTCK2TfuelRef
+			set rRadioDialRef to fwvT7CradioDialRef
+			set rTCcomms to fwvT7CcommsRef
+			
+			set rTCrotorRef to fwvT7rotorRef
+			
+			set rLightNormalRef to fwvT7ClightNormalRef
+			set rLightRedRef to fwvT7ClightRedRef
+			set rLightBlueRef to fwvT7ClightBlueRef
+			set rDesktopRoom to fwvTinterior1
+			set rDesktopInteriorDoor to fwvTinteriorDoor7Ref
+			set rDesktopShipDoor to fwvTinteriorShipDoor7Ref
+			set rDesktopScannerPosRef to fwvTinteriorScanner7Ref
+			set fShakeMultiplier to 0.25
+			
+			set rPoliceBoxView to fwvPoliceBoxRetro
+			set rDesktopWeatherRef to fwvTardisConsole3Weather
+			set rDesktopDisableList to fwvTconsoleRoom7ObjectList
+			set sRoomExitStyle to 0
+		endif
+		set sLastTheme to fwvq1.tTheme
+	endif
+end

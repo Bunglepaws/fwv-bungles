@@ -1,0 +1,23 @@
+scn fwvPlantPotatoPickableScript
+
+begin onActivate player
+	printc "mutation averted"
+	player.additem Potato 5
+	if fwvqCraft.growing1Type == 16 && fwvqCraft.growing1Phase == 2
+		set fwvqCraft.growing1Type to 0
+		set fwvqCraft.growing1Phase to 0
+		set fwvqCraft.growing1 to 0
+	elseif fwvqCraft.growing2Type == 16 && fwvqCraft.growing2Phase == 2
+		set fwvqCraft.growing2Type to 0
+		set fwvqCraft.growing2Phase to 0
+		set fwvqCraft.growing2 to 0
+	elseif fwvqCraft.growing3Type == 16 && fwvqCraft.growing3Phase == 2
+		set fwvqCraft.growing3Type to 0
+		set fwvqCraft.growing3Phase to 0
+		set fwvqCraft.growing3 to 0
+	endif
+	playGroup Forward 1
+	setdestroyed 1
+	Disable
+	MarkForDelete
+end

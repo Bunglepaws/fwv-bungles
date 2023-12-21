@@ -1,0 +1,18 @@
+scn fwvTCradarScannerScript
+
+ref curCell
+ref curRef
+ref curBase
+short staticIndex
+short staticCount
+short mapsFound
+
+begin OnActivate
+	set staticIndex to 0
+	set mapsFound to 0
+	
+	if fwvq1.tFlying == 0
+		;ShowMessage fwvTCRadarScannerStartMessage
+		;set PoliceBoxDoorRef.doRadarScan to 1
+	endif
+end

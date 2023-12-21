@@ -1,0 +1,14 @@
+scn fwvTimeRaiderZetanPrisonerSCRIPT
+
+short sDoOnce
+
+begin Gamemode
+	if sDoOnce == 0
+		if getunconscious == 0
+			setunconscious 1
+			setrestrained 1
+			printc "TR stasis"
+			set sDoOnce to 1
+		endif
+	endif
+end

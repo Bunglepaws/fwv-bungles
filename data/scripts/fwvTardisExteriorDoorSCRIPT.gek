@@ -1,0 +1,41 @@
+scn fwvTardisExteriorDoorSCRIPT
+
+short sOpen
+short sInit
+ref rLinkedRef
+
+begin GameMode
+	if sInit == 0
+		set sInit to 1
+		set sOpen to 1
+	endif
+
+		if sOpen != fwvq1.sDoorIsOpen
+			set sOpen to fwvq1.sDoorIsOpen
+			if GetIsID fwvK2TdoorToExterior
+				if sOpen == 0
+					SetOpenState 0
+				else
+					SetOpenState 1
+				endif
+			else
+				if sOpen == 0
+					PlayGroup Forward 0
+				else
+					PlayGroup Backward 0
+				endif
+			endif
+		endif
+		set rLinkedRef to GetLinkedRef
+		
+		if IsAnimPlaying == 0
+			if sOpen == rLinkedRef.GetDisabled
+				if sOpen == 0
+					rLinkedRef.Disable 0
+				else
+					rLinkedRef.Enable 0
+				endif
+			endif
+		endif
+
+end

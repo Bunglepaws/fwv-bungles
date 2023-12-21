@@ -1,0 +1,15 @@
+scn fwvAsylumForceEmperorDialogueSCRIPT
+
+short sDoOnce
+
+Begin OnTriggerEnter Player
+
+	if sDoOnce == 0
+		;player.startconversation fwvEmperorHoloREF Greeting
+		fwvEmperorHailREF.enable
+		AsylumCommsOnLight.enable
+		set sDoOnce to 1
+	endif
+
+
+END

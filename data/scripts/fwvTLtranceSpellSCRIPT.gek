@@ -1,0 +1,23 @@
+scn fwvTLtranceSpellSCRIPT
+
+;written by Demeggy 6/5/13
+
+float timer
+
+begin scripteffectstart
+	pms fwvTLtrance
+	SetUnconscious 1
+end
+
+begin scripteffectupdate
+
+if timer < 10
+	set timer to timer+getsecondspassed
+else
+	sms fwvTLtrance
+	SetUnconscious 0
+	set timer to 0
+	Dispel fwvTLtranceSpell
+endif
+
+end

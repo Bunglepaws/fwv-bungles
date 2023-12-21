@@ -1,0 +1,29 @@
+scn fwvqPatchQuestScript
+
+short patch
+ref consoleRef
+
+;this script will be used for ALL future patch releases - speak with Demeggy before updating!
+
+Begin GameMode
+
+	;2.2.1.2 - 2/5/15
+	if patch < 1 && getQuestCompleted fwvq1a == 1 && player.getInCell fwvtInterior1 == 1
+		;MessageBoxEx "FWV Patch Update 2.2.1.2%r%rTo correct power bugs with the TARDIS, the ship will now reset. You have been teleported back to the control room.%r%rRefer to the Patch Readme for further details."
+		printc "Patch update run"
+		set consoleRef to fwvq1.rTDesktopScannerPosRef
+		Call fwvFuncResetSystemsFunction
+		;player.moveTo consoleRef
+		set patch to 1
+	endif
+
+	if patch == 1
+		if Player.GetInCell fwvTinterior1 == 0 
+			set fwvqRooms.sTimeChangey to 1
+			MessageBoxEx "Note from Xoanon: A patch has been made to remove certain extraneous time-changing scripts within the TARDIS."
+			set patch to 2
+			printc "Patch is %g" patch
+		endif
+	endif
+	
+End

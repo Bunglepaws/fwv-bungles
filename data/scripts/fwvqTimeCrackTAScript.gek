@@ -1,0 +1,38 @@
+scn fwvqTimeCrackTAScript
+
+short sDestroy
+ref rSelf
+
+begin OnActivate Player
+	SetTalkingActivatorActor fwvRassilonOverseerRef
+	set rSelf to getSelf
+	set sDestroy to 1
+	Activate
+end
+
+begin gamemode
+
+	if sDestroy == 1
+		imod FadeInFromWhiteISFX
+		imod ExplosionInFace
+		PlaySound FXFireGasHigh
+		if rSelf.getIsReference fwvqTCautonRef == 1
+			fwvqTCautonRef.markForDelete
+			fwvqTCautonRef.disable
+		elseif rSelf.getIsReference fwvqTCangelRef == 1
+			fwvqTCangelRef.markForDelete
+			fwvqTCangelRef.disable
+		elseif rSelf.getIsReference fwvqTCcyberRef == 1
+			fwvqTCcyberRef.markForDelete
+			fwvqTCcyberRef.disable
+		elseif rSelf.getIsReference fwvqTCdalekRef == 1
+			fwvqTCdalekRef.markForDelete
+			fwvqTCdalekRef.disable
+		elseif rSelf.getIsReference fwvqTCxmasRef == 1
+			fwvqTCxmasRef.markForDelete
+			fwvqTCxmasRef.disable
+		endif		
+	endif
+
+end
+

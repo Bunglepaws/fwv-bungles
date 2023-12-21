@@ -1,0 +1,54 @@
+scn fwvTCtelepathicCircuitScript
+
+short frame
+short randVar
+float fTimer
+ref markerRef
+ref curRotor
+
+Begin onActivate Player
+
+	if eval fwvqProtocols.protocol[25] == 1
+		if fwvqRegen.regenVar > 1
+			DisablePlayerControls
+			PlaySound fwvFXtardisTelepathicCall
+			let fwvqProtocols.protocol[25] := 0
+			set frame to 1
+			set fTimer to 0.0
+		else
+			MessageEx "[Nobody hears your call...]"
+			let fwvqProtocols.protocol[25] := 0
+		endif
+	endif
+
+End
+
+Begin GameMode
+
+	;lights dim and brighten, current rotor is animated
+	;electricity arcs at centre of TARDIS
+	
+	if frame == 1
+		;decide which npc comes back
+		;randomise var between 1 and 12
+		;check if regen array contains npc at randomised var index
+			;if so, use that npcRef
+			;if not, loop back again until it finds one
+	elseif frame == 2
+		;timer block
+		;3 secs, start rotor anim
+		;place electricityArc at rotor
+		;8 secs, start brightning/fading imod on loop
+		;10 secs, explosion at console, start dematerialising npcTARDIS
+		;end at 27 secs, go to frame 3
+	elseif frame == 3
+		;spawn npc at TARDIS
+		;set frame to 4
+	elseif frame == 4
+		;if timer is over 5 minutes
+		;make npcRef say goodbye to the player
+		;npcRef returns to TARDIS
+		;TARDIS dematerialises
+	endif
+
+End

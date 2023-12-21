@@ -1,0 +1,64 @@
+scn fwvDalekSaucer02ActivatorScript
+
+short eliteConvo
+short rOnce
+
+begin onActivate player
+
+	if getIsReference fwvDalekSaucerCaseRef == 1
+		if getStage fwvqDalekSaucer02 == 50
+			fwvDalekSaucerCaseRef.playgroup forward 1
+			set eliteConvo to 1
+		elseif getStage fwvqDalekSaucer02 == 75
+			MessageBoxEx "'You have chosen wisely. Remove me from my casing and return me to Skaro immediately!'"
+			player.addToFaction fwvDalekFaction 10
+			setStage fwvqDalekSaucer02 85
+		elseif getStage fwvqDalekSaucer02 == 85 || getStage fwvqDalekSaucer02 == 95
+			if player.getItemCount fwvDalekMutantTank < 1
+				MessageBoxEx "You remove the Dalek Elite mutant from its housing, and with a plop, place it in a nearby transport tank."
+				player.addItem fwvDalekMutantTank 1
+			else
+				MessageBoxEx "The Dalek Elite's casing is empty. Slimey, but empty."
+			endif
+		endif
+	elseif getIsReference fwvDalekSaucerCloneDoorRef == 1
+		if getStage fwvqDalekSaucer02 == 75
+			fwvDalekSaucerCloneDoorRef.setOpenState 1
+			MessageBoxEx "The real you awakens with a start, the duplicate disintegrating as the nanotechnology holding it together fails..."
+			;move all items from player to clone npc
+			fwvDalekSaucerReplicantAshRef.enable
+			player.removeAllItems fwvDalekSaucerReplicantAshRef 1 1
+			imod FadeInFromWhiteISFX
+			PlaySound UIHealthChemsWearOff
+			player.moveTo fwvDalekSaucerCloneMarkerRef
+			setStage fwvqDalekSaucer02 95
+			set fwvqRegen.disableRegen to 0							;reenable your ability to regenerate
+		elseif getStage fwvqDalekSaucer02 < 75
+			MessageBoxEx "The knocking is coming from the other side of the door..."
+		endif
+	elseif getIsReference fwvDalekSaucerReplicantAshRef == 1
+		if rOnce == 0
+			MessageBoxEx "You retrieve your equipment"
+			fwvDalekSaucerReplicantAshRef.removeAllItems player 1 1
+			set rOnce to 1
+		else
+			MessageBoxEx "The ashes of your deceased Dalek Replicant are of no use to you now..."
+		endif
+	elseif getIsReference fwvDalekSaucerMutantPetRef == 1
+		MessageBoxEx "The Dalek Elite Mutant glares at you menacingly..."
+	endif
+end
+
+Begin GameMode
+
+	if eliteConvo == 1
+		if fwvDalekSaucerCaseRef.isAnimPlaying == 0
+			MessageBoxEx "The Dalek Elite Mutant addresses you... 'You have returned... the prodigal child... You are not what you think you are. Beyond this door lies your true self, for you are a Dalek Replicant, a masterpiece of Dalek technology. Make your choice... serve the Daleks for riches and return me to Skaro, or defy us and release your real self...'"
+			fwvDalekSaucerCloneDoorRef.setName "Free your original self..."
+			fwvDalekSaucerCaseRef.setName "Ally with the Daleks..."
+			setStage fwvqDalekSaucer02 75
+			set eliteConvo to 0
+		endif
+	endif
+
+End

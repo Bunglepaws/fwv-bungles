@@ -1,0 +1,49 @@
+scn fwvWdalekScramblerEffectTwoScript
+
+ref rSelf
+float fTimer
+short frame
+float fAngle
+
+Begin ScriptEffectStart
+
+	if getInFaction fwvDalekFaction == 1 && GetIsCreatureType 6 == 1
+		let rSelf := getSelf
+		;StopCombat
+		setAV Aggression 3
+		MessageEx "Dalek is scrambled and confused!"
+		set fTimer to 0.0
+		set frame to 1
+		;rSelf.RemoveFromFaction fwvDalekFaction
+		;rSelf.AddToFaction fwvGenericDalekEnemyFaction 1
+	endif
+
+End
+
+Begin ScriptEffectUpdate
+
+	set fAngle to getAngle Z + 10
+
+	if frame == 1
+		if fTimer < 4
+			set fTimer to fTimer + getSecondsPassed
+			setAngle Z fAngle
+			;FireWeapon fwvWdalek
+			StopCombat
+		elseif fTimer >= 4 && fTimer < 8
+			set fTimer to fTimer + getSecondsPassed
+		else 
+			setAV Aggression 2
+			MessageEx "Dalek has recovered..."
+			set frame to 0
+		endif
+	endif
+
+End
+
+;Begin ScriptEffectFinish
+	;rSelf.RemoveFromFaction fwvGenericDalekEnemyFaction
+	;rSelf.AddToFaction fwvDalekFaction 1
+	;setAV Aggression 2
+;End
+

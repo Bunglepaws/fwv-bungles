@@ -1,0 +1,79 @@
+scn fwvTardisCorridorDoorScript
+
+; TARDIS corridor door script.  Spyduck here!
+; edited by Demeggy 23/2/13 B)
+
+float explode
+float timer
+short trap
+short activatable
+short sealed
+
+float fTimePassed
+
+begin OnActivate
+	set fTimePassed to 4.0
+
+	if activatable == 0
+		if fwvqSystems.crashed == 1
+			if getOpenState == 3
+				set explode to getRandomPercent
+				if explode > 50
+					PlaySound FXExplosionArtilleryExplosionFar
+					set timer to 0.0
+					set trap to 1
+					set activatable to 1
+				else
+					setOpenState 1
+				endif
+			endif
+		else
+			activate
+		endif
+	endif
+
+end
+
+begin GameMode
+
+	if trap == 1
+		if timer < 1.5
+			set timer to timer + getsecondspassed
+		else
+			placeatme fwvTardisDoorBurst
+			activate
+			set activatable to 0
+			set trap to 0
+		endif
+	endif
+
+if fwvqSystems.crashed == 0
+	set sealed to 0
+	if GetTeleportCell == 0 && GetLocked == 0 ; doesn't teleport the player and not locked
+		set fTimePassed to fTimePassed - GetSecondsPassed
+		if fTimePassed < 0.0
+			set fTimePassed to 0.0
+		endif
+		if GetOpenState == 3 && fTimePassed <= 0.0 && GetCurrentWeatherPercent == 1.0 ; closed, try to open
+			set fTimePassed to 0.5
+			if GetDistance Player <= 200
+				SetOpenState 1
+			endif
+		endif
+		if GetOpenState == 1 && fTimePassed <= 0.0 ; opened, try to close
+			if GetDistance Player <= 200
+				set fTimePassed to 1.0
+			else
+				set fTimePassed to 0.5
+				SetOpenState 0
+			endif
+		endif
+	endif
+else
+	if sealed == 0
+		SetOpenState 0
+		set sealed to 1
+	endif
+endif
+
+end

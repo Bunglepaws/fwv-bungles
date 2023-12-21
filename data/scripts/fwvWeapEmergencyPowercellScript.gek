@@ -1,0 +1,13 @@
+scn fwvWeapEmergencyPowercellScript
+
+Begin GameMode
+
+	;trigger if AltFire is pressed
+	if isControlPressed 6 == 1 && player.getEquipped fwvWeapEmergencyPowercell == 1
+		player.unequipItem  fwvWeapEmergencyPowercell 1
+		player.removeItem fwvWeapEmergencyPowercell 1 1
+		player.placeAtMe fwvRegenExplosion2 1
+		let fwvqSystems.coreCharge := 1
+	endif
+
+End

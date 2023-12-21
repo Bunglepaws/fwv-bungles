@@ -1,0 +1,25 @@
+scn fwvqXmasSilentScript
+
+short sIsCounted
+ref rSelf
+
+begin gamemode
+
+	set rSelf to GetSelf
+
+	if rSelf.GetInWorldspace fwvWorldSmallTrenzalore == 1
+
+		if rSelf.getDead == 1 && sIsCounted == 0
+			set sIsCounted to 1
+			let fwvqTrenzalore.EDeaths[3] := fwvqTrenzalore.EDeaths[3] + 1
+		endif
+	endif
+
+	if player.getEquipped fwvIeyeDrive == 1
+		SAA 100
+	else
+		SAA 0
+		ResetHealth
+	endif
+
+end

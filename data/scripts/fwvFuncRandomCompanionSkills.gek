@@ -1,0 +1,19 @@
+scn fwvFuncRandomCompanionSkills
+
+short spcRand
+short sciRand
+short lpcRand
+
+ref rCompanion
+
+Begin Function { rCompanion }
+
+set spcRand to 10 + GetRandomPercent * (40 - 10 + 1) / 100
+set sciRand to 10 + GetRandomPercent * (40 - 10 + 1) / 100
+set lpcRand to 10 + GetRandomPercent * (40 - 10 + 1) / 100
+
+rCompanion.setav speech spcRand
+rCompanion.setav science sciRand
+rCompanion.setav lockpick lpcRand
+
+End

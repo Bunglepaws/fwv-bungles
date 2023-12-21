@@ -1,0 +1,26 @@
+scn fwvFuncGetAngleToward
+
+ref rRefToTurn
+ref rRefToFace
+float fDeltaX
+float fDeltaY
+float fAngle
+
+begin function { rRefToTurn, rRefToFace }
+	set fDeltaX to (rRefToFace.getPos X - rRefToTurn.getPos X)
+	set fDeltaY to (rRefToFace.getPos Y - rRefToTurn.getPos Y)
+	if fDeltaX == 0.0
+		set fDeltaX to 0.0001
+	endif
+	set fAngle to fDeltaY / fDeltaX
+	set fAngle to Tan fAngle 1
+	if (fDeltaX < 0)
+		set fAngle to 180 + fAngle
+	endif
+	if fAngle > 180
+		set fAngle to fAngle - 360
+	endif
+	set fAngle to -fAngle
+	set fAngle to fmod fAngle 360.0
+	SetFunctionValue fAngle
+end

@@ -1,0 +1,67 @@
+scn fwvq3bHackWaxScript
+
+short hack		; determines if hack is running
+short hacked	; determines if it is hacked
+
+float hTimer		; Hack timer
+
+begin onTriggerEnter player
+	if getstage fwvq3b == 20
+		ShowMessage fwvq3bHintMessage
+	endif
+end
+
+begin ontrigger player
+	if hack == 0
+		if player.IsWeaponInList fwvWSonicList == 1 && IsControlPressed 4 == 1
+			printc "Sonic is firing"
+			ShowMessage fwvq3bHackStartedMessage
+			fwvq3bWaxAuton1Ref.startCombat player
+			fwvq3bWaxAuton2Ref.startCombat player
+			fwvq3bWaxAuton3Ref.startCombat player
+			fwvq3bWaxAuton4Ref.startCombat player
+			set hack to 1
+		endif
+	endif
+end
+
+begin ontriggerleave player
+	;if player leaves before hack is complete, hack fails
+	if hacked == 0
+		if hack == 1
+			ShowMessage fwvq3bHackFailedMessage
+			fwvq3bHackWaxRef.disable
+			set hTimer to 0.0
+			set hack to 0
+		endif
+	endif
+end
+
+begin gamemode
+	;run 30 second timer in here for the hacking
+	if hacked == 0
+		if hack == 1
+
+			fwvq3bHackWaxRef.enable
+
+			if hTimer < 30
+				set hTimer to hTimer + getSecondsPassed
+			else
+				;complete the hack here
+				ShowMessage fwvq3bHackCompletedMessage
+				player.rewardXp 25
+				PlaySound OBJForcefieldShutdown
+				fwvq3bWaxSpawnRef.placeatme fwvExpControlExplosion
+				fwvq3bWaxAuton1Ref.killActor
+				fwvq3bWaxAuton2Ref.killActor
+				fwvq3bWaxAuton3Ref.killActor
+				fwvq3bWaxAuton4Ref.killActor
+				fwvq3bHackWaxRef.disable
+				fwvq3bWaxSpawnRef.disable
+				setStage fwvq3b 30
+				set hacked to 1
+				set hack to 0
+			endif
+		endif
+	endif
+end

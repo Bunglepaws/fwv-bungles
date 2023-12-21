@@ -1,0 +1,56 @@
+scn fwvFuncMatchAge
+
+short sTargetAge
+ref rTargetActor
+ref rAgeRace
+
+begin Function { rTargetActor, sTargetAge }
+	set rAgeRace to rTargetActor.GetRace
+	
+	if ListGetFormIndex fwvRaceAfricanAmericanList rAgeRace >= 0
+		; african american
+
+		if sTargetAge >= 0 && sTargetAge < 3
+			rTargetActor.MatchRace VMS49MaxREF
+			if sTargetAge > 0
+				rTargetActor.AgeRace sTargetAge
+			endif
+		elseif sTargetAge == 3
+			rTargetActor.MatchRace EasyPeteRef
+		endif
+	elseif ListGetFormIndex fwvRaceAsianList rAgeRace >= 0
+		; asian
+		
+		if sTargetAge >= 0 && sTargetAge < 3
+			rTargetActor.MatchRace ForecasterRef
+			if sTargetAge > 0
+				rTargetActor.AgeRace sTargetAge
+			endif
+		elseif sTargetAge == 3
+			rTargetActor.MatchRace fwvRaceAsianOldAgedRef
+		endif
+	elseif ListGetFormIndex fwvRaceCaucasianList rAgeRace >= 0
+		; caucasian
+		
+		if sTargetAge >= 0 && sTargetAge < 3
+			rTargetActor.MatchRace VFSMickAndRalphsCrierREF
+			if sTargetAge > 0
+				rTargetActor.AgeRace sTargetAge
+			endif
+		elseif sTargetAge == 3
+			rTargetActor.MatchRace NarratorRef
+		endif
+	elseif ListGetFormIndex fwvRaceHispanicList rAgeRace >= 0
+		; hispanic
+		
+		if sTargetAge >= 0 && sTargetAge < 3
+			rTargetActor.MatchRace FortMelodyRef
+			if sTargetAge > 0
+				rTargetActor.AgeRace sTargetAge
+			endif
+		elseif sTargetAge == 3
+			rTargetActor.MatchRace NellisPearlREF
+		endif
+	endif
+	
+end

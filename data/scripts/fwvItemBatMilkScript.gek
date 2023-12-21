@@ -1,0 +1,14 @@
+scn fwvItemBatMilkScript
+
+begin scripteffectstart
+
+	if player.hasmagicEffect fwvDiseaseSpectrox == 1
+		player.removeSpell fwvDiseaseSpectroxPoison
+		imod Addiction01ISFX
+		MessageEx "You have been cured of Spectrox Toxaemia..."
+	else
+		MessageEx "You do not need to take this right now..."
+		player.addItem fwvItemBatMilk 1 0
+	endif
+
+end

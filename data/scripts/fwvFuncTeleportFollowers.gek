@@ -1,0 +1,44 @@
+scn fwvFuncTeleportFollowers
+
+short sCurCount
+short sFindType
+short sFindNumber
+ref rCurRef
+ref rTarget
+
+begin Function { rTarget }
+
+	set sFindType to 42
+
+	Label 0
+
+	set sCurCount to 0
+	set sFindNumber to GetNumRefs sFindType
+	if sFindNumber > 0
+		set rCurRef to GetFirstRef sFindType
+		Label 1
+		
+		set sCurCount to sCurCount + 1
+		
+		if rCurRef.IsFormValid == 1
+			if rCurRef.GetDisabled == 0 && rCurRef.GetDead == 0
+				;if rCurRef.GetCurrentAIProcedure == 0 || rCurRef.GetCurrentAIProcedure == 11 || rCurRef.GetCurrentAIProcedure == 19 || rCurRef.GetCurrentAIProcedure == 44
+					if rCurRef.GetPackageTarget == Player && rCurRef.GetShouldAttack Player == 0
+						rCurRef.MoveTo rTarget
+					endif
+				;endif
+			endif
+		endif
+		if sCurCount < sFindNumber
+			set rCurRef to GetNextRef
+			Goto 1
+		endif
+	endif
+
+	set sFindType to sFindType + 1
+
+	if sFindType <= 45
+		Goto 0
+	endif
+
+end

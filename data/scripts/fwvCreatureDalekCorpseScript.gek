@@ -1,0 +1,18 @@
+scn fwvCreatureDalekCorpseScript
+
+short init
+float fDay
+
+Begin GameMode
+
+	if init == 0
+		let fDay := GameDaysPassed
+		let init := 1
+	endif
+
+	if GameDaysPassed > fDay + 1
+		Disable
+		MarkForDelete
+	endif
+
+End

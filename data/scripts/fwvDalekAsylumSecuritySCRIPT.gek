@@ -1,0 +1,13 @@
+scn fwvDalekAsylumSecuritySCRIPT
+
+begin OnActivate
+
+	If Player.GetItemCount fwvSkaroAsylumKey == 0
+  		Player.AddItem fwvSkaroAsylumKey 1
+		showmessage fwvXODalekAsylumSecMSG
+		setstage fwvDalekAsylum 5
+	else
+		MessageEx "You already have the Asylum keycode."
+	EndIf
+
+end

@@ -1,0 +1,6 @@
+scn fwvCreatureSilurianInfectedGlowSCRIPT
+
+Begin ScriptEffectStart
+	pms fwvSilurianInfectionFXShader
+End
+

@@ -1,0 +1,92 @@
+scn fwvq2doorLockSCRIPT
+
+short doOnce
+short button
+short path
+
+begin onActivate player
+
+if getStage fwvquestTwo >= 40
+	if getLocked == 1
+		if doOnce == 0
+			setStage fwvquestTwo 45
+			set doOnce to 1
+		endif
+		ShowMessage fwvq2doorLockMessage
+		set path to 0
+	endif
+endif
+
+end
+
+begin gamemode
+
+set button to getbuttonpressed
+
+if path == 0
+	if button == 0
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	elseif button == 1
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	elseif button == 2
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	elseif button == 3
+		set path to 1
+		PlaySound UIHackingPassGood 1
+		ShowMessage fwvq2doorLockMessage
+	endif
+elseif path == 1
+	if button == 0
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	elseif button == 1
+		set path to 2
+		PlaySound UIHackingPassGood 1
+		ShowMessage fwvq2doorLockMessage
+	elseif button == 2
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	elseif button == 3
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	endif
+elseif path == 2
+	if button == 0
+		set path to 3
+		PlaySound UIHackingPassGood 1
+		ShowMessage fwvq2doorLockMessage	
+	elseif button == 1
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	elseif button == 2
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	elseif button == 3
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	endif
+elseif path == 3
+	if button == 0
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	elseif button == 1
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	elseif button == 2
+		unlock		
+		setopenstate 1
+		setObjectiveCompleted fwvquestTwo 45 1
+		PlaySound UIHackingPassGood 1
+		set path to 0	
+	elseif button == 3
+		set path to 0
+		PlaySound OBJIntercomHail 1
+	endif
+endif
+
+end
+
+

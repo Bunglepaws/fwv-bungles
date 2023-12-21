@@ -1,0 +1,12 @@
+scn fwvTClabMonitorSCRIPT
+
+; TARDIS Lab Monitor script, written by Demeggy 16/3/13
+
+Begin OnActivate player
+
+	;fwvTmonitorLabRef.activate player 1
+
+end
+
+
+

@@ -1,0 +1,23 @@
+scn fwvSilurStrngWakeup02SCRIPT
+
+ref Sleeper3
+ref Sleeper4
+
+begin OnTriggerEnter Player
+
+	set Sleeper3 to fwvqInvasionsSilurian.SilurianSleeper03
+	set Sleeper4 to fwvqInvasionsSilurian.SilurianSleeper04
+	fwvXOSilurianStrngPod03.setopenstate 1
+	fwvXOSilurianStrngPod04.setopenstate 1
+
+end
+
+begin GameMode
+
+	if fwvXOSilurianStrngPod03.getopenstate == 1
+		Sleeper3.setrestrained 0
+		Sleeper4.setrestrained 0
+	endif
+
+
+End

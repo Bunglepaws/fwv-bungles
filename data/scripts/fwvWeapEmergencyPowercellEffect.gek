@@ -1,0 +1,29 @@
+scn fwvWeapEmergencyPowercellEffect
+
+short fxOn
+float fTimer
+
+Begin ScriptEffectStart
+
+	set fxOn to 1
+	set fTimer to 0.0
+
+End
+
+Begin ScriptEffectUpdate
+
+	if fxOn == 1
+		if fTimer < 2.5
+			set fTimer to fTimer + getSecondsPassed
+		else
+			if getDistance player < 1000
+				sgtm 0.25
+			else
+				sgtm 1
+			endif
+		endif
+	else
+		set fxOn to 0
+	endif
+
+End

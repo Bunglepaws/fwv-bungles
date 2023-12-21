@@ -1,0 +1,13 @@
+scn fwvxoAutonHiddenRoomGoSCRIPT
+
+short sOnce
+
+begin OnTriggerEnter Player
+
+	if sOnce == 0
+
+		;fwvXOHiddenRoomAutonSphere01.enable
+		set sOnce to 1
+	endif
+
+end

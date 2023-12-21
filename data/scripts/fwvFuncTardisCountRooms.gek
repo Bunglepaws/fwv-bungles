@@ -1,0 +1,7 @@
+scn fwvFuncTardisCountRooms
+
+short rListSize
+
+Begin Function { }
+	SetFunctionValue fwvqRooms.tLibrary + fwvqRooms.tArtGallery + fwvqRooms.tGardens + fwvqRooms.tBedroom + fwvqRooms.tGalley + fwvqRooms.tSickbay + fwvqRooms.tWardrobe + fwvqRooms.tPool + fwvqRooms.tWorkshop + fwvqRooms.tLab + fwvqRooms.tZeroRoom
+End

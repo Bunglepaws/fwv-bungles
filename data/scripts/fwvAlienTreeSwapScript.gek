@@ -1,0 +1,47 @@
+scn fwvAlienTreeSwapScript
+
+ref rLinkedRefNight
+ref rLinkedRefDay
+short sNightTime
+
+begin GameMode
+	set rLinkedRefDay to GetLinkedRef
+	set rLinkedRefNight to rLinkedRefDay.GetLinkedRef
+	if rLinkedRefDay != 0 && rLinkedRefNight != 0
+		if GameHour > 19.75 || GameHour < 6.0
+			set sNightTime to 1
+		else
+			set sNightTime to 0
+		endif
+
+		if rLinkedRefDay.GetDisabled != sNightTime
+			if sNightTime
+				rLinkedRefDay.Disable 0
+				rLinkedRefNight.Enable 0
+			else
+				rLinkedRefDay.Enable 0
+				rLinkedRefNight.Disable 0
+			endif
+		endif
+	endif
+end
+
+begin MenuMode
+	if rLinkedRefDay != 0 && rLinkedRefNight != 0
+		if GameHour > 19.75 || GameHour < 6.0
+			set sNightTime to 1
+		else
+			set sNightTime to 0
+		endif
+
+		if rLinkedRefDay.GetDisabled != sNightTime
+			if sNightTime
+				rLinkedRefDay.Disable 0
+				rLinkedRefNight.Enable 0
+			else
+				rLinkedRefDay.Enable 0
+				rLinkedRefNight.Disable 0
+			endif
+		endif
+	endif
+end

@@ -1,0 +1,44 @@
+scn fwvAutonLabMachine1
+
+short button
+short doOnce
+short awaitingInput
+
+Begin OnActivate Player
+		if fwvTSchematicsRef.getItemCount fwvItemSchemAntiplastic > 0
+			playsound DRSNukaColaMachineOpen
+			ShowMessage fwvAutonStrngCanBrew
+			set awaitingInput to 1
+		else
+			ShowMessage fwvAutonStrngCannotBrew
+		endif
+End
+
+Begin GameMode
+
+
+	if awaitingInput == 1
+		set button to GetButtonPressed
+		if button == 0 	; Make 1
+			player.removeitem fwvItemNestenePolymer 1
+			player.additem fwvWeapAntiplastic 2
+			PlaySound UIItemGenericDown
+			set awaitingInput to 0
+		elseif button == 1	; Make 3
+			player.removeitem fwvItemNestenePolymer 3
+			player.additem fwvWeapAntiplastic 6
+			PlaySound UIItemGenericDown
+			set awaitingInput to 0
+		elseif button == 2	; Make 10
+			player.removeitem fwvItemNestenePolymer 5
+			player.additem fwvWeapAntiplastic 10
+			PlaySound UIItemGenericDown
+			set awaitingInput to 0
+		elseif button == 3	; Nope
+			set awaitingInput to 0	
+			playsound DRSNukaColaMachineClose
+		endif
+
+	endif
+
+End

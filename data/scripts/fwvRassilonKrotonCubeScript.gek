@@ -1,0 +1,7 @@
+scn fwvRassilonKrotonCubeScript
+
+Begin onActivate player
+
+	MessageBoxEx "This Hypercube cannot open, because it belongs to 'another'..."
+
+End

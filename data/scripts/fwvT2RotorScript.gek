@@ -1,0 +1,31 @@
+scn fwvT2RotorScript
+
+short sLightingMode
+
+begin GameMode
+
+if fwvqSystems.cSys == 1
+	if fwvT2ClightNormalRef.GetDisabled == 1
+		fwvT2CroomDimLightRef.Disable 0
+		fwvT2CroomNormalLightRef.Disable 0
+		fwvT2CroomBrightLightRef.Disable 0
+	elseif sLightingMode == 0
+		fwvT2CroomDimLightRef.Disable 0
+		fwvT2CroomNormalLightRef.Enable 0
+		fwvT2CroomBrightLightRef.Disable 0
+	elseif sLightingMode == 1
+		fwvT2CroomDimLightRef.Enable 0
+		fwvT2CroomNormalLightRef.Disable 0
+		fwvT2CroomBrightLightRef.Disable 0
+	elseif sLightingMode == 2
+		fwvT2CroomDimLightRef.Disable 0
+		fwvT2CroomNormalLightRef.Disable 0
+		fwvT2CroomBrightLightRef.Enable 0
+	endif
+elseif fwvqSystems.cSys == 0
+	fwvT2ClightNormalRef.Disable
+	fwvT2CroomDimLightRef.Disable 0
+	fwvT2CroomNormalLightRef.Disable 0
+	fwvT2CroomBrightLightRef.Disable 0
+endif
+end

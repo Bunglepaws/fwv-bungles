@@ -1,0 +1,16 @@
+scn fwvxoAngelRegenSCRIPT
+
+short fTimer
+short sRegen
+
+begin onTriggerEnter Player
+
+	if sRegen == 0
+		set fwvqRegen.regenMode to 1
+		set sRegen to 1
+	endif
+
+
+
+end
+

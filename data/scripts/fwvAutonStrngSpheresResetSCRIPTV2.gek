@@ -1,0 +1,19 @@
+scn fwvAutonStrngSpheresResetSCRIPTV2
+
+short sHits
+
+Begin OnHit
+	
+	if sHits == 0
+		set sHits to 1
+	else 
+		placeatme LimbExplosionBug 1
+		set sHits to 2
+		;printc "Hit 2"
+		rewardxp 3
+		disable
+	endif
+
+
+end
+

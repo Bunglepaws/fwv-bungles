@@ -1,0 +1,10 @@
+scn fwvInspirationSCRIPT
+
+short sOneTime
+
+begin ScriptEffectStart
+	if sOneTime == 0
+		CastImmediateOnSelf fwvInspiration
+		set sOneTime to 1
+	endif
+end

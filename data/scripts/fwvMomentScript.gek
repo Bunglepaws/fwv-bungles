@@ -1,0 +1,90 @@
+scn fwvMomentScript
+
+;Written by Cookiemorph on the '59th minute'
+
+short button
+short awaiting input
+short doOnce
+short awaitingInput
+float fTimer
+short sDoOnce
+short sGuilt
+
+Begin OnActivate Player
+
+	if fwvqTrenzalore.sTrenzaloreDestroyed == 0
+		if doOnce == 0
+			let fwvqTrenzalore.sHumans := 4 + GetRandomPercent * (9-4+1) / 100
+			let fwvqTrenzalore.sChildren := 450 + GetRandomPercent * (900-450+1) / 100
+			set doOnce to 1
+		endif
+		ShowMessage fwvMomentMessage fwvqTrenzalore.sHumans fwvqTrenzalore.sChildren
+		set awaitingInput to 1
+	endif
+
+End
+
+Begin GameMode
+
+
+	if awaitingInput == 1
+		set button to GetButtonPressed
+		if button == 0 	; NUKE EM RICO
+			SetObjectiveCompleted fwvqTrenzalore 20 1
+			setstage fwvqTrenzalore 100
+			set fwvqTrenzalore.sTrenzaloreDestroyed to 1
+			let fwvqLocs.fwvLtrenzaloreVisited := 0
+			PlaySound FXExplosionArtilleryExplosionFar
+			fwvTheMomentREF.placeAtMe fwvVortexManipulatorExplosion
+			fwvTheMomentREF.disable
+			set sGuilt to 1
+			set awaitingInput to 0
+
+		elseif button == 1	; Heroic Sacrifice
+			set awaitingInput to 0
+			set fwvqTrenzalore.sSacrifice to 2
+			SetObjectiveCompleted fwvqTrenzalore 20 1
+			setstage fwvqTrenzalore 100
+			let fwvqLocs.fwvLtrenzaloreVisited := 0
+			fwvTheMomentREF.placeAtMe fwvVortexManipulatorExplosion
+			fwvTheMomentREF.disable
+
+		elseif button == 2	; WHAT A NOOB, HE CANT EVEN DESTROY A PLANET
+			set awaitingInput to 0
+			if fwvqTrenzalore.sTheWoman == 0
+				fwvXOTheWomanREF.enable
+				fwvXOTheWomanGlow.enable
+				set fwvqTrenzalore.sTheWoman to 1
+			endif
+		endif
+
+	endif
+
+End
+
+Begin Gamemode
+	
+	if fwvqTrenzalore.sSacrifice == 2
+		if fTimer < 5 && sDoOnce == 0
+			set fTimer to fTimer + GetSecondsPassed
+		else
+			set sDoOnce to 1
+			set fwvqTrenzalore.sSacrifice to 3
+			showmessage fwvMomentMessageTimelock
+		endif
+	endif
+
+
+	if sGuilt == 1
+		if fwvqRegen.TimeLordTrue == 1
+			if fTimer < 10 && sDoOnce == 0
+				set fTimer to fTimer + GetSecondsPassed
+			else
+				set sDoOnce to 1
+				set sGuilt to 0
+				showmessage fwvMomentMessageDone
+				set fwvqRegen.regenMode to 2
+			endif
+		endif
+	endif
+end

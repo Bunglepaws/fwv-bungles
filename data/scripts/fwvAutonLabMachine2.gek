@@ -1,0 +1,28 @@
+scn fwvAutonLabMachine2
+
+short sDoOnce
+short sSchemCount
+
+Begin OnActivate Player
+	set sSchemCount to fwvTSchematicsRef.getItemCount fwvItemSchemAntiplastic
+	printc "Schem Count %g" sSchemCount
+	if sDoOnce == 0
+		if fwvTSchematicsRef.getItemCount fwvItemSchemAntiplastic == 0
+			ShowMessage fwvAutonStrngLearnSchem
+			playsound UIItemGenericUp
+			fwvTSchematicsRef.addItem fwvItemSchemAntiplastic 1
+			set sSchemCount to fwvTSchematicsRef.getItemCount fwvItemSchemAntiplastic
+			printc "Schem Count now %g" sSchemCount
+			set sDoOnce to 1
+		else
+			ShowMessage fwvAutonStrngKnowSchem
+			playsound UIItemGenericUp
+			fwvTSchematicsRef.addItem fwvItemSchemAntiplastic 1
+			set sSchemCount to fwvTSchematicsRef.getItemCount fwvItemSchemAntiplastic
+			printc "Schem Count now %g" sSchemCount
+			set sDoOnce to 1
+		endif
+	else
+		ShowMessage fwvAutonStrngKnowSchem2
+	endif
+End

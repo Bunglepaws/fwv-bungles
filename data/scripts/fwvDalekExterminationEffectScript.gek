@@ -1,0 +1,32 @@
+scn fwvDalekExterminationEffectScript
+
+ref rSelf
+float fTimer
+
+Begin ScriptEffectStart
+
+	let rSelf := getSelf
+	pushActorAway rSelf 1
+		;addItem fwvArmorSkeletonEffect 1
+	addItem fwvArmorSkeletonEffectXO 1
+		;addItem fwvArmorSkullEffect 1
+		;equipItem fwvArmorSkeletonEffect 1
+	equipItem fwvArmorSkeletonEffectXO 1
+		;equipItem fwvArmorSkullEffect 1
+	pms fwvHologramPsychicMarker
+	set fTimer to 0.0
+	;imod fwvXODalekExterminationSFX
+End
+
+Begin ScriptEffectUpdate
+
+	if fTimer < 0.5
+		set fTimer to fTimer + getSecondsPassed
+	else
+		removeItem fwvArmorSkeletonEffectXO 1
+			;removeItem fwvArmorSkeletonEffect 1
+			;removeItem fwvArmorSkullEffect 1
+		sms fwvHologramPsychicMarker
+	endif
+
+End

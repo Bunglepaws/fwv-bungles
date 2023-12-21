@@ -1,0 +1,41 @@
+scn fwvAlphaBetaOmegaSCRIPT
+
+short killOnce
+short destroy
+float dTimer
+ref rSelf
+short sDead
+short sModel
+short random
+short sIsCounted
+
+Begin GameMode
+
+	set rSelf to GetSelf
+
+	if getDead == 1
+		if killOnce == 0
+
+			let random := getRandomPercent
+			
+				if random < 50
+
+					rSelf.placeAtMe fwvDalekDroneRemains01Havok
+					rSelf.disable
+					rSelf.MarkForDelete
+				else
+
+					rSelf.placeAtMe fwvDalekDroneRemains02Havok
+					rSelf.disable
+					rSelf.MarkForDelete
+				endif
+
+
+			PlaceAtMe fwvDalekExplosion
+
+			let killOnce := 1
+		endif
+	endif
+
+End
+

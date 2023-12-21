@@ -1,0 +1,30 @@
+scn fwvItemDufflebagScript
+
+short frame
+float fTimer
+
+begin onActivate player
+
+	DisablePlayerControls
+	imod FadeToWhiteAndBackISFX
+	set frame to 1
+	set fTimer to 0.0
+
+end
+
+begin gamemode
+
+	if frame == 1
+		if fTimer < 5.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			EnablePlayerControls
+			PlaySound fwvDoctorWar
+			player.addItem fwvOutfitDoctorWar 1
+			player.addItem fwvItemSchemSonicWar 1
+			MarkForDelete
+			Disable
+		endif
+	endif
+
+end

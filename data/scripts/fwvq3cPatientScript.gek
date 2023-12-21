@@ -1,0 +1,101 @@
+scn fwvq3cPatientScript
+
+short button
+
+short ending ; 1- bad, 2 - good
+short frame
+float fTimer
+
+begin onActivate player
+
+	if getStage fwvq3c == 60
+		PlaySound UIHackingCharMultiple 1
+		ShowMessage fwvq3cPatientMessage
+	elseif getStage fwvq3c != 60
+		PlaySound UIHackingCharMultiple 1
+		ShowMessage fwvq3cPatientLockedMessage
+	endif
+
+end
+
+begin gamemode
+
+	set button to getbuttonpressed
+
+	if button == 0
+		;bad ending
+		setObjectiveCompleted fwvq3c 60 1
+		setStage fwvq3c 100
+		fwvq3cEndGas1Ref.enable
+		set fwvqComms.init to 0
+		set fwvq3c.ending to 1
+		set fTimer to 0.0
+		set frame to 1
+		player.rewardKarma -25		
+		set ending to 1
+	elseif button == 1
+		;good ending
+		if player.getItemCount fwvq3cPathogenCure
+			DisablePlayerControls
+			player.removeItem fwvq3cPathogenCure 1
+			fwvq3cEndGas3Ref.enable
+			set fTimer to 0.0
+			set frame to 1
+			player.rewardKarma 25	
+			set ending to 2
+		else
+			ShowMessage fwvq3cPathogenNeededMessage
+		endif
+	endif
+
+	if getStage fwvq3c == 50
+		if getDistance player < 200
+			setStage fwvq3c 60
+		endif
+	endif
+
+	if ending == 1
+		if frame == 1
+			if fTimer < 5.0
+				set fTimer to fTimer + getSecondsPassed
+			else
+				fwvq3cEndGas1Ref.disable
+				fwvq3cEndGas2Ref.enable
+				set fTimer to 0.0
+				set frame to 2
+			endif
+		elseif frame == 2
+
+		endif
+	elseif ending == 2
+		if frame == 1
+			if fTimer < 5.0
+				set fTimer to fTimer + getSecondsPassed
+			else
+				imod FadeToBlackAndBackISFX
+				set fTimer to 0.0
+				set frame to 2
+			endif
+		elseif frame == 2
+			if fTimer < 2.0
+				set fTimer to fTimer + getSecondsPassed
+			else
+				fwvq3cEndGas3Ref.disable
+				fwvq3cSalaanDeadRef.disable
+				fwvq3cSalaanAliveRef.enable
+				set fTimer to 0.0
+				set frame to 3
+			endif
+		elseif frame == 3
+			if fTimer < 3.0
+				set fTimer to fTimer + getSecondsPassed
+			else
+				fwvq3cSalaanAliveRef.startConversation player
+				EnablePlayerControls
+				set fTimer to 0.0
+				set frame to 4
+			endif
+		endif
+	endif
+
+end

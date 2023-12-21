@@ -1,0 +1,47 @@
+scn fwvCreditsCinematicEndScript
+
+short sAnim
+float fTimer
+short sframe
+short sDirection
+
+Begin onactivate
+
+	fwvTitleEndAnimRef.PlayGroup Forward 1
+
+end
+
+Begin onTriggerEnter player
+
+	if sFrame < 1
+		PlaySound fwvTitleEndFX
+		fwvTitleEndAnimRef.PlayGroup Forward 1
+		set fTimer to 0.0
+		set sAnim to 1
+		set sFrame to 1
+	endif
+
+End
+
+Begin Gamemode
+
+	if sAnim == 1
+		if fTimer < 9.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			set fTimer to 0.0	
+			set sAnim to 2
+		endif
+	elseif sAnim == 2
+		if fTimer < 41.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			player.moveTo fwvIntroPlayerMarkerRef
+			imod fwvFadeFromWhiteFastISFX
+			EnablePlayerControls
+			set sAnim to 3
+		endif
+	endif
+
+End
+

@@ -1,0 +1,11 @@
+scn fwvq3dSectorBDoorScript
+
+begin onActivate player
+
+	if fwvq3d.sector == 2
+		
+	else
+		activate
+	endif
+
+end

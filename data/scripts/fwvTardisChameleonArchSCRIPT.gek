@@ -1,0 +1,265 @@
+scn fwvTardisChameleonArchSCRIPT
+
+; This script stores all of the players human stats before they become a Time Lord
+; written by Demeggy 12/3/13
+
+short button
+
+;human stats
+
+short hStr			;Strength
+short hPer		;Perception
+short hEnd		;Endurance
+short hCha		;Charisma
+short hInt			;Intelligence
+short hAg			;Agility
+short hLuck		;Luck
+
+short hBarter	;Bartering
+short hBG		;BigGuns
+short hEW		;EnergyWeaps
+short hExp		;Explosives
+short hLock		;LockPick
+short hMed		;Medicine
+short hMW		;MeleeWeaps
+short hRep		;Repair
+short hSci		;Science
+short hSG			;SmallGuns
+short hSneak	;Sneaking
+short hSp			;Speech
+short hUA			;Unarmed
+
+;Time Lord stats
+
+short tStr			;Strength
+short tPer		;Perception
+short tEnd		;Endurance
+short tCha		;Charisma
+short tInt			;Intelligence
+short tAgi		;Agility
+short tLuck		;Luck
+
+short tBarter	;Bartering
+short tBG		;BigGuns
+short tEW		;EnergyWeaps
+short tExp		;Explosives
+short tLock		;LockPick
+short tMed		;Medicine
+short tMW		;MeleeWeaps
+short tRep		;Repair
+short tSci		;Science
+short tSG			;SmallGuns
+short tSneak	;Sneaking
+short tSp			;Speech
+short tUA			;Unarmed
+
+; spyduck-added
+short curStatBase
+short curStat
+short newMod
+short event
+
+short menu
+
+; Xoanon added
+short tlpxl
+short tlpxp
+
+short sPatchVersion
+ref rSelf
+begin GameMode
+	;if sPatchVersion < fwvPatchVersion
+	;	set sPatchVersion to sPatchVersion
+	;	set rSelf to GetSelf
+	;	Call fwvFuncResetPosition rSelf
+	;endif
+end
+
+
+begin onActivate player
+
+	if fwvqRegen.TimeLordTrue == 1
+		ShowMessage fwvTCchameleonArchMessage
+	else
+		MessageEx "Nothing happens..."
+	endif
+
+end
+
+begin gameMode
+
+	set button to getbuttonpressed
+
+	if button == 3
+		ShowMessage fwvRegenHumanMessage
+		player.addSpell fwvRegenFX
+		set event to 1
+	elseif button == 1
+			set event to 0
+			set menu to 2
+			if menu == 2
+				;MessageBoxEx "Strength: %g|Perception: %g|Endurance: %g|Charisma: %g|Intelligence: %g|Agility: %g|Luck: %g" hStr hPer hEnd hCha hInt hAg hLuck
+				ShowMessage fwvTCchameleonArchSPECIALMessage hStr hPer hEnd hCha hInt hAg hLuck
+				if button >= -1
+					set menu to 0
+				endif
+			endif
+	elseif button == 2
+			set event to 0
+			set menu to 3
+			if menu == 3
+				;MessageBoxEx "Barter: %g|Big Guns: %g|Energy Weapons: %g|Explosives: %g|Lockpicking: %g|Medical: %g|Melee: %g| Repair: %g| Science: %g| Small Guns: %g| Sneak: %g| Speech: %g| Unarmed: %g" hBarter hBG hEW hExp hLock hMed hMW hRep hSci hSG hSneak hSp hUA
+				ShowMessage fwvTCchameleonArchSkillsMessage1 hBarter hEW hExp hLock hMed hMW 
+				ShowMessage fwvTCchameleonArchSkillsMessage2 hRep hSci hSG hSneak hSp hUA
+				if button >= -1
+					set menu to 0
+				endif
+			endif
+	endif
+
+	if event == 1
+
+;store the current timelord stats in the arch
+		set tStr to player.getAV Strength
+		set tPer to player.getAV Perception
+		set tEnd to player.getAV Endurance
+		set tCha to player.getAV Charisma
+		set tInt to player.getAV Intelligence
+		set tAgi to player.getAV Agility
+		set tLuck to player.getAV Luck
+		set tBarter to player.getAV Barter
+		set tBG	to player.getAV BigGuns
+		set tEW to player.getAV EnergyWeapons
+		set tExp to player.getAV Explosives
+		set tLock to player.getAV Lockpick
+		set tMed to player.getAV Medicine
+		set tRep to player.getAV Repair
+		set tSci to player.getAV Science
+		set tSG to player.getAV Guns
+		set tSneak to player.getAV Sneak
+		set tSp to player.getAV	Speech
+		set tUA to player.getAV Unarmed
+		set tlpxl to fwvq1.pxl
+		set tlpxp to fwvq1.pxp
+		printc "tlpxl %g" tlpxl
+		printc "tlpxp %g" tlpxp
+
+		printc "TimeLord Data stored"
+
+		player.setAV Strength hStr
+		player.setAV Perception hPer
+		player.setAV Endurance hEnd
+		player.setAV Charisma hCha
+		player.setAV Intelligence hInt
+		player.setAV Agility hAg
+		player.setAV Luck hLuck
+
+		; do barter
+		set curStatBase to player.getbaseav barter
+		set curStat to player.getav barter
+		set newMod to curStat - curStatBase
+		player.modav barter newMod
+		set newMod to hBarter - curStatBase
+		player.modav barter newMod
+
+		; do BIGGUNS
+		set curStatBase to player.getbaseav BigGuns
+		set curStat to player.getav BigGuns
+		set newMod to curStat - curStatBase
+		player.modav BigGuns newMod
+		set newMod to hBG - curStatBase
+		player.modav BigGuns newMod
+
+		; do EnergyWeapons 
+		set curStatBase to player.getbaseav EnergyWeapons
+		set curStat to player.getav EnergyWeapons
+		set newMod to curStat - curStatBase
+		player.modav EnergyWeapons newMod
+		set newMod to hEW - curStatBase
+		player.modav EnergyWeapons newMod
+
+		; do Explosives 
+		set curStatBase to player.getbaseav Explosives 
+		set curStat to player.getav Explosives 
+		set newMod to curStat - curStatBase
+		player.modav Explosives newMod
+		set newMod to hExp - curStatBase
+		player.modav Explosives newMod
+
+		; do Lockpicking 
+		set curStatBase to player.getbaseav Lockpick
+		set curStat to player.getav Lockpick
+		set newMod to curStat - curStatBase
+		player.modav Lockpick newMod
+		set newMod to hLock - curStatBase
+		player.modav Lockpick newMod
+
+		; do Medicine 
+		set curStatBase to player.getbaseav Medicine 
+		set curStat to player.getav Medicine 
+		set newMod to curStat - curStatBase
+		player.modav Medicine newMod
+		set newMod to hMed - curStatBase
+		player.modav Medicine newMod
+
+		; do Repair 
+		set curStatBase to player.getbaseav Repair  
+		set curStat to player.getav Repair  
+		set newMod to curStat - curStatBase
+		player.modav Repair newMod
+		set newMod to hRep - curStatBase
+		player.modav Repair newMod
+
+		; do Science  
+		set curStatBase to player.getbaseav Science  
+		set curStat to player.getav Science  
+		set newMod to curStat - curStatBase
+		player.modav Science newMod
+		set newMod to hSci - curStatBase
+		player.modav Science newMod
+
+		; do Small Guns
+		set curStatBase to player.getbaseav Guns   
+		set curStat to player.getav Guns 
+		set newMod to curStat - curStatBase
+		player.modav Guns newMod
+		set newMod to hSG - curStatBase
+		player.modav Guns newMod
+
+		; do Sneak
+		set curStatBase to player.getbaseav Sneak 
+		set curStat to player.getav Sneak 
+		set newMod to curStat - curStatBase
+		player.modav Sneak newMod
+		set newMod to hSneak - curStatBase
+		player.modav Sneak newMod
+
+		; do speech
+		set curStatBase to player.getbaseav speech
+		set curStat to player.getav speech
+		set newMod to curStat - curStatBase
+		player.modav speech newMod
+		set newMod to hSp - curStatBase
+		player.modav speech newMod
+		
+		; do unarmed
+		set curStatBase to player.getbaseav unarmed
+		set curStat to player.getav unarmed
+		set newMod to curStat - curStatBase
+		player.modav unarmed newMod
+		set newMod to hUA - curStatBase
+		player.modav unarmed newMod
+
+		set fwvq1.pxl to 0
+		set fwvq1.pxp to 0
+		set fwvqRegen.TimeLordTrue to 0
+		player.removePerk fwvTLrassilonPerk		
+
+		if player.getItemCount fwvWfobWatchPlayable < 1
+			player.addItem fwvWfobWatchPlayable 1
+		endif
+		set event to 0
+
+	endif
+
+end

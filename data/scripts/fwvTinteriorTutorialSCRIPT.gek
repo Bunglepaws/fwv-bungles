@@ -1,0 +1,12 @@
+scn fwvTinteriorTutorialSCRIPT
+
+short tutOnce
+
+begin onTriggerEnter player
+
+if fwvq1.tutorial == 1 && tutOnce == 0
+	ShowTutorialMenu fwvTUTinteriorMessage
+	set tutOnce to 1
+endif
+
+end

@@ -1,0 +1,38 @@
+scn fwvTardisSickbaySCRIPT
+
+short heal
+
+begin onTriggerEnter player
+
+	if player.gethealthpercentage < 100
+		ShowMessage fwvTardisSickbayHealOnMessage
+		player.pms DLC03GhoulFXShader
+		set heal to 1
+	endif
+
+end
+
+begin onTriggerLeave player
+
+	if heal == 1
+		ShowMessage fwvTardisSickbayHealOffMessage
+		player.sms DLC03GhoulFXShader
+		set heal to 0
+	endif
+
+end
+
+begin gamemode
+
+	if heal == 1
+		if player.gethealthpercentage < 100
+			player.restoreAv health 0.5
+		elseif player.gethealthpercentage == 100
+			ShowMessage fwvTardisSickbayHealDoneMessage
+			player.resetHealth
+			player.sms DLC03GhoulFXShader
+			set heal to 0
+		endif
+	endif
+
+end

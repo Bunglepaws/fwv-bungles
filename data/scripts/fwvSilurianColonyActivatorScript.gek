@@ -1,0 +1,136 @@
+scn fwvSilurianColonyActivatorScript
+
+short button
+
+short frame
+float fTimer
+short liftAnim
+short liftMenu
+ref liftRef
+
+begin onActivate player
+	if getIsReference fwvSilurianColonyStartRef
+		Disable
+		MarkForDelete
+		PlaySound UIInkBlotPages 1
+		fwvSilurianColonyStartRef.disable
+		MessageEx "[Silurian Colony destination added to Databanks]"
+		set fwvqLocs.fwvLsilurianColonyVisited to 1
+	elseif getIsReference fwvSilurianColonyLiftButton01Ref || getIsReference fwvSilurianColonyLiftButton02Ref || getIsReference fwvSilurianColonyLiftButton03Ref
+		Set LiftMenu to 1
+		ShowMessage fwvSilurianColonyElevatorMessage
+	elseif getIsReference fwvSilurianColonySpeakerRef
+		fwvSilurianColonyMagmaRef.SetTalkingActivatorActor
+		fwvSilurianColonyMagmaRef.activate
+	endif
+
+	if fwvqSilurianColony.reactorStart == 1
+		if getIsReference fwvSilurianColonyValve01Ref
+			if fwvSilurianColonyValve01FXRef.getDisabled == 0
+				PlaySound OBJPipeControlTurn
+				fwvSilurianColonyValve01FXRef.disable 0
+			endif
+		elseif getIsReference fwvSilurianColonyValve02Ref
+			if fwvSilurianColonyValve02FXRef.getDisabled == 0
+				PlaySound OBJPipeControlTurn
+				fwvSilurianColonyValve02FXRef.disable 0
+			endif
+		elseif getIsReference fwvSilurianColonyValve03Ref
+			if fwvSilurianColonyValve03FXRef.getDisabled == 0
+				PlaySound OBJPipeControlTurn
+				fwvSilurianColonyValve03FXRef.disable 0
+			endif
+		elseif getIsReference fwvSilurianColonyValve04Ref
+			if fwvSilurianColonyValve04FXRef.getDisabled == 0
+				PlaySound OBJPipeControlTurn
+				fwvSilurianColonyValve04FXRef.disable 0
+			endif
+		endif
+	endif
+
+end
+
+begin gamemode
+	if liftMenu == 1
+		set button to getbuttonpressed
+		if button == 0																;Lab
+			set fwvqSilurianColony.tLevel to 3
+			set liftMenu to 0
+			set liftAnim to 1
+			set fTimer to 0.0
+			set frame to 1
+		elseif button == 1															;Habitat
+			set fwvqSilurianColony.tLevel to 2
+			set liftMenu to 0
+			set liftAnim to 1
+			set fTimer to 0.0
+			set frame to 1
+		elseif button == 2															;Magma Field
+			set fwvqSilurianColony.tLevel to 1
+			set liftMenu to 0
+			set liftAnim to 1
+			set fTimer to 0.0
+			set frame to 1
+		endif
+	endif
+
+	if liftAnim == 1
+		if frame == 1
+			DisablePlayerControls 1 1 1 1 1 1 1
+			if fwvqSilurianColony.cLevel == 3
+				player.moveTo fwvSilurianColonyLiftLabRef
+				fwvCompanionSalaanRef.moveTo fwvSilurianColonyLiftLabCompanionRef
+				fwvSilurianColonyLiftLabDoorRef.setOpenState 0
+			elseif fwvqSilurianColony.cLevel == 2
+				player.moveTo fwvSilurianColonyLiftHabitatRef
+				fwvSilurianColonyLiftHabitatDoorRef.setOpenState 0
+			elseif fwvqSilurianColony.cLevel == 1
+				player.moveTo fwvSilurianColonyLiftMagmaRef
+				fwvSilurianColonyLiftMagmaDoorRef.setOpenState 0
+			endif
+			PlaySound FXEventMonorailDepart
+			set fTimer to 0.0
+			set frame to 2
+		elseif frame == 2
+			if fTimer < 10.0
+				set fTimer to fTimer + getsecondspassed
+			else
+				PlaySound DRSMonorailClose
+				set frame to 3
+			endif
+		elseif frame == 3
+			if fTimer < 3.0
+				set fTimer to fTimer + getsecondspassed
+			else
+				PlaySound DRSMonorailClose
+				if fwvqSilurianColony.tLevel == 3
+					player.moveTo fwvSilurianColonyLiftLabRef
+					set fwvqSilurianColony.cLevel to 3
+					fwvSilurianColonyLiftLabDoorRef.setOpenState 1
+				elseif fwvqSilurianColony.tLevel == 2
+					player.moveTo fwvSilurianColonyLiftHabitatRef
+					set fwvqSilurianColony.cLevel to 2
+					fwvSilurianColonyLiftHabitatDoorRef.setOpenState 1
+					if getStage fwvqSilurianColony == 60
+						fwvSilurianColonyGasRef.enable 0
+						fwvCompanionSalaanRef.moveTo fwvSilurianColonyLiftHabitatCompanionRef
+						;fwvCompanionSalaanRef.additem fwvFollowMeFlag 1
+						fwvCompanionSalaanRef.addScriptPackage DefaultFollowPlayerClose
+						fwvCompanionSalaanRef.evp
+						set fwvqSilurianColony.gasOn to 1
+					endif
+				elseif fwvqSilurianColony.tLevel == 1
+					player.moveTo fwvSilurianColonyLiftMagmaRef
+					set fwvqSilurianColony.cLevel to 1
+					fwvSilurianColonyLiftMagmaDoorRef.setOpenState 1
+				endif
+				set frame to 4
+			endif
+		elseif frame == 4
+			EnablePlayerControls
+			set fTimer to 0.0
+			set frame to 0
+			set liftAnim to 0
+		endif
+	endif
+end

@@ -1,0 +1,23 @@
+scn fwvSkaroAsylumEnterSCRIPT
+
+short DoOnce
+
+begin onTriggerEnter
+
+	if DoOnce == 0
+		ShowMessage fwvSkaroAsylumEnterMSG
+		AsylumSupremeMutantCasing.PlayGroup Forward 0
+		AsylumSupremeEmptyCasing.PlayGroup Forward 0
+		;fwvAsylumSec.KillActor fwvAlphaEODREF 1 2
+		fwvEmperorHoloRef.pms fwvHologramInterfaceNeutral
+		;fwvEmperorHoloRef.saa 0.6
+		fwvEmperorHoloRef.saa 0.0
+		fwvEmperorHoloRef.setscale 0.7
+		fwvEmperorHoloRef.disable
+		if getstage fwvDalekAsylum == 5 
+			setstage fwvDalekAsylum 10
+		endif
+		set DoOnce to 1
+	endif
+
+end

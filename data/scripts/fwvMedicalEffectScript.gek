@@ -1,0 +1,20 @@
+scn fwvMedicalEffectScript
+
+float fTimer
+
+begin ScriptEffectStart
+
+	pms fwvRepairGlowShader
+
+end
+
+begin ScriptEffectUpdate
+
+	if fTimer < 3.0
+		set fTimer to fTimer + getSecondsPassed
+	else
+		sms fwvRepairGlowShader
+	endif
+
+end
+

@@ -1,0 +1,14 @@
+scn fwvZetaSchematicTableScript
+
+short doOnce
+
+begin onActivate player
+
+ if doOnce == 0
+  PlaySound OBJZAXConsoleVialForward
+	MEssageEx "[Schematic added: Custom Alien Blaster]"
+  player.addItem fwvItemSchemAlienBlaster 1
+  set doOnce to 1
+ endif
+ activate
+end

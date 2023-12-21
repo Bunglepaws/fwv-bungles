@@ -1,0 +1,8 @@
+scn fwvFuncForceRegen
+
+begin Function { }
+	if fwvqRegen.regenMode == 0
+		set fwvqRegen.TimeLordTrue to 1
+		set fwvqRegen.regenMode to 1
+	endif
+end

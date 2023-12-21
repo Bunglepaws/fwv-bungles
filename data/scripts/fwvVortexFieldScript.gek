@@ -1,0 +1,28 @@
+scn fwvVortexFieldScript
+
+float fTimer
+
+begin ScriptEffectStart
+
+	PlaySound OBJStealthBoyActivate
+	player.pms DLC03TeslaFXShader
+	set fTimer to 0.0
+
+end
+
+begin scriptEffectUpdate
+
+
+	if fTimer < 30.0
+		set fTimer to fTimer + getSecondsPassed
+		player.resetHealth
+	else
+		PlaySound OBJForcefieldShutdown
+		player.sms DLC03TeslaFXShader
+		player.removeSpell fwvVortexShield
+		set fwvqWeaponQuest.vortexMenu to 0
+		set fwvqWeaponQuest.vortexMode to 0
+		set fwvqWeaponQuest.VortexCoolDown to gameDaysPassed	
+	endif	
+
+end

@@ -1,0 +1,578 @@
+scn fwvCraftingSCRIPT
+
+;written by Demeggy 16/3/13
+
+short wMode		; True if workshop is crafting
+short lMode			; True if Lab is crafting
+
+float wTimer			; Workshop Timer
+float lTimer			; Lab Chemistry Timer
+
+; workshop variables
+short rewardCount
+ref rewardCountLab
+short refining
+short mType
+float craftTime
+
+; lab variables
+short brewing
+short cType
+float brewTime
+short lXp
+
+short acid
+short alkali
+short protein
+
+; garden variables
+
+ref mutant1
+ref mutant2
+ref mutant3
+short growing1
+short growing2
+short growing3
+short growing1Type
+short growing2Type
+short growing3Type
+short growing1Phase
+short growing2Phase
+short growing3Phase
+short growing1Day
+short growing2Day
+short growing3Day
+float fSterile
+ref crop1
+ref crop2
+ref crop3
+;float spawnRand
+
+short sK9Schem
+
+short txl3
+short txl5
+short txl7
+short txl9
+short txl10
+
+short txlcap
+short cxlcap
+
+short button
+
+begin gamemode
+
+	;K9 spawn once crafted
+	if player.getItemCount fwvItemK9Dummy >= 1
+		player.removeItem fwvItemK9Dummy 1 1
+		fwvCompanionK9Ref.resurrectActor 2
+		fwvCompanionK9Ref.moveTo player
+	endif
+
+	;laserscrewdriver/sonicscrewdriver user guide spawn once crafted
+
+	if player.getItemCount fwvItemAntiSilurianGunDUMMY >= 1
+		if GetHasNote fwvXOAntiSilurianGunGuide == 0
+			AddNote fwvXOAntiSilurianGunGuide
+		endif
+		player.removeItem fwvItemAntiSilurianGunDUMMY 1 1
+	endif
+
+
+	if player.getItemCount fwvItemModdedSilurianGunDUMMY >= 1
+		if GetHasNote fwvXOSilurianModRifleGuide == 0
+			AddNote fwvXOSilurianModRifleGuide
+		endif
+		player.removeItem fwvItemModdedSilurianGunDUMMY 1 1
+	endif
+
+	if player.getItemCount fwvItemCryoGunDummy >= 1
+		if GetHasNote fwvXOCryoGunGuide == 0
+			AddNote fwvXOCryoGunGuide
+		endif
+		player.removeItem fwvItemCryoGunDummy 1 1
+	endif
+
+	if player.getItemCount fwvItemMediProbeDummy >= 1
+		if GetHasNote fwvXOMediProbeGuide == 0
+			AddNote fwvXOMediProbeGuide
+		endif
+		player.removeItem fwvItemMediProbeDummy 1 1
+	endif
+
+	if player.getItemCount fwvItemLaserGuideDummy >= 1
+		if GetHasNote fwvXOLaserGuide == 0
+			AddNote fwvXOLaserGuide
+		endif
+		player.removeItem fwvItemLaserGuideDummy 1 1
+	endif
+
+	if player.getItemCount fwvItemSonicGuideDummy >= 1
+		if GetHasNote fwvXOSonicGuide == 0
+			AddNote fwvXOSonicGuide
+		endif
+		player.removeItem fwvItemSonicGuideDummy 1 1
+	endif
+
+	if player.getItemCount fwvItemSonicShadesGuideDummy >= 1
+		if GetHasNote fwvXOSonicShadesGuide == 0
+			AddNote fwvXOSonicShadesGuide
+		endif
+		player.removeItem fwvItemSonicShadesGuideDummy 1 1
+	endif
+	
+	if player.getItemCount fwvItemVortexManipDUMMY >= 1
+		if GetHasNote fwvXOVortManGuide == 0
+			AddNote fwvXOVortManGuide
+		endif
+		player.removeItem fwvItemVortexManipDUMMY 1 1
+	endif
+
+	;commented out as using new simplified system
+	;if fwvq1.txl == 0
+		;set fwvq1.txl to 1
+	;endif
+
+	;cap engineering level
+	;if fwvq1.txl > 100
+		;set fwvq1.txl to 100
+	;endif
+
+	;cap chemistry level
+	;if fwvq1.cxl > 100
+		;set fwvq1.cxl to 100
+	;endif
+
+	;let fwvq1.txl := (player.getAV science/2) + (player.getAV repair/2)
+	;let fwvq1.cxl := (player.getAV science/2) + (player.getAV medicine/2)		
+	
+	let txlcap := (player.getAV science/2) + (player.getAV repair/2)
+	let cxlcap := (player.getAV science/2) + (player.getAV medicine/2)
+
+	;cap engineering level
+	if txlcap > 100
+		set txlcap to 100
+		set fwvq1.txl to txlcap
+	else	
+		set fwvq1.txl to txlcap	
+	endif
+
+	;cap chemistry level
+	if cxlcap > 100
+		set cxlcap to 100
+		set fwvq1.cxl to cxlcap
+	else
+		set fwvq1.cxl to cxlcap		
+	endif	
+	
+	set craftTime to 100 - fwvq1.txl
+
+	if refining == 1
+
+		if wTimer < craftTime
+			set wTimer to wTimer + getsecondspassed
+		else
+
+			if mType == 1
+				fwvTmaterialRef.addItem fwvItemBazoolium rewardCount
+			elseif mType == 2
+				fwvTmaterialRef.addItem fwvItemKontron rewardCount
+			elseif mType == 3
+				fwvTmaterialRef.addItem fwvItemValidium rewardCount
+			elseif mType == 4
+				fwvTmaterialRef.addItem fwvItemJethrik rewardCount
+			elseif mType == 5
+				fwvTmaterialRef.addItem fwvItemTrisilicate rewardCount
+			elseif mType == 6
+				fwvTmaterialRef.addItem fwvItemDalekanium rewardCount
+			;elseif mType == 7
+				;fwvTmaterialRef.addItem fwvAmmoIsotope63 rewardCount
+				;fwvTmaterialRef.addItem fwvAmmoIsotope63 rewardCount
+				;fwvTmaterialRef.addItem fwvAmmoIsotope63 rewardCount
+			endif
+
+			ShowMessage fwvTCtransEngineeringCompleteMessage
+			PlaySound UIPopUpMessageWindow
+			;set fwvq1.txp to fwvq1.txp + getRandomPercent / fwvq1.txl	;reward the player with engineering xp
+
+			;if fwvq1.txp > fwvq1.txl * 100 && fwvq1.txl < 5			;level up the Engineering level
+			;	set fwvq1.txl to fwvq1.txl + 1
+			;	ShowMessage fwvTCtemporalEngineeringSkillMessage fwvq1.txl
+			;	PlaySound UILevelUp
+			;	PlaySound UILevelUpText
+			;	set fwvq1.txp to 0
+			;endif
+
+			set wTimer to 0.0
+			set mType to 0
+			set refining to 0
+
+		endif
+
+	endif
+
+	if brewing == 1
+
+		if lTimer < brewTime
+			set lTimer to lTimer + getsecondspassed
+		else
+			ShowMessage fwvTCchemistryReplicationCompleteMessage
+			PlaySound UIPopUpMessageWindow
+			set fwvq1.cxp to fwvq1.cxp + getRandomPercent / fwvq1.cxl	;reward the player with engineering xp
+
+			;check formlists here
+
+			set acid to fwvTardisLabExtractorRef.getItemCount fwvLabAcidsList
+			set alkali to fwvTardisLabExtractorRef.getItemCount fwvLabAlkalisList
+			set protein to fwvTardisLabExtractorRef.getItemCount fwvLabproteinsList
+
+			;fwvTardisLabExtractorRef.removeAllItems	;REMOVES ALL EXTRACTED ITEMS
+
+			if fwvTardisLabExtractorRef.getItemCount fwvLabAcidsList > 0
+				fwvTardisLabExtractorRef.removeItem fwvLabAcidsList acid
+				
+				fwvTardisLabExtractorRef.addItem fwvLabAcidsList 1
+				fwvTardisLabExtractorRef.removeItem fwvLabAcidsList 1
+				
+				fwvTardisLabExtractorRef.addItem fwvItemBaseAcid acid
+				set lXp to 1
+			endif
+
+			if fwvTardisLabExtractorRef.getItemCount fwvLabAlkalisList > 0
+				fwvTardisLabExtractorRef.removeItem fwvLabAlkalisList alkali
+				
+				fwvTardisLabExtractorRef.addItem fwvLabAlkalisList 1
+				fwvTardisLabExtractorRef.removeItem fwvLabAlkalisList 1
+				
+				fwvTardisLabExtractorRef.addItem fwvItemBaseAlkali alkali
+				set lXp to 1
+			endif
+
+			if fwvTardisLabExtractorRef.getItemCount fwvLabproteinsList > 0
+				fwvTardisLabExtractorRef.removeItem fwvLabproteinsList protein
+				
+				fwvTardisLabExtractorRef.addItem fwvLabproteinsList 1
+				fwvTardisLabExtractorRef.removeItem fwvLabproteinsList 1
+				
+				fwvTardisLabExtractorRef.addItem fwvItemBaseProtein protein
+				;set lXp to 1
+			endif
+
+			;if lXp == 1
+			;	if fwvq1.cxp > fwvq1.cxl * 100 && fwvq1.cxl < 5			;level up the Biochemistry level
+			;		set fwvq1.cxl to fwvq1.cxl + 1
+			;		ShowMessage fwvTCchemistrySkillMessage fwvq1.cxl
+			;		PlaySound UILevelUp
+			;		PlaySound UILevelUpText
+			;		set fwvq1.cxp to 0
+			;		set lXp to 0
+			;	endif
+			;endif
+			
+			set lTimer to 0.0
+			set brewing to 0
+
+		endif
+
+	endif
+
+	;cap txp/cxp minimum level to 0
+	if fwvq1.txp < 0
+		set fwvq1.txp to 0
+	endif
+
+	if fwvq1.cxp < 0
+		set fwvq1.cxp to 0
+	endif
+
+	;=========== GARDENS CROPS
+	if fwvTardisGardens.getDisabled == 0
+		if growing1 == 1
+			if growing1Phase == 1
+				if gameDaysPassed > growing1Day + 2
+					if growing1Type == 1
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvBarrelCactusPickable
+					elseif growing1Type == 2
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvNevadaAgavePickable
+					elseif growing1Type == 3
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvBananaYuccaPickable
+					elseif growing1Type == 4
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvBuffaloGourdPickable
+					elseif growing1Type == 5
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvPricklyPearCactusPickable
+					elseif growing1Type == 6
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvTardisTeaplant
+					elseif growing1Type == 7
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvTardisDemeterBush
+					elseif growing1Type == 8
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvTardisJanisBush
+					elseif growing1Type == 9
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvFungusPickableGarden ; Fungus
+					elseif growing1Type == 10
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvBrocFlowerPlant ; Broc Flower
+					elseif growing1Type == 11
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvCoyoteTobaccoPickable ; Coyote Tobacco
+					elseif growing1Type == 12
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvCrunchyMutfruitPickable ; Crunchy Mutfruit
+					elseif growing1Type == 13
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvApplePickable ; Apple
+					elseif growing1Type == 14
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvCarrotsPickable ; Carrot
+					elseif growing1Type == 15
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvPearPickable ; Pear
+					elseif growing1Type == 16
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvPotatoesPickable ; Potato
+					elseif growing1Type == 17
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvHoneyMesquitePickable ; Honey Mesquite
+					elseif growing1Type == 18
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvJalapenoPickable ; Jalapeno
+					elseif growing1Type == 19
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvMaizePickable ; Maize
+					elseif growing1Type == 20
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvMutfruitPickable ; Mutfruit
+					elseif growing1Type == 21
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvPintoPickable ; Pinto
+					elseif growing1Type == 22
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvPinyonPickable ; Pinyon
+					elseif growing1Type == 23
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvWhiteHorseNettle ; Horsenettle
+					elseif growing1Type == 24
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvXanderRootPlant ; Xander Root
+					elseif growing1Type == 25
+						set crop1 to fwvTgardenPlot1Ref.placeAtMe fwvCeleryPickable ; Celery						
+					endif
+					printc "Plot 1 Ready to be Harvested!"
+					set growing1Phase to 2
+					set growing1Day to GameDaysPassed
+					printc "#1 growing phase is %g" growing1phase
+				endif
+			elseif growing1Phase == 2 
+				if gameDaysPassed > growing1Day + 1 
+					if fSterile == 1
+						;printc "#1 Mutant fried. Bye, Mutant."
+					else
+						;printc "#1 Mutant spawned in the gardens!"
+						printc "#1 growing phase is %g" growing1phase
+						crop1.MarkForDelete
+						crop1.disable
+						;set spawnRand to getRandomPercent
+						;printc "#1 SpawnRand = %g" spawnRand
+						;if spawnRand < 33
+							let mutant1 := fwvTardisGardenSpawn1Ref.placeAtMe CrSporeCarrierFD2
+							printc "mutant1 spawned"
+						;elseif spawnRand < 66
+							;let mutant1 := fwvTardisGardenSpawn2Ref.placeAtMe CrSporeCarrierFD2
+							;printc "mutant1B spawned"
+						;elseif spawnRand < 100
+							;let mutant1 := fwvTardisGardenSpawn3Ref.placeAtMe CrSporeCarrierFD2
+							;printc "mutant1C spawned"
+						;endif
+						printc "mutant1 spawned"
+						set growing1Type to 0
+						set growing1Phase to 0
+						set growing1 to 0
+					endif
+
+
+
+				endif
+			endif
+		endif
+
+		if growing2 == 1
+			if growing2Phase == 1
+				if gameDaysPassed > growing2Day + 2
+					if growing2Type == 1
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvBarrelCactusPickable
+					elseif growing2Type == 2
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvNevadaAgavePickable
+					elseif growing2Type == 3
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvBananaYuccaPickable
+					elseif growing2Type == 4
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvBuffaloGourdPickable
+					elseif growing2Type == 5
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvPricklyPearCactusPickable
+					elseif growing2Type == 6
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvTardisTeaplant
+					elseif growing2Type == 7
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvTardisDemeterBush
+					elseif growing2Type == 8
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvTardisJanisBush
+					elseif growing2Type == 9
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvFungusPickableGarden ; Fungus
+					elseif growing2Type == 10
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvBrocFlowerPlant ; Broc Flower
+					elseif growing2Type == 11
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvCoyoteTobaccoPickable ; Coyote Tobacco
+					elseif growing2Type == 12
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvCrunchyMutfruitPickable ; Crunchy Mutfruit
+					elseif growing2Type == 13
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvApplePickable ; Apple
+					elseif growing2Type == 14
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvCarrotsPickable ; Carrot
+					elseif growing2Type == 15
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvPearPickable ; Pear
+					elseif growing2Type == 16
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvPotatoesPickable ; Potato
+					elseif growing2Type == 17
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvHoneyMesquitePickable ; Honey Mesquite
+					elseif growing2Type == 18
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvJalapenoPickable ; Jalapeno
+					elseif growing2Type == 19
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvMaizePickable ; Maize
+					elseif growing2Type == 20
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvMutfruitPickable ; Mutfruit
+					elseif growing2Type == 21
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvPintoPickable ; Pinto
+					elseif growing2Type == 22
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvPinyonPickable ; Pinyon
+					elseif growing2Type == 23
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvWhiteHorseNettle ; Horsenettle
+					elseif growing2Type == 24
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvXanderRootPlant ; Xander Root
+					elseif growing2Type == 25
+						set crop2 to fwvTgardenPlot2Ref.placeAtMe fwvCeleryPickable ; Celery						
+					endif
+					printc "Plot 2 Ready to be Harvested!"
+					set growing2Phase to 2
+					set growing2Day to GameDaysPassed
+					printc "#2 growing phase is %g" growing2phase
+				endif
+			elseif growing2Phase == 2 
+				if gameDaysPassed > growing2Day + 1 
+					if fSterile == 1
+						;printc "#2 Mutant fried. Bye, Mutant."
+					else
+						;printc "#2 Mutant spawned in the gardens!"
+						printc "#2 growing phase is %g" growing2phase
+						crop2.MarkForDelete
+						crop2.disable
+						;set spawnRand to getRandomPercent
+						;printc "#2 SpawnRand = %g" spawnRand
+						;if spawnRand < 33
+							;let mutant2 := fwvTardisGardenSpawn1Ref.placeAtMe CrSporeCarrierFD2
+							;printc "mutant2A spawned"
+						;elseif spawnRand < 66
+							let mutant2 := fwvTardisGardenSpawn2Ref.placeAtMe CrSporeCarrierFD2
+							printc "mutant2 spawned"
+						;elseif spawnRand < 100
+							;let mutant2 := fwvTardisGardenSpawn3Ref.placeAtMe CrSporeCarrierFD2
+							;printc "mutant2C spawned"
+						;endif
+						set growing2Type to 0
+						set growing2Phase to 0
+						set growing2 to 0
+					endif
+
+
+
+				endif
+			endif
+		endif
+
+		if growing3 == 1
+			if growing3Phase == 1
+				if gameDaysPassed > growing3Day + 2
+					if growing3Type == 1
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvBarrelCactusPickable
+					elseif growing3Type == 2
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvNevadaAgavePickable
+					elseif growing3Type == 3
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvBananaYuccaPickable
+					elseif growing3Type == 4
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvBuffaloGourdPickable
+					elseif growing3Type == 5
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvPricklyPearCactusPickable
+					elseif growing3Type == 6
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvTardisTeaplant
+					elseif growing3Type == 7
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvTardisDemeterBush
+					elseif growing3Type == 8
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvTardisJanisBush
+					elseif growing3Type == 9
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvFungusPickableGarden ; Fungus
+					elseif growing3Type == 10
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvBrocFlowerPlant ; Broc Flower
+					elseif growing3Type == 11
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvCoyoteTobaccoPickable ; Coyote Tobacco
+					elseif growing3Type == 12
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvCrunchyMutfruitPickable ; Crunchy Mutfruit
+					elseif growing3Type == 13
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvApplePickable ; Apple
+					elseif growing3Type == 14
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvCarrotsPickable ; Carrot
+					elseif growing3Type == 15
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvPearPickable ; Pear
+					elseif growing3Type == 16
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvPotatoesPickable ; Potato
+					elseif growing3Type == 17
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvHoneyMesquitePickable ; Honey Mesquite
+					elseif growing3Type == 18
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvJalapenoPickable ; Jalapeno
+					elseif growing3Type == 19
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvMaizePickable ; Maize
+					elseif growing3Type == 20
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvMutfruitPickable ; Mutfruit
+					elseif growing3Type == 21
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvPintoPickable ; Pinto
+					elseif growing3Type == 22
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvPinyonPickable ; Pinyon
+					elseif growing3Type == 23
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvWhiteHorseNettle ; Horsenettle
+					elseif growing3Type == 24
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvXanderRootPlant ; Xander Root
+					elseif growing3Type == 25
+						set crop3 to fwvTgardenPlot3Ref.placeAtMe fwvCeleryPickable ; Celery						
+					endif
+					printc "Plot 3 Ready to be Harvested!"
+					set growing3Phase to 2
+					set growing3Day to GameDaysPassed
+					printc "#3 growing phase is %g" growing3phase
+				endif
+			elseif growing3Phase == 2 
+				if gameDaysPassed > growing3Day + 1 
+					if fSterile == 1
+						;printc "#3 Mutant fried. Bye, Mutant."
+					else
+						;printc "#3 Mutant spawned in the gardens!"
+						printc "#3 growing phase is %g" growing3phase
+						crop3.MarkForDelete
+						crop3.disable
+						;set spawnRand to getRandomPercent
+						;printc "#3 SpawnRand = %g" spawnRand
+						;if spawnRand < 33
+							;let mutant3 := fwvTardisGardenSpawn1Ref.placeAtMe CrSporeCarrierFD2
+							;printc "mutant3A spawned"
+						;elseif spawnRand < 66
+							;let mutant3 := fwvTardisGardenSpawn2Ref.placeAtMe CrSporeCarrierFD2
+							;printc "mutant3B spawned"
+						;elseif spawnRand < 100
+							let mutant3 := fwvTardisGardenSpawn3Ref.placeAtMe CrSporeCarrierFD2
+							printc "mutant3 spawned"
+						;endif
+						set growing3Type to 0
+						set growing3Phase to 0
+						set growing3 to 0
+					endif
+
+
+
+				endif
+			endif
+		endif								
+		
+		if fSterile == 1
+			mutant1.KillActor player 1 0
+			mutant2.KillActor player 1 0
+			mutant3.KillActor player 1 0
+			;mutant1.disable
+			;mutant2.disable
+			;mutant3.disable
+			mutant1.MarkForDelete
+			mutant2.MarkForDelete
+			mutant3.MarkForDelete
+		endif
+		
+	endif
+end

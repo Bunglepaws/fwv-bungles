@@ -1,0 +1,46 @@
+scn fwvToyotaConsoleScreenRotatorSCRIPT
+
+float fScreen1Angle
+float fScreen2Angle
+short sRotateNow
+float fAnglePlus
+
+Begin OnActivate Player
+	if GetIsID fwvT4CmonitorHandleLeft == 1
+		set fAnglePlus to 1.5
+	elseif GetIsID fwvT4CmonitorHandleRight == 1
+		set fAnglePlus to -1.5
+	endif 
+	fwvToyotaScreenSpinLPREF.enable
+	set sRotateNow to 1
+End
+
+
+
+
+Begin Gamemode
+	if sRotateNow == 1
+		
+		if iscontrolpressed 5 == 1
+			set fScreen1Angle to fwvxoScreen1REF.getAngle z + fAnglePlus ;adjust this value for speed
+			set fScreen2Angle to fwvxoScreen2REF.getAngle Z + fAnglePlus ;adjust this value for speed
+			fwvxoScreen1REF.setAngle z fScreen1Angle
+			fwvxoScreen1HandleLeftREF.setAngle z fScreen1Angle
+			fwvxoScreen1HandleRightREF.setAngle z fScreen1Angle
+			fwvxoScreen2REF.setAngle z fScreen2Angle
+			fwvxoScreen2HandleLeftREF.setAngle z fScreen2Angle
+			fwvxoScreen2HandleRightREF.setAngle z fScreen2Angle
+			
+		elseif iscontrolpressed 5 == 0
+			set sRotateNow to 0
+			;fwvxoScreen1REF.Update3D
+			;fwvxoScreen1HandleLeftREF.Update3D
+			;fwvxoScreen1HandleRightREF.Update3D
+			;fwvxoScreen2REF.Update3D
+			;fwvxoScreen2HandleLeftREF.Update3D
+			;fwvxoScreen2HandleRightREF.Update3D
+			fwvToyotaScreenSpinLPREF.disable
+		endif
+	
+	endif
+END

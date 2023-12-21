@@ -1,0 +1,23 @@
+scn fwvKarnShopScript
+
+ref rObject
+short sIntroduced
+short sCurDay
+short sBuyItem
+
+Begin GameMode
+
+	if GameDaysPassed > sCurDay
+		set sBuyItem to 1
+		;printc "CAN NOW BUY AN ITEM"
+		;printc "sBuyItem: %g" sBuyItem
+		;printc "CurDay: %g" sCurDay
+		set sCurDay to GameDaysPassed + 1
+		;printc "New CurDay: %g" sCurDay
+		;player.additem ToasterPostwar 1
+		;player.additem VacuumCleaner 1
+		;player.additem Lunchbox 1
+		;player.additem PanCookingMetal 1
+	endif
+
+End

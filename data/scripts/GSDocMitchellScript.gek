@@ -1,0 +1,91 @@
+scn GSDocMitchellScript
+
+short	DoOnce								;Script blocker
+short	BeginMedicalServicesBAD		;Used for Sawbones
+float	Timer									;Timer used for animation control
+
+; Copying all of DoctorTemplateSCRIPT into this, and adding a little
+
+int PlayerLeft								; 0 = Player's never left Doc's house, 1 = Player left
+
+begin onActivate
+
+	if IsTalking == 0
+		Activate
+	endif
+
+end
+
+BEGIN OnHit Player	;shouldn't be possible until player gets the ability to attack, which happens upon the conclusion of VCG01. But just in case.
+	if (GetQuestRunning VCG01)
+		StopCombat;
+		ResetHealth;
+		SetDisposition player 100;
+	endif
+END
+
+
+BEGIN GameMode
+
+	;When set to 1, plays medical animations for eight seconds then restarts conversation with the player
+	if ( GetAV Variable01 == 1 )
+		if ( DoOnce== 0 )
+			disablePlayerControls
+			set Timer to 8
+			set DoOnce to 1
+			if ( GetIsID Sawbones == 0  && GetFurnitureMarkerID == 0)
+				PlayIdle LooseDoctorHealPlayer
+			endif
+
+			resetai
+		endif
+
+		set Timer to ( Timer - GetSecondsPassed )
+
+		if ( Timer <= 6 ) && ( DoOnce == 1 )
+			IMod FadeToBlackISFX
+			set DoOnce to 2
+		endif
+
+		if ( Timer <= 0 ) &&  ( IsImagespaceActive FadeToBlackISFX == 0 )
+			setstage VDoctors 10
+			enablePlayerControls
+			SetAv Variable01 3 
+			resetai
+			Set DoOnce to 0
+		endif
+		
+	endif
+
+	;When set to 1, plays medical animations for eight seconds then restarts conversation with the player
+	if ( GetAV Variable01 == 2 )
+		if ( DoOnce== 0 )
+			disablePlayerControls
+			set Timer to 10
+			set DoOnce to 1
+			if ( GetIsID Sawbones == 0  && GetFurnitureMarkerID == 0)
+				PlayIdle LooseDoctorHealPlayer
+			endif
+
+			resetai
+		endif
+
+		set Timer to ( Timer - GetSecondsPassed )
+
+		if ( Timer <= 6 ) && ( DoOnce == 1 )
+			IMod FadeToBlackISFX
+			set DoOnce to 2
+		endif
+
+		if ( Timer <= 0 ) && ( IsImagespaceActive FadeToBlackISFX == 0 )
+			setstage VDoctors 20
+			enablePlayerControls
+			SetAv Variable01 3 
+			resetai
+			Set DoOnce to 0
+		endif
+		
+	endif
+
+END
+

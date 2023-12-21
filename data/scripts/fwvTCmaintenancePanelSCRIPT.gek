@@ -1,0 +1,536 @@
+scn fwvTCmaintenancePanelSCRIPT
+
+; written by Demeggy 24/2/13
+
+short fade
+short button
+short menu
+short kitsLeft
+
+short rMode					;0 - basic repairs, 1 - advanced
+short rnd						;random var
+short rInit					;initialise which tool is needed next
+ref rTool						;randomise which tool to use for the current step
+ref rComponent				;store the component ID in here
+short rComponentHP		;store component HP from fwvqSystems vars here
+string_var rToolName	;name of tool to use
+short rStep					;repair step
+short rState
+short rMod					;repair Val Modifier (0 or 100)
+
+string_var rName		;name of component being repaired
+short component
+short rndDmg
+
+float fTimer
+
+ref fixChance
+
+begin onActivate player
+
+	if fwvqSystems.repairing == 1 && rnd == 0
+		set fwvqSystems.repairing to 0
+		printc "repair error eschatch go"
+	endif	
+
+
+	if eval fwvq1.tFlying == 0 || fwvqProtocols.Protocol[9]==0
+		if fwvqSystems.tAdvanced == 0
+			set rMode to 0
+			ShowMessage fwvTCmaintenanceMessage
+		elseif fwvqSystems.tAdvanced == 1 && fwvqSystems.cSys == 1
+			if getObjectiveCompleted fwvq2a 50 == 0
+				ShowTutorialMenu fwvAdvancedManualMaintenanceMessage
+				SetObjectiveCompleted fwvq2a 50 1
+			else
+				if fwvqSystems.repairing == 0 
+					set rMode to 1
+					ShowMessage fwvTCAdvMaintenance01Message
+					set menu to 0
+				else
+					if rStep < 4
+						;relay next repair message	
+						if player.getEquipped rTool && player.IsWeaponOut == 1
+							PlaySound UIRepairWeapon
+							DisablePlayerControls
+							imod FadeToBlackAndBackISFX
+							set ftimer to 0.0
+							set rMode to 1
+							set fade to 3
+						elseif player.GetEquippedObject 5 && player.IsWeaponOut == 0
+							ShowMessage fwvTCAdvMaintenance03Message
+							set menu to 2
+						else
+							MessageEx "Component destroyed. Wrong tool used..."
+							PlaceAtMe fwvExpControlExplosion
+							set rMod to 0
+							set rState to 1
+							set rStep to 0
+							set fwvqSystems.repairing to 0
+						endif
+					else
+						MessageEx "Component repaired"
+						set rMod to 100
+						set rState to 1
+						set rStep to 0
+						set fwvqSystems.repairing to 0
+					endif
+				endif
+			elseif fwvqSystems.tAdvanced == 1 && fwvqSystems.cSys == 0
+				MessageEx "[Systems offline...]"
+			endif
+		endif
+	elseif eval fwvq1.tFlying == 1
+		ShowMessage fwvTardisFlyingMessage
+	elseif eval fwvqProtocols.Protocol[9]==1
+		MessageEx "[You cannot repair the TARDIS without power]"
+	else	
+		printc "ERROR STATE?"	
+	endif
+
+end
+
+begin GameMode
+
+	set kitsLeft to player.getItemCount fwvItemTardisRepairKit
+	set button to getButtonPressed
+
+if rMode == 0
+	if menu == 0
+		if button == 0
+			set menu to 1
+			ShowMessage fwvTCmaintenanceKitMessage kitsLeft
+		elseif button == 1
+			set menu to 2
+			ShowMessage fwvTCmaintenancePatchMessage fwvq1.txl
+		else
+			set menu to 0
+		endif
+	elseif menu == 1												;Repairkits
+		if button == 0												;Navigations Repairkit
+			player.removeItem fwvItemTardisRepairkit 1
+			player.addSpell fwvRepairAnim
+			PlaySound UIRepairWeapon
+			set fade to 1
+			set fTimer to 0.0
+			set fwvq1.tNav to 100
+			set menu to 0
+		elseif button == 1											;Communications Repairkit
+			player.removeItem fwvItemTardisRepairkit 1
+			player.addSpell fwvRepairAnim
+			PlaySound UIRepairWeapon
+			set fade to 1
+			set fTimer to 0.0
+			set fwvq1.tComms to 100
+			set menu to 0
+		elseif button == 2											;Architecture Repairkit
+			player.removeItem fwvItemTardisRepairkit 1
+			player.addSpell fwvRepairAnim
+			PlaySound UIRepairWeapon
+			set fade to 1
+			set fTimer to 0.0
+			set fwvq1.tArchitecture to 100
+			set menu to 0
+		elseif button == 3											;Life Support Repairkit
+			player.removeItem fwvItemTardisRepairkit 1
+			player.addSpell fwvRepairAnim
+			PlaySound UIRepairWeapon
+			set fade to 1
+			set fTimer to 0.0
+			set fwvq1.tLifeSupport to 100
+			set menu to 0
+		else
+			set menu to 0
+			ShowMessage fwvTCmaintenanceMessage			
+		endif
+	elseif menu == 2												;Patch Repairs
+		if button == 0												;Navigations
+			set fixChance to fwvq1.txl * 10
+			if fixChance > getRandomPercent
+				player.addSpell fwvRepairAnim
+				PlaySound UIRepairWeapon
+				set fade to 1
+				set fTimer to 0.0
+				set fwvq1.tNav to fwvq1.tNav + getRandomPercent/4
+				set menu to 0
+			else
+				player.addSpell fwvRepairAnim
+				PlaySound UIRepairWeapon
+				set fade to 2
+				set fTimer to 0.0
+				set rndDmg to getRandomPercent / 4
+				set fwvq1.tNav to fwvq1.tNav - rndDmg
+				set menu to 0
+			endif
+		elseif button == 1											;Communications
+			set fixChance to fwvq1.txl * 10
+			if fixChance > getRandomPercent
+				player.addSpell fwvRepairAnim
+				PlaySound UIRepairWeapon
+				set fade to 1
+				set fTimer to 0.0
+				set fwvq1.tComms to fwvq1.tComms - getRandomPercent/4
+				set menu to 0
+			else
+				player.addSpell fwvRepairAnim
+				PlaySound UIRepairWeapon
+				set fade to 2
+				set fTimer to 0.0
+				set rndDmg to getRandomPercent / 4
+				set fwvq1.tComms to fwvq1.tComms - rndDmg
+				set menu to 0
+			endif
+		elseif button == 2											;Architecture
+			set fixChance to fwvq1.txl * 10
+			if fixChance > getRandomPercent
+				player.addSpell fwvRepairAnim
+				PlaySound UIRepairWeapon
+				set fade to 1
+				set fTimer to 0.0
+				set fwvq1.tArchitecture to fwvq1.tArchitecture + getRandomPercent/4
+				set menu to 0
+			else
+				player.addSpell fwvRepairAnim
+				PlaySound UIRepairWeapon
+				set fade to 2
+				set fTimer to 0.0
+				set rndDmg to getRandomPercent / 4
+				set fwvq1.tArchitecture to fwvq1.tArchitecture - rndDmg
+				set menu to 0
+			endif
+		elseif button == 3											;Life Support
+			set fixChance to fwvq1.txl * 10
+			if fixChance > getRandomPercent
+				player.addSpell fwvRepairAnim
+				PlaySound UIRepairWeapon
+				set fade to 1
+				set fTimer to 0.0
+				set fwvq1.tLifeSupport to fwvq1.tLifeSupport + getRandomPercent/4
+				set menu to 0
+			else
+				player.addSpell fwvRepairAnim
+				PlaySound UIRepairWeapon
+				set fade to 2
+				set fTimer to 0.0
+				set rndDmg to getRandomPercent / 4
+				set fwvq1.tLifeSupport to fwvq1.tLifeSupport - rndDmg
+				set menu to 0
+			endif
+		else
+			set menu to 0
+			ShowMessage fwvTCmaintenanceMessage
+		endif
+	endif
+
+	if fade == 1
+		if fTimer < 12.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			if getStage fwvq1a == 20
+				PlaySound OBJTurretGeneratorDisable
+				fwvT1ClightNormalRef.enable
+
+				fwvTardisVoiceInterfaceRef.Disable
+				fwvTardisVoiceInterfaceRef.MoveTo fwvq1aSpot1Ref
+				fwvTardisVoiceInterfaceRef.Enable
+				PlaySound OBJForceFieldImpact
+				set fwvq1a.spot to fwvq1a.spot + 1
+				printc "Spot: %g" fwvq1a.spot
+			endif
+			EnablePlayerControls
+			ShowMessage fwvTComponentRepairPassMessage
+			player.removeSpell fwvRepairAnim
+			set fTimer to 0.0
+			set fade to 0
+		endif
+	elseif fade == 2
+		if fTimer < 12.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			PlaySound FXExplosionMineLunchbox
+			imod ExplosionInFace
+			EnablePlayerControls
+			ShowMessage fwvTComponentRepairFailMessage
+			player.removeSpell fwvRepairAnim
+			set fTimer to 0.0
+			set fade to 0
+		endif
+	endif
+
+;============ ADVANCED REPAIR MODE ====================
+
+else
+	if menu == 0			;page 1 of components
+		if button == 0
+			set rComponent to fwvItemForcefieldGenerator
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 1
+			set rComponent to fwvItemWarpEllipseCutoutCircuit
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 2
+			set rComponent to fwvItemTimeVectorGenerator
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 3
+			set rComponent to fwvItemArtronCapacitor
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 4
+			set rComponent to fwvItemRelativeDimensionalStabiliser
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 5
+			set rComponent to fwvItemChameleonCircuit
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 6
+			set rComponent to fwvItemDematerializationCircuit
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 7
+			set rComponent to fwvItemFluidLinks
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 8
+			ShowMessage fwvTCAdvMaintenance02Message
+			set menu to 1
+		else
+			set menu to 0
+		endif
+	elseif menu == 1		;page 2 of components
+		if button == 0
+			set rComponent to fwvItemChronometricAstrometer
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 1
+			set rComponent to fwvItemTemporalCircuits
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 2
+			set rComponent to fwvItemQuantumAccelerator
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 3
+			set rComponent to fwvItemRedThermocouplings
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 4
+			set rComponent to fwvItemGreenThermocouplings
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 5
+			set rComponent to fwvItemBlueThermocouplings
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 6
+			set rComponent to fwvItemInterstitialBeamSynthesiser
+			ShowMessage fwvTCAdvMaintenance03Message
+			set menu to 2
+		elseif button == 7
+			ShowMessage fwvTCAdvMaintenance01Message
+			set menu to 0
+		else
+			set menu to 0
+		endif
+	elseif menu == 2		;component options (repair or replace)
+	
+		;REPAIR COMPONENT
+		if button == 0
+
+			if rComponent == fwvItemForcefieldGenerator
+				set rComponentHP to fwvqSystems.ForcefieldGenerator
+			elseif rComponent == fwvItemWarpEllipseCutoutCircuit
+				set rComponentHP to fwvqSystems.WarpEllipseCutoutCircuit 
+			elseif rComponent == fwvItemTimeVectorGenerator
+				set rComponentHP to fwvqSystems.TimeVectorGenerator
+			elseif rComponent == fwvItemArtronCapacitor 
+				set rComponentHP to fwvqSystems.ArtronCapacitor
+			elseif rComponent == fwvItemRelativeDimensionalStabiliser 
+				set rComponentHP to fwvqSystems.RelativeDimensionalStabiliser
+			elseif rComponent == fwvItemChameleonCircuit 
+				set rComponentHP to fwvqSystems.ChameleonCircuit
+			elseif rComponent == fwvItemDematerializationCircuit 
+				set rComponentHP to fwvqSystems.DematerializationCircuit
+			elseif rComponent == fwvItemFluidLinks 
+				set rComponentHP to fwvqSystems.FluidLinks
+			elseif rComponent == fwvItemChronometricAstrometer 
+				set rComponentHP to fwvqSystems.ChronometricAstrometer
+			elseif rComponent == fwvItemTemporalCircuits 
+				set rComponentHP to fwvqSystems.TemporalCircuits
+			elseif rComponent == fwvItemQuantumAccelerator 
+				set rComponentHP to fwvqSystems.QuantumAccelerator
+			elseif rComponent == fwvItemRedThermocouplings 
+				set rComponentHP to fwvqSystems.RedThermocouplings
+			elseif rComponent == fwvItemGreenThermocouplings 
+				set rComponentHP to fwvqSystems.GreenThermocouplings
+			elseif rComponent == fwvItemBlueThermocouplings 
+				set rComponentHP to fwvqSystems.BlueThermocouplings
+			elseif rComponent == fwvItemInterstitialBeamSynthesiser 
+				set rComponentHP to fwvqSystems.InterstitialBeamSynthesiser
+			endif
+			
+			if rComponent == fwvItemFluidLinks
+				MessageEx "Fluid Links cannot be repaired, only replaced."
+			else
+				if rComponentHP > 0
+					set rInit to 1
+					set fwvqSystems.repairing to 1
+				else
+					MessageEx "This component is beyond repair..."
+				endif
+			endif
+			set menu to 0
+
+		;CANCEL REPAIRS
+		elseif button == 1
+			MessageEx "Repairs cancelled..."
+			set fwvqSystems.repairing to 0
+			set menu to 0
+
+		;EXAMINE COMPONENT
+		elseif button == 2
+			;examining the component
+			if rComponent == fwvItemForcefieldGenerator
+				set rComponentHP to fwvqSystems.ForcefieldGenerator
+			elseif rComponent == fwvItemWarpEllipseCutoutCircuit
+				set rComponentHP to fwvqSystems.WarpEllipseCutoutCircuit 
+			elseif rComponent == fwvItemTimeVectorGenerator
+				set rComponentHP to fwvqSystems.TimeVectorGenerator
+			elseif rComponent == fwvItemArtronCapacitor 
+				set rComponentHP to fwvqSystems.ArtronCapacitor
+			elseif rComponent == fwvItemRelativeDimensionalStabiliser 
+				set rComponentHP to fwvqSystems.RelativeDimensionalStabiliser
+			elseif rComponent == fwvItemChameleonCircuit 
+				set rComponentHP to fwvqSystems.ChameleonCircuit
+			elseif rComponent == fwvItemDematerializationCircuit 
+				set rComponentHP to fwvqSystems.DematerializationCircuit
+			elseif rComponent == fwvItemFluidLinks 
+				set rComponentHP to fwvqSystems.FluidLinks
+			elseif rComponent == fwvItemChronometricAstrometer 
+				set rComponentHP to fwvqSystems.ChronometricAstrometer
+			elseif rComponent == fwvItemTemporalCircuits 
+				set rComponentHP to fwvqSystems.TemporalCircuits
+			elseif rComponent == fwvItemQuantumAccelerator 
+				set rComponentHP to fwvqSystems.QuantumAccelerator
+			elseif rComponent == fwvItemRedThermocouplings 
+				set rComponentHP to fwvqSystems.RedThermocouplings
+			elseif rComponent == fwvItemGreenThermocouplings 
+				set rComponentHP to fwvqSystems.GreenThermocouplings
+			elseif rComponent == fwvItemBlueThermocouplings 
+				set rComponentHP to fwvqSystems.BlueThermocouplings
+			elseif rComponent == fwvItemInterstitialBeamSynthesiser 
+				set rComponentHP to fwvqSystems.InterstitialBeamSynthesiser
+			endif
+			set menu to -1
+			set rState to 2
+		;REPLACE COMPONENT
+		elseif button == 3
+			if player.getItemCount rComponent > 0
+				MessageEx "Component Replaced"
+				if rComponent == fwvItemFluidLinks 
+					fwvTARDISBreathingMaskLP.disable
+				endif
+				set rMod to 100
+				player.removeItem rComponent 1
+				set rState to 1
+			else
+				MessageEx "You are not carrying a spare component..."
+			endif
+			set component to 0
+			set menu to 0
+
+		;RETURN TO MAIN MENU
+		elseif button == 3
+			ShowMessage fwvTCAdvMaintenance01Message
+			set menu to 0
+		else
+			set menu to 0
+		endif
+	endif
+
+	if fade == 3
+		if fTimer < 4.0
+			set fTimer to fTimer + getSecondsPassed
+			printc "maint timer running"
+		else
+			EnablePlayerControls
+			set rStep to rStep + 1
+			set rInit to 1
+			set fTimer to 0.0
+			set fade to 0
+		endif
+	endif
+
+	if rInit == 1
+		set rnd to Rand 1, 4
+		if rnd == 1
+			set rTool to fwvWeapToolkitLaserCutter
+		elseif rnd == 2
+			set rTool to fwvWeapToolkitMagneticClamp
+		elseif rnd == 3
+			set rTool to fwvWeapToolkitNeutronRam
+		elseif rnd == 4
+			set rTool to fwvWeapToolkitUniversalDetector
+		endif
+		MessageEx "Use the %n" rTool
+		set rInit to 0
+	endif
+
+	
+	
+	if rState == 1
+		if rComponent == fwvItemForcefieldGenerator
+			set fwvqSystems.ForcefieldGenerator to rMod
+			printc "component is now %g%%" fwvqSystems.ForcefieldGenerator
+		elseif rComponent == fwvItemWarpEllipseCutoutCircuit
+			set fwvqSystems.WarpEllipseCutoutCircuit  to rMod
+		elseif rComponent == fwvItemTimeVectorGenerator
+			set fwvqSystems.TimeVectorGenerator to rMod
+		elseif rComponent == fwvItemArtronCapacitor 
+			set fwvqSystems.ArtronCapacitor to rMod
+		elseif rComponent == fwvItemRelativeDimensionalStabiliser 
+			set fwvqSystems.RelativeDimensionalStabiliser to rMod
+		elseif rComponent == fwvItemChameleonCircuit 
+			set fwvqSystems.ChameleonCircuit to rMod
+		elseif rComponent == fwvItemDematerializationCircuit 
+			set fwvqSystems.DematerializationCircuit to rMod
+		elseif rComponent == fwvItemFluidLinks 
+			set fwvqSystems.FluidLinks to rMod
+		elseif rComponent == fwvItemChronometricAstrometer 
+			set fwvqSystems.ChronometricAstrometer to rMod
+		elseif rComponent == fwvItemTemporalCircuits 
+			set fwvqSystems.TemporalCircuits to rMod
+		elseif rComponent == fwvItemQuantumAccelerator 
+			set fwvqSystems.QuantumAccelerator to rMod
+		elseif rComponent == fwvItemRedThermocouplings 
+			set fwvqSystems.RedThermocouplings to rMod
+		elseif rComponent == fwvItemGreenThermocouplings 
+			set fwvqSystems.GreenThermocouplings to rMod
+		elseif rComponent == fwvItemBlueThermocouplings 
+			set fwvqSystems.BlueThermocouplings to rMod
+		elseif rComponent == fwvItemInterstitialBeamSynthesiser 
+			set fwvqSystems.InterstitialBeamSynthesiser to rMod
+		endif
+		set rState to 0
+	elseif rState == 2
+		;used for examining components
+		printc "component is %g%%" rComponentHP
+		if rComponentHP > 75
+			MessageBoxEx "The component appears to be shiny and almost brand new!"
+		elseif rComponentHP > 50
+			MessageBoxEx "The component has been in use for a while, with slight signs of wear."
+		elseif rComponentHP > 25
+			MessageBoxEx "The component is showing moderate signs of wear and tear, and looks like it could do with replacing soon."
+		elseif rComponentHP > 0
+			MessageBoxEx "The component is charred and ill-fitting, occasionally sparking."
+		elseif rComponentHP <= 0
+			MessageBoxEx "This component is damaged beyond repair."
+		endif
+		set rState to 0
+	endif
+
+endif
+
+end

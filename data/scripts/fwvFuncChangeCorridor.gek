@@ -1,0 +1,115 @@
+scn fwvFuncChangeCorridor
+
+ref rCurRef
+short sCurCount
+
+begin function { }
+
+	set sCurCount to 0
+
+	While sCurCount < ListGetCount fwvTardisCorridorKitpieceList
+		set rCurRef to ListGetNthForm fwvTardisCorridorKitpieceList sCurCount
+		
+		if fwvq1.tTheme == 2 || fwvq1.tTheme == 6 || fwvq1.tThemeQuest == fwvqThemeRani 
+			if rCurRef.GetIsID fwvTardisCorridor2w
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\Classic\Corridor2w.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wL
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\Classic\Corridor2wL.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor3wT
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\Classic\Corridor3wT.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor4w
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\Classic\Corridor4w.nif"
+			elseif rCurRef.GetIsID fwvTardisDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\Classic\CorridorDoor.nif"
+			elseif rCurRef.GetIsID fwvTardisInteriorExitDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\Classic\CorridorDoorStatic.nif"
+			elseif rCurRef.GetIsID fwvTardisDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\Classic\CorridorDoor.nif"
+			elseif rCurRef.GetIsID fwvTardisGlassDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\Classic\corridorGlassDoor.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftBottom
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\Classic\corridor2wGravLiftBottom.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftTop
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\Classic\corridor2wGravLiftTop.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftMiddle
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\corridor2wGravLiftMiddle.nif"
+			endif
+		elseif fwvq1.tTheme == 3
+			if rCurRef.GetIsID fwvTardisCorridor2w
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2013a\Corridor2w.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wL
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2013a\Corridor2wL.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor3wT
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2013a\Corridor3wT.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor4w
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2013a\Corridor4w.nif"
+			elseif rCurRef.GetIsID fwvTardisDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2013a\CorridorDoor.nif"
+			elseif rCurRef.GetIsID fwvTardisInteriorExitDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2013a\CorridorDoorStatic.nif"
+			elseif rCurRef.GetIsID fwvTardisDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2013a\CorridorDoor.nif"
+			elseif rCurRef.GetIsID fwvTardisGlassDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2013a\CorridorDoorGlass.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftBottom
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2013a\corridor2wGravLiftBottom.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftTop
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2013a\corridor2wGravLiftTop.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftMiddle
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\corridor2wGravLiftMiddle.nif"
+			endif
+		elseif fwvq1.tTheme == 1 || fwvq1.tTheme == 5
+			if rCurRef.GetIsID fwvTardisCorridor2w
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2005\Corridor2w.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wL
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2005\Corridor2wL.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor3wT
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2005\Corridor3wT.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor4w
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2005\Corridor4w.nif"
+			elseif rCurRef.GetIsID fwvTardisDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2005\CorridorDoor.nif"
+			elseif rCurRef.GetIsID fwvTardisInteriorExitDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2005\CorridorDoorStatic.nif"
+			elseif rCurRef.GetIsID fwvTardisGlassDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2005\corridorGlassDoor.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftBottom
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2005\corridor2wGravLiftBottom.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftTop
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2005\corridor2wGravLiftTop.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftMiddle
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2005\corridor2wGravLiftMiddle.nif"
+			endif
+		else
+			if rCurRef.GetIsID fwvTardisCorridor2w
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\Corridor2w.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wL
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\Corridor2wL.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor3wT
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\Corridor3wT.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor4w
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\Corridor4w.nif"
+			elseif rCurRef.GetIsID fwvTardisDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\CorridorDoor.nif"
+			elseif rCurRef.GetIsID fwvTardisInteriorExitDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\CorridorDoorStatic.nif"
+			elseif rCurRef.GetIsID fwvTardisGlassDoor
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\corridorGlassDoor.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftBottom
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\corridor2wGravLiftBottom.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftTop
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\corridor2wGravLiftTop.nif"
+			elseif rCurRef.GetIsID fwvTardisCorridor2wGravLiftMiddle
+				rCurRef.SetModelPathEx "fowv\dungeon\fowvTardis\corridors\2010\corridor2wGravLiftMiddle.nif"
+
+			endif
+
+		endif
+		
+		set sCurCount to sCurCount + 1
+		
+	loop
+
+	Call fwvFuncChangePoliceBoxScript
+	
+end

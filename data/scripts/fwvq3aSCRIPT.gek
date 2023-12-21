@@ -1,0 +1,40 @@
+scn fwvq3aSCRIPT
+
+short charges
+short valves
+short good
+short bad
+short ending	; 0 - GOOD, 1 - BAD
+
+begin gamemode
+
+	if getStage fwvq3a == 25
+		if player.getHasNote fwvq3aProspectorsJobNote == 1
+			setStage fwvq3a 50
+			fwvq3aSonicCharge1Ref.enable
+			fwvq3aSonicCharge2Ref.enable
+			fwvq3aSonicCharge3Ref.enable
+			fwvq3aSonicCharge4Ref.enable
+			fwvq3aSonicCharge5Ref.enable
+		endif
+	endif
+
+	if charges == 5
+		setStage fwvq3a 75
+	endif
+
+	if valves == 5
+		set ending to 0
+		fwvq3aSonicCharge1Ref.disable
+		fwvq3aSonicCharge2Ref.disable
+		fwvq3aSonicCharge3Ref.disable
+		fwvq3aSonicCharge4Ref.disable
+		fwvq3aSonicCharge5Ref.disable
+		setObjectiveCompleted fwvq3a 75 1
+		set fwvqComms.init to 0
+		player.rewardKarma 10
+		setStage fwvq3a 100
+		set valves to 0
+	endif
+
+end

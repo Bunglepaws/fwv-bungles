@@ -1,0 +1,49 @@
+scn fwvTARDISEffectRoomTimerSCRIPT
+
+ref rTDesktopShipDoor
+ref rSelf
+float fRoomReqEffTimer
+short sDoOnce
+
+begin ScriptEffectStart
+	printc "SES"
+	set fRoomReqEffTimer to 0
+	set sDoOnce to 0
+end
+
+begin ScriptEffectUpdate
+	if fRoomReqEffTimer < 25
+		set fRoomReqEffTimer to fRoomReqEffTimer + GetSecondsPassed
+		;printc "Timer %g" fRoomReqEffTimer
+   else
+		if sDoOnce == 0
+			printc "SE180"
+			set rTDesktopShipDoor to fwvq1.rTDesktopShipDoor
+			PlaySound DRSVaultVertical01Close
+			rSelf.moveto rTDesktopShipDoor
+			rSelf.RemoveScriptPackage
+			rSelf.evp
+			rSelf.AddScriptPackage fwvCompanionReqReturnGreetingPackage
+			rSelf.evp
+			;rSelf.removeitem fwvRoomReqFlag 1
+			printc "flag removed"
+			rSelf.dispel fwvTARDISRoomReqTimerAE
+			set sDoOnce to 1
+			printc "DoOnce 1"
+		endif
+   endif
+
+	
+end
+
+begin ScriptEffectFinish
+	printc "SEF"
+	;set rTDesktopShipDoor to fwvq1.rTDesktopShipDoor
+	;PlaySound DRSVaultVertical01Close
+	;rSelf.moveto rTDesktopShipDoor
+
+	;rSelf.RemoveScriptPackage
+	;rSelf.evp
+	;rSelf.AddScriptPackage fwvCompanionReqReturnGreetingPackage
+	;rSelf.evp
+end

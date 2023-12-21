@@ -1,0 +1,11 @@
+scn fwvq3bNestenePodDoorScript
+
+begin onActivate player
+
+if getStage fwvq3b < 80
+	activate
+else
+	ShowMessage fwvq3bNesteneDoorMessage
+endif
+
+end

@@ -1,0 +1,18 @@
+scn fwvq3cSilurianGsScript
+
+begin onActivate player
+
+	if getStage fwvq3c == 10
+		PlaceAtMe LimbExplosionGlow
+		player.addSpell fwvq3cSilurianPoison
+		imod BarkScorpionPoisonISFX
+		setStage fwvq3c 20
+	endif
+
+	if getStage fwvq3c != 30
+		ShowMessage fwvq3cSilurianBodyMessage
+	else
+		Activate
+	endif
+
+end

@@ -1,0 +1,111 @@
+scn fwvTARDISGardenMisterSCRIPT
+
+short patch ; for patching
+short direction
+float gardenDay
+short infectMod
+short init
+short sterileday
+ref rSelfSwitch
+short sDoOnce
+
+
+
+short frame
+float fTimer
+
+begin onActivate player
+
+set rSelfSwitch to GetSelf
+
+	if patch < 3
+		;patch stuff here
+		set init to 0
+		;set infectMod to 0
+		set gardenDay to GameDaysPassed
+		set patch to 3
+	endif
+
+	if init == 0
+		;set infectMod to 0
+		set fTimer to 0.0
+		set frame to 1
+		set gardenDay to GameDaysPassed
+		fwvTardisGardenJetRef.enable
+		PlaySound OBJSwitchButtonBPass
+		PlaySound OBJPipeControlTurn
+		set fwvqCraft.fSterile to 1
+		MessageEx "Gardens sterilized. All mutations destroyed."
+		MessageEx "All mutations averted for 4 days."
+		;MessageEx "Sterile is %g" fwvqCraft.fSterile
+		set sterileday to GameDaysPassed
+		;playsound DRSVaultGearOpenSteam01
+		;ShowMessage fwvTardisGardenPesticideMessage
+		if IsAnimPlaying == 0
+			if direction == 0
+				PlayGroup Backward 0
+			else
+				PlayGroup Forward 0
+			endif
+			;set direction to 1 - direction
+		endif
+		set init to 1
+	else
+		if gameDaysPassed > gardenDay ;+ 1
+			set fTimer to 0.0
+			set frame to 1
+			;set infectMod to 0
+			set gardenDay to GameDaysPassed
+			fwvTardisGardenJetRef.enable
+			PlaySound OBJSwitchButtonBPass
+			PlaySound OBJPipeControlTurn
+			set fwvqCraft.fSterile to 1
+			MessageEx "Gardens sterilized. Mutations destroyed."
+			MessageEx "All mutations averted for 4 days."
+			;MessageEx "Sterile is %g" fwvqCraft.fSterile
+			set sterileday to GameDaysPassed
+			;playsound DRSVaultGearOpenSteam01
+			;ShowMessage fwvTardisGardenPesticideMessage
+			if IsAnimPlaying == 0
+				if direction == 0
+					PlayGroup Backward 0
+				else
+					PlayGroup Forward 0
+				endif
+			;set direction to 1 - direction
+			endif
+		else
+			ShowMessage fwvTardisGardenPesticideFailMessage
+		endif
+	endif
+
+end
+
+begin gameMode
+
+	if gameDaysPassed > sterileday + 4
+		if sDoOnce == 0
+			set fwvqCraft.fSterile to 0
+			MessageEx "The Gardens are no longer sterilised."
+			set sDoOnce to 1
+		endif
+	endif
+
+	;if GameDaysPassed > gardenDay + 1
+		;set infectMod to infectMod + 1
+	;endif
+
+	if frame == 1
+		if fTimer < 10.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			rSelfSwitch.PlayGroup Forward 0
+			PlaySound OBJSwitchButtonBPass
+			PlaySound OBJPipeControlTurn
+			fwvTardisGardenJetRef.disable
+			set frame to 0
+			set fTimer to 0.0
+		endif
+	endif
+
+end

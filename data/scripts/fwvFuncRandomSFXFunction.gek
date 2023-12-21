@@ -1,0 +1,16 @@
+scn fwvFuncRandomSFXFunction
+
+short random
+short listCount
+ref soundRef
+
+begin function {}
+
+	set listCount to ListGetCount fwvRandomSFX
+	set random to 1 + getRandomPercent * listCount / 100
+	set soundRef to ListGetNthForm fwvRandomSFX random
+	PlaySound soundRef
+
+end
+
+

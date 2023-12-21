@@ -1,0 +1,80 @@
+scn fwvTCartronSCRIPT
+
+;written by Demeggy 24/2/13
+
+short fTimerMinutes
+short direction
+short button
+short tutOnce
+
+short sPatchVersion
+ref rSelf
+begin GameMode
+	if sPatchVersion < fwvPatchVersion
+		set sPatchVersion to fwvPatchVersion
+		set rSelf to GetSelf
+		Call fwvFuncResetPosition rSelf
+	endif
+end
+
+Begin onActivate player
+
+	if fwvq1.tFlying == 0
+		if fwvqSystems.tAdvanced == 0 
+			if fwvq1.tRefuel == 0
+				set fTimerMinutes to (fwvq1.fuelTotal / 60) + 1
+				ShowMessage fwvTfuelMessage fTimerMinutes
+			endif
+		elseif fwvqSystems.tAdvanced == 1 
+			if fwvqSystems.TemporalEnergyCore == 1 ;&& fwvqEvents.systemEvent == 0
+				if eval fwvqProtocols.protocol[6]== 1
+					if fwvq1.tRefuel == 0
+						set fTimerMinutes to (fwvq1.fuelTotal / 60) + 1
+						ShowMessage fwvTfuelMessage fTimerMinutes
+					endif
+				else
+					MessageEx "[Protocol must be engaged]"
+				endif
+			elseif fwvqSystems.TemporalEnergyCore == 0
+				MessageEx "[Subsystem(s) offline]"
+			;elseif fwvqEvents.systemEvent == 1
+			;	MessageEx "[Cannot activate during an Event]"
+			endif
+		endif
+	else
+		ShowMessage fwvTardisFlyingMessage
+	endif
+
+end
+
+begin GameMode
+
+set button to getbuttonpressed
+
+if button == 0
+
+	if direction
+		PlayGroup Backward 0
+	else
+		PlayGroup Forward 0
+	endif
+	if GetIsID fwvT5Crefuel == 0
+		set direction to 1 - direction
+	endif
+
+	PlaySound OBJVaultGearConsoleUnlock
+	PlaySound OBJZAXConsoleVialForward
+	PlaySound DRSVaultGearOpenSteam01
+	ShowMessage fwvTrefuelStartMessage 
+	;fwvTardisAmbRef.disable
+	set fwvq1.tRefuel to 1
+
+elseif button == 1
+
+	if fwvqSystems.tAdvanced == 1
+		let fwvqProtocols.protocol[6] := 0
+	endif
+
+endif
+
+end

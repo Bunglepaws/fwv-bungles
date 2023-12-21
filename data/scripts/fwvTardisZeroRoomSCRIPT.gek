@@ -1,0 +1,83 @@
+scn fwvTardisZeroRoomSCRIPT
+
+short zHeal
+short zBrainHeal
+float zTimer
+
+begin onTriggerEnter player
+
+	if fwvqRegen.TimeLordTrue == 0
+		MessageEx "A Tranquility passes over you..."
+		imod fwvXOZeroRoomEnterExit
+		imod fwvXOZeroEffect
+	else
+		MessageEx "You are aware of passing into Zero Space..."
+		set fwvqRegen.sZeroRoomRegenEff to 1
+		imod fwvXOZeroRoomEnterExit
+		imod fwvXOZeroEffect 
+		printc "RegenZR is %g" fwvqRegen.sZeroRoomRegenEff 
+	endif
+
+	if zHeal == 0
+		set zHeal to 1
+		if fwvqTimeLord.brainPower < 10
+			ShowMessage fwvTardisZeroRoomMessage
+			set zBrainHeal to 1
+		endif
+	endif
+
+	if player.hasMagicEffect fwvRegenCycleEffect == 1
+		PlaySound UIKarmaUp
+		player.removeSpell fwvRegenCycle
+		ShowMessage fwvRegenCycleZeroRoomMessage
+		printc "ZR entry cured RegenSickness"
+		EnableControl 15
+	endif
+
+end
+
+begin onTriggerLeave player
+
+	ShowMessage fwvTardisZeroRoomLeaveMessage
+	set fwvqRegen.sZeroRoomRegenEff to 0
+	imod fwvXOZeroRoomEnterExit
+	rimod fwvXOZeroEffect 
+	printc "RegenZR is %g" fwvqRegen.sZeroRoomRegenEff 
+	if zHeal == 1
+		PlaySound UIHealthChemsWearOff
+		set zBrainHeal to 0
+		set zHeal to 0
+	endif
+
+end
+
+begin gamemode
+
+	if zBrainHeal == 1
+		if zTimer < 30
+			set zTimer to zTimer + getSecondsPassed
+		else
+			set fwvqTimeLord.brainPower to 10
+			set fwvqTimeLord.brainDead to 0
+
+			if fwvqRegen.tlordGood == 1
+				set fwvqTimeLord.tlPoints to 50
+				player.dispel fwvTLdepressionSpell
+			endif
+			if fwvqRegen.tlordBad == 1
+				set fwvqTimeLord.tlPoints to -50				
+				player.dispel fwvTLinsanitySpell
+			endif
+
+			imod Addiction01ISFX
+			PlaySound UIHealthChemsAddicted
+			;player.restoreAv Intelligence fwvqTimeLord.pInt
+			;player.restoreAv Perception fwvqTimeLord.pPer
+			;player.restoreAv Speech fwvqTimeLord.pSp
+			player.removeSpell fwvTLpsychosisSpell
+			ShowMessage fwvTardisZeroRoomCompleteMessage
+			set zBrainHeal to 0
+		endif
+	endif
+
+end

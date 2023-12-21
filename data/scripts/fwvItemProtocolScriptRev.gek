@@ -1,0 +1,70 @@
+scn fwvItemProtocolScriptRev
+
+short effectOn
+
+Begin onActivate
+
+if getStage fwvqTardisManualQuest == 10
+
+	PlaySound UIPopUpMapMarkerAdded
+
+	let fwvqTardisManualQuest.page := fwvqTardisManualQuest.page + 1
+
+	MessageEx "[%g/15 pages found...]" fwvqTardisManualQuest.page
+
+	if fwvqTardisManualQuest.page == 1
+		ShowMessage fwvProtocolInfo01
+	elseif fwvqTardisManualQuest.page == 2
+		ShowMessage fwvProtocolInfo02
+	elseif fwvqTardisManualQuest.page == 3
+		ShowMessage fwvProtocolInfo03
+	elseif fwvqTardisManualQuest.page == 4
+		ShowMessage fwvProtocolInfo04
+	elseif fwvqTardisManualQuest.page == 5
+		ShowMessage fwvProtocolInfo05
+	elseif fwvqTardisManualQuest.page == 6
+		ShowMessage fwvProtocolInfo06
+	elseif fwvqTardisManualQuest.page == 7
+		ShowMessage fwvProtocolInfo07
+	elseif fwvqTardisManualQuest.page == 8
+		ShowMessage fwvProtocolInfo08
+	elseif fwvqTardisManualQuest.page == 9
+		ShowMessage fwvProtocolInfo09
+	elseif fwvqTardisManualQuest.page == 10
+		ShowMessage fwvProtocolInfo10
+	elseif fwvqTardisManualQuest.page == 11
+		ShowMessage fwvProtocolInfo11
+	elseif fwvqTardisManualQuest.page == 12
+		ShowMessage fwvProtocolInfo12
+	elseif fwvqTardisManualQuest.page == 13
+		ShowMessage fwvProtocolInfo13
+	elseif fwvqTardisManualQuest.page == 14
+		ShowMessage fwvProtocolInfo14
+	elseif fwvqTardisManualQuest.page == 15
+		ShowMessage fwvProtocolInfo15
+	endif
+
+	MarkForDelete
+	Disable
+
+else
+
+	MessageEx "[Better leave it alone for now...]"
+
+endif
+
+End
+
+Begin GameMode
+
+	if player.getEquipped fwvOutfit3DGlasses == 1 && getDistance player <= 400
+		if effectOn == 0
+			pms fwvHologramInterface
+			set effectOn to 1
+		endif
+	else
+		sms fwvHologramInterface
+		set effectOn to 0
+	endif
+
+End

@@ -1,0 +1,9 @@
+scn fwvTemporaryFallDamageResetScript
+
+ref rSelf
+
+begin ScriptEffectUpdate
+	set rSelf to GetSelf
+	rSelf.ResetFallDamageTimer
+	printc "%n" rSelf
+end

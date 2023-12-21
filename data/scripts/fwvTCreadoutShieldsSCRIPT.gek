@@ -1,0 +1,22 @@
+scn fwvTCreadoutShieldsSCRIPT
+
+float shieldHealth
+
+; TARDIS Shields Readout script, written by Demeggy 21/2/13
+
+short sPatchVersion
+ref rSelf
+begin GameMode
+	if sPatchVersion < fwvPatchVersion
+		set sPatchVersion to fwvPatchVersion
+		set rSelf to GetSelf
+		Call fwvFuncResetPosition rSelf
+	endif
+end
+
+Begin OnActivate player
+
+	ShowMessage fwvTCReadoutShieldsMessage fwvq1.tShields fwvq1.tHull
+	activate
+
+end

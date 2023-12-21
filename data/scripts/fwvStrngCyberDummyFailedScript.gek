@@ -1,0 +1,8 @@
+scn fwvStrngCyberDummyFailedScript
+
+
+begin onActivate
+
+	showmessage fwvStrngCyberDummyFailedMesg
+
+end

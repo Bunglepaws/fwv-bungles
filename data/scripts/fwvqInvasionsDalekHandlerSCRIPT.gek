@@ -1,0 +1,170 @@
+scn fwvqInvasionsDalekHandlerSCRIPT
+
+; REF all the Daleks and Captives to be populated
+
+ref SaucerDalek01
+ref SaucerDalek02
+ref SaucerDalek03
+ref SaucerDalek04
+ref SaucerDalek05
+ref SaucerDalek06
+ref SaucerDalek07
+ref SaucerDalek08
+ref SaucerDalek09
+ref SaucerDalek10
+ref SaucerDalek11
+ref SaucerDalek12
+ref SaucerDalek13
+ref SaucerDalek14
+
+short CleanupDalek
+short sForceRunNow
+ref Prisoner01
+ref Prisoner02
+ref Prisoner03
+
+Begin GameMode
+
+	; Population of ship upon entry
+	if player.getInCell fwvStrongholdDalek == 1 && fwvqInvasions.sPopulateSaucer == 1
+
+		; Turn off any warning lights or sounds, set up Robomen
+		set fwvqInvasions.sDalekRed to 0
+		set fwvqInvasions.sDalekCommsActivated to 0
+		fwvDSRoboman01.SetRestrained 1
+		fwvDSRoboman02.SetRestrained 1
+		fwvDSRoboman03.SetRestrained 1
+		fwvDSRoboman04.SetRestrained 1
+		fwvDSRoboman05.SetRestrained 1
+		fwvXODalekSaucerCommsKlaxLightREF.playgroup Left 1
+		fwvDSRoboman01.SetGhost 1
+		fwvDSRoboman02.SetGhost 1
+		fwvDSRoboman03.SetGhost 1
+		fwvDSRoboman04.SetGhost 1
+		fwvDSRoboman05.SetGhost 1
+
+		; Set the initial variables to get the Ship prepped for action
+		set fwvqInvasions.sDalekEscapes to 0
+		setAlly fwvDalekFaction FWVDalekStrongholdPrisonerFaction 1 1  ; Daleks will not kill prisoners in cell
+		setAlly PlayerFaction FWVDalekStrongholdPrisonerFaction 1 1  ; Reset in case Player previously enraged Prisoners
+		set fwvqInvasions.sTransmatOn to 0
+		fwvDalekTransmatLight01.disable
+		fwvDalekTransmatLight02.disable
+		fwvDalekTransmatLight03.disable
+		fwvDalekTransmatLight01A.disable
+		fwvDalekTransmatLight02A.disable
+		fwvDalekTransmatLight03A.disable
+		fwvTransmatZap01.disable
+		fwvTransmatZap02.disable
+		fwvTransmatZap03.disable
+		
+		;Populate the prisoners
+		let Prisoner01 := fwvDalekCellPrisoner01.placeAtMe fwvDalekStrongholdPrisonerAF2
+		let Prisoner02 := fwvDalekCellPrisoner02.placeAtMe fwvDalekStrongholdPrisonerCM
+		let Prisoner03 := fwvDalekCellPrisoner03.placeAtMe fwvDalekStrongholdPrisonerHM3
+		Prisoner01.evp
+		Prisoner02.evp
+		Prisoner03.evp	
+		
+		; Populate the Daleks
+		let SaucerDalek01 := fwvDalekSHLDSDREF01.placeAtMe fwvLvlDalekSaucerXO2010Blue
+		let SaucerDalek02 := fwvDalekSHLDSDREF02.placeAtMe fwvLvlDalekSaucerDalekXOShip
+		let SaucerDalek03 := fwvDalekSHLDSDREF03.placeAtMe fwvLvlDalekSaucerXO2010Gold
+		let SaucerDalek04 := fwvDalekSHLDSDREF04.placeAtMe fwvLvlDalekSaucerXO2010Red
+		let SaucerDalek05 := fwvDalekSHLDSDREF05.placeAtMe fwvLvlDalekSaucerDalekXO
+		let SaucerDalek06 := fwvDalekSHLDSDREF06.placeAtMe fwvLvlDalekSaucerXO2010Yellow
+		let SaucerDalek07 := fwvDalekSHLDSDREF07.placeAtMe fwvLvlDalekSaucerXO2010Red
+		let SaucerDalek08 := fwvDalekSHLDSDREF08.placeAtMe fwvLvlDalekSaucerXO2010Red
+		let SaucerDalek09 := fwvDalekSHLDSDREF09.placeAtMe fwvLvlDalekSaucerXO2010Red
+		let SaucerDalek10 := fwvDalekSHLDSDREF10.placeAtMe fwvLvlDalekSaucerDalekXO
+		let SaucerDalek11 := fwvDalekSHLDSDREF11.placeAtMe fwvLvlDalekSaucerDalekXO
+		let SaucerDalek12 := fwvDalekSHDSPatREF02.placeAtMe fwvLvlDalekSaucerDalekPatrolXO2012
+		let SaucerDalek13 := fwvDalekSHDSSupREF.placeAtMe fwvDalekSaucerSupremeXO
+		let SaucerDalek14 := fwvDalekSHLDSDREF12.placeAtMe fwvLvlDalekSaucerDalekXO
+		set fwvqInvasions.DoOnce to 0
+		set fwvqInvasions.sPopulateSaucer to 0
+		set CleanupDalek to 0
+	endif
+
+	;NEW - force all Prisoners to run immediately when it's OK to go, not fiddlefart around
+	if fwvqInvasions.sEscape == 1 && player.getInCell fwvStrongholdDalek == 1
+		if sForceRunNow == 0
+			printc "Run Now %g" sForceRunNow
+			Prisoner01.evp
+			Prisoner02.evp
+			Prisoner03.evp
+			set sForceRunNow to 1
+			printc "Run Now now %g" sForceRunNow
+		endif
+	endif	
+
+	; After blowing up the Ship
+	 if fwvqInvasions.sBlow == 1 && player.getInCell fwvtInterior1 == 1 && fwvq1.tFlying == 1 && fwvqInvasions.eType == 1 
+		if CleanupDalek == 0
+			printc "Dalek Cleanup Ahoy!"
+			;Disable alarm noise and imod
+
+			fwvStrongholdDalekAlarmRef.disable
+			; Door Locks
+			fwvDalekPrisonCellDoorREF.setOpenState 0
+			fwvDalekPrisonCellDoorREF.Lock 255
+			
+			; Remove Keys
+		
+			
+			;Reset Boom Switches
+			let fwvDalekSaucerShieldControl01.sShieldOff := 0					
+			let fwvDalekSaucerShieldControl02.sShieldOff := 0									
+			let fwvDalekSaucerShieldControl03.sShieldOff := 0									
+			let fwvDalekSaucerShieldControl04.sShieldOff := 0			
+			fwvStrongholdDalekShieldRef.enable
+			
+			; clear any remaining Daleks or Prisoners
+			
+			set sForceRunNow to 0
+			printc "sForceRunNow %g" sForceRunNow		
+			SaucerDalek01.disable
+			SaucerDalek02.disable
+			SaucerDalek03.disable
+			SaucerDalek04.disable
+			SaucerDalek05.disable
+			SaucerDalek06.disable
+			SaucerDalek07.disable
+			SaucerDalek08.disable
+			SaucerDalek09.disable
+			SaucerDalek10.disable
+			SaucerDalek11.disable
+			SaucerDalek12.disable
+			SaucerDalek13.disable
+			SaucerDalek14.disable			
+			SaucerDalek01.MarkForDelete
+			SaucerDalek02.MarkForDelete
+			SaucerDalek03.MarkForDelete
+			SaucerDalek04.MarkForDelete
+			SaucerDalek05.MarkForDelete
+			SaucerDalek06.MarkForDelete
+			SaucerDalek07.MarkForDelete
+			SaucerDalek08.MarkForDelete
+			SaucerDalek09.MarkForDelete
+			SaucerDalek10.MarkForDelete
+			SaucerDalek11.MarkForDelete
+			SaucerDalek12.MarkForDelete
+			SaucerDalek13.MarkForDelete
+			SaucerDalek14.MarkForDelete
+			Prisoner01.disable
+			Prisoner02.disable
+			Prisoner03.disable
+			Prisoner01.MarkForDelete
+			Prisoner02.MarkForDelete
+			Prisoner03.MarkForDelete
+			printc "Daleks Go Done"
+
+			set CleanupDalek to 1
+		endif
+
+		
+
+	endif
+
+
+end

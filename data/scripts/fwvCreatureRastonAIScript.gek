@@ -1,0 +1,62 @@
+scn fwvCreatureRastonAIScript
+
+short sInitialise
+short sMode		;1 - randomise next location and length of visit, 2 - visiting, 3 - combat mode
+short sLoc			;randomised location
+float fDuration 		;length of visit
+float fTimer
+
+begin gamemode
+
+	;spawn raston
+	;1 - randomise length of time before teleporting
+	;2 - if not in combat, run teleport timer, if expires, teleport to next location and reset, else pause timer until no longer in combat
+
+	if sInitialise < 1
+		moveTo fwvDZquarry01Ref
+		let sMode := 1
+		let sInitialise := 1
+	endif
+
+	if sMode == 1
+		let sLoc := Rand 1,12
+		let fDuration := Rand 5.0,10.0
+		let fTimer := 0.0
+		let sMode := 2
+	elseif sMode == 2
+		;if isInCombat == 0
+			if fTimer < fDuration
+				let fTimer := fTimer + getSecondsPassed
+			else
+				if sLoc == 1
+					moveTo fwvDZmountain01Ref
+				elseif sLoc == 2
+					moveTo fwvDZmountain02Ref
+				elseif sLoc == 3
+					moveTo fwvDZmountain03Ref
+				elseif sLoc == 4
+					moveTo fwvDZmoorland01Ref
+				elseif sLoc == 5
+					moveTo fwvDZmoorland02Ref
+				elseif sLoc == 6
+					moveTo fwvDZmoorland03Ref
+				elseif sLoc == 7
+					moveTo fwvDZforest01Ref
+				elseif sLoc == 8
+					moveTo fwvDZforest02Ref
+				elseif sLoc == 9
+					moveTo fwvDZforest03Ref
+				elseif sLoc == 10
+					moveTo fwvDZquarry01Ref
+				elseif sLoc == 11
+					moveTo fwvDZquarry02Ref
+				elseif sLoc == 12
+					moveTo fwvDZquarry02Ref
+				endif
+				let sMode := 1
+			endif
+		;else
+		;endif
+	endif
+
+end

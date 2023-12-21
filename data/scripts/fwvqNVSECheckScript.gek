@@ -1,0 +1,15 @@
+scn fwvqNVSECheckScript
+; quest: fwvqNVSECheck
+short iInstalled
+
+begin GameMode
+    if iInstalled == 0
+        ; NVSE is not installed
+        ; make the player suffer the consequences of their inactions
+        ; spawn cazador?
+        ; or show message??
+        ShowMessage NVSENotFoundMESG
+	;else
+        ;ShowMessage NVSEFoundMESG
+    endif
+end

@@ -1,0 +1,10 @@
+scn fwvq3aStage25SCRIPT
+
+begin onTrigger Player
+
+	if getStage fwvq3a == 10
+		fwvq3aGelthRef.enable 1
+		setStage fwvq3a 25
+	endif
+
+end

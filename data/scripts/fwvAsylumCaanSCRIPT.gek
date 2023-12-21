@@ -1,0 +1,37 @@
+scn fwvAsylumCaanSCRIPT
+
+float angle
+short BeckonOnce
+begin Gamemode
+
+		if GetDistance Player < 750 
+			If BeckonOnce == 0
+				ShowMessage fwvCaanBeckonsMSG
+				SetTalkingActivatorActor fwvAsylumCaanDialogREF3
+				set BeckonOnce to 1
+			endif
+		endif
+
+		
+		if GetDistance Player < 100 
+			if player.isInCombat == 0
+				if getIsReference fwvAsylumCaanTAREF
+					SetTalkingActivatorActor fwvAsylumCaanDialogREF3
+					;activate
+					player.startconversation fwvAsylumCaanTAREF, Greeting
+				endif
+			endif
+		endif
+
+end
+
+Begin OnActivate
+
+	if player.isInCombat == 0
+		if getIsReference fwvAsylumCaanTAREF
+			SetTalkingActivatorActor fwvAsylumCaanDialogREF3
+			activate
+		endif
+	endif
+	
+end

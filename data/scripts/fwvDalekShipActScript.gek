@@ -1,0 +1,254 @@
+scn fwvDalekShipActScript
+
+ref rTargetNpc
+ref rCannonRef
+ref rTargetRef
+ref rSelf
+ref rCurRef
+short sTargetChosen
+short sShotsFired
+
+float fAngleZ
+float fAngleY
+float fCalc
+
+float fTimer
+float fTimeWait
+float fMinDist
+float fDistance
+short sFormCount
+short sFormCurrent
+short sFlightType
+short sShotDelay
+float fShakeAngleExtra
+
+float fMaxMoveSpeed
+float fMoveSpeed
+ref rCurMarker
+ref rTargetMarker
+float fMoveTimer
+float fPosStart
+float fPosEnd
+float fPosSpeed
+short sCurAction
+	; 1 = move
+	; 2 = wait timer
+	; 3 = move and fire
+	; 4 = wait timer, and fire
+short sSoundPlayed ; woosh sound effect played
+ref rSaucerSound
+
+begin GameMode
+	if GetDisabled == 0
+	
+		set rSelf to GetSelf
+		
+		if rCurMarker == 0 && rSelf.GetLinkedRef != 0
+			set rCurMarker to rSelf.GetLinkedRef
+		endif
+		if rCurMarker != 0
+			if rTargetMarker == 0 && rCurMarker.GetLinkedRef != 0
+				set rTargetMarker to rCurMarker.GetLinkedRef
+				set fMoveTimer to 0
+				set fPosSpeed to 0
+			endif
+		endif
+		
+		set fMaxMoveSpeed to (sFlightType * 0.25 + 0.5) * 1500
+		
+		set fShakeAngleExtra to (rSelf.GetScale * 3000.0 - rSelf.GetDistance Player) / 10000.0 * 50.0
+		
+		if sCurAction == 0
+			if rSelf == fwvSkaroLabSaucerRef
+				set sCurAction to 1
+			elseif ListGetFormIndex fwvDalekShipAttackStripFormList rSelf >= 0
+				set sCurAction to 3
+			endif
+		endif
+		
+		if rCurMarker != 0 && rTargetMarker != 0 && (sCurAction == 1 || sCurAction == 3)
+		
+			if fPosSpeed == 0
+				set fPosSpeed to rCurMarker.GetDistance rTargetMarker
+				set fPosSpeed to fPosSpeed / fMaxMoveSpeed
+			endif
+			
+			set fMoveTimer to fMoveTimer + (GetSecondsPassed / fPosSpeed)
+			
+			set fPosStart to rCurMarker.GetPos X
+			set fPosEnd to rTargetMarker.GetPos X
+			set fCalc to Call fwvFuncLerp fPosStart fPosEnd fMoveTimer
+			rSelf.SetPos X fCalc
+			
+			set fPosStart to rCurMarker.GetPos Y
+			set fPosEnd to rTargetMarker.GetPos Y
+			set fCalc to Call fwvFuncLerp fPosStart fPosEnd fMoveTimer
+			rSelf.SetPos Y fCalc
+			
+			set fPosStart to rCurMarker.GetPos Z
+			set fPosEnd to rTargetMarker.GetPos Z
+			set fCalc to Call fwvFuncLerp fPosStart fPosEnd fMoveTimer
+			rSelf.SetPos Z fCalc
+			
+			if fMoveTimer >= 1.0
+				set fMoveTimer to 0
+				set fPosSpeed to 0
+				set rCurMarker to rTargetMarker
+				if rCurMarker == fwvSkaroLabSaucerWaitRef
+					set sCurAction to sCurAction + 1
+					set fMoveTimer to 7.5
+				endif
+				
+				if rCurMarker.GetLinkedRef != 0
+					set rTargetMarker to rCurMarker.GetLinkedRef
+				else
+					set rTargetMarker to 0
+					rSelf.Disable
+				endif
+			endif
+			set fShakeAngleExtra to (rSelf.GetScale * 10000.0 - rSelf.GetDistance Player) / 10000.0 * 50.0
+		elseif rCurMarker != 0 && rTargetMarker != 0 && (sCurAction == 2 || sCurAction == 4)
+			set fMoveTimer to fMoveTimer - GetSecondsPassed
+			if fMoveTimer <= 0.0
+				set fMoveTimer to 0
+				set fPosSpeed to 0
+				set sCurAction to 0
+			endif
+		endif
+		
+		
+		if IsAnimPlaying == 0
+			if sFlightType == 0
+				set sFlightType to GetRandomPercent * (1 + 1) / 100
+			endif		
+			if sFlightType == 1
+				set fTimeWait to 0.6
+				PlayGroup Forward 0
+			elseif sFlightType == 2
+				set fTimeWait to 0.4
+				PlayGroup FastForward 0
+			endif
+		endif
+		
+		if fShakeAngleExtra > fwvqRooms.fShakeAngleExtra
+			set fwvqRooms.fShakeAngleExtra to fShakeAngleExtra
+		endif
+		
+		if fShakeAngleExtra > 0
+			set fCalc to Call fwvFuncGetDistance2D rSelf Player
+			if fCalc < rSelf.GetScale * 2500.0
+				if sSoundPlayed == 0
+					PlaySound fwvFXdalekSaucerWoosh
+					set sSoundPlayed to 1
+				endif
+			elseif fCalc >= rSelf.GetScale * 2800
+				set sSoundPlayed to 0
+			endif
+		else
+			set sSoundPlayed to 0
+		endif
+	endif
+end
+
+begin GameMode
+	if rCannonRef == 0 && rTargetRef == 0
+		set rTargetRef to PlaceAtMe XMarker 1
+		set rCannonRef to PlaceAtMe fwvDalekShipCannon 1
+		set fTimer to fTimeWait + GetRandomPercent * ((fTimeWait * 3.0 - fTimeWait) + 1.0) / 100.0
+	else
+		
+		if ListGetFormIndex fwvDalekShipFormList rSelf < 0
+			ListAddReference fwvDalekShipFormList rSelf ; temporary until next reload
+		endif
+		
+		set fCalc to GetPos X
+		rCannonRef.SetPos X fCalc
+		set fCalc to GetPos Y
+		rCannonRef.SetPos Y fCalc
+		set fCalc to GetPos Z - 860.0 * GetScale
+		rCannonRef.SetPos Z fCalc
+		
+		set fTimer to fTimer - GetSecondsPassed
+		
+		if sCurAction >= 3
+			if fTimer < 0
+				if rTargetNpc != 0
+					if ListGetFormIndex fwvDalekAttackLocsStrip rTargetNpc < 0
+						if rTargetNpc.GetDead || rTargetNpc.GetInFaction fwvDalekFaction
+							set sTargetChosen to 0
+						endif
+					endif
+				else
+					set sTargetChosen to 0
+				endif
+				if sTargetChosen == 0 || sShotsFired > 5
+					set sTargetChosen to 1
+					Label 0
+					if GetRandomPercent < 10
+						set rTargetNpc to Call fwvFuncFindRandomRef 43 3
+					elseif GetRandomPercent < 15
+						set rTargetNpc to Call fwvFuncFindRandomRef 42 3
+					endif
+					if rTargetNpc == 0
+						Label 1
+						set rTargetNpc to Call fwvFuncGetRandomForm fwvDalekAttackLocsStrip
+						if rTargetNpc.getPos Z > GetPos Z - (1280 * GetScale) - 1024
+							GoTo 1
+						endif
+					elseif rTargetNpc.GetDead
+						Goto 0
+					endif
+					rTargetRef.MoveTo rTargetNpc
+					set fCalc to rTargetNpc.GetPos X + (GetRandomPercent - 50)
+					rTargetRef.SetPos X fCalc
+					set fCalc to rTargetNpc.GetPos Y + (GetRandomPercent - 50)
+					rTargetRef.SetPos Y fCalc
+					set fCalc to rTargetNpc.GetPos Z + 64 + (GetRandomPercent - 50)
+					rTargetRef.SetPos Z fCalc
+					
+					set sShotsFired to 0
+				endif
+				
+				set sShotDelay to 0
+				
+				set sFormCount to ListGetCount fwvDalekShipFormList
+				set sFormCurrent to 0
+				Label 2
+				if sFormCurrent < sFormCount
+					set rCurRef to ListGetNthForm fwvDalekShipFormList sFormCurrent
+					if rCurRef != rSelf && rCurRef.GetDisabled == 0
+						if rSelf.GetPos Z - rSelf.GetScale * 1280 > rCurRef.GetPos Z - rCurRef.GetScale * 1280
+							set fMinDist to rCurRef.GetScale * 3500.0
+							if fMinDist < rSelf.GetScale * 3500.0
+								set fMinDist to rSelf.GetScale * 3500.0
+							endif
+
+							set fDistance to Call fwvFuncGetDistance2D rSelf rCurRef
+							if fDistance <= fMinDist
+								set sShotDelay to 1
+							endif
+						endif
+					endif
+					set sFormCurrent to sFormCurrent + 1
+					Goto 2
+				endif
+				if sShotDelay == 0
+					set fAngleZ to Call fwvFuncGetAngleToward3D 0 rCannonRef rTargetRef
+					set fAngleY to Call fwvFuncGetAngleToward3D 1 rCannonRef rTargetRef
+					rCannonRef.SetAngle X -90
+					rCannonRef.SetAngle Y fAngleZ
+					rCannonRef.SetAngle Z fAngleY
+					set fTimer to fTimeWait
+					rCannonRef.FireWeapon fwvDalekShipLaserWeapon
+					rCannonRef.PlaySound3d fwvFXdalekSaucerFire
+					set sShotsFired to sShotsFired + 1
+					if sShotsFired > 5
+						set fTimer to fTimeWait + GetRandomPercent * ((fTimeWait * 3.0 - fTimeWait) + 1.0) / 100.0
+					endif
+				else
+					set fTimer to fTimeWait * 0.5
+				endif
+			endif
+		endif
+	endif
+end

@@ -1,0 +1,39 @@
+scn fwvq2aSCRIPT
+
+short frame
+float fTimer
+array_var tutorial
+ref desktopRef
+ref doorRef
+ref rTimelordNpc 
+
+Begin GameMode
+
+	;when Advanced Mode is activated
+	;enable Time Lord Hologram
+	;start conversation with hologram
+
+	;point the markers to the right desktop locs
+	if getQuestCompleted fwvq2a == 0
+		let desktopRef := fwvq1.rTDesktopScannerPosRef
+		let doorRef := fwvq1.rTDesktopInteriorDoor
+		fwvq2aObjectiveRef.moveTo desktopRef
+		fwvq2aObjective2Ref.moveTo doorRef
+	endif
+
+	if getStage fwvq2a > 0
+		if getObjectiveCompleted fwvq2a 20 == 1 && getObjectiveCompleted fwvq2a 30 == 1 && getObjectiveCompleted fwvq2a 40 == 1 && getObjectiveCompleted fwvq2a 50 == 1 && getObjectiveCompleted fwvq2a 60 == 1
+			SetObjectiveCompleted fwvq2a 10 1
+			SetStage fwvq2a 100
+		endif
+	endif
+
+	;Patched in to run the companion tutorial
+	if getStage fwvq2a == 100 && getStage fwvqCompanionTutorial < 10
+		;MessageBoxEx "[The TARDIS has received a distress signal from a craft in the distant future...%r%r SS Cirius has been added to the Navcom Databanks]"
+		set fwvqComms.sEventPhone to 6
+		;set fwvqLocs.fwvLssCiriusVisited to 1
+		;setStage fwvqCompanionTutorial 10
+	endif
+
+End

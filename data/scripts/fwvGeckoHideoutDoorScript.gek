@@ -1,0 +1,11 @@
+scn fwvGeckoHideoutDoorScript
+
+Begin OnActivate player
+
+	if getStage fwvqSilurianGasStation >= 40 || fwvqSilurianGasStation == 1
+		Activate
+	else
+		ShowMessage fwvGeckoDoorMESG
+	endif
+
+End

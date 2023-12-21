@@ -1,0 +1,8 @@
+scn fwvCyberControlPanelLoadingScript
+
+Begin OnActivate
+
+	showmessage fwvCyberControlPanelLoadingMesg
+
+
+end

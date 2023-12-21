@@ -1,0 +1,292 @@
+scn fwvTLcompanionSpellScript
+
+short button
+short menu
+short sMove
+short sMoveLast
+short sMoveChange
+short sCount
+short sOldPath
+short sOldControl
+
+float rShip
+float fTempPos
+ref rCurPanel
+
+ref rCurControl
+ref rLastControl
+ref rSelf
+
+begin ScriptEffectStart
+	set menu to -1
+	printc "companion spell start"
+	if IsSpellTarget fwvTLcompanionMarkerSpell
+		set sMove to 1
+		set sMoveChange to 1
+		set rSelf to GetSelf
+		printc "DEVTEST: %n now a companion" rSelf
+	endif
+end
+
+begin ScriptEffectFinish
+	set rSelf to GetSelf
+	printc "DEVTEST1: %n no longer a companion" rSelf
+	set fwvqTimeLord.cCount to fwvqTimeLord.cCount - 1
+end
+
+begin ScriptEffectUpdate
+
+	if rSelf.IsFormValid == 0
+		set sMove to 1
+		set sMoveChange to 1
+		set rSelf to GetSelf
+		printc "DEVTEST2: %n now a companion" rSelf
+	elseif fwvqTimeLord.rLastActor == GetSelf && menu == -2
+		printc "quest wants me to do things"
+		set rShip to getDisposition player
+		set menu to 0
+		ShowMessage fwvTimeLordCompanionMenu rShip
+	elseif menu != -1
+		if getdisposition player < 25		;if the player ever pisses off the companion, they will stop following
+			dispel fwvTLcompanionSpell
+			set sMoveChange to 1
+			set sMove to 4
+		endif
+		
+		; menu poop
+		set button to getbuttonpressed
+
+		if menu == 0
+
+			if button == 0	; Top Menu
+				;talk to
+				set menu to -1
+				StartConversation Player
+			elseif button == 1
+				;directions
+				set menu to 1
+				ShowMessage fwvTimeLordCompanionMoveMenu
+			elseif button == 2
+				;open inventory
+				set menu to -1
+				OpenTeammateContainer 1
+			elseif button == 3
+				set menu to -1
+			endif
+		elseif menu == 1	; Move menu
+
+			if button == 0
+				;follow me
+				if sMove != 1
+					modDisposition player 5
+				endif
+				set sMove to 1
+				set sMoveChange to 1
+				
+				set menu to -1
+			elseif button == 1
+				;Wait
+				if sMove != 2
+					modDisposition player -2
+				endif
+				set sMove to 2
+				set sMoveChange to 1
+				
+				set menu to -1
+			elseif button == 2
+				;Return to TARDIS
+				if sMove != 3
+					modDisposition player -5
+				endif
+				set sMove to 3
+				set sMoveChange to 1
+				
+				set menu to -1
+			elseif button == 3
+				;Leave
+				if sMove != 4
+					modDisposition player -25
+					;RemoveScriptPackage
+					;evp
+					;dispel fwvTLcompanionSpell
+				endif
+				set sMove to 4
+				set sMoveChange to 1
+				set menu to -1
+			elseif button == 4
+				; special options
+				set menu to 2
+				ShowMessage fwvTimeLordCompanionSpecialistMenu
+			elseif button == 5
+				;Return to Top Menu
+				set menu to 0
+				ShowMessage fwvTimeLordCompanionMenu rShip
+			endif	
+
+		elseif menu == 2	; Special Move menu
+			if button == 0
+				;lockpick
+				printc "Lockpick: Select locked door/container"
+				set menu to 0
+			elseif button == 1
+				;pilot
+				if sMove != 6
+					set sMoveLast to sMove ; return to this when done
+					modDisposition player 6
+				endif
+				printc "Companion Pilot debug"
+				set sMove to 6
+				set sMoveChange to 1
+				set menu to -1
+			endif
+		else
+			set menu to -1
+		endif
+	elseif menu == -1
+		set fwvqTimeLord.rLastActor to 0
+		set menu to -2
+	endif
+		
+	if sMoveChange == 1 ; reset packages
+		set sMoveChange to 0
+		
+		RemoveScriptPackage
+		; RemoveScriptPackage fwvTLcompanionFollowDefault
+		; RemoveScriptPackage fwvTLcompanionWait
+		; RemoveScriptPackage fwvTLcompanionReturn
+		; RemoveScriptPackage fwvTLcompanionFly
+		; RemoveScriptPackage fwvTLcompanionFlyPause
+		; RemoveScriptPackage fwvTLcompanionLockpick
+		
+		if sMove == 1 ; follow me 
+			AddScriptPackage fwvTLcompanionFollowDefault
+		elseif sMove == 2 ; wait
+			AddScriptPackage fwvTLcompanionWait
+		elseif sMove == 3 ; return to TARDIS
+			AddScriptPackage fwvTLcompanionReturn
+		elseif sMove == 4 ; leave
+			dispel fwvTLcompanionSpell
+		elseif sMove == 5 ; lockpick
+		
+		elseif sMove == 6 ; pilot
+			AddScriptPackage fwvTLcompanionFly
+		endif
+		evp
+	endif
+	
+	if sMove == 6 ; flight logic
+		;printc "flight logic 1"
+		;if GetIsCurrentPackage fwvTLcompanionFly || GetIsCurrentPackage fwvTLcompanionFlyPause
+			if fwvq1.flightMode == 3
+				set sMoveChange to 1
+				set sMove to sMoveLast
+			else
+				if fwvq1.flightMode == 3
+					set sMoveChange to 1
+					set sMove to sMoveLast
+				elseif fwvq1.CSROn < 2 && fwvq1.tPath == 5 ; waiting for move orders
+					if GetIsCurrentPackage fwvTLcompanionFly
+						RemoveScriptPackage fwvTLcompanionFly
+						AddScriptPackage fwvTLcompanionFlyPause
+						evp
+					endif
+				elseif fwvqTimeLord.sCompActivateNow == 1
+					set fwvqTimeLord.sCompActivateNow to 2
+					set sOldPath to fwvq1.tPath
+					set sOldControl to fwvq1.control
+					rCurControl.Activate rSelf 1
+					RemoveScriptPackage fwvTLcompanionFly
+					AddScriptPackage fwvTLcompanionFlyPause
+					evp
+				elseif fwvq1.CSROn == 2 || fwvq1.tPath <= 5
+					if fwvq1.tPath == 0
+						set rCurControl to fwvq1.rTCzigzagRef1
+					elseif fwvq1.tPath == 1
+						set rCurControl to fwvq1.rTChelmicRef1
+					elseif fwvq1.tPath == 2
+						set rCurControl to fwvq1.rTCthrottleRef1
+					elseif fwvq1.tPath == 3
+						set rCurControl to fwvq1.rTClockdownRef1
+					elseif fwvq1.tPath == 4
+						set rCurControl to fwvq1.rTChandbrakeRef
+					elseif fwvq1.tPath == 5
+						if fwvq1.control == 1
+							set rCurControl to fwvq1.rTChelmicRef1
+						elseif fwvq1.control == 2
+							set rCurControl to fwvq1.rTCnavicompRef1
+						elseif fwvq1.control == 3
+							set rCurControl to fwvq1.rTCthrottleRef1
+						elseif fwvq1.control == 4
+							set rCurControl to fwvq1.rTCatomicRef1
+						elseif fwvq1.control == 5
+							set rCurControl to fwvq1.rTCgyroRef1
+						elseif fwvq1.control == 6
+							set rCurControl to fwvq1.rTCpointerRef1
+						elseif fwvq1.control == 7
+							set rCurControl to fwvq1.rTCzigzagRef1
+						elseif fwvq1.control == 8
+							set rCurControl to fwvq1.rTCvortexRef1
+						endif
+					endif
+					
+					;printc "flight logic 2"
+					
+					if fwvq1.tTheme == 0 && rCurControl != rLastControl
+						printc "flight logic control update"
+						fwvCompanionFlightTargetRef.Disable 0
+						set rCurPanel to fwvT1Panel1Ref
+						if ListGetFormIndex fwvPanel1ControlsList rCurControl >= 0
+							printc "1"
+							set rCurPanel to fwvT1Panel1Ref
+						elseif ListGetFormIndex fwvPanel2ControlsList rCurControl >= 0
+							printc "2"
+							set rCurPanel to fwvT1Panel2Ref
+						elseif ListGetFormIndex fwvPanel3ControlsList rCurControl >= 0
+							printc "3"
+							set rCurPanel to fwvT1Panel3Ref
+						elseif ListGetFormIndex fwvPanel4ControlsList rCurControl >= 0
+							printc "4"
+							set rCurPanel to fwvT1Panel4Ref
+						elseif ListGetFormIndex fwvPanel5ControlsList rCurControl >= 0
+							printc "5"
+							set rCurPanel to fwvT1Panel5Ref
+						elseif ListGetFormIndex fwvPanel6ControlsList rCurControl >= 0
+							printc "6"
+							set rCurPanel to fwvT1Panel6Ref
+						endif
+						fwvCompanionFlightTargetRef.MoveTo rCurPanel
+						
+						set fTempPos to rCurPanel.GetPos X
+						fwvCompanionFlightTargetRef.SetPos X fTempPos
+						set fTempPos to rCurPanel.GetPos Y
+						fwvCompanionFlightTargetRef.SetPos Y fTempPos
+						set fTempPos to rCurPanel.GetPos Z
+						fwvCompanionFlightTargetRef.SetPos Z fTempPos
+						
+						;fwvCompanionFlightTargetRef.Enable 0
+						evp
+						set rLastControl to rCurControl
+					elseif fwvq1.tTheme == 1
+					
+					elseif fwvq1.tTheme == 2
+					
+					endif
+					
+				elseif fwvqTimeLord.sCompActivateNow == 2
+					;printc "flight logic 3"
+					if (fwvq1.tPath != sOldPath || fwvq1.control != sOldControl) && (fwvq1.CSROn == 2 || fwvq1.tPath != 5)
+						set fwvqTimeLord.sCompActivateNow to 0
+						if GetIsCurrentPackage fwvTLcompanionFlyPause
+							RemoveScriptPackage fwvTLcompanionFlyPause
+							AddScriptPackage fwvTLcompanionFly
+							evp
+						endif
+					endif
+				endif
+			endif
+		;else
+		;	set sMoveChange to 1
+		;	set sMove to sMoveLast
+		endif
+	endif
+end

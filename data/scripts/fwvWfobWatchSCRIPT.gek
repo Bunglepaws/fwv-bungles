@@ -1,0 +1,19 @@
+scn fwvWfobWatchSCRIPT
+
+; nothing to see here - yet ;)
+; written by Demeggy 12/3/13
+
+short doOnce
+
+begin onequip player
+
+	if doOnce == 0
+		ShowMessage fwvq1ItemFobWatchMessage
+		set doOnce to 1
+	endif
+
+end
+
+
+
+

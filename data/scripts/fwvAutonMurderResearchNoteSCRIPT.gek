@@ -1,0 +1,5 @@
+scn fwvAutonMurderResearchNoteSCRIPT
+
+begin onActivate
+	showmessage fwvAutonMurderResearchMSG
+end

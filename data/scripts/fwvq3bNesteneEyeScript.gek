@@ -1,0 +1,203 @@
+scn fwvq3bNesteneEyeScript
+
+float fBaseZAngle
+float fMinMaxZAngle
+float fDownXAngle
+float fUpXAngle
+float fSpeed
+float fMoveSpeed
+
+float fCurHeading
+ref rSelf
+float fCx
+float fCy
+
+float fA
+float fAngleOffset
+float fDesHeading
+float fMoveSpeed
+
+short sActive
+
+float fDist
+float fDist2
+float fDist3
+
+float fDesPitch
+float fLastTime
+float fAngleX
+float fCurPitch
+
+float fTempAdd
+
+float fPassed
+
+float fMaxDist
+
+short sDoOnce
+
+float fDiff
+float fChange
+
+short sDirection
+
+begin GameMode
+	if sDoOnce == 0
+		set sDoOnce to 1
+		set fLastTime to 1.0
+	endif
+
+
+	;xyz = 0, 384.0000, 208.0000
+	; rot = 0,0,180
+
+	set fBaseZAngle to 180 ; intial Z angle
+	if GetBaseObject == fwvq3bNesteneEye
+		set fBaseZAngle to 0
+	endif
+	
+	set fDownXAngle to 75.0000
+	set fUpXAngle to 10.0000
+	set fMinMaxZAngle to 45.0000
+	set fSpeed to 1.0;
+	set fMaxDist to 900.0 ; non-zero value, max distance
+	set fPassed to GetSecondsPassed
+	set fMoveSpeed to fSpeed;fPassed * fMinMaxZAngle * fSpeed;
+	
+
+	set fLastTime to fLastTime + fPassed
+	if (fLastTime >= 0.175)
+		set sActive to 1
+		set fLastTime to 0
+	else
+		set sActive to 0
+	endif
+
+	set rSelf to GetSelf
+	if sActive == 1
+		set fAngleOffset to GetStartingAngle Z;GetStartingAngle Z; + 90
+		;set fCurHeading to rSelf.GetHeadingAngle PlayerRef
+		set fCx to (Player.getPos X - rSelf.getPos X)
+		set fCy to (Player.getPos Y - rSelf.getPos Y)
+		if fCx == 0.0
+			set fCx to 0.01
+		endif
+		set fA to fCy / fCx
+		set fA to Tan fA 1
+		set fA to fA - fAngleOffset
+		if (fCx < 0)
+			set fA to 180 + fA
+		endif
+		if fA > 180
+			set fA to fA - 360
+		endif
+		
+		set fCurHeading to (rSelf.GetAngle Z + 3600) % 360
+		set fDesHeading to ((fAngleOffset - fA) + fAngleOffset + 3600) % 360
+		
+		set fDiff to (fAngleOffset + fMinMaxZAngle) - fDesHeading
+		if Abs fDiff > (360 - fMinMaxZAngle)
+			set fDist to (fAngleOffset + (360 - fMinMaxZAngle)) - fDesHeading
+			set fDist2 to (fAngleOffset - (360 - fMinMaxZAngle)) - fDesHeading
+			if Abs fDist > Abs fDist2
+				set fDesHeading to ((fAngleOffset - (360 - fMinMaxZAngle)) + 3600) % 360
+			else
+				set fDesHeading to ((fAngleOffset + (360 - fMinMaxZAngle)) + 3600) % 360
+			endif
+			
+			;set fDesHeading to (fBaseZAngle - fMinMaxZAngle + 3600) % 360
+		endif
+		
+		;if fDesHeading > (fBaseZAngle + fMinMaxZAngle)
+		;	set fDesHeading to (fBaseZAngle + fMinMaxZAngle + 3600) % 360
+		;elseif fDesHeading < (fBaseZAngle - fMinMaxZAngle)
+		;	set fDesHeading to (fBaseZAngle - fMinMaxZAngle + 3600) % 360
+		;endif
+		set fCurHeading to (fCurHeading + 3600) % 360
+		set fDesHeading to (fDesHeading + 3600) % 360
+	endif
+
+
+	set fCurHeading to (rSelf.GetAngle Z + 3600) % 360
+	; compare directions for optimal movement
+	
+	set fDist to (fCurHeading - fDesHeading)
+	set fDist to Abs fDist
+	if fDist > fMoveSpeed
+		set fChange to 0
+		set fDiff to fCurHeading - fDesHeading
+		if (fDiff < 0)
+			set fChange to fMoveSpeed
+		else
+			set fChange to -fMoveSpeed
+		endif
+		if (Abs fDiff > 180)
+			set fChange to -fChange
+		endif
+		set fA to fCurHeading + fChange
+		set fA to (fA + 3600) % 360
+		
+		SetAngle Z fA
+	endif
+		
+	
+	
+	set fDist to GetDistance Player
+	if (fDist > fMaxDist)
+		set fDist to fMaxDist
+	endif
+	set fDesPitch to fUpXAngle - (1.0 - (fDist / fMaxDist)) * (fUpXAngle - fDownXAngle)
+	
+	set sDirection to GetStartingAngle Z / 90
+	; "up" is...
+	if sDirection == 0 ; 0: X -
+		set fDesPitch to fUpXAngle - (1.0 - (fDist / fMaxDist)) * (fUpXAngle - fDownXAngle)
+		set fCurPitch to GetAngle X
+	elseif sDirection == 1 ; 1: Y -
+		set fDesPitch to fUpXAngle - (1.0 - (fDist / fMaxDist)) * (fUpXAngle - fDownXAngle)
+		set fCurPitch to GetAngle Y
+	elseif sDirection == 2 ; 2: X +
+		set fDesPitch to fUpXAngle - (1.0 - (1-(fDist / fMaxDist))) * (fUpXAngle - fDownXAngle)
+		set fCurPitch to GetAngle X
+	else ; sDirection == 3 ; 3: Y +
+		set fDesPitch to fUpXAngle - (1.0 - (1-(fDist / fMaxDist))) * (fUpXAngle - fDownXAngle)
+		set fCurPitch to GetAngle Y
+		;set fDesPitch to fDesPitch + 180
+	endif
+	;set fCurPitch to GetAngle X
+	set fCurPitch to (fCurPitch + 3600) % 360
+
+	set fDesPitch to (fDesPitch + 3600) % 360
+	
+	; distance between angles
+	set fDist2 to fCurPitch - fDesPitch
+	set fDist2 to Abs fDist2
+	
+	;set fDist2 to (fDist2 + 3600) % 360
+	
+	if fDist2 > fMoveSpeed ; move now
+	
+		; compare directions for optimal movement
+		
+		set fChange to 0
+		set fDiff to fCurPitch - fDesPitch
+		if (fDiff < 0)
+			set fChange to fMoveSpeed
+		else
+			set fChange to -fMoveSpeed
+		endif
+		if (Abs fDiff > 180)
+			set fChange to -fChange
+		endif
+		set fAngleX to fCurPitch + fChange
+		set fAngleX to (fAngleX + 3600) % 360
+		
+		if sDirection == 0 || sDirection == 2 ; X
+			SetAngle X fAngleX
+		else
+			SetAngle Y fAngleX
+		endif
+		;SetAngle X fAngleX
+		;printtoconsole "%.2f, %.2f, %.2f" fDiff fCurPitch fDesPitch
+	endif
+end

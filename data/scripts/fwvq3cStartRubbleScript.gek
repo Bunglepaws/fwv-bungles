@@ -1,0 +1,13 @@
+scn fwvq3cStartRubbleScript
+
+ref rubble
+
+begin ontriggerenter player
+
+	if fwvq3cStartRubbleRef.getDisabled == 1
+		PlaySound FXExplosionVault19
+		PlaySound FXExplosionImpactDirt
+		fwvq3cStartRubbleRef.enable
+	endif
+
+end

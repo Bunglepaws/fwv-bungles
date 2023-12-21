@@ -1,0 +1,82 @@
+scn fwvqWeepingAngelSCRIPT
+
+float curHealth
+float cTimer
+float eTimer
+short encounter
+short captured
+
+float cRand
+float angleToward
+float angleFov
+float eyesightDist
+
+ref angel
+
+;written by demeggy 23/3/13
+
+begin gamemode
+
+	;set angel to fwvWeepingAngelRef
+	set encounter to 1000
+	if encounter == 0 && 1 == 0
+		if cTimer < 5.0
+			set cTimer to cTimer + getSecondsPassed
+		else
+			set cRand to getRandomPercent
+			printc "cRand is %g" cRand
+			if cRand < 50 && (GameHour >= 20 || GameHour <= 5)
+				set cTimer to 0.0
+			else
+				MessageEx "You are being hunted..."
+				;fwvAngelMarkerRef.moveTo Player
+				set encounter to 1
+				set eTimer to 0.0
+				set cTimer to 0.0
+			endif
+		endif
+	elseif encounter == 1
+		if eTimer < 5.0
+			set eTimer to eTimer + getsecondspassed
+		else
+			;fwvWeepingAngelRef.enable 0
+			;fwvWeepingAngelRef.moveTo fwvAngelMarkerRef
+			;fwvWeepingAngelStatueRef.enable 0
+			;fwvWeepingAngelStatue2Ref.enable 0
+			;fwvWeepingAngelStatue3Ref.enable 0
+			set encounter to 2
+			set eTimer to 0.0
+		endif
+	elseif encounter == 2
+		if eTimer < 30.0
+			set eTimer to eTimer + getsecondspassed
+
+			;set angleFov to player.getHeadingAngle fwvWeepingAngelRef
+
+			if angleFov < -90 || angleFov < 90
+				printc "angle is %g" angleFov
+				printc "Angel in view!"
+			else
+				printc "angle is %g" angleFov
+				printc "Angel not in view!"
+			endif
+
+		else
+			MessageEx "You are no longer being hunted..."
+			fwvWeepingAngelRef.disable 0
+			;fwvWeepingAngelStatueRef.disable 0
+			;fwvWeepingAngelStatue2Ref.disable 0
+			;fwvWeepingAngelStatue3Ref.disable 0
+			set encounter to 0
+			set eTimer to 0.0
+		endif
+	else
+			;fwvWeepingAngelRef.disable 0
+			;fwvWeepingAngelStatueRef.disable 0
+			;fwvWeepingAngelStatue2Ref.disable 0
+			;fwvWeepingAngelStatue3Ref.disable 0
+			set encounter to 0
+			set eTimer to 0.0
+	endif
+
+end

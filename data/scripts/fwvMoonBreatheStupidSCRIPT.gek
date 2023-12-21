@@ -1,0 +1,15 @@
+scn fwvMoonBreatheStupidSCRIPT
+
+short sDoOnce
+ref rSelf
+
+Begin OnTriggerEnter Player
+
+	if sDoOnce == 0
+		ShowMessage fwvMoonBreatheStupidMESG
+		set sDoOnce to 1
+		set rSelf to GetSelf
+		rSelf.Disable
+	endif
+
+End

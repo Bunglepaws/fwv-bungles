@@ -1,0 +1,34 @@
+scn fwvItemHypercubeRedScript
+
+short destruct
+short frame
+float fTimer
+
+short effectOn
+ref rSelf
+
+begin onActivate player
+
+	MessageEx "Dimensional Collapse in 10 seconds..."
+	DisablePlayerControls
+	imod FadeToWhiteAndBackISFX
+	PlaySound fwvMaster
+	set frame to 1
+
+end
+
+begin gamemode
+
+	let rSelf := GetSelf
+
+	if player.getEquipped fwvOutfit3DGlasses == 1 && rSelf.getDistance player <= 400
+		if effectOn == 0
+			rSelf.pms fwvHologramInterface
+			set effectOn to 1
+		endif
+	else
+		rSelf.sms fwvHologramInterface
+		set effectOn to 0
+	endif
+
+end

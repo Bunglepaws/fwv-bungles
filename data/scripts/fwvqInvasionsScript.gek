@@ -1,0 +1,914 @@
+scn fwvqInvasionsScript
+
+;short eType		type of enemy
+int eType       ;type of enemy
+ref rShipBase	;type of enemy vessel
+ref rEnemyBase    ;Base Creature/NPC Type for Enemy placement
+ref rEnemyStrongBase  ; Stronger Version of Enemy
+
+float fStrongholdDate  
+
+ref eShip			;Ship Ref
+short eShipInit	; ship is initialized
+ref eShipTargets	; ship target formlist
+short eKilled	;num. of enemies killed
+
+ref enemy1		
+ref enemy2
+ref enemy3
+ref enemy4
+
+short CyberPrisoner01Uncrux
+
+short GravGo01
+short GravGo02
+short GravGo03
+short GravGo04
+
+short sGeckoRegret
+short sGarethTalkFlag
+short sLanderTutorial
+short sEnginesTutorialOnce
+short sLanderLaunch
+
+short sGeckoShameTalk
+float fGeckoTimer
+
+ref rSelf
+ref rLander
+float rLanderX
+ref rEye
+
+short sDalekEscapes
+short sDalekEscapesKarmaPenalty
+short sAutonEscapes
+short sAutonEscapesKarmaPenalty
+short sSilurianEscapes
+short sSilurianEscapesKarmaPenalty
+short sCyberEscapes
+short sCyberEscapesKarmaPenalty
+short sCyberLanderPassengers
+
+;short Kablooey
+;float fKablooeyTimer
+;float fKablooeySecondsPassed
+
+short DoOnce
+
+short sPopulateSaucer
+short sPopulateCyberShip
+short sPopulateAutonFactory
+short sPopulateSilurianBase
+
+short rLoc		;location of invasion
+short sDalekCommsActivated
+short sDalekRed
+short sCyberMauve
+short sHeadache
+
+;float x
+;float xPos
+;float z
+;float zPos
+short LanderFlee
+short LanderDoOnce
+
+float fDay		;GameDaysPassed
+float fRand		;Rand Var
+short sStage	;Invasion Stage
+short sAbduct	;Chance of companion abduction
+
+short sShield	;4 to disable, if all disabled, disable the stronghold 'death' shield
+short sHack		;true if cell door in stronghold is hacked
+short sBlow		;when a Stronghold is about to blow
+float fTimer		;stronghold countdown
+
+short sTransmatOn		;Transmat pads or GravShafts or whatever activated for Prisoner escape
+short sFoundPrisoners ; Have you spoken to prisoners?
+short sEscape  ;flag to tell prisoners to run for it, tied to AI package
+short init			;quest initialiser
+short tutorial	;tutorial messages trigger once only
+
+Begin GameMode
+
+	if init == 0
+		if getStage fwvqAutonMurder > 0
+			let fDay := GameDaysPassed   ;INITIAL TRIGGER DATE SET
+			let sStage := 0
+			let tutorial := 1
+			printc "fwvqInvasionsScript initialised"
+			let init := 1
+		endif
+	elseif sStage == 0    ;TRIGGER AN ATTACK CHANCE
+		if GameDaysPassed > fDay + 3 && (player.getInCell fwvtInterior1 == 1 && fwvq1.tCommsOn == 1) && fwvqComms.sEventPhone == 0
+			let fRand := getRandomPercent
+			printc "fwvqInvasionsScript: Chance: %g" fRand
+			;if fRand > 0  
+			;DEBUG
+			if fRand > 50
+				let rLoc := 1 + getRandomPercent * 5/100
+				if rLoc == 1
+					set fwvqComms.sEventPhone to 11
+				elseif rLoc == 2
+					set fwvqComms.sEventPhone to 12
+				elseif rLoc == 3
+					set fwvqComms.sEventPhone to 13
+				elseif rLoc == 4
+					set fwvqComms.sEventPhone to 14
+				elseif rLoc == 5
+					set fwvqComms.sEventPhone to 15
+				endif
+				let sStage := 1
+			else
+				;if fwvCompanion.cCount > 0
+					;let sAbduct := getRandomPercent
+					;if sAbduct > 75    ;This doesn't appear turned on in fwvCompanion, commenting for now - Xoanon
+						;set fwvCompanion.sCompanionAbducted to 1
+						;printc "Abduction!"
+						;set fwvCompanion.stage to 1
+					;endif
+				;endif
+				;let fDay := GameDaysPassed  ;RESET TRIGGER, NO ATTACK, 3 MORE DAYS FOR NEXT ATTACK CHANCE
+				;let fRand := 0
+				;let sStage := 0
+			endif
+		endif
+	elseif sStage == 2              ;AFTER ANSWERING PHONE, CHOOSE ENEMY TYPE
+		if tutorial == 1
+			MessageBoxEx "Invading enemies want to take over the Earth, and only you can stop them! Ignoring a plea for help will have negative consequences for your relations with the people of the Mojave, but tackling the enemy threat face on will make you a hero!"
+			;setObjectiveDisplayed fwvqInvasions 5 1
+			let tutorial := 2
+		endif
+		
+		let eType := Rand 1,5
+		; minimum(inclusive) to maximum(exclusive)
+		;let eType := 2       
+		;DEBUG
+		printc "Enemy Type %.0f" eType
+		
+		let fDay := GameDaysPassed  ;ATTACK CHANCE DAY/FAILURE TIMER COUNTER RESET AFTER ANSWER PHONE
+		
+		let sStage := 3
+		let eShipInit := 0
+	
+	elseif sStage == 3     ; SET ENEMY TYPE DETAILS AND PLACEMENTS, CHOOSE LOCATION AND PLACE ENEMIES
+
+		if fwvqInvasions.eType == 1 ; Daleks
+			let rEnemyBase := fwvqDalekAttackDroneInv
+			let rEnemyStrongBase := fwvqDalekAttackParadigmInv
+			let rShipBase := fwvqInvShipDalek
+		elseif fwvqInvasions.eType == 2 ; cybermen
+			let rEnemyBase := fwvCrCybermanInv
+			let rEnemyStrongBase := fwvCrCyberleaderInv
+			let rShipBase := FXVulturesNV ;fwvqInvShipCyber too big for town at the height of UFO. But w/o something there, script may freak out. 
+		elseif fwvqInvasions.eType == 3 ; autons
+			let rEnemyBase := fwvAutonDuplicateInv
+			let rEnemyStrongBase := fwvAutonDuplicateCMInv
+			let rShipBase := fwvBiggerSparks2 ;Cloud of Zaps for Nestene Consciousness, Eye is in elsewhere 
+		elseif fwvqInvasions.eType == 4 ; silurians 
+			let rEnemyBase := fwvSilurianGuardianInv
+			let rEnemyStrongBase := fwvSilurianWarriorInv
+			let rShipBase := FXVulturesNV ; Silurian ship does not exist. Just putting vultures in the sky. 
+		endif
+		
+		if eShipInit == 0
+			
+			if rLoc == 1 ; goodsprings
+				let eShipTargets := fwvInvGSSpacecraftTargetList
+				let eShip := fwvqInvGSSpacecraftRef.placeAtMe rShipBase
+				let enemy1 := fwvqInvGSEnemy01Ref.placeAtMe rEnemyBase
+				let enemy2 := fwvqInvGSEnemy02Ref.placeAtMe rEnemyStrongBase
+				let enemy3 := fwvqInvGSEnemy03Ref.placeAtMe rEnemyBase
+				let enemy4 := fwvqInvGSEnemy04Ref.placeAtMe rEnemyBase
+				let sStage := 4
+					
+				if fwvqLocs.fwvLgoodspringsExtVisited == 0
+					set fwvqLocs.fwvLgoodspringsExtVisited to 1
+					MessageEx "Goodsprings added to NavCom Databanks."
+				endif					
+				setStage fwvqInvasions 10
+				setObjectiveDisplayed fwvqInvasions 10 1
+
+				if eType == 2
+					let rLander := fwvGSCyberLanderREF.placeAtMe fwvCyberLanderACTV
+					set LanderFlee to 0
+					set LanderDoOnce to 0
+
+					;rlander.setscale 2.4
+					;set rLanderX to -10
+					set rLanderX to -20
+				endif
+				
+				if eType == 3
+					fwvNesteneEyeInvGS.enable
+					;fwvNesteneEyeInvGS.saa 0.2
+				endif
+				
+				if eType == 4
+					fwvGSSilurianDisc01REF.enable
+					fwvGSSilurianDisc02REF.enable
+					fwvGSSilurianDisc03REF.enable
+					fwvGSSilurianDisc04REF.enable
+				endif
+				
+				
+			elseif rLoc == 2 ; north vegas
+				let eShipTargets := fwvInvNVSpacecraftTargetList
+				let eShip := fwvqInvNVSpacecraftRef.placeAtMe rShipBase
+				let enemy1 := fwvqInvNVEnemy01Ref.placeAtMe rEnemyBase
+				let enemy2 := fwvqInvNVEnemy02Ref.placeAtMe rEnemyStrongBase
+				let enemy3 := fwvqInvNVEnemy03Ref.placeAtMe rEnemyBase
+				let enemy4 := fwvqInvNVEnemy04Ref.placeAtMe rEnemyBase
+				let sStage := 4
+					
+				if fwvqLocs.fwvLnorthvegasSquareExtVisited == 0
+					set fwvqLocs.fwvLnorthvegasSquareExtVisited to 1
+					MessageEx "North Vegas Square added to NavCom Databanks."
+				endif
+				setStage fwvqInvasions 20
+				setObjectiveDisplayed fwvqInvasions 20 1
+
+				if eType == 2
+					let rLander := fwvNVSQCyberLanderREF.placeAtMe fwvCyberLanderACTV
+					set LanderFlee to 0
+
+					;rlander.setscale 2.4
+					;set rLanderX to 10
+					set rLanderX to 20
+				endif				
+
+				if eType == 3
+					fwvNesteneEyeInvNVSQ.enable
+					;fwvNesteneEyeInvNVSQ.saa 0.2
+				endif
+				
+				if eType == 4
+					fwvNVSQSilurianDisc01REF.enable
+					fwvNVSQSilurianDisc02REF.enable
+					fwvNVSQSilurianDisc03REF.enable
+					fwvNVSQSilurianDisc04REF.enable
+				endif				
+				
+			elseif rLoc == 3 ; primm
+				let eShipTargets := fwvInvPRSpacecraftTargetList
+				let eShip := fwvqInvPRSpacecraftRef.placeAtMe rShipBase
+				let enemy1 := fwvqInvPREnemy01Ref.placeAtMe rEnemyBase
+				let enemy2 := fwvqInvPREnemy02Ref.placeAtMe rEnemyStrongBase
+				let enemy3 := fwvqInvPREnemy03Ref.placeAtMe rEnemyBase
+				let enemy4 := fwvqInvPREnemy04Ref.placeAtMe rEnemyBase
+				let sStage := 4
+				
+				if fwvqLocs.fwvLprimmExtVisited == 0
+					set fwvqLocs.fwvLprimmExtVisited to 1
+					MessageEx "Primm added to NavCom Databanks."	
+				endif
+				setStage fwvqInvasions 30
+				setObjectiveDisplayed fwvqInvasions 30 1
+
+				if eType == 2
+					let rLander := fwvPRMCyberLanderREF.placeAtMe fwvCyberLanderACTV
+					set LanderFlee to 0
+
+					;rlander.setscale 2.4
+					;set rLanderX to -10
+					set rLanderX to -20
+				endif				
+
+				if eType == 3
+					fwvNesteneEyeInvPR.enable
+					;fwvNesteneEyeInvPR.saa 0.2
+				endif
+				
+				if eType == 4
+					fwvPrimmSilurianDisc01REF.enable
+					fwvPrimmSilurianDisc02REF.enable
+					fwvPrimmSilurianDisc03REF.enable
+					fwvPrimmSilurianDisc04REF.enable
+				endif
+				
+			elseif rLoc == 4 ; nellis
+				let eShipTargets := fwvInvNASpacecraftTargetList
+				let eShip := fwvqInvNASpacecraftRef.placeAtMe rShipBase
+				let enemy1 := fwvqInvNAEnemy01Ref.placeAtMe rEnemyBase
+				let enemy2 := fwvqInvNAEnemy02Ref.placeAtMe rEnemyStrongBase
+				let enemy3 := fwvqInvNAEnemy03Ref.placeAtMe rEnemyBase
+				let enemy4 := fwvqInvNAEnemy04Ref.placeAtMe rEnemyBase
+				let sStage := 4
+								
+				if fwvqLocs.fwvLnellisAfbExtVisited == 0
+					set fwvqLocs.fwvLnellisAfbExtVisited to 1
+					MessageEx "Nellis Air Force Base added to NavCom Databanks."
+				endif
+				setStage fwvqInvasions 40
+				setObjectiveDisplayed fwvqInvasions 40 1
+
+				if eType == 2
+					let rLander := fwvNAFBCyberLanderREF.placeAtMe fwvCyberLanderACTV
+					set LanderFlee to 0
+
+					;rlander.setscale 2.4
+					;set rLanderX to -10
+					set rLanderX to -20
+				endif
+
+				if eType == 3
+					fwvNesteneEyeInvNAFB.enable
+					;fwvNesteneEyeInvNAFB.saa 0.2
+				endif				
+				
+				if eType == 4				
+					fwvNAFBSilurianDisc01REF.enable
+					fwvNAFBSilurianDisc02REF.enable				
+					fwvNAFBSilurianDisc03REF.enable
+					fwvNAFBSilurianDisc04REF.enable
+				endif
+				
+				
+			elseif rLoc == 5 ; novac
+				let eShipTargets := fwvInvNOSpacecraftTargetList
+				let eShip := fwvqInvNOSpacecraftRef.placeAtMe rShipBase
+				let enemy1 := fwvqInvNOEnemy01Ref.placeAtMe rEnemyBase
+				let enemy2 := fwvqInvNOEnemy02Ref.placeAtMe rEnemyStrongBase
+				let enemy3 := fwvqInvNOEnemy03Ref.placeAtMe rEnemyBase
+				let enemy4 := fwvqInvNOEnemy04Ref.placeAtMe rEnemyBase
+				let sStage := 4
+				
+				if fwvqLocs.fwvLnovacExtVisited == 0
+					set fwvqLocs.fwvLnovacExtVisited to 1
+					MessageEx "Novac added to NavCom Databanks."
+				endif
+				setStage fwvqInvasions 50
+				setObjectiveDisplayed fwvqInvasions 50 1
+
+				if eType == 2
+					let rLander := fwvNOVCyberLanderREF.placeAtMe fwvCyberLanderACTV
+					set LanderFlee to 0
+
+					;rlander.setscale 2.4
+					;set rLanderX to -10
+					set rLanderX to -20
+				endif		
+				
+				if eType == 3
+					fwvNesteneEyeInvNOV.enable
+					;fwvNesteneEyeInvNOV.saa 0.2
+				endif
+				
+				if eType == 4
+					fwvNovacSilurianDisc01REF.enable
+					fwvNovacSilurianDisc02REF.enable
+					fwvNovacSilurianDisc03REF.enable
+					fwvNovacSilurianDisc04REF.enable
+				endif					
+									
+			endif
+			let eShipInit := 2
+		endif
+		
+	elseif sStage == 4  ; PROTECT TOWN BY KILLING 4 ENEMIES, OR FAIL TO PROTECT AFTER 24 HOURS
+	; and gameDaysPassed <= fDay + 1 - Commented out because it conflicts with Failure State condition
+		
+		if GameDaysPassed > fDay + 1
+			printc "Failure to Defend!"
+			let fDay := GameDaysPassed   ;RESET ATTACK CHANCE COUNTER TO 3 DAYS AFTER FAILURE
+			let fRand := 0
+			let sStage := 0
+			let eKilled := 0 ; FAILURE TO PROTECT SETS eKILLED TO ZERO
+			MessageBoxEx "You failed to assist the people of the Mojave with their defense against the Invaders! They will not forget easily..."
+			;MessageBoxEx "GameDaysPassed: %g fDay: %g sStage: %g" GameDaysPassed fDay sStage
+			playsound UIKarmaDown
+				if rLoc == 1
+					setObjectiveDisplayed fwvqInvasions 10 0
+					addReputation RepNVGoodsprings 0 1
+				elseif rLoc == 2
+					setObjectiveDisplayed fwvqInvasions 20 0
+					addReputation RepNVFreeside 0 1
+				elseif rLoc == 3
+					setObjectiveDisplayed fwvqInvasions 30 0
+					addReputation RepNVPrimm 0 1
+				elseif rLoc == 4
+					setObjectiveDisplayed fwvqInvasions 40 0
+					addReputation RepNVBoomer 0 1
+				elseif rLoc == 5
+					setObjectiveDisplayed fwvqInvasions 50 0
+					addReputation RepNVNovac 0 1
+				endif
+			eShip.disable
+			eShip.MarkForDelete
+			enemy1.disable
+			enemy2.disable
+			enemy3.disable
+			enemy4.disable
+			enemy1.MarkForDelete
+			enemy2.MarkForDelete
+			enemy3.MarkForDelete
+			enemy4.MarkForDelete
+			if eType == 1
+				printc "Daleks left, bored"
+			elseif eType == 2
+				rLander.disable
+				rLander.MarkForDelete
+			elseif eType == 3
+				fwvNesteneEyeInvNVSQ.disable
+				fwvNesteneEyeInvPR.disable
+				fwvNesteneEyeInvNAFB.disable
+				fwvNesteneEyeInvNOV.disable
+				fwvNesteneEyeInvGS.disable
+			elseif eType == 4
+				if rLoc == 1
+					fwvGSSilurianDisc01REF.disable
+					fwvGSSilurianDisc02REF.disable
+					fwvGSSilurianDisc03REF.disable
+					fwvGSSilurianDisc04REF.disable
+					fwvGSSilurianDisc01REF.MarkForDelete
+					fwvGSSilurianDisc02REF.MarkForDelete
+					fwvGSSilurianDisc03REF.MarkForDelete
+					fwvGSSilurianDisc04REF.MarkForDelete
+				elseif rLoc == 2
+					fwvNVSQSilurianDisc01REF.disable
+					fwvNVSQSilurianDisc02REF.disable
+					fwvNVSQSilurianDisc03REF.disable
+					fwvNVSQSilurianDisc04REF.disable
+					fwvNVSQSilurianDisc01REF.MarkForDelete
+					fwvNVSQSilurianDisc02REF.MarkForDelete
+					fwvNVSQSilurianDisc03REF.MarkForDelete
+					fwvNVSQSilurianDisc04REF.MarkForDelete
+				elseif rLoc == 3
+					fwvPrimmSilurianDisc01REF.disable
+					fwvPrimmSilurianDisc02REF.disable
+					fwvPrimmSilurianDisc03REF.disable
+					fwvPrimmSilurianDisc04REF.disable
+					fwvPrimmSilurianDisc01REF.MarkForDelete
+					fwvPrimmSilurianDisc02REF.MarkForDelete
+					fwvPrimmSilurianDisc03REF.MarkForDelete
+					fwvPrimmSilurianDisc04REF.MarkForDelete
+				elseif rLoc == 4
+					fwvNAFBSilurianDisc01REF.disable
+					fwvNAFBSilurianDisc02REF.disable				
+					fwvNAFBSilurianDisc03REF.disable
+					fwvNAFBSilurianDisc04REF.disable
+					fwvNAFBSilurianDisc01REF.MarkForDelete
+					fwvNAFBSilurianDisc02REF.MarkForDelete				
+					fwvNAFBSilurianDisc03REF.MarkForDelete
+					fwvNAFBSilurianDisc04REF.MarkForDelete
+				elseif rLoc == 5
+					fwvNovacSilurianDisc01REF.disable
+					fwvNovacSilurianDisc02REF.disable
+					fwvNovacSilurianDisc03REF.disable
+					fwvNovacSilurianDisc04REF.disable	
+					fwvNovacSilurianDisc01REF.MarkForDelete
+					fwvNovacSilurianDisc02REF.MarkForDelete
+					fwvNovacSilurianDisc03REF.MarkForDelete
+					fwvNovacSilurianDisc04REF.MarkForDelete							
+				endif
+			endif
+		else 
+			if eKilled < 4
+				;printc "waiting for 4"
+			elseif eKilled == 4
+				printc "eKilled %g trigger!" eKilled
+				;setObjectiveDisplayed fwvqInvasions 60 1
+				if rLoc == 1
+					setObjectiveDisplayed fwvqInvasions 10 0
+					addReputation RepNVGoodsprings 1 1
+				elseif rLoc == 2
+					setObjectiveDisplayed fwvqInvasions 20 0
+					addReputation RepNVFreeside 1 1
+				elseif rLoc == 3
+					setObjectiveDisplayed fwvqInvasions 30 0
+					addReputation RepNVPrimm 1 1
+				elseif rLoc == 4
+					setObjectiveDisplayed fwvqInvasions 40 0
+					addReputation RepNVBoomer 1 1
+				elseif rLoc == 5
+					setObjectiveDisplayed fwvqInvasions 50 0
+					addReputation RepNVNovac 1 1
+				endif
+				eShip.disable 3
+
+				if eType == 1
+					printc "daleks gone"
+					playsound fwvfxDalekSaucerWoosh
+				elseif eType == 2
+					set LanderFlee to 1
+				elseif eType == 3
+					printc "autons gone"
+					fwvNesteneEyeInvNVSQ.disable
+					fwvNesteneEyeInvPR.disable
+					fwvNesteneEyeInvNAFB.disable
+					fwvNesteneEyeInvNOV.disable
+					fwvNesteneEyeInvGS.disable
+				elseIf eType == 4
+					printc "attempt Silur Reset"
+
+					if rLoc == 1
+						fwvGSSilurianDisc01REF.disable 4
+						fwvGSSilurianDisc02REF.disable 4
+						fwvGSSilurianDisc03REF.disable 4
+						fwvGSSilurianDisc04REF.disable 4
+						fwvGSSilurianDisc01REF.MarkForDelete
+						fwvGSSilurianDisc02REF.MarkForDelete
+						fwvGSSilurianDisc03REF.MarkForDelete
+						fwvGSSilurianDisc04REF.MarkForDelete
+					elseif rLoc == 2
+						fwvNVSQSilurianDisc01REF.disable 4
+						fwvNVSQSilurianDisc02REF.disable 4
+						fwvNVSQSilurianDisc03REF.disable 4
+						fwvNVSQSilurianDisc04REF.disable 4
+						fwvNVSQSilurianDisc01REF.MarkForDelete
+						fwvNVSQSilurianDisc02REF.MarkForDelete
+						fwvNVSQSilurianDisc03REF.MarkForDelete
+						fwvNVSQSilurianDisc04REF.MarkForDelete
+					elseif rLoc == 3
+						fwvPrimmSilurianDisc01REF.disable 4
+						fwvPrimmSilurianDisc02REF.disable 4
+						fwvPrimmSilurianDisc03REF.disable 4
+						fwvPrimmSilurianDisc04REF.disable 4
+						fwvPrimmSilurianDisc01REF.MarkForDelete
+						fwvPrimmSilurianDisc02REF.MarkForDelete
+						fwvPrimmSilurianDisc03REF.MarkForDelete
+						fwvPrimmSilurianDisc04REF.MarkForDelete
+					elseif rLoc == 4
+						fwvNAFBSilurianDisc01REF.disable 4
+						fwvNAFBSilurianDisc02REF.disable 4				
+						fwvNAFBSilurianDisc03REF.disable 4
+						fwvNAFBSilurianDisc04REF.disable 4
+						fwvNAFBSilurianDisc01REF.MarkForDelete
+						fwvNAFBSilurianDisc02REF.MarkForDelete				
+						fwvNAFBSilurianDisc03REF.MarkForDelete
+						fwvNAFBSilurianDisc04REF.MarkForDelete
+					elseif rLoc == 5
+						fwvNovacSilurianDisc01REF.disable 4
+						fwvNovacSilurianDisc02REF.disable 4
+						fwvNovacSilurianDisc03REF.disable 4
+						fwvNovacSilurianDisc04REF.disable	 4
+						fwvNovacSilurianDisc01REF.MarkForDelete
+						fwvNovacSilurianDisc02REF.MarkForDelete
+						fwvNovacSilurianDisc03REF.MarkForDelete
+						fwvNovacSilurianDisc04REF.MarkForDelete
+					endif
+				endif
+								
+				eShip.MarkForDelete
+				let sStage := 5
+			endif
+		endif
+		
+		if eShipInit == 2
+			eShip.SetRefVariable "rSelf", eShip
+			let eShipInit := 1
+		endif
+		
+	elseif sStage == 5      ; KILLED 4 ENEMIES, UNLOCK STRONGHOLD, CYBERLANDER FLIES OFF
+	
+		if tutorial == 2
+			MessageBoxEx "Invader Strongholds are unique dungeons that are accessible for 24 hours only after an Invasion attempt. You can travel to the relevant dungeon, and whilst there, may free captive humans, loot rare items, or even destroy the Stronghold by overloading its power source!"
+			let tutorial := 3
+		endif
+		
+		SetObjectiveDisplayed fwvqInvasions 60 1
+		
+		if eType == 1
+			MessageEx "[Stronghold: Dalek Saucer unlocked]"
+			let fStrongholdDate := GameDaysPassed
+			let fwvqLocs.fwvLstrongholdDalekVisited := 1
+			let sPopulateSaucer := 1
+		elseif eType == 2
+			MessageEx "[Stronghold: Cyber-Ship unlocked]"
+			let fStrongholdDate := GameDaysPassed
+			let fwvqLocs.fwvLstrongholdCybermenVisited := 1
+			let sPopulateCyberShip := 1
+		elseif eType == 3
+			MessageEx "[Stronghold: Auton Factory unlocked]"
+			let fStrongholdDate := GameDaysPassed
+			let fwvqLocs.fwvLstrongholdAutonVisited := 1
+			let sPopulateAutonFactory := 1
+		elseif eType == 4
+			MessageEx "[Stronghold: Silurian Scout Base unlocked]"
+			let fStrongholdDate := GameDaysPassed
+			let fwvqLocs.fwvLstrongholdSilurianVisited := 1
+			let sPopulateSilurianBase := 1
+		endif
+
+		let fDay := GameDaysPassed ; RESET ATTACK COUNTER FROM THIS MOMENT, WILL RESET AGAIN IF PLAYER BLOWS UP STRONGHOLD
+		let fRand := 0
+		let sStage := 0
+	endif
+
+	;STRONGHOLDS
+	;=============
+	
+	
+
+
+	if sBlow == 1
+		if player.getInCell fwvStrongholdDalek == 1	 ; THIS DISABLES RED ALERT IMOD EFFECT USED IN DALEK SAUCER	 
+			if sDalekRed == 0	
+				imod fwvXORedAlert60
+				set sDalekRed to 1
+			endif
+		else				
+			rimod fwvXORedAlert60
+			set sDalekRed to 0	
+		endif
+
+		if player.getInCell fwvStrongholdAuton == 1	 ; THIS DISABLES IMOD USED IN AUTON FACTORY	 
+			if sHeadache == 0	
+				imod fwvXOAutonMind60
+				set sHeadache to 1
+			endif
+		else				
+			rimod fwvXOAutonMind60
+			set sHeadache to 0	
+		endif
+		
+		if player.getInCell fwvStrongholdCyberman == 1	; THIS DISABLES MAUVE ALERT IN CYBERSHIP	
+			if sCyberMauve == 0	
+				imod fwvXOMauveAlert60
+				set sCyberMauve to 1
+			endif
+		else				
+			rimod fwvXOMauveAlert60
+			set sCyberMauve to 0	
+		endif
+
+		if player.getInCell fwvtInterior1 == 1 && fwvq1.tFlying == 1  ; DO STRONGHOLD CLEANUP/RESET AND START TIMER FOR EXPLOSION EFFECT
+			if DoOnce == 0
+
+				if eType == 1  ;  DALEKS
+					printc "Daleks Go"
+					let fwvqLocs.fwvLstrongholdDalekVisited := 0
+					if sDalekEscapes < 3
+						MessageEx "You may have escaped, but not all the prisoners did..."
+						set sDalekEscapesKarmaPenalty to (  0 - (  (3 - sDalekEscapes) * 5) )
+						rewardKarma sDalekEscapesKarmaPenalty
+						printc "sDalekEscapes: %g" sDalekEscapes
+						printc "sDalekEscapesKarmaPenalty: %g" sDalekEscapesKarmaPenalty
+					else
+						MessageEx "You saved all the prisoners, the people of the Mojave will be grateful!"
+						printc "sDalekEscapes: %g" sDalekEscapes
+						printc "sDalekEscapesKarmaPenalty: 0" 
+					endif
+					setObjectiveDisplayed fwvqInvasions 100 1
+					setObjectiveDisplayed fwvqInvasions 60 0				
+					rimod fwvXORedAlert60
+					set fwvqInvasions.sDalekRed to 0
+
+					set sFoundPrisoners to 0
+					set sEscape to 0
+					set sShield	to 0
+					
+					set sTransmatOn to 0
+					fwvDalekTransmatLight01.disable
+					fwvDalekTransmatLight02.disable
+					fwvDalekTransmatLight03.disable
+					fwvDalekTransmatLight01A.disable
+					fwvDalekTransmatLight02A.disable
+					fwvDalekTransmatLight03A.disable
+					fwvTransmatZap01.disable
+					fwvTransmatZap02.disable
+					fwvTransmatZap03.disable
+					printc "Daleks Go Done"
+					playsound FXExplosionNukeBigDemo
+					imod fwvxodehydrationisfx
+					printc "DoOnce %g" DoOnce
+					set DoOnce to 1
+					printc "DoOnce %g" DoOnce	
+				endif
+				
+				if eType == 2   ;  CYBERMEN
+					printc "Cybermen Go"
+					let fwvqLocs.fwvLstrongholdCybermenVisited := 0
+					if sCyberEscapes < 4    ;CHANGE NUMBER TO # OF PRISONERS PLACED
+						MessageEx "You may have escaped, but not all the prisoners did..."
+						set sCyberEscapesKarmaPenalty to (  0 - (  (4 - sCyberEscapes) * 5) )
+						rewardKarma sCyberEscapesKarmaPenalty
+						printc "sCyberEscapes: %g" sCyberEscapes
+						printc "sCyberEscapesKarmaPenalty: %g" sCyberEscapesKarmaPenalty
+					else
+						MessageEx "You saved all the prisoners, the people of the Mojave will be grateful!"				
+						printc "sCyberEscapes: %g" sCyberEscapes
+						printc "sCyberEscapesKarmaPenalty: 0" 
+					endif			
+					setObjectiveDisplayed fwvqInvasions 100 1
+					setObjectiveDisplayed fwvqInvasions 60 0				
+					rimod fwvXOMauveAlert60
+					set sCyberMauve to 0	
+
+					set sFoundPrisoners to 0
+					set sEscape to 0
+					set sShield	to 0
+
+					set sTransmatOn to 0  ; the escape mechanism for prisoners
+					printc "Cybermen Go Done"
+					playsound FXExplosionNukeBigDemo
+					imod fwvxodehydrationisfx
+					printc "DoOnce %g" DoOnce
+					set DoOnce to 1
+					printc "DoOnce %g" DoOnce	
+				endif
+				
+				if eType == 3  ;  AUTONS
+					printc "Autons Go"
+					let fwvqLocs.fwvLstrongholdAutonVisited := 0
+					if sAutonEscapes < 4
+						MessageEx "You may have escaped, but not all the prisoners did..."
+						set sAutonEscapesKarmaPenalty to (  0 - (  (4 - sAutonEscapes) * 5) )
+						rewardKarma sAutonEscapesKarmaPenalty
+						printc "sAutonEscapes: %g" sAutonEscapes
+						printc "sAutonEscapesKarmaPenalty: %g" sAutonEscapesKarmaPenalty
+					else
+						MessageEx "You saved all the prisoners, the people of the Mojave will be grateful!"				
+						printc "sAutonEscapes: %g" sAutonEscapes
+						printc "sAutonEscapesKarmaPenalty: 0" 
+					endif			
+					; PLACE ALL MAP RESET FUNCTIONS HERE - DOOR CLOSE/LOCKS, ACTIVATOR RESETS, ETC
+
+
+					setObjectiveDisplayed fwvqInvasions 100 1
+					setObjectiveDisplayed fwvqInvasions 60 0				
+					rimod fwvXOAutonMind60
+					set sHeadache to 0
+					
+					set sFoundPrisoners to 0
+					set sEscape to 0
+					set sShield	to 0  
+
+					set sTransmatOn to 0  ; the escape mechanism for prisoners
+					
+					printc "Autons Go Done"
+					playsound FXExplosionNukeBigDemo
+					imod fwvxodehydrationisfx
+					printc "DoOnce %g" DoOnce
+					set DoOnce to 1
+					printc "DoOnce %g" DoOnce						
+				endif
+				
+				if eType == 4  ;  SILURIANS
+					printc "Silurians Go"
+					let fwvqLocs.fwvLstrongholdSilurianVisited := 0
+					if sSilurianEscapes < 4
+						MessageEx "You may have escaped, but not all the prisoners did..."
+						set sSilurianEscapesKarmaPenalty to (  0 - (  (4 - sSilurianEscapes) * 5) )
+						rewardKarma sSilurianEscapesKarmaPenalty
+						printc "sSilurianEscapes: %g" sSilurianEscapes
+						printc "sSilurianEscapesKarmaPenalty: %g" sSilurianEscapesKarmaPenalty
+					else
+						MessageEx "You saved all the prisoners, the people of the Mojave will be grateful!"				
+						printc "sSilurianEscapes: %g" sSilurianEscapes
+						printc "sSilurianEscapesKarmaPenalty: 0" 
+					endif
+					printc "Silurians Go 2"
+					printc "Silurians Go 3"					
+					if sGeckoShameTalk == 0 && getstage fwvqSilurianPeaceAttempt01 == 100 && fwvGeckoREF.getdead == 0 && fwvqSilurianPeaceAttempt01.sGeckoRegretFlag == 1
+						set sGeckoShameTalk to 1
+					endif
+					printc "Silurians Go 4"
+
+					setObjectiveDisplayed fwvqInvasions 100 1
+					setObjectiveDisplayed fwvqInvasions 60 0				
+					set sFoundPrisoners to 0
+					set sEscape to 0
+					set sTransmatOn to 0  ; the escape mechanism for prisoners
+
+
+					printc "Silurians Go 5"
+					playsound FXExplosionNukeBigDemo
+					imod fwvxodehydrationisfx
+					printc "DoOnce %g" DoOnce
+					set DoOnce to 1
+					printc "DoOnce %g" DoOnce	
+
+				endif
+							
+			elseif DoOnce == 1
+				let fDay := GameDaysPassed  ;BLOWING STRONGHOLD SETS ATTACK CHANCE COUNTER TO 3 DAYS FROM CURRENT
+				printc "After eType Stuff"
+				let sShield := 0
+				let sHack := 0
+				let eKilled := 0     ;BLOWING STRONGHOLD SETS eKILLED TO ZERO
+				printc "Flying, eKilled to %g" eKilled
+				let eType := 0
+				MessageEx "Stronghold destroyed!"
+				printc "Stronghold Destroyed!"
+				if rLoc == 1
+					addReputation RepNVGoodsprings 1 1
+					let rLoc := 0
+				elseif rLoc == 2
+					addReputation RepNVFreeside 1 1
+					let rLoc := 0
+				elseif rLoc == 3
+					addReputation RepNVPrimm 1 1
+					let rLoc := 0
+				elseif rLoc == 4
+					addReputation RepNVBoomer 1 1
+					let rLoc := 0
+				elseif rLoc == 5
+					addReputation RepNVNovac 1 1
+					let rLoc := 0
+				endif
+				rewardXP 100
+				let sBlow := 0
+				printc "sBlow %g" sBlow
+				set DoOnce to 2
+			endif
+		else
+			if fTimer < 60.0
+				set fTimer to fTimer + getSecondsPassed
+			else
+				player.killActor
+				PlaySound FXExplosionNukeSmall3D
+				imod WhiteISFX
+				set fTimer to 0
+			endif
+		endif
+	endif
+
+	;MISC  - DALEK SAUCER POPULATION, TUTORIAL MESSAGES, AND EXPLOSION OF STRONGHOLDS
+	;====
+
+	if player.getInCell fwvStrongholdDalek == 1      ;POPULATE DALEK SAUCER, SET CAPTIVES, SET CAPTIVE # TO 0, ETC
+
+		if tutorial == 3
+			MessageBoxEx "You have entered the Invaders' Stronghold. There is no going back... freeing captives and destroying the Stronghold will improve Faction Relations in the Mojave, but letting the Invaders get away unscathed will not look good back at ground level..."
+			set tutorial to 4
+		endif
+		;CALLING IN AN EXTERNAL SCRIPT FOR SCRIPT SHORTENING
+	endif
+		
+	if player.getInCell fwvStrongholdCyberman == 1      ;POPULATE CYBERSHIP, SET CAPTIVES, SET CAPTIVE # TO 0, ETC
+		if tutorial == 3
+			MessageBoxEx "You have entered the Invaders' Stronghold. There is no going back... freeing captives and destroying the Stronghold will improve Faction Relations in the Mojave, but letting the Invaders get away unscathed will not look good back at ground level..."
+			set tutorial to 4
+		endif
+		;CALLING IN AN EXTERNAL SCRIPT FOR SCRIPT SHORTENING
+	endif	
+
+	if player.getInCell fwvStrongholdAuton == 1      ;POPULATE AUTON FACTORY, SET CAPTIVES, SET CAPTIVE # TO 0, ETC
+		if tutorial == 3
+			MessageBoxEx "You have entered the Invaders' Stronghold. There is no going back... freeing captives and destroying the Stronghold will improve Faction Relations in the Mojave, but letting the Invaders get away unscathed will not look good back at ground level..."
+			set tutorial to 4
+		endif
+	
+		;if sPopulateAutonFactory == 1
+		;CALLING IN AN EXTERNAL SCRIPT FOR SCRIPT SHORTENING
+
+	endif	
+
+	if player.getInCell fwvSilurianStronghold == 1      ;POPULATE SILURIAN BASE, SET CAPTIVES, SET CAPTIVE # TO 0, ETC
+		if tutorial == 3
+			MessageBoxEx "You have entered the Invaders' Stronghold. There is no going back... freeing captives and destroying the Stronghold will improve Faction Relations in the Mojave, but letting the Invaders get away unscathed will not look good back at ground level..."
+			set tutorial to 4
+		endif
+
+	endif	
+
+	if GameDaysPassed > fStrongholdDate + 1 && sStage == 0  ; LOSE STRONGHOLD COORDINATES IF NOT VISITED IN TIME, MUST BE STAGE 0
+			
+		if fwvqLocs.fwvLstrongholdDalekVisited == 1
+			MessageEx "[Dalek Saucer coordinates lost]"
+			let eKilled := 0
+			let fDay := GameDaysPassed
+			setObjectiveDisplayed fwvqInvasions 60 0
+			set fwvqLocs.fwvLstrongholdDalekVisited to 0
+		endif	
+
+		
+		if fwvqLocs.fwvLstrongholdCybermenVisited == 1
+			MessageEx "[Cyberman Ship coordinates lost]"
+			let eKilled := 0
+			let fDay := GameDaysPassed
+			setObjectiveDisplayed fwvqInvasions 60 0
+			set fwvqLocs.fwvLstrongholdCybermenVisited to 0
+		endif
+		
+		
+		if fwvqLocs.fwvLstrongholdAutonVisited == 1
+			MessageEx "[Auton Factory coordinates lost]"
+			let eKilled := 0
+			let fDay := GameDaysPassed
+			setObjectiveDisplayed fwvqInvasions 60 0			
+			set fwvqLocs.fwvLstrongholdAutonVisited to 0
+		endif
+
+
+		if fwvqLocs.fwvLstrongholdSilurianVisited  == 1
+			MessageEx "[Silurian Scout Base coordinates lost]"
+			let eKilled := 0
+			let fDay := GameDaysPassed
+			setObjectiveDisplayed fwvqInvasions 60 0			
+			set fwvqLocs.fwvLstrongholdSilurianVisited to 0
+			SetEnemy PlayerFaction fwvSilurianFaction 0 0
+		endif	
+	endif
+
+	if sGeckoShameTalk == 1
+		if fGeckoTimer < 15.0
+			set fGeckoTimer to fGeckoTimer + GetSecondsPassed
+			;printc "fGeckoTimer %g" fGeckoTimer
+		else
+			player.startconversation fwvGeckoREF 
+		endif
+	endif
+	
+End

@@ -1,0 +1,9 @@
+scn fwvq2Page3SCRIPT
+
+begin onactivate
+
+	ShowMessage fwvq2Page3Message
+	fwvq2Page4Ref.enable
+	Disable 1
+
+end

@@ -1,0 +1,12 @@
+scn fwvTardisLabExtractorUnitSCRIPT
+
+float fCalc
+
+begin onactivate player
+	if fwvqCraft.brewing == 0
+		activate
+	else
+		set fCalc to fwvqCraft.brewTime - fwvqCraft.lTimer
+		ShowMessage fwvTCchemistryReplicatingMessage fCalc
+	endif
+end

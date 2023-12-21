@@ -1,0 +1,165 @@
+scn fwvFuncDematTardis
+
+ref rPoliceBox
+ref rBoxPosition
+ref rStartPose
+ref rEndPose
+float fPz
+float fMx
+float fMy
+float fMz
+float fCalc
+
+short sFadeOut
+; TEST
+; new
+short sNoFadeOut ; 1 if we can't see the box dematerialize
+short sNoFadeIn ; 1 if we can't see the box rematerialize
+
+
+begin Function { rEndPose }
+
+	let rPoliceBox := fwvq1.rPoliceBoxRef
+	let rStartPose := fwvq1.enableDoor
+	fwvTardisRecallExtFadeInBox.Disable 0   ; see if this helps the flicker - XO
+	; Check if the policebox ref exists
+	; OR if we're in the middle of switching console rooms during a space loop
+	if rPoliceBox.IsFormValid == 1 || eval (fwvqEvents.event[10] && fwvq1.tSwitchTheme > 0)
+		; if not, assume landing location is where to go
+		; we can't animate a fade-out without the box already there
+		let sNoFadeOut := 0           
+		;exists, so allow fade out
+	endif
+	
+	;Xoanon's attempt to force the FadeIn/FadeOut Model to force to the right model
+	call fwvFuncChangeFaderPoliceBoxSCRIPT fwvTardisRecallExtFadeInBox
+	printc "PBFader Updater called on Demat"	
+	
+	
+	; determine whether to play the fadeout animation
+	if sNoFadeOut == 0   ; allow fade out...
+		; are we in the same cell as the player?
+		if Player.IsInInterior == 1 && rPoliceBox.IsInInterior == 1 && Player.GetParentWorldspace == rPoliceBox.GetParentWorldspace
+			printc "in Same Interior Worldspace as Player"
+			let sNoFadeOut := 0          ;nearby, so allow fadeout
+		; if not, are we in the same exterior worldspace?
+		elseif Player.IsInInterior == 0 && rPoliceBox.IsInInterior == 0 && Player.GetParentWorldspace == rPoliceBox.GetParentWorldspace
+			; and are we close enough to the player to bother animating out?
+			let fCalc := Player.GetDistance2D rPoliceBox
+			printc "both Outside, fCalc %g" fCalc
+			if fCalc < 48.0
+				let sNoFadeOut := 0         ;nearby, allow fadeout
+			else
+				let sNoFadeOut := 1         ; far away, don't fade out
+			endif
+		else
+			let sNoFadeOut := 1
+		endif
+	endif
+	
+	; we should fade out the box first
+	if sNoFadeOut == 0
+		; fading activator is "fwvTardisRecallExtFadeInBox"
+		; printc "sNoFadeOut is 0 so..."
+		; set fading position
+		fwvTardisRecallExtFadeInBox.Disable 0
+		fwvTardisRecallExtFadeInBox.MoveTo rPoliceBox
+		Call fwvFuncSetPosition { fwvTardisRecallExtFadeInBox (rStartPose.GetPos X) (rStartPose.GetPos Y) (rStartPose.GetPos Z) }
+		let fPz := rStartPose.GetAngle Z
+		fwvTardisRecallExtFadeInBox.SetAngle Z fPz
+	endif
+	
+	; now we've gotta decide whether to fade back in or not
+
+	; are we running the intro quest, at the fade-out moment? (don't fade-in to give impression of multiple policeboxes)
+	; OR we're switching console rooms during a space-loop
+	if fwvq1a.frame == 13 || eval (fwvqEvents.event[10] && fwvq1.tSwitchTheme > 0)
+		let sNoFadeIn := 1
+	; are we in the same cell as the player?
+	elseif rEndPose.GetInSameCell Player
+		let sNoFadeIn := 0
+	; if not, are we in the same exterior worldspace?
+	elseif Player.IsInInterior == 0 && rEndPose.IsInInterior == 0 && Player.GetParentWorldspace == rEndPose.GetParentWorldspace
+		; and are we close enough to the player to bother animating in?
+		let fCalc := Player.GetDistance2D rEndPose
+		printc "fCalc %g Fadein" fCalc
+		if fCalc < 480.0
+			let sNoFadeIn := 0
+		else
+			let sNoFadeIn := 1
+		endif
+	else
+		let sNoFadeIn := 1
+	endif
+	
+	
+	; we should fade in the box first
+	if sNoFadeOut == 1 && sNoFadeIn == 0      ;no fade out but fade in, this would be the most common? 
+		printc "no fade out but fade in"
+		; fading activator is "fwvTardisRecallExtFadeInBox"
+		; set fading position
+		fwvTardisRecallExtFadeInBox.Disable 0
+		;fwvTardisRecallExtFadeInBox.MoveTo rEndPose
+		Call fwvFuncSetPosition { fwvTardisRecallExtFadeInBox (rEndPose.GetPos X) (rEndPose.GetPos Y) (rEndPose.GetPos Z) }
+		let fPz := rEndPose.GetAngle Z
+		fwvTardisRecallExtFadeInBox.SetAngle Z fPz
+		fwvTardisRecallExtFadeInBox.MoveTo rEndPose
+	endif
+	
+	; can't write variables until it's enabled, so if allowing fade out OR allowing fade in
+	if sNoFadeOut == 0 || sNoFadeIn == 0
+		fwvTardisRecallExtFadeInBox.Enable 0
+		; initialize the animation
+		let fwvTardisRecallExtFadeInBox.fTimeFade := 0.0
+	endif
+	
+	
+	; fade out, then fade back in
+	if sNoFadeOut == 0 && sNoFadeIn == 0
+		printc "0 and 0"
+		fwvTardisRecallExtFadeInBox.moveto rPoliceBox ;XOTEST
+		let fwvTardisRecallExtFadeInBox.sFadeOut := 2
+		let fwvTardisRecallExtFadeInBox.sDoNow := 1
+		;fwvTardisRecallExtFadeInBox.moveto rEndPose  ;XOTEST
+	; fade out but not back in
+	elseif sNoFadeOut == 0 && sNoFadeIn == 1
+		printc "0 and 1"
+		let fwvTardisRecallExtFadeInBox.sFadeOut := 1
+		let fwvTardisRecallExtFadeInBox.sDoNow := 1
+	; only fade in
+	elseif sNoFadeOut == 1 && sNoFadeIn == 0
+		printc "1 and 0"
+		let fwvTardisRecallExtFadeInBox.sFadeOut := 0
+		let fwvTardisRecallExtFadeInBox.sDoNow := 1
+	; don't do any animation
+	elseif sNoFadeOut == 1 && sNoFadeIn == 1
+		printc "1 and 1"
+		; cancel the animation
+		let fwvq1.sMoveBoxNow := 4
+	endif
+	
+	
+	; reset these variables to the end pose
+	let fMx := rEndPose.GetPos X
+	let fMy := rEndPose.GetPos Y
+	let fMz := rEndPose.GetPos Z
+	let fPz := rEndPose.GetAngle Z
+	let fPz := fPz
+	
+	; where the player steps out at
+	let fMx := Sin fPz
+	let fMy := Cos fPz
+	let fMx := fMx * 96 + rEndPose.GetPos X
+	let fMy := fMy * 96 + rEndPose.GetPos Y
+	let fMz := rEndPose.GetPos Z
+	;let fPz := fPz + 180
+
+	; set the player to leave the box at this marker
+	PoliceBoxDoorExitRef.moveTo rEndPose
+	Call fwvFuncSetPosition { PoliceBoxDoorExitRef fMx fMy fMz }
+	PoliceBoxDoorExitRef.SetAngle Z fPz
+	
+	; and move the landing location...
+	let fwvq1.enableDoor := rEndPose
+	Call fwvFuncResetTardisExitLocation
+end

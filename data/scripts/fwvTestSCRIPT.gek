@@ -1,0 +1,17 @@
+scn fwvTestSCRIPT
+
+; for debugging
+
+short quickmenu
+
+begin gamemode
+
+	if getKeyPress 50	== 1	; Shows the Quick-Ref guide at any point during the mod
+
+		printc "Quickmenu Pressed..."
+		ShowMessage fwvModQuickrefMessage
+		set quickMenu to 1
+
+	endif
+
+end

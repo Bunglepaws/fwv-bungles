@@ -1,0 +1,11 @@
+scn fwvTWireDangleScript
+
+begin GameMode
+	if IsAnimPlaying == 0
+		if fwvq1.tFlying == 0 || fwvq1.sShakeEnabled == 0
+			PlayGroup Forward 0
+		else
+			PlayGroup FastForward 0
+		endif
+	endif
+end

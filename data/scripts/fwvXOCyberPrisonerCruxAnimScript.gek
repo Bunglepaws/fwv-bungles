@@ -1,0 +1,45 @@
+scn fwvXOCyberPrisonerCruxAnimScript
+
+
+ref rSelf
+short sExitOnce
+
+begin GameMode
+	
+	set rSelf to GetSelf
+	;if fwvqInvasions.CyberPrisoner01Uncrux == 0 
+	;	if fwvqInvasionsCyber.sCruxOnce == 1
+	;		rSelf.playidle NVCrucifixDynamicIdle
+	;		rSelf.setpos z -272
+	;		printc "CruxAnimScript a go"
+	;		set fwvqInvasionsCyber.sCruxOnce to 0 
+	;	endif
+	;endif
+	
+
+	;if fwvqInvasions.CyberPrisoner01Uncrux == 0 
+		;if fwvqInvasionsCyber.sCruxOnce == 1
+
+		;	fwvCybStrngPrisoner01NPC.playidle NVCrucifixDynamicIdle
+		;	fwvCybStrngPrisoner01NPC.setpos z -290
+		;	printc "CruxAnimScript01 a go"
+
+		;	fwvCybStrngPrisoner02NPC.playidle NVCrucifixDynamicIdle
+		;	fwvCybStrngPrisoner02NPC.setpos z -290
+		;	printc "CruxAnimScript02 a go"
+
+		;	fwvCybStrngPrisoner03NPC.playidle NVCrucifixDynamicIdle
+		;	fwvCybStrngPrisoner03NPC.setpos z -290
+		;	printc "CruxAnimScript03 a go"
+
+		;	fwvCybStrngPrisoner04NPC.playidle NVCrucifixDynamicIdle
+		;	fwvCybStrngPrisoner04NPC.setpos z -290
+		;	printc "CruxAnimScript04 a go"
+
+;			set fwvqInvasionsCyber.sCruxOnce to 0 
+;		endif
+;	endif
+		
+
+	
+end

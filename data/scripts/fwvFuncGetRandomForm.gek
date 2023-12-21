@@ -1,0 +1,13 @@
+scn fwvFuncGetRandomForm
+
+short sFCount
+short sRandomPercent
+ref rChooseList
+ref rReturnValue
+
+begin function { rChooseList }
+	set sFCount to ListGetCount rChooseList 
+	set sRandomPercent to GetRandomPercent * (sFCount) / 100
+	set rReturnValue to ListGetNthForm rChooseList sRandomPercent
+	SetFunctionValue rReturnValue
+end

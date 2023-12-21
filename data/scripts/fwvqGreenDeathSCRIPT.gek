@@ -1,0 +1,15 @@
+scn fwvqGreenDeathSCRIPT
+
+short qDay
+float day
+short sStart
+
+begin GameMode
+
+;if GetQuestCompleted fwvqGameofRassilon == 1
+	;if getQuestRunning fwvqGreenDeath == 0
+		;set fwvqComms.sEventPhone to 6
+	;endif
+;endif
+
+END

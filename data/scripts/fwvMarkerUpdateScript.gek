@@ -1,0 +1,19 @@
+scn fwvMarkerUpdateScript
+
+ref rTDesktopShipDoor
+
+begin OnTriggerEnter player
+	set fwvqRooms.rNextLoc to GetSelf
+
+	if fwvqSystems.tAdvanced == 1
+		if eval fwvqSystems.RelativeContinuumStabilizer == 0 && fwvqSystems.cSys == 1 && fwvqSystems.TimeVectorGenerator > 0
+			Call fwvFuncTardisRoomRand
+			MessageEx "[Dimensions have destabilised]"
+			PlaySound FXExplosionArtilleryExplosionFar
+		elseif fwvqSystems.TimeVectorGenerator <= 0
+			let rTDesktopShipDoor := fwvq1.rTDesktopShipDoor
+			player.moveTo rTDesktopShipDoor
+		endif
+	endif
+
+end

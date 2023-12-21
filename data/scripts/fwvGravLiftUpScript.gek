@@ -1,0 +1,187 @@
+scn fwvGravLiftUpScript
+
+ref startRef
+ref midRef
+ref endRef
+ref endDoorRef ;not yet implimented
+ref curTarget
+ref rActionRef
+
+short doProtect
+short doLift
+short frame
+float xySpeed
+float zSpeed
+float fTemp
+float fTemp2
+float fTemp3
+float protectTimer
+float oldMin
+
+begin OnTrigger
+
+	if fwvq1.tPower > 0
+		;Player.ResetFallDamageTimer
+	endif
+
+end
+
+begin OnTriggerLeave
+	set rActionRef to GetActionRef
+	if rActionRef == Player
+		if doLift == 2
+			set doLift to 3
+		endif
+	elseif fwvq1.tPower > 0
+		;rActionRef.Dispel fwvFallDamageResetSpell
+	endif
+end
+
+begin OnTriggerEnter
+	set rActionRef to GetActionRef
+	if rActionRef == Player
+		if (fwvq1.tPower > 0 && fwvqSystems.failsafe == 1) || fwvqSystems.failsafe == 0 && doLift == 0
+			DisablePlayerControls
+			Player.ResetFallDamageTimer
+			if Player.GetPos Z >= startRef.GetPos Z + 96
+				set doProtect to 1
+				set protectTimer to getSecondsPassed
+				set protectTimer to 2
+				set oldMin to GetGameSetting fJumpFallHeightMin
+				SetNumericGameSetting fJumpFallHeightMin 10240
+				set doLift to 2
+			else
+				;Player.MoveTo Player 0 0 0
+				set doLift to 1
+				set frame to 0
+			endif
+		endif
+	elseif fwvq1.tPower > 0
+		set startRef to getLinkedRef
+		set midRef to startRef.getLinkedRef
+		set endRef to midRef.getLinkedRef
+		if rActionRef.GetPos Z >= startRef.GetPos Z + 96
+			rActionRef.MoveTo startRef
+		else
+			rActionRef.MoveTo endRef
+		endif
+	endif
+
+end
+
+begin GameMode
+	set xySpeed to 8
+	set zSpeed to 12
+
+	set startRef to getLinkedRef
+	set midRef to startRef.getLinkedRef
+	set endRef to midRef.getLinkedRef
+
+	if doProtect == 1
+		set protectTimer to protectTimer - GetSecondsPassed
+		if protectTimer <= 0.0
+			set doProtect to 0
+			SetNumericGameSetting fJumpFallHeightMin oldMin
+		endif
+		Player.ResetFallDamageTimer
+	endif
+	
+	if doLift == 1
+		sgtm 0.35
+		if frame == 0
+			set curTarget to startRef
+		elseif frame == 1
+			set curTarget to midRef
+		elseif frame == 2
+			set curTarget to endRef
+		elseif frame == 3
+			set doLift to 3
+		endif
+		
+		if player.getDistance curTarget >= (zSpeed * 1.5) && doLift == 1
+		
+			if frame == 1
+				set fTemp to Player.GetAngle Z - endRef.GetAngle Z
+				set fTemp2 to Abs fTemp
+				if fTemp2 >= 4
+					set fTemp2 to fmod fTemp 360
+					set fTemp to endRef.GetAngle Z - Player.GetAngle Z
+					set fTemp3 to fmod fTemp 360
+					if fTemp2 < fTemp3
+						set fTemp to Player.GetAngle Z - 2.5
+						set fTemp to fmod fTemp 360
+						Player.SetAngle Z fTemp
+					else
+						set fTemp to Player.GetAngle Z + 2.5
+						set fTemp to fmod fTemp 360
+						Player.SetAngle Z fTemp
+					endif
+				endif
+			endif
+		
+			if Player.GetPos X < curTarget.GetPos X - xySpeed
+				set fTemp to Player.GetPos X + xySpeed
+				Player.setPos X fTemp
+			elseif Player.GetPos X > curTarget.GetPos X + xySpeed
+				set fTemp to Player.GetPos X - xySpeed
+				Player.setPos X fTemp
+			endif
+
+			if Player.GetPos Y < curTarget.GetPos Y - xySpeed
+				set fTemp to Player.GetPos Y + xySpeed
+				Player.setPos Y fTemp
+			elseif Player.GetPos Y > curTarget.GetPos Y + xySpeed
+				set fTemp to Player.GetPos Y - xySpeed
+				Player.setPos Y fTemp
+			endif
+
+
+			if Player.GetPos Z < (curTarget.GetPos Z + 12) - zSpeed
+				set fTemp to Player.GetPos Z + zSpeed
+				player.setPos Z fTemp
+			elseif Player.GetPos Z > (curTarget.GetPos Z + 12) + zSpeed ; 12 offset
+				set fTemp to Player.GetPos Z - zSpeed
+				Player.setPos Z fTemp
+			endif
+		elseif doLift == 1
+			set frame to frame + 1
+		endif
+		
+	elseif doLift == 2 ; fall
+		sgtm 0.35
+		set curTarget to startRef
+		
+		if Player.GetPos X < curTarget.GetPos X - xySpeed
+			set fTemp to Player.GetPos X + xySpeed
+			Player.setPos X fTemp
+		elseif Player.GetPos X > curTarget.GetPos X + xySpeed
+			set fTemp to Player.GetPos X - xySpeed
+			Player.setPos X fTemp
+		endif
+
+		if Player.GetPos Y < curTarget.GetPos Y - xySpeed
+			set fTemp to Player.GetPos Y + xySpeed
+			Player.setPos Y fTemp
+		elseif Player.GetPos Y > curTarget.GetPos Y + xySpeed
+			set fTemp to Player.GetPos Y - xySpeed
+			Player.setPos Y fTemp
+		endif
+
+		if Player.GetPos Z < (curTarget.GetPos Z + 12) - zSpeed * 0.7
+			set fTemp to Player.GetPos Z + zSpeed * 0.37
+			player.setPos Z fTemp
+		elseif Player.GetPos Z > (curTarget.GetPos Z + 12) + zSpeed * 0.7 ; 12 offset
+			set fTemp to Player.GetPos Z - zSpeed * 0.37
+			Player.setPos Z fTemp
+		endif
+		set protectTimer to 2.0
+	elseif doLift == 3 ; end
+		;Player.MoveTo Player 0 0 0
+		sgtm 1
+		EnablePlayerControls
+		Player.ResetFallDamageTimer
+		set fwvq1.sTeleportCompanions to 1
+		set doLift to 0
+	endif
+
+end

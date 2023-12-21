@@ -1,0 +1,323 @@
+scn fwvqInvasionsSilurHandlerSCRIPT
+
+; REF all the Silurians and Captives to be populated
+
+
+short CleanupSilurian
+short sForceRunNow
+ref SilurianPrisoner01
+ref SilurianPrisoner02
+ref SilurianPrisoner03
+ref SilurianPrisoner04
+ref GravPlat01
+ref GravPlat02
+ref GravPlat03
+ref GravPlat04
+ref GravBubble01
+ref GravBubble02
+ref GravBubble03
+ref GravBubble04
+
+ref SilurianWarrior01
+ref SilurianWarrior02
+ref SilurianWarrior03
+ref SilurianWarrior04
+ref SilurianWarrior05
+ref SilurianWarrior06
+ref SilurianWarrior07
+ref SilurianSleeper01
+ref SilurianSleeper04
+
+ref SilurianScientist01
+ref SilurianScientist02
+ref SilurianScientist03
+ref SilurianScientist04
+ref SilurianScientist05
+ref SilurianScientist06
+
+ref SilurianGuardian01
+ref SilurianGuardian02
+ref SilurianGuardian03
+ref SilurianGuardian04
+ref SilurianGuardian05
+ref SilurianGuardian06
+ref SilurianGuardian07
+ref SilurianGuardian08
+ref SilurianGuardian09
+ref SilurianGuardian10
+ref SilurianGuardian11
+ref SilurianGuardian12
+ref SilurianGuardian13
+ref SilurianGuardian14
+ref SilurianSleeper02
+ref SilurianSleeper03
+
+Begin GameMode
+
+	; Population of ship upon entry
+	if player.getInCell fwvSilurianStronghold == 1 && fwvqInvasions.sPopulateSilurianBase == 1
+
+		; Turn off any warning lights or sounds, set up Robomen
+		fwvXOSilurStrngAlertREF.disable
+
+		; Set the initial variables to get the Ship prepped for action
+		set fwvqInvasions.sSilurianEscapes to 0
+
+		setAlly fwvSilurianFaction FWVSilurianStrongholdPrisonerFaction 1 1  
+		setAlly PlayerFaction FWVSilurianStrongholdPrisonerFaction 1 1 
+		set fwvqInvasions.sTransmatOn to 0
+		
+		;Populate the prisoners and Transmats
+		let SilurianPrisoner01 := SilurianStrngPrisoner01REF.placeAtMe fwvSilurianStrongholdPrisonerAM
+		let SilurianPrisoner02 := SilurianStrngPrisoner02REF.placeAtMe fwvSilurianStrongholdPrisonerCM
+		let SilurianPrisoner03 := SilurianStrngPrisoner03REF.placeAtMe fwvSilurianStrongholdPrisonerHF
+		let SilurianPrisoner04 := SilurianStrngPrisoner04REF.placeAtMe fwvSilurianStrongholdPrisonerAAF			
+		
+		SilurianPrisoner01.evp
+		SilurianPrisoner02.evp
+		SilurianPrisoner03.evp
+		SilurianPrisoner04.evp
+		
+		let GravPlat01 := fwvSilurianPlatform01.placeatme fwvSilurianGravDiscACT01
+		let GravPlat02 := fwvSilurianPlatform02.placeatme fwvSilurianGravDiscACT02
+		let GravPlat03 := fwvSilurianPlatform03.placeatme fwvSilurianGravDiscACT03
+		let GravPlat04 := fwvSilurianPlatform04.placeatme fwvSilurianGravDiscACT04
+		let GravBubble01 := fwvGravBubbleREF01.placeatme fwvXOGravBubble01 
+		let GravBubble02 := fwvGravBubbleREF02.placeatme fwvXOGravBubble02
+		let GravBubble03 := fwvGravBubbleREF03.placeatme fwvXOGravBubble03
+		let GravBubble04 := fwvGravBubbleREF04.placeatme fwvXOGravBubble04
+		GravBubble01.SetScale 0.1500
+		GravBubble02.SetScale 0.1500
+		GravBubble03.SetScale 0.1500
+		GravBubble04.SetScale 0.1500
+		fwvXOSilurShaftLightREF01.disable
+		fwvXOSilurShaftLightREF02.disable
+		fwvXOSilurShaftLightREF03.disable
+		fwvXOSilurShaftLightREF04.disable
+		fwvGravBubbles01.disable
+		fwvGravBubbles02.disable
+		printc "Transmats Off"
+		
+		; Populate the Silurians
+
+		;Warriors
+		let SilurianSleeper01 := fwvXOSilurSleeper01REF.placeAtMe fwvSilurianWarriorStronghold
+		let SilurianSleeper04 := fwvXOSilurSleeper04REF.placeAtMe fwvSilurianWarriorStronghold
+		let SilurianWarrior01 := fwvSilStrWarrior01.placeAtMe fwvSilurianWarriorStronghold
+		let SilurianWarrior02 := fwvSilStrWarrior02.placeAtMe fwvSilurianWarriorStronghold
+		let SilurianWarrior03 := fwvSilStrWarrior03.placeAtMe fwvSilurianWarriorStrongholdNoWander
+		let SilurianWarrior04 := fwvSilStrWarrior04.placeAtMe fwvSilurianWarriorStronghold
+		let SilurianWarrior05 := fwvSilStrWarrior05.placeAtMe fwvSilurianWarriorStronghold
+		let SilurianWarrior06 := fwvSilStrWarrior06.placeAtMe fwvSilurianWarriorStronghold
+		let SilurianWarrior07 := fwvSilStrWarrior07.placeAtMe fwvSilurianWarriorStronghold
+
+		;Scientists
+		let SilurianScientist01 := fwvSilStrScientist01.placeAtMe fwvSilurianScientistStng
+		let SilurianScientist02 := fwvSilStrScientist02.placeAtMe fwvSilurianScientistStng
+		let SilurianScientist03 := fwvSilStrScientist03.placeAtMe fwvSilurianScientistStng
+		let SilurianScientist04 := fwvSilStrScientist04.placeAtMe fwvSilurianScientistStng
+		let SilurianScientist05 := fwvSilStrScientist05.placeAtMe fwvSilurianScientistStngNoWander
+		let SilurianScientist06 := fwvSilStrScientist06.placeAtMe fwvSilurianScientistStngNoWander
+
+
+		;Guardians
+		let SilurianSleeper02 := fwvXOSilurSleeper02REF.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianSleeper03 := fwvXOSilurSleeper03REF.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian01 := fwvSilStrGuardian01.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian02 := fwvSilStrGuardian02.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian03 := fwvSilStrGuardian03.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian04 := fwvSilStrGuardian04.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian05 := fwvSilStrGuardian05.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian06 := fwvSilStrGuardian06.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian07 := fwvSilStrGuardian07.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian08 := fwvSilStrGuardian08.placeAtMe fwvSilurianGuardianStrongholdNoWander
+		let SilurianGuardian09 := fwvSilStrGuardian09.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian10 := fwvSilStrGuardian10.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian11 := fwvSilStrGuardian11.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian12 := fwvSilStrGuardian12.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian13 := fwvSilStrGuardian13.placeAtMe fwvSilurianGuardianStronghold
+		let SilurianGuardian14 := fwvSilStrGuardian14.placeAtMe fwvSilurianGuardianStronghold		
+	
+		SilurianSleeper01.SetRestrained 1
+		SilurianSleeper02.SetRestrained 1
+		SilurianSleeper03.SetRestrained 1
+		SilurianSleeper04.SetRestrained 1
+		SilurianSleeper03.moveto fwvXOSilurSleeper01MOVEREF
+		SilurianSleeper04.moveto fwvXOSilurSleeper02MOVEREF 
+
+		set fwvqInvasions.DoOnce to 0
+		set fwvqInvasions.sPopulateSilurianBase to 0
+		set CleanupSilurian to 0
+		printc "Silurian Base Populated"
+	endif
+
+	;NEW - force all Prisoners to run immediately when it's OK to go, not fiddlefart around
+	if fwvqInvasions.sEscape == 1 && player.getInCell fwvSilurianStronghold == 1
+		if sForceRunNow == 0
+			printc "Run Now %g" sForceRunNow
+			SilurianPrisoner01.evp
+			SilurianPrisoner02.evp
+			SilurianPrisoner03.evp
+			SilurianPrisoner04.evp
+			set sForceRunNow to 1
+			printc "Run Now now %g" sForceRunNow
+		endif
+	endif	
+
+	; Moving Sleeper wakeup code here in the hopes of triggering it more reliably
+	
+	;if fwvXOSilurianStrngPod03.getopenstate == 1
+		;SilurianSleeper03.setrestrained 0
+		;SilurianSleeper04.setrestrained 0
+	;endif
+	
+	;if fwvXOSilurianStrngPod01.getopenstate == 1
+		;SilurianSleeper01.setrestrained 0
+		;SilurianSleeper02.setrestrained 0
+	;endif	
+	
+	
+	
+	
+	; After blowing up the Ship
+	 if fwvqInvasions.sBlow == 1 && player.getInCell fwvtInterior1 == 1 && fwvq1.tFlying == 1 && fwvqInvasions.eType == 4 
+		if CleanupSilurian == 0
+			;Disable alarm noise and imod
+			fwvXOSilurStrngAlertREF.disable		
+
+			set sForceRunNow to 0
+			printc "sForceRunNow %g" sForceRunNow
+			
+			; Reset Enemy Status 
+			SetEnemy PlayerFaction fwvSilurianFaction 0 0
+			SetEnemy fwvCompanionFaction fwvSilurianFaction 0 0
+					
+			; Door Locks
+			fwvSilurianStrongholdCellDoor.setOpenState 0
+			fwvSilurianStrongholdCellDoor.Lock 255
+			fwvSilurStrongDoorToBigRoomREF.setOpenState 0
+			fwvSilurStrongDoorToBigRoomREF.Lock 255
+			fwvXOSilurianStrngPod01.setopenstate 0
+			fwvXOSilurianStrngPod02.setopenstate 0
+			fwvXOSilurianStrngPod03.setopenstate 0
+			fwvXOSilurianStrngPod04.setopenstate 0
+			
+			; Remove Keys
+			Player.RemoveItem fwvSilurianStrngGeoKey 1 1
+			Player.RemoveItem fwvSilurianStrngCellKey 1 1 		
+			
+			;Reset Boom Switches
+			fwvSilurStrngValveSteam01.enable
+			fwvSilurStrngValveSteam02.enable
+			fwvSilurStrngValveSteam03.enable
+			fwvSilurStrngValveSteam04.enable
+			let fwvSilurStrValve01.sValveOff := 0					
+			let fwvSilurStrValve02.sValveOff := 0									
+			let fwvSilurStrValve03.sValveOff := 0									
+			let fwvSilurStrValve04.sValveOff := 0	
+			GravPlat01.disable
+			GravPlat02.disable
+			GravPlat03.disable
+			GravPlat04.disable
+			GravPlat01.MarkForDelete
+			GravPlat02.MarkForDelete
+			GravPlat03.MarkForDelete
+			GravPlat04.MarkForDelete
+			GravBubble01.disable
+			GravBubble02.disable
+			GravBubble03.disable
+			GravBubble04.disable
+			GravBubble01.MarkForDelete
+			GravBubble02.MarkForDelete
+			GravBubble03.MarkForDelete
+			GravBubble04.MarkForDelete
+			fwvXOSilurShaftLightREF01.disable
+			fwvXOSilurShaftLightREF02.disable
+			fwvXOSilurShaftLightREF03.disable
+			fwvXOSilurShaftLightREF04.disable
+			fwvGravBubbles01.disable
+			fwvGravBubbles02.disable
+					
+			; clear any remaining Silurians or Prisoners
+			SilurianWarrior01.disable
+			SilurianWarrior02.disable
+			SilurianWarrior03.disable
+			SilurianWarrior04.disable
+			SilurianWarrior05.disable
+			SilurianWarrior06.disable
+			SilurianWarrior07.disable
+			SilurianSleeper01.disable
+			SilurianSleeper04.disable
+			SilurianScientist01.disable
+			SilurianScientist02.disable
+			SilurianScientist03.disable
+			SilurianScientist04.disable
+			SilurianScientist05.disable
+			SilurianScientist06.disable
+			SilurianGuardian01.disable
+			SilurianGuardian02.disable
+			SilurianGuardian03.disable
+			SilurianGuardian04.disable
+			SilurianGuardian05.disable
+			SilurianGuardian06.disable
+			SilurianGuardian07.disable
+			SilurianGuardian08.disable
+			SilurianGuardian09.disable
+			SilurianGuardian10.disable
+			SilurianGuardian11.disable
+			SilurianGuardian12.disable
+			SilurianGuardian13.disable
+			SilurianGuardian14.disable
+			SilurianSleeper02.disable
+			SilurianSleeper03.disable				
+			SilurianWarrior01.MarkForDelete
+			SilurianWarrior02.MarkForDelete
+			SilurianWarrior03.MarkForDelete
+			SilurianWarrior04.MarkForDelete
+			SilurianWarrior05.MarkForDelete
+			SilurianWarrior06.MarkForDelete
+			SilurianWarrior07.MarkForDelete
+			SilurianSleeper01.MarkForDelete
+			SilurianSleeper04.MarkForDelete
+			SilurianScientist01.MarkForDelete
+			SilurianScientist02.MarkForDelete
+			SilurianScientist03.MarkForDelete
+			SilurianScientist04.MarkForDelete
+			SilurianScientist05.MarkForDelete
+			SilurianScientist06.MarkForDelete
+			SilurianGuardian01.MarkForDelete
+			SilurianGuardian02.MarkForDelete
+			SilurianGuardian03.MarkForDelete
+			SilurianGuardian04.MarkForDelete
+			SilurianGuardian05.MarkForDelete
+			SilurianGuardian06.MarkForDelete
+			SilurianGuardian07.MarkForDelete
+			SilurianGuardian08.MarkForDelete
+			SilurianGuardian09.MarkForDelete
+			SilurianGuardian10.MarkForDelete
+			SilurianGuardian11.MarkForDelete
+			SilurianGuardian12.MarkForDelete
+			SilurianGuardian13.MarkForDelete
+			SilurianGuardian14.MarkForDelete
+			SilurianSleeper02.MarkForDelete
+			SilurianSleeper03.MarkForDelete	
+			SilurianPrisoner01.disable
+			SilurianPrisoner02.disable
+			SilurianPrisoner03.disable
+			SilurianPrisoner04.disable
+			SilurianPrisoner01.MarkForDelete
+			SilurianPrisoner02.MarkForDelete
+			SilurianPrisoner03.MarkForDelete	
+			SilurianPrisoner04.MarkForDelete		
+
+			printc "Silurians Go Done"
+
+			set CleanupSilurian to 1
+		endif
+
+		
+
+	endif
+
+
+end

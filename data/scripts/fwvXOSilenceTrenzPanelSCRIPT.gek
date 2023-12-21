@@ -1,0 +1,11 @@
+scn fwvXOSilenceTrenzPanelSCRIPT
+
+begin OnActivate Player
+
+	if player.GetHasNote fwvNoteSTCTrenzalore == 0
+		player.additem fwvNoteSTCTrenzalore 1
+	endif
+
+	showmessage fwvXOSilenceTrenzPanelMESG
+	
+end

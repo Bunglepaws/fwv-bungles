@@ -1,0 +1,19 @@
+scn fwvObservatoryLightsSCRIPT
+
+Begin OnActivate
+
+	if fwvq1.tPower > 0 && fwvqSystems.crashed == 0
+		if fwvXOObservatoryLightSetREF.GetDisabled == 1
+			fwvXOObservatoryLightSetREF.Enable
+			Playgroup Forward 1
+		else
+			fwvXOObservatoryLightSetREF.Disable
+			PlayGroup Backward 1
+		endif
+		Activate
+	
+	else 
+		MessageEx "[The TARDIS has no power...]"
+	endif
+	
+End

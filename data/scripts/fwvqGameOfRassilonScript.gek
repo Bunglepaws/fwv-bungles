@@ -1,0 +1,307 @@
+scn fwvqGameOfRassilonScript
+
+short sMountainTaken
+short sMoorlandTaken
+short sForestTaken
+short sQuarryTaken
+short sInit
+short sKarnDone
+short sSpiridonDone
+short sSolDone
+short sCyberDone
+short sDalekDone
+short sCanvas
+float fTimer
+float fTimer2
+short sEnd
+short sRemote
+ref rInteriorDoor
+short sTeleport
+short sEquipOutfit 
+short sTutorial
+ref rConsole
+float fHour
+short sWarning
+short sSpiridonResinOn
+short sArtGalTip
+Begin GameMode
+
+	;quest triggers on all FWV quests being completed and the Art Gallery being active
+
+	if getStage fwvqGameOfRassilon < 10
+		;printc "check less 10"
+		if getStage fwvqAngelMotel >= 100 && getStage fwvqChristmasSpecial >= 100 && getStage fwvqDalekSkaro >= 100 && getStage fwvqCybermanMoon >= 100 && getStage fwvqAutonMurder >= 100 
+			printc "the 5 qs done"
+			if getQuestCompleted fwvqCompanionTutorial == 1
+				print "CompTutDone"
+				if sArtGalTip == 0
+					;if eval (Call fwvFuncGetInTardis)
+						MessageBoxEx "In the back of your mind, an image forms faintly... the TARDIS Art Gallery, and a torn canvas?"
+						set sArtGalTip to 1
+					;endif
+				endif
+				
+				if fwvTardisGalleryRef.getDisabled == 0
+					printc "Gall On so 10"
+					;if getStage fwvqGameOfRassilon < 10
+						setStage fwvqGameOfRassilon 10
+						fwvRassilonCrackRef.enable
+					;endif
+				endif
+			endif
+		endif
+	endif
+
+	;deathzone ambience
+	if player.getInWorldspace fwvWorldDeathzoneWorld == 1
+		set fHour to GameHour 
+		set fHour to fmod fHour 24
+		if fHour < 0.001
+			PlaySound fwvFXDeathZoneBell
+			set fHour to getCurrentTime
+		endif
+	endif
+
+
+
+	;spaceflight VI tutorial
+
+	if sTutorial == -2 ;because Im an idiot and setup the vars wrong
+		set rConsole to fwvq1.rTDesktopScannerPosRef
+		fwvTardisVoiceInterfaceRef.moveTo rConsole
+		fwvTardisVoiceInterfaceRef.enable
+		fwvTardisVoiceInterfaceRef.pms fwvHologramInterfaceNeutral
+		fwvTardisVoiceInterfaceRef.saa 0.6
+		set sTutorial to 1
+	elseif sTutorial == 1
+		if player.getDistance fwvTardisVoiceInterfaceRef < 250
+			player.startConversation fwvTardisVoiceInterfaceRef
+		endif
+	elseif sTutorial == 2
+		if fwvq1.tSpace == 1 && fwvqDrift.gID > 0
+			player.startConversation fwvTardisVoiceInterfaceRef
+		endif
+	elseif sTutorial == 3 ;on entering navigated flight
+		if fwvqDrift.sDrift == 2 && fwvq1.tSpace == 1 && fwvqDrift.gID > 0
+			player.startConversation fwvTardisVoiceInterfaceRef
+		endif
+	elseif sTutorial == 4 ;on exiting navigated flight
+		;printc "tutorial is %g" sTutorial
+		if fwvqDrift.sDrift == 1 && fwvq1.tSpace == 1 && fwvqDrift.gID > 0
+			player.startConversation fwvTardisVoiceInterfaceRef
+		endif
+	endif
+
+	if player.getHasNote fwvRassilonSpiridonNote06 == 1
+		if sSpiridonDone < 1
+			fwvRassilonInvisibleDalekRef.enable
+			fwvSpiridonDaleksRefv2.enable
+			fwvSpiridonDalek01v2.enable
+			fwvSpiridonDalek02v2.enable
+			fwvSpiridonDalek03v2.enable
+			fwvSpiridonDoorTriffid.enable
+			fwvSpiridonResin01.enable
+			fwvSpiridonResin02.enable
+			fwvSpiridonResin03.enable
+			fwvSpiridonResin04.enable
+			set sSpiridonResinOn to 1
+			printc "Resin %g" sSpiridonResinOn
+			let sSpiridonDone := 1
+		endif
+	endif
+
+	if sSolDone == 0 && player.getHasNote fwvRassilonHypermarketNote
+		MessageBoxEx "You find a crumpled note in your pocket..."
+		player.addNote fwvRassilonHypermarketNote
+		let sSolDone := 1
+	endif
+	
+	if getStage fwvqGameOfRassilon > 10 && sSolDone == 1
+		if Vnight == 1
+			if fwvRassilonHyperTraderRef.getDisabled == 1
+				fwvRassilonHyperTraderRef.placeAtMe fwvVortexManipulatorExplosion
+				fwvRassilonHyperTraderRef.enable
+			endif
+		else
+			if fwvRassilonHyperTraderRef.getDisabled == 0
+				fwvRassilonHyperTraderRef.placeAtMe fwvVortexManipulatorExplosion
+				fwvRassilonHyperTraderRef.disable
+			endif
+		endif
+	endif
+
+	if getStage fwvqGameOfRassilon > 10 && fwvqDrift.gID == 4 && sDalekDone == 0
+		MessageBoxEx "Rumour has reached you of a Dalek Squadron escorting a Gallifreyan Artefact through the Magellanic Clouds. It's exact location is unknown, but fly around long enough with both HADS and the Autopilot off, and you should bump into them..."
+		let sDalekDone := 1
+	elseif sDalekDone == 1
+		if fwvqEncounter.reward == 1
+			MessageBoxEx "From amongst the floating debris field of the Assault Saucer, the TARDIS locks in and rematerialises around the Indigo Fragment..."
+			player.addItem fwvRassilonFragment04 1
+			let sDalekDone := -1
+		endif
+	endif
+
+	if player.getItemCount fwvRassilonFragment05 == 1
+		if getObjectiveCompleted fwvqGameOfRassilon 21 == 0
+			let sCanvas := sCanvas + 1
+			setObjectiveCompleted fwvqGameOfRassilon 21 1		;spiridon
+		endif
+	endif
+	if player.getItemCount fwvRassilonFragment06 == 1
+		if getObjectiveCompleted fwvqGameOfRassilon 22 == 0
+			let sCanvas := sCanvas + 1
+			setObjectiveCompleted fwvqGameOfRassilon 22 1		;sol 3
+		endif
+	endif
+	if player.getItemCount fwvRassilonFragment03 == 1
+		if getObjectiveCompleted fwvqGameOfRassilon 23 == 0
+			let sCanvas := sCanvas + 1
+			setObjectiveCompleted fwvqGameOfRassilon 23 1		;karn
+		endif
+	endif
+	if player.getItemCount fwvRassilonFragment02 == 1
+		if getObjectiveCompleted fwvqGameOfRassilon 24 == 0
+			let sCanvas := sCanvas + 1
+			setObjectiveCompleted fwvqGameOfRassilon 24 1		;zeta
+		endif
+	endif
+	if player.getItemCount fwvRassilonFragment04 == 1
+		if getObjectiveCompleted fwvqGameOfRassilon 25 == 0
+			let sCanvas := sCanvas + 1
+			setObjectiveCompleted fwvqGameOfRassilon 25 1		;skaro
+		endif
+	endif
+	if player.getItemCount fwvRassilonFragment01 == 1
+		if getObjectiveCompleted fwvqGameOfRassilon 26 == 0
+			let sCanvas := sCanvas + 1
+			setObjectiveCompleted fwvqGameOfRassilon 26 1		;cyber
+		endif
+	endif
+
+	if sCanvas >= 6 && getStage fwvqGameOfRassilon == 20
+		setStage fwvqGameOfRassilon 30
+	endif
+
+	if sTeleport == 1
+		if fTimer < 5.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			player.moveTo fwvqRassilonStarterRef
+			EnablePlayerControls
+			set sTeleport to 2
+		endif
+	elseif sTeleport == 2
+		if player.getInWorldspace fwvWorldDeathzoneWorld == 1
+			fwvRassilonGameRef.activate player 1
+			MessageBoxEx "The Death Zone of Gallifrey... a lethal combat arena from the Dark Times, long abandoned by the Time Lords...%r%r You will need to be on your guard here, as the 'Time Scoop' was recently activated..."
+			PlaySound OBJComputerTerminalArc
+			fwvqRassilonStarterRef.pushActorAway player 3
+			setStage fwvqGameOfRassilon 50
+			set sTeleport to 0
+		endif
+	endif
+
+	if sEquipOutfit == 1
+		if fTimer < 2.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			PlaySound UIItemsClothingUp
+			player.addItem fwvOutfitSB6suit 1 0
+			player.addItem fwvOutfitSB6HelmetStranger 1 0
+			player.equipItem fwvOutfitSB6suit 1 0
+			player.equipItem fwvOutfitSB6HelmetStranger 1 0
+			set sEquipOutfit to 2
+		endif
+	elseif sEquipOutfit == 2
+		if fTimer < 2.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			EnablePlayerControls 1 0 1 1 1 1 1
+			Call fwvFuncDematTardis fwvLtombRef
+			set sEquipOutfit to 0
+		endif
+	endif
+
+	if player.getInCell fwvtInterior1 == 1 && (getStage fwvqGameOfRassilon >= 60 && getStage fwvqGameOfRassilon <= 70)
+		if sEnd == 0
+			let sRemote := 1
+			Call fwvFuncResetSystemsFunction
+			if fwvXOTranspowerQuest.TranspowerOn > 0
+				set fwvXOTranspowerQuest.TranspowerAnimate to 50
+				set fwvXOTranspowerQuest.TranspowerOn to 0
+			endif		
+			let fwvq1.chosenDoor := fwvLgibsonRef
+			if fwvq1.tTheme == 4
+				PlaySound fwvFXT4Launch
+				fwvT4flightRef.Enable 0
+			else
+				PlaySound fwvFXtardisLaunchLong
+				fwvTflightRef.Enable 0
+			endif
+			let fwvq1.tFlightType := 2
+			let fwvq1.tPowerAutopilot := 1
+			let fwvq1.tNextFlightType := 1
+			let fwvq1.tActive := 1
+			let fwvq1.tFlying := 1
+			let fwvq1.flightMode := 1
+			let fwvq1.hbTimerWait := 0
+			let sEnd := 1
+		elseif sEnd == 2
+			if fTimer2 < 2.0
+				let fTimer2 := fTimer2 + getSecondsPassed
+			else
+				let rInteriorDoor := fwvq1.rTDesktopInteriorDoor
+				player.moveTo rInteriorDoor
+				MessageBoxEx "You've handed over the Control Disc to your earlier self... that was weird!"
+				player.removeItem fwvq1aControlDisc 1
+				let fTimer2 := 0.0
+				let sEnd := 3
+			endif
+		elseif sEnd == 3
+			if fTimer < 2.0
+				let fTimer := fTimer + getSecondsPassed
+			else
+				setStage fwvqGameOfRassilon 70
+				EnablePlayerControls
+				let sEnd := 4
+			endif
+		elseif sEnd == 4
+			let fwvq1.chosenDoor := fwvLtombRef
+			if fwvq1.tTheme == 4
+				PlaySound fwvFXT4Launch
+				fwvT4flightRef.Enable 0
+			else
+				PlaySound fwvFXtardisLaunchLong
+				fwvTflightRef.Enable 0
+			endif
+			let fwvq1.tFlightType := 2
+			let fwvq1.tPowerAutopilot := 1
+			let fwvq1.tNextFlightType := 1
+			let fwvq1.tActive := 1
+			let fwvq1.tFlying := 1
+			let fwvq1.flightMode := 1
+			let fwvq1.hbTimerWait := 0
+			fwvRassilonOldTARDISRef.markForDelete
+			fwvRassilonOldTARDISRef.disable
+			let sEnd := -1
+		endif
+	endif
+
+	if player.getInWorldSpace fwvWorldTelosIceWorld == 1 && player.IsInInterior == 0 ; Xoanon put this here in order to allow a one-time-only warning on landing on Telos. 
+		if fwvLtelosCaveRef.getDistance player > 300 && sWarning == 0
+			ShowMessage fwvTelosAlarmWarningMSG
+			set sWarning to 1
+		endif
+	endif
+
+End
+
+begin MenuMode
+
+	if getStage fwvqGameOfRassilon > 10 && IsPCSleeping == 1
+		if player.getHasNote fwvRassilonHypermarketNote == 0
+			player.addNote fwvRassilonHypermarketNote
+		endif
+	endif
+
+end

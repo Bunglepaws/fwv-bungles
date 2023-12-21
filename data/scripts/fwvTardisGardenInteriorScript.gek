@@ -1,0 +1,19 @@
+scn fwvTardisGardenInteriorScript
+
+float chance
+
+begin ontriggerenter
+
+	set chance to getRandomPercent / player.getAV Luck
+
+if player.hasmagiceffect fwvDiseaseSpectrox == 1 || player.hasmagiceffect fwvDiseaseGreenDeath 
+	if fwvTardisGardenAtmosRef.infectMod * chance > getRandomPercent
+		if player.hasmagiceffect fwvDiseaseSpectrox == 0
+			player.addSpell fwvDiseaseSpectroxPoison
+		elseif player.hasmagiceffect fwvDiseaseGreenDeath == 0
+			player.addSpell fwvDiseaseGreenDeathPoison
+		endif
+	endif
+endif
+
+end

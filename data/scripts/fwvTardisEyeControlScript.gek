@@ -1,0 +1,147 @@
+scn fwvTardisEyeControlScript
+
+short init
+short button
+short frame
+short rods		;0 - closed, 1 - open
+short eye		;0 - closed, 1 - open
+float fTimer
+float eTimer
+ref eyeRef
+
+Begin onActivate player
+
+	if fwvqSystems.tAdvanced == 1
+		if getObjectiveCompleted fwvq2a 40 == 0
+			ShowTutorialMenu fwvAdvancedManualTranspowerMessage
+ 			SetObjectiveCompleted fwvq2a 40 1
+		else
+			ShowMessage fwvTardisEyeOfHarmonyMessage
+		endif
+	else
+		MessageEx "[Nothing happens]"
+	endif
+End
+
+begin gamemode
+
+	set button to getbuttonpressed
+	set eyeRef to GetLinkedRef
+
+	if init == 0
+		fwvTardisFuelLightRedRef.PlayGroup Backward 1
+		fwvTardisFuelLightYellowRef.PlayGroup Forward 1
+		fwvTardisFuelRod1Ref.PlayGroup Backward 1
+		fwvTardisFuelRod2Ref.PlayGroup Backward 1
+		fwvTardisFuelRod3Ref.PlayGroup Backward 1
+		set rods to 0
+		set eye to 0
+		set init to 1
+	endif
+
+	if button == 0			;Open fuel rods
+		PlaySound DRSMetalUtilityFloor01Open 1
+		set rods to 1
+		set fTimer to 0.0
+		fwvTardisFuelLightRedRef.PlayGroup Forward 1
+		fwvTardisFuelLightYellowRef.PlayGroup Backward 1
+		fwvTardisEyeYellowRef.disable
+		fwvTardisEyeRedRef.enable
+		fwvTardisFuelRod1Ref.PlayGroup Forward 1
+		fwvTardisFuelRod2Ref.PlayGroup Forward 1
+		fwvTardisFuelRod3Ref.PlayGroup Forward 1
+	elseif button == 1		;Close fuel rods
+		PlaySound DRSMetalUtilityFloor01Close 1
+		set rods to 0
+		fwvTardisFuelLightRedRef.PlayGroup Backward 1
+		fwvTardisFuelLightYellowRef.PlayGroup Forward 1
+		fwvTardisEyeYellowRef.enable
+		fwvTardisEyeRedRef.disable
+		fwvTardisFuelRod1Ref.PlayGroup Backward 1
+		fwvTardisFuelRod2Ref.PlayGroup Backward 1
+		fwvTardisFuelRod3Ref.PlayGroup Backward 1
+
+
+	elseif button == 2		;Open Eye of Harmony
+	
+		if fwvXOTranspowerQuest.TranspowerOn == 1
+			MessageEx "[The Eye cannot be opened while the Auxiliary Power Station is online.]"
+
+		else
+			if frame == 0
+				MessageEx "[Caution: Failsafes offline]"
+				set fwvqSystems.failsafe to 0
+				Playgroup Forward 1
+				PlaySound DRSVaultGearOpen
+				set eTimer to 0.0
+				set eye to 1
+				set frame to 1
+			else
+				MessageEx "[Eye currently in use]"
+			endif
+		endif
+
+
+	elseif button == 3		;Close Eye of Harmony
+		if frame == 0
+			MessageEx "[Failsafes online]"
+			if fwvq1.tPower < 0
+				Call fwvFuncSystemOverloadFunction
+				Call fwvFuncDamageSystemsFunction
+				MessageEx "[Core Supernova in 60 seconds]"
+				let fwvqEvents.systemEvent := 1
+				let fwvqEvents.timer[1] := 0.0
+				let fwvqEvents.event[1] := 1
+				let fwvq1.tHull := 19
+				let fwvqSystems.failsafe := 1
+			else
+				let fwvqSystems.failsafe := 1
+			endif
+			Playgroup Backward 2
+			PlaySound DRSVaultGearCloseSTEREO
+			set eTimer to 0.0
+			set eye to 0
+			set frame to 2
+		else
+			MessageEx "[Eye currently in use]"
+		endif
+	else
+	endif
+
+	if frame == 1
+		if eTimer < 10.0
+			set eTimer to eTimer + getsecondspassed
+		else
+			fwvTeyeRadsRef.enable
+			if player.getDistance eyeRef < 1500
+				imod FadeInFromWhiteISFX
+			endif
+			eyeRef.setOpenState 1
+			set frame to 0
+		endif
+	elseif frame == 2
+		if eTimer < 10.0
+			set eTimer to eTimer + getsecondspassed
+		else
+			fwvTeyeRadsRef.disable
+			if player.getDistance eyeRef < 1500
+				imod FadeToWhiteAndBackQuickISFX
+			endif
+			eyeRef.setOpenState 0
+			set frame to 0
+		endif
+	endif
+
+	if rods == 1 && fwvq1.tFuel > 0
+		if fTimer < 60.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			MessageEx "[Fuel is leaking...]"
+			set fwvq1.tFuel to fwvq1.tFuel - 2.5
+			set fTimer to 0.0
+		endif
+	else
+		set fTimer to 0.0
+	endif
+
+end

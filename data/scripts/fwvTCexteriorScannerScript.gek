@@ -1,0 +1,7 @@
+scn fwvTCexteriorScannerScript
+
+begin onActivate
+
+	MessageBoxEx "Oxygen Levels: %g | Local Time: %g"
+
+end

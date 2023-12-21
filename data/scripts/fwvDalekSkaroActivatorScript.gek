@@ -1,0 +1,55 @@
+scn fwvDalekSkaroActivatorScript
+
+begin onActivate player
+
+	if player.isInCombat == 0
+		if getIsReference fwvDalekSkaroIntercomRef
+			PlaySound OBJIntercomHail 1
+			SetTalkingActivatorActor fwvZetanCrashActorRef
+			activate
+		endif
+	endif
+
+	if getStage fwvqDalekSkaro > 10 && getStage fwvqDalekSkaro < 75
+		if getIsReference fwvDalekSkaroComponent01Ref
+			set fwvqDalekSkaro.component to fwvqDalekSkaro.component + 1
+			MessageEx "%g/5 Components Collected..." fwvqDalekSkaro.component
+			setObjectiveCompleted fwvqDalekSkaro 20 1
+			fwvSkaroFungus01.disable
+			fwvSkaroLabSaucerRef.Enable
+			fwvSkaroAmbush01.enable
+			fwvSkaroAmbush02.enable
+			fwvSkaroAmbush03.enable
+			;MessageEx "A Dalek saucer overhead..." 
+			Activate
+		elseif getIsReference fwvDalekSkaroComponent02Ref
+			set fwvqDalekSkaro.component to fwvqDalekSkaro.component + 1
+			MessageEx "%g/5 Components Collected..." fwvqDalekSkaro.component
+			setObjectiveCompleted fwvqDalekSkaro 30 1
+			fwvSkaroFungus02.disable
+			ComponentSmoke02.disable
+			Activate
+		elseif getIsReference fwvDalekSkaroComponent03Ref
+			set fwvqDalekSkaro.component to fwvqDalekSkaro.component + 1
+			MessageEx "%g/5 Components Collected..." fwvqDalekSkaro.component
+			setObjectiveCompleted fwvqDalekSkaro 40 1
+			fwvSkaroFungus03.disable
+			ComponentSmoke03.disable
+			Activate
+		elseif getIsReference fwvDalekSkaroComponent04Ref
+			set fwvqDalekSkaro.component to fwvqDalekSkaro.component + 1
+			MessageEx "%g/5 Components Collected..." fwvqDalekSkaro.component
+			setObjectiveCompleted fwvqDalekSkaro 50 1
+			fwvSkaroFungus04.disable
+			ComponentSmoke04.disable
+			Activate
+		elseif getIsReference fwvDalekSkaroComponent05Ref
+			set fwvqDalekSkaro.component to fwvqDalekSkaro.component + 1
+			MessageEx "%g/5 Components Collected..." fwvqDalekSkaro.component
+			setObjectiveCompleted fwvqDalekSkaro 60 1
+			fwvSkaroFungus05.disable
+			ComponentSmoke05.disable
+			Activate
+		endif
+	endif
+end

@@ -1,0 +1,21 @@
+scn fwvCyberStrngCruxForcerSCRIPT3
+
+Begin OnTriggerEnter Player
+
+
+	if fwvqInvasions.CyberPrisoner01Uncrux == 0
+
+		;fwvCybStrngPrisoner03NPC.addscriptpackage fwvCyberCaptiveCrux03Bak
+		;printc "Package3"
+
+		if fwvCybStrngPrisoner03NPC.getSitting == 0
+			fwvCybStrngPrisoner03NPC.moveto fwvCybStrngPrisoner03Furn
+			printc "Furn3"
+		endif
+
+		fwvCybStrngPrisoner03NPC.evp
+	
+	endif
+
+
+end

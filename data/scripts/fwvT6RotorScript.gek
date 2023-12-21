@@ -1,0 +1,79 @@
+scn fwvT6RotorScript
+
+float fWaitTimer
+short sOnOff
+short sWarningLightsStarted
+short sWarningLightsDir
+short sLightsDisabled
+short sNormalLightColor
+short sLastColor
+
+begin GameMode
+	if sLastColor != sNormalLightColor
+		if fwvT6ClightNormalMarkerRef.GetDisabled == 0
+			if sNormalLightColor == 0
+				fwvT6ClightNormalTanRef.enable
+				fwvT6lightAquaRef.disable
+			else
+				fwvT6ClightNormalTanRef.disable
+				fwvT6lightAquaRef.enable
+			endif
+		else
+			fwvT6ClightNormalTanRef.disable
+			fwvT6lightAquaRef.disable
+		endif
+		set sLastColor to sNormalLightColor
+	endif 
+	
+	if fwvq1.tTheme == 5
+		if fwvq1.flightMode != 0
+			if fwvT6roundelsRef.IsAnimPlaying == 0
+				fwvT6roundelsRef.PlayGroup Forward 0
+			endif
+		endif
+
+		if sLightsDisabled == 0
+			if fWaitTimer <= 0.0
+				if fwvq1.flightMode == 0
+					set fWaitTimer to 3.2
+				else
+					set fWaitTimer to 1.25
+				endif
+				if fwvT6ClightNormalMarkerRef.GetDisabled == 0
+					set sOnOff to -1
+				else
+					set sOnOff to 1
+				endif
+				Call fwvFuncSetListIsDisabled fwvT6LightBlinkList sOnOff
+			else
+				set fWaitTimer to fWaitTimer - GetSecondsPassed
+			endif
+		else
+			Call fwvFuncSetListIsDisabled fwvT6LightBlinkList 1
+		endif
+		if fwvq1.sWarningLightsOn == 1 && (fwvT5CwarningLight1Ref.IsAnimPlaying == 0 && fwvT5CwarningLight2Ref.IsAnimPlaying == 0)
+			if sWarningLightsStarted == 0
+				fwvT5CwarningLight1Ref.PlayGroup Forward 0
+				set sWarningLightsStarted to 1
+				set sWarningLightsDir to 0
+			else
+				if sWarningLightsDir == 0
+					fwvT5CwarningLight1Ref.PlayGroup Forward 0
+					fwvT5CwarningLight2Ref.PlayGroup Backward 0
+				elseif sWarningLightsDir == 1
+					fwvT5CwarningLight1Ref.PlayGroup Backward 0
+					fwvT5CwarningLight2Ref.PlayGroup Forward 0
+				endif
+			endif
+			set sWarningLightsDir to 1 - sWarningLightsDir
+		elseif sWarningLightsStarted == 1 && fwvq1.sWarningLightsOn == 0 && (fwvT5CwarningLight1Ref.IsAnimPlaying == 0 && fwvT5CwarningLight2Ref.IsAnimPlaying == 0)
+			set sWarningLightsStarted to 0
+			if sWarningLightsDir == 0
+				fwvT5CwarningLight2Ref.PlayGroup Backward 0
+			elseif sWarningLightsDir == 1
+				fwvT5CwarningLight1Ref.PlayGroup Backward 0
+			endif
+			set sWarningLightsDir to 0
+		endif
+	endif
+end

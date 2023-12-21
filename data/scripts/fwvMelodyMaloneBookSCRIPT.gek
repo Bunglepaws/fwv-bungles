@@ -1,0 +1,9 @@
+scn fwvMelodyMaloneBookSCRIPT
+
+Begin OnActivate Player
+
+	showmessage fwvMelodyMaloneBookMESG
+	player.additem fwvItemSchemChronodyne 1
+	disable
+
+end

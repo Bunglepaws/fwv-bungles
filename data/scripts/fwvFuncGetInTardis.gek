@@ -1,0 +1,12 @@
+scn fwvFuncGetInTardis
+
+ref rDesktopRoom
+
+begin Function { }
+	let rDesktopRoom := fwvq1.rTDesktopRoom
+	if Player.GetInCell fwvTinterior1 || Player.GetInCell rDesktopRoom
+		SetFunctionValue 1
+	else
+		SetFunctionValue 0
+	endif
+end

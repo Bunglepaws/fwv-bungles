@@ -1,0 +1,28 @@
+scn fwvSilurianColonyTriggerScript
+
+short scare01
+
+begin onTriggerEnter player
+
+	if getIsReference fwvSilurianColonyLabRef
+		if getStage fwvqSilurianColony == 10
+			player.startConversation fwvCompanionSalaanRef
+		elseif getStage fwvqSilurianColony == 40
+			player.startConversation fwvCompanionSalaanRef
+		endif
+	elseif getIsReference fwvSilurianColonyMagmaRef
+		if getStage fwvqSilurianColony == 30
+			fwvSilurianColonySpeakerRef.SetTalkingActivatorActor fwvCompanionSalaanRef
+			fwvSilurianColonySpeakerRef.activate player
+		endif
+	elseif getIsReference fwvSilurianColonyScare01Ref
+		if scare01 == 0
+			PlaySound QstSunnySmilesDistantGecko
+			set scare01 to 1
+		endif
+	elseif getIsReference fwvSilurianColonyLava01Ref
+		player.killActor
+	endif
+
+end
+

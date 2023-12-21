@@ -1,0 +1,82 @@
+scn fwvFuncDebugFunction
+
+;used for testing functions
+
+short frame
+float rTimer
+short rListSize
+short tRoom
+ref roomRef
+
+Begin Function { }
+
+	;=============
+	;TVG Collapse
+	if frame == 0
+		if fwvqRooms.tLibrary == 1
+			fwvTardisLibraryRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tArtGallery == 1
+			fwvTardisGalleryRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tGardens == 1
+			fwvTardisGardensRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tBedroom == 1
+			fwvTardisBedroomRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tGalley == 1
+			fwvTardisGalleyRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tSickbay == 1
+			fwvTardisSickbayRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tWardrobe == 1
+			fwvTardisWardrobeRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tPool == 1
+			fwvTardisPoolRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tWorkshop == 1
+			fwvTardisWorkshopRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tLab == 1
+			fwvTardisLabRef.ListAddReference fwvTardisActiveRooms
+		endif
+		if fwvqRooms.tZeroRoom == 1
+			fwvTardisZeroRmRef.ListAddReference fwvTardisActiveRooms
+		endif
+		set rListSize to ListGetCount fwvTardisActiveRooms
+		printc "Rooms active %g" rListSize
+		set rTimer to 0.0
+		set frame to 1
+	elseif frame == 1
+		if rTimer < 5.0
+			set rTimer to rTimer + getSecondsPassed
+			printc "timer is %g" rTimer
+		else
+			set rListSize to ListGetCount fwvTardisActiveRooms
+			printc "Rooms active %g" rListSize
+			if rListSize > 0
+				PlaySound FXExplosionArtilleryExplosionFar
+				MessageEx "[Room Constructed Delete]"
+				set tRoom to 1 + getRandomPercent * rListSize/100
+				printc "%z disabled" tRoom
+				roomRef.disable
+				set fwvq1.tPower to fwvq1.tPower + 5
+				ListRemoveNthForm fwvTardisActiveRooms tRoom
+				set rTimer to 0.0
+			else
+				if fwvq1.tFlying == 1
+					set fwvqSystems.crashing to 1
+				else
+					;boot player out of the TARDIS with the TVG added to their inventory
+					player.moveTo fwvTpoliceIntMarkerRef
+					player.addItem fwvItemTimeVectorGenerator 1
+					MessageEx "[Dimension Dams Collapsing]"
+				endif
+			endif
+		endif
+	endif
+
+end

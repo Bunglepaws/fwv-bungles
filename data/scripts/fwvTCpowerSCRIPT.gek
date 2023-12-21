@@ -1,0 +1,35 @@
+scn fwvTCpowerSCRIPT
+
+;written by Demeggy 27/2/13
+
+short button
+
+Begin onActivate player
+
+if fwvq1.tFlying == 1 && fwvq1.tFlightType == 0
+
+	ShowMessage fwvTCpowerRouteMessage
+
+endif
+
+end
+
+begin GameMode
+
+set button to getbuttonpressed
+
+if button == 0	; speed up flight at expense of shields
+
+	ShowMessage fwvTCPowerRoutedSpeedMessage
+	set fwvq1.tSpeed to 10
+	set fwvq1.tShields to 0
+
+elseif button == 1 ; strengthen shields at expense of speed
+
+	ShowMessage fwvTCPowerRoutedShieldsMessage
+	set fwvq1.tShields to 100
+	set fwvq1.tSpeed to 120
+
+endif
+
+end

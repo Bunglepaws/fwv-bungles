@@ -1,0 +1,31 @@
+scn fwvCreatureNeverwereScript
+
+short sInit
+float fShaderTimer
+
+begin gamemode
+
+	if (GetGameRestarted || GetGameLoaded || fShaderTimer <= 0.5 || sInit == 0) && GetDisabled == 0 && HasLoaded3D == 1
+		;Reset3DState
+		pms fwvNeverwereShader 10
+		set fShaderTimer to 10.0
+		set sInit to 1
+	elseif GetDead == 1
+		sms fwvNeverwereShader
+		MarkForDelete
+		Disable
+	elseif GetDistance Player < 230
+		
+	elseif GetDistance Player < 1000
+		set fwvq1.fNeverwereSpawnTimer to 5.0
+	endif
+	if (((fwvqEncounter.encounterType == 4 && fwvqEncounter.sSpecifiedType == 1) == 0) && fwvqRooms.sNeverwereExist == 0 && GetInWorldSpace fwvDesertPlanetWorld == 0)
+		; Distortion bubble is over, neverwere shouldn't exist in normal space and not on desert planet. Destroy this
+		Kill
+	elseif fwvqRooms.sNeverwereExist == 0 && GetInWorldSpace fwvDesertPlanetWorld == 0
+		; Assume distortion bubble is happening, only disable
+		Kill
+	endif
+	
+	set fShaderTimer to fShaderTimer - GetSecondsPassed
+end

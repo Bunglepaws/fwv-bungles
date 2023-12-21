@@ -1,0 +1,10 @@
+scn fwvKarnTriggerScript
+
+Begin onTriggerEnter player
+
+	player.moveTo PoliceBoxDoorExitRef
+	MessageEx "[You are repelled by a Psychic Barrier...]"
+	imod FadeInFromWhiteISFX
+	PlaySound UIHealthChemsAddicted
+
+End

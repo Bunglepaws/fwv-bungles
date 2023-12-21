@@ -1,0 +1,79 @@
+scn fwvWeapPsychicPaperScript
+
+short scan
+ref CombTarget
+short sType
+short sTut
+
+begin onEquip
+	set scan to 1
+	if sTut == 0
+		ShowMessage fwvPsychicPaperTutorialMSG
+		set sTut to 1
+	endif
+end
+
+begin onUnequip
+	set scan to 0
+end
+
+begin gameMode
+
+	set CombTarget to GetCrosshairRef
+	set sType to GetObjectType CombTarget
+
+	if scan == 1
+		if isControlPressed 6 == 1
+			if sType == 42 && CombTarget.getAV Perception < 9			;apply only to NPCs
+				if CombTarget.getInFaction PowderGangerFactionNV == 1
+					set fwvqWeaponQuest.PowderGangers to 1
+				elseif CombTarget.getInFaction KingsFaction == 1
+					set fwvqWeaponQuest.Kings to 1
+				elseif CombTarget.getInFaction SuperMutantFaction == 1
+					set fwvqWeaponQuest.SuperMutants to 1
+				elseif CombTarget.getInFaction BoomerFaction == 1
+					set fwvqWeaponQuest.Boomer to 1
+				elseif CombTarget.getInFaction BrotherhoodSteelFaction == 1
+					set fwvqWeaponQuest.Brotherhood to 1
+				elseif CombTarget.getInFaction EnclaveFaction == 1
+					set fwvqWeaponQuest.Enclave to 1
+				elseif CombTarget.getInFaction NCRFactionNV == 1
+					set fwvqWeaponQuest.NCR to 1
+				elseif CombTarget.getInFaction OmertaFaction == 1
+					set fwvqWeaponQuest.Omerta to 1
+				elseif CombTarget.getInFaction VCaesarsLegionFaction == 1
+					set fwvqWeaponQuest.CaesarsLegion to 1
+				endif
+				PlaySound UIKarmaUp
+				CombTarget.stopCombat player
+				set scan to 2
+			else
+				PlaySound UIKarmaDown
+				CombTarget.startCombat player
+			endif
+		endif
+	elseif scan == 2
+		if player.getInFaction PowderGangerFactionNV == 1
+			set fwvqWeaponQuest.PowderGangers to 1
+		elseif player.getInFaction KingsFaction == 1
+			set fwvqWeaponQuest.Kings to 1
+		elseif player.getInFaction SuperMutantFaction == 1
+			set fwvqWeaponQuest.SuperMutants to 1
+		elseif player.getInFaction BoomerFaction == 1
+			set fwvqWeaponQuest.Boomer to 1
+		elseif player.getInFaction BrotherhoodSteelFaction == 1
+			set fwvqWeaponQuest.Brotherhood to 1
+		elseif player.getInFaction EnclaveFaction == 1
+			set fwvqWeaponQuest.Enclave to 1
+		elseif player.getInFaction NCRFactionNV == 1
+			set fwvqWeaponQuest.NCR to 1
+		elseif player.getInFaction OmertaFaction == 1
+			set fwvqWeaponQuest.Omerta to 1
+		elseif player.getInFaction VCaesarsLegionFaction == 1
+			set fwvqWeaponQuest.CaesarsLegion to 1
+		endif
+		player.addSpell fwvWeapPsychicSpell
+		set scan to 1
+	endif
+
+end

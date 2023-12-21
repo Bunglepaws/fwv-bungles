@@ -1,0 +1,20 @@
+scn fwvWeapACGunEffectScript
+
+short sDamage
+
+Begin ScriptEffectStart
+	if GetInFaction fwvCybermanFaction == 1 
+		if getisid fwvmooncybermanboss == 1
+			DamageAV Health 2500
+		else
+			; shot in the head
+			if GetHitLocation == 1
+				let sDamage := GetActorValue Health
+			else ; shot in a limb or head
+				let sDamage := GetActorValue Health
+				let sDamage := sDamage * GetRandomPercent * 0.01
+			endif
+			DamageAV Health sDamage
+		endif
+	endif
+End

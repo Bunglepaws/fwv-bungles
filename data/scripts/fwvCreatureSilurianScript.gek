@@ -1,0 +1,35 @@
+scn fwvCreatureSilurianScript
+
+short sIsCounted
+ref rSelf
+
+
+Begin onActivate player
+		if fwvqSilurianGasStation.sSilurian1stEnc == 0
+			showmessage fwvXOSilurian1stEncMESG
+			set fwvqSilurianGasStation.sSilurian1stEnc to 1
+			MessageBoxEx "[You might be able to craft a modifiable version of the Silurian weapon...]"
+			player.additem fwvItemSchemModdableSilurian 1
+			;if fwvq1.SilurianGunLvl == 0
+				set fwvqWeaponQuest.SilurianGunLvl to 1
+			;endif			
+			setStage fwvSilurianBook 10
+			;activate
+		else
+			activate
+		endif
+end
+
+
+Begin GameMode
+
+	set rSelf to GetSelf
+	if rSelf.GetInWorldspace fwvWorldSmallTrenzalore == 1
+
+		if rSelf.getDead == 1 && sIsCounted == 0
+			set sIsCounted to 1
+			let fwvqTrenzalore.EDeaths[2] := fwvqTrenzalore.EDeaths[2] + 1
+		endif
+	endif
+
+End

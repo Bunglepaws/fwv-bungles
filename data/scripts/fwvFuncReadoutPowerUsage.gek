@@ -1,0 +1,140 @@
+scn fwvFuncReadoutPowerUsage
+
+string_var strBreakdownMessage
+short sNoneUsed
+float fCalc
+
+begin Function { }
+	let sNoneUsed := 1
+	let strBreakdownMessage := ""
+	if fwvqSystems.tAdvanced && fwvqSystems.failsafe == 0
+		let strBreakdownMessage := "Eye of Harmony Failsafes offline!%rTotal Power Available: 100.00%%%r%rPower Usage:%r"
+	else
+		let strBreakdownMessage := "Total Power Available: " + $fwvq1.tPower + "%%%r%rPower Usage:%r"
+	endif
+	if fwvq1.tNavOn ; drive and guidance
+		; 25
+		let fCalc := 25
+		let sNoneUsed := 0
+		if fwvqSystems.tAdvanced && fwvqSystems.Axiomator 
+			let fCalc += 2.5
+		endif
+		
+		if fwvqSystems.tAdvanced && fwvqSystems.TemporalStabilizer  ; added by Xoanon
+			let fCalc += 2.5
+		endif
+			
+		if fwvqSystems.tAdvanced
+			let strBreakdownMessage := $strBreakdownMessage + "Drive & Guidance: " + $fCalc + "%% %r"
+		else
+			let strBreakdownMessage := $strBreakdownMessage + "Navigations: " + $fCalc + "%% %r"
+		endif
+	endif
+	
+	; defense
+	if fwvqSystems.tAdvanced
+		let fCalc := 0
+		if fwvqSystems.IsomorphicSecuritySystem
+			let fCalc += 2.5
+		endif
+		if fwvqSystems.MandrelCondensers 
+			let fCalc += 5
+		endif
+		if fwvq1.tHadsOn
+			let fCalc += 10
+		endif
+		if fCalc > 0.0
+			let sNoneUsed := 0
+			let strBreakdownMessage := $strBreakdownMessage + "Defense: " + $fCalc + "%% %r"
+		endif
+	endif
+	; environment
+	if fwvqSystems.tAdvanced
+		let fCalc := 0
+		if fwvqSystems.MolecularStabilizers  
+			let fCalc += 2.5
+		endif
+		if fwvqSystems.ThermoBuffer   
+			let fCalc += 2.5
+		endif
+		if fwvq1.tLifeSupportOn
+			let fCalc += 10
+		endif
+		if fCalc > 0.0
+			let sNoneUsed := 0
+			let strBreakdownMessage := $strBreakdownMessage + "Environment: " + $fCalc + "%% %r"
+		endif
+	endif
+	
+	; architecture
+	let fCalc := 0
+	if fwvqSystems.tAdvanced
+		if fwvqSystems.RelativeContinuumStabilizer   
+			let fCalc += 2.5
+		endif
+		if fwvqSystems.SpatialDampeners   
+			let fCalc += 2.5 
+		endif
+	endif
+	
+	if fwvq1.tArchitectureOn
+		let fCalc += 25
+	endif
+	
+	let fCalc += fwvqSystems.tRoomPower * Call fwvFuncTardisCountRooms
+	
+	if fCalc > 0.0
+		let sNoneUsed := 0
+		let strBreakdownMessage := $strBreakdownMessage + "Architecture: " + $fCalc + "%% %r"
+	endif
+	
+	; life support
+	if fwvqSystems.tAdvanced == 0 && fwvq1.tLifeSupportOn
+		let strBreakdownMessage := $strBreakdownMessage + "Life Support: 10%% %r"
+		let sNoneUsed := 0
+	endif
+	
+	; comms
+	if fwvq1.tCommsOn
+		; 5
+		let strBreakdownMessage := $strBreakdownMessage + "Communications: 5%% %r"
+		let sNoneUsed := 0
+	endif
+	
+	; hads
+	if fwvqSystems.tAdvanced == 0 && fwvq1.tHadsOn
+		; 10
+		let strBreakdownMessage := $strBreakdownMessage + "Hostile Action Displacement: 10%% %r"
+		let sNoneUsed := 0
+	endif
+	
+	; beacon
+	if fwvq1.tBeaconOn 
+		; 10
+		let strBreakdownMessage := $strBreakdownMessage + "Homing Beacon: 5%% %r"
+		let sNoneUsed := 0
+	endif
+	
+	; infrastructure
+	if fwvqSystems.tAdvanced
+		let fCalc := 0
+		if fwvqSystems.ConditionalStates1to6 
+			let fCalc += 2
+		endif
+		if fwvqSystems.ConditionalStates7to17  
+			let fCalc += 2
+		endif
+		if fwvqSystems.ConditionalStates18to30   
+			let fCalc += 2
+		endif
+		if fCalc > 0.0
+			let strBreakdownMessage := $strBreakdownMessage + "Infrastructure: " + $fCalc + "%% %r"
+			let sNoneUsed := 0
+		endif
+	endif
+	if sNoneUsed == 1
+		let strBreakdownMessage := $strBreakdownMessage + "None used"
+	endif
+	MessageBoxEx $strBreakdownMessage
+	sv_Destruct strBreakdownMessage
+end

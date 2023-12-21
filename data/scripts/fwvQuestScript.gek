@@ -1,0 +1,1030 @@
+scn fwvQuestScript
+
+short init
+
+ref enableDoor ; landing loc actual
+ref chosenDoor ; landing loc chosen
+
+; desktop references
+ref rTChandbrakeRef
+ref rTChelmicRef1
+ref rTCatomicRef1
+ref rTCpointerRef1
+ref rTCvortexRef1
+ref rTCzigzagRef1
+ref rTCnavicompRef1
+ref rTCgyroRef1
+ref rTCmechanicalRef1
+ref rTCartronRef1
+ref rTCtimeControllerRef1
+ref rTCengineRef1
+ref rTCthrottleRef1
+ref rTClockdownRef1
+ref rTCastronavRef1
+ref rTCdriftRef1
+ref rLightBlue
+ref rLightRed
+ref rLightNormal
+ref rCloister
+ref rCRotorRef
+ref rTCrepairRef1
+ref rTCproximityRef1
+ref rTCproximityAlarmRef
+ref rTCdeepScanRef
+ref rTDesktopRoom
+ref rTDesktopInteriorDoor
+ref rTDesktopShipDoor
+ref rTDesktopScannerPosRef
+ref rTDesktopWeatherRef
+ref rTDesktopDisableList
+ref rTCradioDial
+ref rTCcomms
+float fTDShakeMultiplier
+short sTDRoomExitStyle
+	; 0 = only door
+	; 1 = CCW exit from room (hall)
+	; 2 = CW exit (hall)
+	; 3 = both halls at once
+ref rTDHallCWExit
+ref rTDHallCCWExit
+
+short tActive ; TARDIS animations are active or not
+float hbTimer ; TARDIS flight timer
+float hbTimerWait ; Used for pauses between setting the rematerialize sound to play and actually landing
+
+short tLandingMethod; 0 = random, 1 = partial random, 2 = exact
+short tTheme	; desktop theme
+	; 0 = Nautical (2010)
+	; 1 = Coral (2005)
+	; 2 = Classical (1983)
+	; 3 = Neon (2013 a)
+	; 4 = Edwardian (1996)
+	; 5 = Glitch (2013 b)
+	; 6 = Key to Time (1977)
+short tSwitchTheme ; theme switching
+short tFlightType ; 0 = random, 1 = vortex, 2 = programmable, 3 = drift navigated, 4 = galaxy flight
+short tSpace ; 0 - Planet, 1 - Space
+short tNextFlightType	; used for transitions
+short tPath ; Determines which step of takeoff the player is at
+short tSpeed ; TARDIS Speed (timer in seconds)
+short tSpeedLvl ; TARDIS Speed Level (0=default, 1=medium, 2=faster)
+short tFlying ; Whether the TARDIS is flying or not
+short flightMode ; 0 = landed, 1 = takeoff, 2 = flight, 3 = landing
+short sShakeEnabled ; used for shaking
+float fShakeAngle ; used for the shaking
+float fShakeMultiplier
+
+short pxp ; Piloting XP
+short pxl ; Piloting Level
+short txp ; Temporal Engineering XP
+short txl ; Temporal Engineering Level
+short cxp ; Chemistry XP
+short cxl ; Chemistry Level
+short sDoorLockFire
+short cube ; Hypercubes collected
+short bottle ; Encyclopedia collected
+
+; upgrade levels
+short sonicLvl ; sonic
+short laserLvl ; laser
+short alphaLvl ; alpha
+short vortexLvl ; vortex
+short karateLvl ; karate
+short defabLvl ; defabricator
+short SilurianGunLvl ; Sonic Rifle
+
+short tArchitecture ; SYSTEM Arch Config 
+short tLifeSupport ; SYSTEM Life Support
+short tNav ; SYSTEM Navigations
+short tComms	; SYSTEM Comms
+float tPower	; SYSTEM Power Level
+float tShields ; SYSTEM Shields
+float tHull ; SYSTEM Hull
+float tFuel ; SYSTEM Fuel Level
+
+short sWarningLightsOn ; warning lights incase one of the systems is <= 25%
+
+short tArchitectureOn	
+short tLifeSupportOn
+short tNavOn
+short tCommsOn
+short tHadsOn
+short tBeaconOn
+short tSOSOn
+
+short damageTotal
+short fuelTotal
+short tTVGbroken
+float tvgTimer
+
+short tPowerAutopilot ; True if Autopilot is active
+
+short fEmpty	; True if Fuel reserves are depleted
+
+short tRefuel ; If True, Refuel the TARDIS
+short tRefuelOn
+short tRepair ; If True, Repair the TARDIS
+short tRepairOn
+short tReset	 ;if true, reset TARDIS to factory settings
+short tResetOn
+float fTimer ; Fuelling Timer
+float rTimer ; Repair Timer
+short rTimerMinutes
+short fTimerMinutes
+short tCalibrateSpeed	; True if TARDIS is calibrating new upgrades
+short tCalibrateShields ; True if TARDIS is calibrating new upgrades
+float cTimer	; Calibration Timer
+
+float lTimer	; Lifesupport Countdown Timer
+short lCountdown ; Lifesupport Countdown
+
+; CSR Variables
+
+ref rCsrDestCtrl ; Next CSR control required
+
+short done		; Determines if the right control has been activated
+short sMissedControls
+short last1Control	; last control picked randomly
+short last2Control	; second to last control picked
+short control	; LIST OF CONTROLS -
+	; 1 = HELMIC
+	; 2 = NAV. INTERFACE
+	; 3 = PROX. SENSOR
+	; 4 = ATOMIC ACCEL.
+	; 5 = GYRO.
+	; 6 = DIR. POINTER
+	; 7 = ZIGZAG
+	; 8 = VORTEX LOOP
+	; 9 = LOCKING-DOWN
+	; 10 = HANDBRAKE
+	; 11 = DEEP-SCAN
+	; 12 = THROTTLE
+					
+short csrON ; 1 is On, control chosen. 2 is waiting for response. 3 is waiting for response for crashlandings, only. 0 is Off.
+short csrShaderDone ; temporary only for csrON == 3
+short doOnce	
+float randDmg		; Randomises the amount of damage to deduct from a damaged core component
+float randTarget	; Randomises the core component to be damaged
+short randControl	; Var for randomising the CSR command
+float word1
+float word2
+float word3
+string_var strPhrase
+
+float CsrTimer ; CSR timer for giving commands
+float CsrMaxTime ; how long the timer goes 'til
+
+
+short tRand			; Randomises which Temporal Distortion occurs
+short tLoop			; Initiates a Time Loop
+short tLoopCount	; Counts how many times the Loop occurs
+
+float secondsPassed
+
+short tBookTech	; True if Technical Reference Skillbook has been read (loads component recipes into workshop)
+
+float fBoxPos
+float fBoxAng	; used to switch themes, angle of box
+short tNextTheme	; theme to transition to
+
+float lBeepTimer
+float lastLSBeep
+float countDown 
+float fShaderLastTime
+
+short sTimeSlowActive
+
+short sMoveBoxNow
+short sMoveBoxFrame	; used in sMoveBoxNow blocks
+float fPz			; math stuff (angle)
+float fMx			; math stuff (x pos)
+float fMy			; math stuff (y pos)
+float fMz			; math stuff (z pos)
+
+short sPoliceBoxIsUnspawned ; whether the policebox object does not exist now
+
+ref rPoliceBoxRef ; reference to the spawned policebox interior
+ref rPoliceBoxDoorRef ; reference to spawned policebox walls/doors
+ref rPoliceBoxViewBase ; base object for the interior
+ref rPoliceBoxBase ; base object for the box/doors
+
+ref curRef			; temporary ref because GECKscript sucks
+
+float fQuestDelayWeapon
+
+short controlAttack
+short controlDefense
+short controlEvade
+short controlScan
+short controlSurf
+ref rCsrCtrlAttack
+ref rCsrCtrlDefense
+ref rCsrCtrlEvade
+ref rCsrCtrlScan
+ref rCsrCtrlSurf
+
+float bookDay	; last time a bookshelf was searched
+short sBookCheck	; set to 1 to check for a new book
+short sBookCount
+ref rBook
+
+short sRoomLeave
+
+; desktop switch stuff
+short sFindType
+short sFindNumber
+short sCurCount
+ref rCurRef
+array_var ar_cellContents
+array_var ar_element
+ref rArrayRef
+short sRestart
+float fThemeSwitchTimer
+short sTeleportCompanions ; teleport "following" companions to player
+ref rTeleportCompanionsRef
+ref tThemeQuest
+string_var strThemeName
+ref rThemeName
+
+float fNeverwereSpawnTimer
+short sNeverwereSpawnFX
+
+short sEventPhone ; telephone ringing event
+
+short sFlightRegion
+short sFlightRegionsMax
+
+ref rRegionQuest ; temporary
+string_var strRegionName ; temporary
+array_var arRegionNames ; all quests
+short sRegionSize ; region list size
+short sRegionMenu ; menu number
+short sRegionOption ; button pressed
+string_var strMessageText ; message text
+array_var arEntry ; foreach loop item
+
+short sEnableIndex
+short sRadioIsOn
+
+short sDoorIsOpen
+
+short sFixConsoleHallways
+
+float resetTimer
+
+Begin GameMode
+	set secondsPassed to getSecondsPassed
+
+	if init == 0			; Initialise all startup variables
+		;bedroom, workshop and galley on 
+		set tArchitecture to 100
+		set tLifeSupport to 100
+		set tNav to 0
+		set tComms to 100
+		set tArchitectureOn to 1 ; 25 power
+		set tLifeSupportOn to 1 ; 10 power
+		set tNavOn to 1 ;
+		set tCommsOn to 1 ; 5 power
+		set tHadsOn to 1 ; 10 power
+		set tShields to 100
+		set tHull to 100
+		set tSpeed to 90
+		set tFuel to 100
+		set tPower to 35
+		set txl to 1
+		set cxl to 1
+		set pxl to 1
+		set sonicLvl to 1
+		set laserLvl to 1
+		set alphaLvl to 1
+		set vortexLvl to 1
+		set tNextTheme to tTheme
+		
+		; 15 power used
+		set fwvqRooms.tLibrary to 0
+		set fwvqRooms.tMuseum to 0
+		set fwvqRooms.tObservatory to 0
+		set fwvqRooms.tGardens to 0
+		set fwvqRooms.tBedroom to 1
+		set fwvqRooms.tGalley to 1
+		set fwvqRooms.tSickbay to 0
+		set fwvqRooms.tWardrobe to 0
+		set fwvqRooms.tPool to 0
+		set fwvqRooms.tWorkshop to 1
+		set fwvqRooms.tLab to 0
+		set fwvqRooms.tZeroRoom to 0
+		set fwvqRooms.sLastLibrary to 1 - fwvqRooms.tLibrary
+		set fwvqRooms.fTeleportToHour to -1
+		
+		set sPoliceBoxIsUnspawned to 1
+		
+		set sFixConsoleHallways to 1
+		set enableDoor to fwvLgibsonRef
+		set init to 2
+	endif
+
+	if fwvPatchVersion < 3
+		; re-initialize some things
+		set fwvPatchVersion to 3
+		
+		; bedroom, workshop and galley on = 15% power
+		; arch-recon, lifesupport, nav, comms and HADS on = 75% power
+		; total left = 10%
+		if getQuestCompleted fwvq1a == 0
+			set tArchitecture to 100
+			set tLifeSupport to 100
+			set tNav to 0
+			set tComms to 100
+			set tArchitectureOn to 1 ; 25 power
+			set tLifeSupportOn to 1 ; 10 power
+			set tNavOn to 1 ; 25 power
+			set tCommsOn to 1 ; 5 power
+			set tHadsOn to 1 ; 10 power
+			set tBeaconOn to 0 ; reset
+			set tShields to 100
+			set tHull to 100
+			set tSpeed to 90
+			set tFuel to 100
+		endif
+		
+		; keep levels though
+		; 15 power used
+		
+		set fwvqRooms.tLibrary to 0
+		fwvTardisLibraryRef.disable
+		set fwvqRooms.tMuseum to 0
+		set fwvqRooms.tObservatory to 0
+		fwvTardisObservatoryRef.disable
+		set fwvqRooms.tGardens to 0
+		fwvTardisGardensRef.disable
+		set fwvqRooms.tBedroom to 1
+		fwvTardisBedroomRef.enable
+		set fwvqRooms.tGalley to 1
+		fwvTardisGalleyRef.enable
+		set fwvqRooms.tSickbay to 0
+		fwvTardisSickbayRef.disable
+		set fwvqRooms.tWardrobe to 0
+		fwvTardisWardrobeRef.disable
+		set fwvqRooms.tPool to 0
+		fwvTardisPoolRef.disable
+		set fwvqRooms.tWorkshop to 1
+		fwvTardisWorkshopRef.enable
+		set fwvqRooms.tLab to 0
+		fwvTardisLabRef.disable
+		set fwvqRooms.tZeroRoom to 0
+		fwvTardisZeroRmRef.disable
+		set fwvqRooms.sLastLibrary to 1 - fwvqRooms.tLibrary
+		set fwvqRooms.fTeleportToHour to -1
+		;fwvTlightsCorridorRef.enable
+		
+		; 90 power used total
+		set tPower to 10
+		
+		set sFixConsoleHallways to 1
+		
+		set fwvqThemeDefaults.sInit to 0
+		
+		set sFlightRegionsMax to 0
+		
+		if (sPoliceBoxIsUnspawned == 1 && init == 1) || Player.GetInCell fwvTinterior1 ; TardisInteriorRefin the TARDIS now, reset the position
+			Player.MoveTo rTDesktopShipDoor
+		endif
+				
+		set init to 2
+	endif
+
+	if fwvPatchVersion < 4
+		set defabLvl to 1
+		set fwvPatchVersion to 4
+	endif
+	
+	if (GetGameLoaded || GetGameRestarted) && init == 1
+		set fwvqThemeDefaults.sInit to 0
+		set sRestart to 1
+		set sFlightRegionsMax to 0
+		let arRegionNames := ar_Construct "array"
+	elseif init == 1
+		set sRestart to 0
+	endif
+	
+	; policebox hull
+	if GetQuestCompleted fwvq1a == 0 && fwvq1a.frame >= 13
+		set rPoliceBoxBase to fwvPoliceBoxDoorDmg3
+	elseif fwvqSystems.crashed == 1
+		set rPoliceBoxBase to fwvPoliceBoxDoorDmg4
+	elseif fwvq1.tHull >= 75
+		set rPoliceBoxBase to fwvPoliceBoxDoor
+	elseif fwvq1.tHull >= 50
+		set rPoliceBoxBase to fwvPoliceBoxDoorDmg1
+	elseif fwvq1.tHull >= 25
+		set rPoliceBoxBase to fwvPoliceBoxDoorDmg2
+	elseif fwvq1.tHull >= 0
+		set rPoliceBoxBase to fwvPoliceBoxDoorDmg3
+	endif
+	
+	; used to allow weapons to switch properly without crash
+	if fQuestDelayWeapon != 0
+		set fwvqWeaponQuest.sSwitched to 1
+		SetQuestDelay fwvqWeaponQuest fQuestDelayWeapon
+		set fQuestDelayWeapon to 0
+	endif
+
+	if tSwitchTheme == 1 && fwvqRooms.sTMMenu == 0
+		if tNextTheme == tTheme ; player switched themes then switched back before closing the menu
+			set tSwitchTheme to 0
+		else
+			set tSwitchTheme to 2
+			set fThemeSwitchTimer to 1.4
+			PlaySound fwvFXtardisAlarm01
+		endif
+	elseif tSwitchTheme >= 2
+		set fThemeSwitchTimer to fThemeSwitchTimer - secondsPassed
+		if fThemeSwitchTimer <= 0.4 && tSwitchTheme == 2
+			imod fwvConsoleSwitchISFX
+			set tSwitchTheme to 3
+			Call fwvFuncSetListIsDisabled fwvTardisCorridorDoorList 1
+		elseif fThemeSwitchTimer <= 0.0 && tSwitchTheme == 3
+			set tSwitchTheme to 4
+			set tTheme to tNextTheme
+			Call fwvFuncSetListIsDisabled rTDesktopDisableList 1
+			set fwvqThemeDefaults.sInit to 0
+		elseif tSwitchTheme == 5
+			Call fwvFuncSetListIsDisabled fwvTardisCorridorDoorList 0
+			set sCurCount to 0
+			
+			While sCurCount < ListGetCount fwvTardisCorridorList
+				set rCurRef to ListGetNthForm fwvTardisCorridorList sCurCount
+				rCurRef.Update3D
+				rCurRef.Reset3DState
+				set sCurCount to sCurCount + 1
+			loop
+			if eval (fwvqEvents.event[10] == 1)
+				Call fwvFuncDematTardis fwvqEvents.interiorRef
+			endif
+			set tSwitchTheme to 0
+		endif
+	endif
+	
+	if tSwitchTheme == 4 || sRestart == 1 || (init == 2 && fwvqThemeDefaults.sInit == 1) ; switching if tSwitchTheme == 1 or 2, don't update this yet unless it's 0
+		if fwvqThemeDefaults.sInit == 1
+			set init to 1 ; finalize
+		endif
+		
+		; using default 7 themes?
+		if tTheme >= 0 && tTheme <= 6
+			set tThemeQuest to fwvqThemeDefaults
+		endif
+		
+		if (((tTheme >= 0 && tTheme <= 6) && fwvqThemeDefaults.sInit == 1) || tTheme > 6)
+			if tThemeQuest != 0
+				let rThemeName := GetRefVariable "rThemeName", tThemeQuest
+				let rTChandbrakeRef := GetRefVariable "rTChandbrakeRef", tThemeQuest
+				let rTChelmicRef1 := GetRefVariable "rTChelmicRef", tThemeQuest
+				let rTCatomicRef1 := GetRefVariable "rTCatomicRef", tThemeQuest
+				let rTCpointerRef1 := GetRefVariable "rTCpointerRef", tThemeQuest
+				let rTCvortexRef1 := GetRefVariable "rTCvortexRef", tThemeQuest
+				let rTCzigzagRef1 := GetRefVariable "rTCzigzagRef", tThemeQuest
+				let rTCnavicompRef1 := GetRefVariable "rTCnavicompRef", tThemeQuest
+				let rTCgyroRef1 := GetRefVariable "rTCgyroRef", tThemeQuest
+				let rTCartronRef1 := GetRefVariable "rTCartronRef", tThemeQuest
+				let rTCthrottleRef1 := GetRefVariable "rTCthrottleRef", tThemeQuest
+				let rTClockdownRef1 := GetRefVariable "rTClockdownRef", tThemeQuest
+				let rLightNormal := GetRefVariable "rLightNormalRef", tThemeQuest
+				let rLightRed := GetRefVariable "rLightRedRef", tThemeQuest
+				let rLightBlue := GetRefVariable "rLightBlueRef", tThemeQuest
+				let rCloister := GetRefVariable "rCloisterRef", tThemeQuest
+				;let rTCastronavRef1 := GetRefVariable "fwvT2CastroRef", tThemeQuest
+				;let rTCdriftRef1 := GetRefVariable "fwvT2CdriftRef", tThemeQuest
+				let rCRotorRef := GetRefVariable "rTCrotorRef", tThemeQuest
+				let rTCrepairRef1 := GetRefVariable "rTCrepairRef", tThemeQuest
+				let rTCproximityRef1 := GetRefVariable "rTCproximityRef", tThemeQuest
+				let rTCproximityAlarmRef := GetRefVariable "rTCproximityAlarmRef", tThemeQuest
+				let rTCdeepScanRef := GetRefVariable "rTCdeepScanRef", tThemeQuest
+				let rTCradioDial := GetRefVariable "rRadioDialRef", tThemeQuest
+				let rTCcomms := GetRefVariable "rTCcomms", tThemeQuest
+				let rTDesktopRoom := GetRefVariable "rDesktopRoom", tThemeQuest
+				let rTDesktopInteriorDoor := GetRefVariable "rDesktopInteriorDoor", tThemeQuest
+				let rTDesktopShipDoor := GetRefVariable "rDesktopShipDoor", tThemeQuest
+				let fTDShakeMultiplier := GetVariable "fShakeMultiplier", tThemeQuest
+				let rPoliceBoxViewBase := GetRefVariable "rPoliceBoxView", tThemeQuest
+				
+				set rTDesktopScannerPosRef to GetRefVariable "rDesktopScannerPosRef", tThemeQuest
+				set rTDesktopWeatherRef to GetRefVariable "rDesktopWeatherRef", tThemeQuest
+				set rTDesktopDisableList to GetRefVariable "rDesktopDisableList", tThemeQuest
+				set rTDHallCWExit to GetRefVariable "rDesktopCWExit", tThemeQuest
+				set rTDHallCCWExit to GetRefVariable "rDesktopCCWExit", tThemeQuest
+				
+				set sTDRoomExitStyle to GetVariable "sRoomExitStyle", tThemeQuest
+				set sFixConsoleHallways to 1
+			endif
+			if sRestart == 0
+				set tNextTheme to tTheme
+				set sDoorIsOpen to 0
+			else
+				if tTheme != 0
+					Call fwvFuncSetListIsDisabled fwvTconsoleRoom1ObjectList 1
+				elseif tTheme != 1
+					Call fwvFuncSetListIsDisabled fwvTconsoleRoom2ObjectList 1
+				elseif tTheme != 2
+					Call fwvFuncSetListIsDisabled fwvTconsoleRoom3ObjectList 1
+				elseif tTheme != 3
+					Call fwvFuncSetListIsDisabled fwvTconsoleRoom4ObjectList 1
+				elseif tTheme != 4
+					Call fwvFuncSetListIsDisabled fwvTconsoleRoom5ObjectList 1
+				elseif tTheme != 5
+					Call fwvFuncSetListIsDisabled fwvTconsoleRoom6ObjectList 1
+				elseif tTheme != 6
+					Call fwvFuncSetListIsDisabled fwvTconsoleRoom7ObjectList 1
+				endif
+				Call fwvFuncSetListIsDisabled rTDesktopDisableList 0
+			endif
+		endif
+	endif
+	
+	if tSwitchTheme == 4 && (((tTheme >= 0 && tTheme <= 6) && fwvqThemeDefaults.sInit == 1) || tTheme > 6)
+		set fwvqRooms.sFixWeather to 1
+		set fwvqRooms.sConsoleWeather to 2
+		Player.MoveTo rTDesktopScannerPosRef
+		Call fwvFuncChangeCorridor
+		
+		set sFindType to 42
+			
+		Label 2
+		
+		set sCurCount to 0
+		
+		set sFindNumber to GetNumRefs sFindType
+		set rCurRef to GetFirstRef sFindType
+		
+		Label 3
+		
+		set sCurCount to sCurCount + 1
+		
+		if rCurRef != 0
+			if rCurRef.GetDisabled == 0 && rCurRef.GetDead == 0
+				if rCurRef.GetPos Y < -6144
+					rCurRef.MoveTo rTDesktopScannerPosRef
+				endif
+			endif
+		endif
+		if sCurCount < sFindNumber
+			set rCurRef to GetNextRef
+			Goto 3
+		endif
+		
+		set sFindType to sFindType + 1
+		
+		if sFindType <= 45
+			Goto 2
+		endif
+		
+		set sFixConsoleHallways to 1
+		set tSwitchTheme to 5
+	endif
+	
+	if sFixConsoleHallways && init == 1
+		set sFixConsoleHallways to 0
+		if tTheme != 0
+			Call fwvFuncSetListIsDisabled fwvTconsoleRoom1ObjectList 1
+		elseif tTheme != 1
+			Call fwvFuncSetListIsDisabled fwvTconsoleRoom2ObjectList 1
+		elseif tTheme != 2
+			Call fwvFuncSetListIsDisabled fwvTconsoleRoom3ObjectList 1
+		elseif tTheme != 3
+			Call fwvFuncSetListIsDisabled fwvTconsoleRoom4ObjectList 1
+		elseif tTheme != 4
+			Call fwvFuncSetListIsDisabled fwvTconsoleRoom5ObjectList 1
+		elseif tTheme != 5
+			Call fwvFuncSetListIsDisabled fwvTconsoleRoom6ObjectList 1
+		elseif tTheme != 6
+			Call fwvFuncSetListIsDisabled fwvTconsoleRoom7ObjectList 1
+		endif
+		Call fwvFuncSetListIsDisabled rTDesktopDisableList 0
+		
+		fwvTardisCorridorOnlyDoorRef.disable 0
+		fwvTardisCorridorDoorAndHallRef.disable 0
+		fwvTardisCorridorHallOnlyCCW.disable 0
+		fwvTardisCorridorHallOnlyCW.disable 0
+		fwvTardisCorridorHallBoth.disable 0
+		fwvTardisCorridorHallEndCCW.disable 0
+		fwvTardisCorridorHallEndCW.disable 0
+		if sTDRoomExitStyle == 0
+			fwvTardisCorridorOnlyDoorRef.enable 0
+		else
+			fwvTardisCorridorDoorAndHallRef.enable 0
+		endif
+		if sTDRoomExitStyle == 1 ; CCW exit from room
+			fwvTardisCorridorHallOnlyCW.enable 0
+			fwvTardisCorridorHallEndCW.enable 0
+		elseif sTDRoomExitStyle == 2 ; CW exit from room
+			fwvTardisCorridorHallOnlyCCW.enable 0
+			fwvTardisCorridorHallEndCCW.enable 0
+		elseif sTDRoomExitStyle == 3 ; both
+			fwvTardisCorridorHallBoth.enable 0
+			fwvTardisCorridorHallEndCW.enable 0
+			fwvTardisCorridorHallEndCCW.enable 0
+		endif
+		Call fwvFuncChangeCorridor
+	endif
+	
+	if sMoveBoxNow == 0 && init == 1
+		; fix for COC-ing in or out
+		if eval fwvqEvents.event[10] == 0
+			; fix for old saves
+			if Player.GetInCell rTDesktopRoom || Player.GetInCell fwvTinterior1
+				if eval rPoliceBoxRef == 0
+					set sMoveBoxNow to 1
+				endif
+			endif
+			if (Player.GetInCell rTDesktopRoom || Player.GetInCell fwvTinterior1) && sMoveBoxNow == 0 && sPoliceBoxIsUnspawned == 0
+				set sMoveBoxNow to 1
+			elseif (GetQuestRunning fwvqSilenceCrash == 1 && GetStage fwvqSilenceCrash >= 15 && GetStage fwvqSilenceCrash <= 50 || (fwvq1.enableDoor == fwvLcreepyHouseRef && fwvqRooms.sAbandonedHouseExit == 0)) && sPoliceBoxIsUnspawned == 0 && fwvTardisRecallExtFadeInBox.GetDisabled == 1
+				if GetQuestRunning fwvqSilenceCrash == 1
+					TriggerHitShader 2
+					PlaySound OBJVertibirdCrashLand
+				endif
+				Call fwvFuncDematTardis fwvLgibsonRef
+			elseif (Player.GetInCell rTDesktopRoom || Player.GetInCell fwvTinterior1) == 0 && sMoveBoxNow == 0 && sPoliceBoxIsUnspawned == 1 && fwvTardisRecallExtFadeInBox.GetDisabled == 1
+				if (fwvq1.enableDoor == fwvLcreepyHouseRef && fwvqRooms.sAbandonedHouseExit == 0) == 0 && (GetQuestRunning fwvqSilenceCrash == 1 && GetStage fwvqSilenceCrash >= 10 && GetStage fwvqSilenceCrash <= 50) == 0
+					set sMoveBoxNow to 2
+				endif
+			endif
+		endif
+	endif
+
+	if init == 1
+		if (sMoveBoxNow == 1 || sMoveBoxNow == 4) && tSwitchTheme == 0 ; moving to the TARDIS
+			if sPoliceBoxIsUnspawned == 0 && rPoliceBoxRef != 0
+				; disable and delete the current policebox
+				if eval !(fwvqEvents.event[10] == 1 && enableDoor.GetParentCell == rTDesktopRoom)
+					rPoliceBoxDoorRef.Disable
+					rPoliceBoxDoorRef.MarkForDelete
+					rPoliceBoxRef.Disable
+					rPoliceBoxRef.MarkForDelete
+				endif
+			endif
+			
+			if (GetQuestCompleted fwvq1a == 1 || fwvq1a.frame >= 13) && enableDoor != fwvLgibsonRef
+				PoliceBoxDoorRef.Disable
+				PoliceBoxRef.Disable
+			endif
+			if sMoveBoxNow == 1 ; disable this block
+				set sMoveBoxNow to 0
+			elseif sMoveBoxNow == 4 ; immediately respawn
+				set sMoveBoxNow to 2
+			endif
+			set sPoliceBoxIsUnspawned to 1
+		elseif (sMoveBoxNow == 2 || sMoveBoxNow == 3) && tSwitchTheme == 0 ; moving to the outside
+			if sMoveBoxNow == 2 ; spawn the box outside first
+				set curRef to enableDoor
+				if eval !(fwvqEvents.event[10] == 1 && enableDoor.GetParentCell == rTDesktopRoom && sPoliceBoxIsUnspawned == 0)
+					if (GetQuestCompleted fwvq1a == 0 && fwvq1a.frame >= 13) && enableDoor == fwvLgibsonRef
+						set rPoliceBoxDoorRef to PoliceBoxDoorRef
+						set rPoliceBoxRef to PoliceBoxRef
+					else
+						set rPoliceBoxDoorRef to curRef.PlaceAtMe rPoliceBoxBase 1
+						set rPoliceBoxRef to curRef.PlaceAtMe rPoliceBoxViewBase 1
+					endif
+				endif
+				set sMoveBoxNow to 3
+				
+				if sDoorLockFire == 1
+					set sDoorLockFire to 2
+					printc "DLF %g" sDoorLockFire
+					printc "player has key, security is on, locking door 2"
+				else
+					printc "Isomorphic security not on, not locking"
+				endif
+				
+				
+				
+			elseif sMoveBoxNow == 3 ; next frame, reposition it
+				set curRef to enableDoor
+				if sMoveBoxFrame == 0
+					set sMoveBoxFrame to 1
+					; fix the door positioning
+					rPoliceBoxDoorRef.Disable 0
+					rPoliceBoxRef.Disable 0
+					set fPz to curRef.GetAngle Z
+					Call fwvFuncSetPosition { rPoliceBoxDoorRef (curRef.GetPos X) (curRef.GetPos Y) (curRef.GetPos Z) }
+					Call fwvFuncSetPosition { rPoliceBoxRef (curRef.GetPos X) (curRef.GetPos Y) (curRef.GetPos Z) }
+					rPoliceBoxDoorRef.SetAngle Z fPz
+					rPoliceBoxRef.SetAngle Z fPz
+				else
+					set sMoveBoxFrame to 0
+					set sMoveBoxNow to 0
+					rPoliceBoxDoorRef.Enable 1 ;0
+					rPoliceBoxRef.Enable 1 ;0
+					set sPoliceBoxIsUnspawned to 0
+					if (Player.GetInCell rTDesktopRoom || Player.GetInCell fwvTinterior1) && sRoomLeave
+						; actually move the player from here
+						set sRoomLeave to 0
+						if PoliceBoxDoorExitRef.GetParentCell != rTDesktopRoom
+							; only do this if we're leaving the TARDIS but not in the middle of a space loop
+							ReleaseWeatherOverride
+						endif
+						player.moveto PoliceBoxDoorExitRef
+					endif
+				endif
+				
+			endif
+		endif
+	endif
+	
+	
+	; XP
+	if pxl > 15
+		set pxl to 15
+		set pxp to 0
+	elseif pxl < 15
+		if pxp < pxl * 45            ;45 sec times current pilot level to next level 
+
+			set pxp to pxp + secondsPassed
+		else
+			set pxl to pxl + 1
+			ShowMessage fwvTardisPilotSkillMessage pxl 
+			PlaySound UILevelUp
+			PlaySound UILevelUpText
+			set pxp to 0
+		endif
+	endif
+	
+	if tRefuel == 0
+		set fuelTotal to (100 - tFuel) * 3
+	elseif tRefuel == 1
+		if tNavOn == 1
+			set tNavOn to 0
+			set tPower to tPower + 25
+			set tRefuelOn to 1
+		endif
+	elseif tRefuel == 2
+		if fTimer >= fShaderLastTime + 2
+			set fShaderLastTime to fTimer
+			if sPoliceBoxIsUnspawned == 0
+				rPoliceBoxDoorRef.pms fwvRefuelGlowShader
+				rPoliceBoxRef.pms fwvRefuelGlowShader
+			endif
+		endif
+		if fTimer == 0
+			set fTimerMinutes to (fuelTotal / 60) + 1
+			set fTimer to 0.1
+			ShowMessage fwvTfuellingMessage fTimerMinutes
+		elseif fTimer < fuelTotal
+			set fTimer to fTimer + secondsPassed
+		else
+			if tRefuelOn == 1
+				set tNavOn to 1
+				set tPower to tPower - 25
+				set tRefuelOn to 0
+			endif
+			set tFuel to 100
+			set fwvqSystems.crashed to 0
+			PlaySound fwvFXtardisLandingShort
+			ShowMessage fwvTfuelFullMessage
+			set fTimer to 0
+			set tRefuel to 0
+			set fShaderLastTime to 0.0
+			rPoliceBoxDoorRef.sms fwvRefuelGlowShader  ; XOANON added to try to fix purple glow not vanishing on refuel completion
+			rPoliceBoxRef.sms fwvRefuelGlowShader      ; same as previous
+			if fwvqSystems.IsomorphicSecuritySystem == 1
+				if player.getItemCount fwvTardisKey > 0 || player.getItemcount fwvWTARDISControllerUserKey > 0
+					set sDoorLockFire to 2
+					printc "DLF %g" sDoorLockFire
+					printc "player has key, security is on, locking door base"
+				else
+					printc "player has no key, not locking"	
+				endif
+			else
+				printc "Isomorphic security not on, not locking"
+			endif
+		endif
+	else
+		if sPoliceBoxIsUnspawned == 0
+			rPoliceBoxDoorRef.sms fwvRefuelGlowShader
+			rPoliceBoxRef.sms fwvRefuelGlowShader
+		endif
+	endif
+
+	if tRepair == 0
+		set damageTotal to tArchitecture + tLifeSupport + tNav + tComms
+	elseif tRepair == 1
+		if tNavOn == 1
+			set tNavOn to 0
+			set tPower to tPower + 25
+			set tRepairOn to 1
+		endif
+
+		elseif tRepair == 2
+
+		if rTimer >= fShaderLastTime + 2
+			set fShaderLastTime to rTimer
+			if sPoliceBoxIsUnspawned == 0
+				rPoliceBoxDoorRef.pms fwvRepairGlowShader
+				rPoliceBoxRef.pms fwvRepairGlowShader
+			endif
+		endif
+		
+		if rTimer == 0
+			set rTimerMinutes to ((500 - damageTotal) / 60) + 1
+			set rTimer to 0.1
+			ShowMessage fwvTrepairingMessage rTimerMinutes
+		elseif rTimer < (500 - damageTotal)
+			set rTimer to rTimer + secondsPassed
+		else
+			Call fwvFuncRepairSystemsFunction
+			PlaySound fwvFXtardisLandingShort
+			ShowMessage fwvTrepairedMessage
+			if tRepairOn == 1
+				set tNavOn to 1
+				set tPower to tPower - 25
+				set tRepairOn to 0
+			endif
+			set rTimer to 0
+			set tRepair to 0
+			set fShaderLastTime to 0.0
+			set sMoveBoxNow to 4
+
+			if fwvqSystems.IsomorphicSecuritySystem == 1
+				if player.getItemCount fwvTardisKey > 0 || player.getItemcount fwvWTARDISControllerUserKey > 0
+					set sDoorLockFire to 1
+					printc "DLF %g" sDoorLockFire
+					printc "player has key, security is on, locking door base"
+				else
+					printc "player has no key, not locking"	
+				endif
+			else
+				printc "Isomorphic security not on, not locking"
+			endif
+
+		endif
+
+	else
+		if sPoliceBoxIsUnspawned == 0
+			rPoliceBoxDoorRef.sms fwvRepairGlowShader
+			rPoliceBoxRef.sms fwvRepairGlowShader
+
+		endif
+	endif
+
+	if tReset == 1
+		if tNavOn == 1
+			set tNavOn to 0
+			set tPower to tPower + 25
+			set tResetOn to 1
+		endif
+	elseif tReset == 2
+		if rTimer >= fShaderLastTime + 2
+			set fShaderLastTime to rTimer
+			if sPoliceBoxIsUnspawned == 0
+				rPoliceBoxDoorRef.pms fwvResetGlowShader
+				rPoliceBoxRef.pms fwvResetGlowShader
+			endif
+		endif
+		if rTimer == 0
+			MessageEx "[System Reset Activated... 7.5 minutes remaining]"
+			set rTimer to 0.1
+		elseif rTimer < 480
+			set rTimer to rTimer + secondsPassed
+		else
+			Call fwvFuncResetSystemsFunction
+			if tResetOn == 0
+				set tNavOn to 1
+				set tPower to tPower - 25
+				set tResetOn to 0
+			endif
+			PlaySound fwvFXtardisLandingShort
+			MessageEx "[TARDIS Factory Reset Complete]"
+			set rTimer to 0
+			set tReset to 0
+			set fShaderLastTime to 0.0
+			set sMoveBoxNow to 4
+		endif
+
+	else
+		if sPoliceBoxIsUnspawned == 0
+			rPoliceBoxDoorRef.sms fwvResetGlowShader
+			rPoliceBoxRef.sms fwvResetGlowShader
+
+		endif
+	endif
+
+	; misc things
+	
+	; bookshelf code (because there is too much stuff to be running on all 8000 bookshelves
+	if sBookCheck
+		set sBookCheck to 0
+		if GameDaysPassed < bookDay ; timer fix
+			set bookDay to 0.0
+		endif
+		if GameDaysPassed > bookDay + 1.0 ; one day passed
+			set bookDay to GameDaysPassed
+			set sBookCount to ListGetCount fwvTardisLibraryList 
+			if sBookCount == 0 ; use fallback list
+				set rBook to Call fwvFuncGetRandomForm fwvTardisLibrary2List
+				if Player.GetAV Luck * 10 > GetRandomPercent
+					Player.AddItem rBook 1
+				else
+					ShowMessage fwvTardisLibraryFailMessage
+				endif
+			else ; use main list including schematics
+				set rBook to Call fwvFuncGetRandomForm fwvTardisLibraryList 
+				if Player.GetAV Luck * 10 > GetRandomPercent
+					Player.AddItem rBook 1
+					ListRemoveForm fwvTardisLibraryList rBook
+				else
+					ShowMessage fwvTardisLibraryFailMessage
+				endif
+			endif
+		else
+			ShowMessage fwvTardisLibraryFailMessage
+		endif
+	endif
+	
+	; teleporting code (for wobbly corridors and lifts and shit, companions won't get lost as easily.)
+	if sTeleportCompanions
+		if rTeleportCompanionsRef == 0
+			set rTeleportCompanionsRef to Player
+		endif
+		Call fwvFuncTeleportFollowers rTeleportCompanionsRef
+		set sTeleportCompanions to 0
+		set rTeleportCompanionsRef to 0
+	endif
+
+	if fNeverwereSpawnTimer > 0.0 && sNeverwereSpawnFX == 0
+		imod fwvNeverwereSpawnISFX
+		set sNeverwereSpawnFX to 1
+	elseif fNeverwereSpawnTimer > 0.0 && sNeverwereSpawnFX == 1
+		set fNeverwereSpawnTimer to fNeverwereSpawnTimer - secondsPassed 
+	elseif fNeverwereSpawnTimer <= 0.0 && sNeverwereSpawnFX == 1
+		set sNeverwereSpawnFX to 0
+		rImod fwvNeverwereSpawnISFX
+	endif
+
+	; restarted game
+	
+	if sRestart == 1 && init == 1
+		set sFixConsoleHallways to 1
+		Call fwvFuncChangeCorridor
+		set sCurCount to 0
+		While sCurCount < ListGetCount fwvTardisCorridorList
+			set rCurRef to ListGetNthForm fwvTardisCorridorList sCurCount
+			;rCurRef.disable 0
+			rCurRef.Update3D
+			;rCurRef.enable 0
+			;rCurRef.Reset3DState
+			set sCurCount to sCurCount + 1
+		loop
+		set fwvDebugMode to 0
+	endif
+	
+	
+	; DLC addition patching
+
+	if rRegionQuest != 0
+		set sFlightRegionsMax to sFlightRegionsMax + 1
+		SetVariable "sRegionIndex", sFlightRegionsMax, rRegionQuest
+		ar_Append arRegionNames, strRegionName
+		printc "Registered region %.0f: %z" sFlightRegionsMax strRegionName
+		set rRegionQuest to 0
+	endif
+	
+	; Reset
+	
+	if sFlightRegion > sFlightRegionsMax
+		set sFlightRegion to 0
+	endif
+	
+	; DLC region menus
+	
+	let sRegionSize := 1 + ar_Size arRegionNames
+	
+	if sRegionMenu == 1
+
+		let strMessageText := sv_Construct "Mojave Wasteland"
+		
+		Foreach arEntry <- arRegionNames
+			let strRegionName := arEntry["value"]
+			let strMessageText := sv_Construct "%z|%z" strMessageText strRegionName
+		loop
+		
+		let strMessageText := sv_Construct "Region Selection:|%z|[Exit]" strMessageText
+		MessageBoxEx $strMessageText
+		set sRegionMenu to 2
+	elseif sRegionMenu == 2
+		set sRegionOption to GetButtonPressed
+		
+		if sRegionOption == sRegionSize
+			set sRegionMenu to 0
+		else
+			set sFlightRegion to sRegionOption
+			set sRegionMenu to 0
+		endif
+	endif
+	
+end
+
+begin MenuMode
+	if sFlightRegion > sFlightRegionsMax
+		set sFlightRegion to 0
+	endif
+end

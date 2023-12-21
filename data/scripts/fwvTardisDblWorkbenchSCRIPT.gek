@@ -1,0 +1,27 @@
+scn fwvTardisDblWorkbenchSCRIPT
+
+short button
+
+Begin OnActivate Player
+
+	ShowMessage fwvTardisDblWorkbenchMessage
+
+End
+
+begin GameMode
+
+set button to getbuttonpressed
+
+if button == 0
+
+	player.showrecipemenu WorkbenchRecipes
+
+elseif button == 1
+
+	player.showrecipemenu ReloadingBenchRecipes
+
+else
+
+endif
+
+end

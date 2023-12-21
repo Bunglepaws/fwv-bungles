@@ -1,0 +1,68 @@
+scn fwvFuncRepairSystemsFunction
+
+float randDmg
+short randVar
+
+begin function { }
+
+	fwvTcontrolRoom1FireRef.disable
+	fwvTcontrolRoom2FireRef.disable
+	fwvTcontrolRoom3FireRef.disable
+	set fwvq1.tArchitecture to 100
+	set fwvq1.tLifeSupport to 100
+	set fwvq1.tNav to 100
+	set fwvq1.tComms to 100
+	set fwvq1.tShields to 100
+	if fwvqSystems.ForcefieldGenerator > 0
+		set fwvqSystems.ForcefieldGenerator to 100
+	endif
+	if fwvqSystems.WarpEllipseCutoutCircuit > 0
+		set fwvqSystems.WarpEllipseCutoutCircuit to 100
+	endif
+	if fwvqSystems.TimeVectorGenerator > 0
+		set fwvqSystems.TimeVectorGenerator to 100
+	endif
+	if fwvqSystems.ArtronCapacitor > 0
+		set fwvqSystems.ArtronCapacitor to 100
+	endif
+	if fwvqSystems.RelativeDimensionalStabiliser > 0
+		set fwvqSystems.RelativeDimensionalStabiliser to 100
+	endif
+	if fwvqSystems.DematerializationCircuit > 0
+		set fwvqSystems.DematerializationCircuit to 100
+	endif
+	if fwvqSystems.ChronometricAstrometer > 0
+		set fwvqSystems.ChronometricAstrometer to 100
+	endif
+	if fwvqSystems.TemporalCircuits > 0
+		set fwvqSystems.TemporalCircuits to 100
+	endif
+	if fwvqSystems.QuantumAccelerator > 0
+		set fwvqSystems.QuantumAccelerator to 100
+	endif
+	if fwvqSystems.RedThermocouplings > 0
+		set fwvqSystems.RedThermocouplings to 100
+	endif
+	if fwvqSystems.GreenThermocouplings > 0
+		set fwvqSystems.GreenThermocouplings to 100
+	endif
+	if fwvqSystems.BlueThermocouplings > 0
+		set fwvqSystems.BlueThermocouplings to 100
+	endif
+	if fwvqSystems.InterstitialBeamSynthesiser > 0
+		set fwvqSystems.InterstitialBeamSynthesiser to 100
+	endif
+	if fwvqSystems.TemporalCircuits > 0
+		set fwvqSystems.TemporalCircuits to 100
+	endif
+
+	set fwvq1.tHull to 100
+	fwvTpoliceIntRef.disable
+	;reenable all main controls
+
+	set fwvqSystems.navCtrls to 1
+	set fwvqSystems.commCtrls to 1
+
+	set fwvqSystems.crashed to 0
+
+end

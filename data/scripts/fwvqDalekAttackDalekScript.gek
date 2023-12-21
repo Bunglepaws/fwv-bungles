@@ -1,0 +1,41 @@
+scn fwvqDalekAttackDalekScript
+
+short killOnce
+short destroy
+float dTimer
+ref rSelf
+short sDead
+short sModel
+short random
+
+Begin GameMode
+
+	set rSelf to GetSelf
+
+	if getDead == 1
+		if killOnce == 0
+
+			let random := getRandomPercent
+			if rSelf.getIsID fwvqDalekAttackDrone == 1
+				if random < 50
+					;rSelf.placeAtMe fwvDalekDroneRemains01
+					rSelf.placeAtMe fwvDalekDroneRemains01Havok
+				else
+					;rSelf.placeAtMe fwvDalekDroneRemains02
+					rSelf.placeAtMe fwvDalekDroneRemains02Havok
+				endif
+			elseif rSelf.getIsID fwvqDalekAttackParadigm == 1
+				if random < 50
+					rSelf.placeAtMe fwvDalekParadigmRemains01Havok
+				else
+					rSelf.placeAtMe fwvDalekParadigmRemains02Havok
+				endif
+			endif
+			PlaceAtMe fwvDalekExplosion
+			rSelf.disable
+			rSelf.MarkForDelete
+			let killOnce := 1
+		endif
+	endif
+
+End

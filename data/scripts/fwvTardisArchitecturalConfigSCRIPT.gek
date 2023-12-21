@@ -1,0 +1,769 @@
+scn fwvTardisArchitecturalConfigSCRIPT
+
+short config
+
+ref rLightRef ; used for lift lights
+short LibraryStackLights
+short tLibrary
+short tArtGallery
+short tMuseum
+short tObservatory
+short tGardens
+
+short tBedroom
+short tGalley
+short tSickbay
+short tWardrobe
+
+short tPool
+short tWorkshop
+short tLab
+short tZeroRoom
+
+short sTempPower
+
+float fLockHour
+float fLastDaysPassed
+short sShortHour
+short sTeleportToHourNow
+float fTeleportToHour
+short sFixTime
+short sFixWeather
+float fOldTimeScale
+ref rWeather
+short sConsoleWeather
+short sDayWeather
+short sLastDayWeather
+float fHcRateWater
+float fHcRateSleep
+float fHcRateFood
+float fHcPlayerWater
+float fHcPlayerSleep
+float fHcPlayerFood
+float fCalc
+short sCalc
+short sLastInCell
+short sHourLockedNow
+float fExteriorHour
+
+float fSettingSwimRadiationDamageMult 
+float fSettingWadeRadiationDamageMult
+
+ref rLastLoc
+ref rNextLoc
+
+; skaro worldspace
+float fSkaroTimer
+float fSecondsPassed
+float radC
+short sSkaroIsInterior
+short sSkaroLastCubicTouched ; 1 = interior, 2 = exterior
+
+short sLastLibrary ; last library status
+short sAbandonedHouseExit ; is fwvCreepyAbandonedHouse leavable?
+
+; telos worldspace
+
+short wLastWeather
+float wTimer
+short wSpawn
+float coldMult
+float coldDmg
+
+; desert worldspace
+float fDesertImodTimer
+float fDehydrateLastDayPassed
+short sNeverwereExist
+
+; camera shaking variables
+float fXIncBase
+float fZIncBase
+
+float fXNew
+float fZNew
+
+float fShakeAmount
+float fShakeSpeed
+
+float fPx
+float fPz
+
+;float fTimePassed
+float fTimeDone
+
+short sShaking
+short sDoOnce
+short sFlopped
+
+; public variables
+float fShakeAngle
+float fShakeAngleModded
+float fShakeSeconds
+short sShakeEnabled
+short sShakeEnabledOverride
+float fShakeAngleExtra
+float fShakeMultiplier
+
+
+float fFallImmunityTimer
+float fOldMin
+short sFallDamageOff
+
+short sGameLoaded
+short sTimeChangey
+
+short sListCount
+short sListIndex
+
+short sTMListSize
+short sTMThemeIndex
+short sTMListIndex
+short sTMMenu
+ref rTMForm
+ref rThemeNameAct
+string_var strTMThemeName
+string_var strTMMenuMessage
+string_var strThemeNames
+short sTMOption
+
+short sMaxVanillaRooms
+
+; teleports
+ref rLastEntered
+ref rLastExited
+
+short roomsActive
+short frame
+short room
+short curRoomPower 
+short neededPower 
+
+Begin MenuMode
+
+	; time locking thing
+	set sShortHour to Floor GameHour
+	if sTimeChangey == 0
+	if Player.GetInCell fwvTinterior1 == 1 || sHourLockedNow == 1
+		if fLockHour != -1 && sHourLockedNow == 0
+			set sHourLockedNow to 1
+			set fExteriorHour to GameHour
+			set fLastDaysPassed to GameDaysPassed
+			set GameHour to fLockHour
+			set sFixTime to 1
+		elseif (fLockHour == -1 || Player.GetInCell fwvTinterior1 == 0) && sHourLockedNow == 1
+			if sHourLockedNow == 1
+				set fLastDaysPassed to GameDaysPassed
+				set GameHour to fExteriorHour
+				set sFixTime to 1
+			endif
+			set fLockHour to -1
+			set sHourLockedNow to 0
+		elseif (fLockHour + 1 <= sShortHour || fLockHour > sShortHour) && fLockHour != -1
+			set fLastDaysPassed to GameDaysPassed
+			if fLockHour <= GameHour
+				set fCalc to fExteriorHour + GameHour - fLockHour
+			else
+				set fCalc to fExteriorHour + (fLockHour - GameHour) + 24
+			endif
+			set fExteriorHour to fmod fExteriorHour 24.0 fCalc
+			set GameHour to fLockHour
+			set sFixTime to 1
+		elseif sFixTime == 1
+			set sFixTime to 2
+			; hardcore mode fix
+			set fHcRateWater to GetNumericGameSetting fHCDehydrationRate
+			set fHcRateSleep to GetNumericGameSetting fHCSleepDeprivationRate
+			set fHcRateFood to GetNumericGameSetting fHCStarvationRate
+			set fHcPlayerWater to Player.GetActorValue Dehydration
+			set fHcPlayerSleep to Player.GetActorValue SleepDeprevation
+			set fHcPlayerFood to Player.GetActorValue Hunger
+			SetNumericGameSetting fHCDehydrationRate 2400
+			SetNumericGameSetting fHCSleepDeprivationRate 2400
+			SetNumericGameSetting fHCStarvationRate 2400
+		elseif sFixTime == 2
+			set sFixTime to 3
+			set GameDaysPassed to fLastDaysPassed
+			
+			set fCalc to Player.GetActorValue Dehydration - fHcPlayerWater
+			Player.RestoreActorValue Dehydration fCalc
+			set fCalc to Player.GetActorValue SleepDeprevation - fHcPlayerSleep
+			Player.RestoreActorValue SleepDeprevation fCalc
+			set fCalc to Player.GetActorValue Hunger - fHcPlayerFood
+			Player.RestoreActorValue Hunger fCalc
+			
+			
+		elseif sFixTime == 3
+			set sFixTime to 4
+			; hardcore mode fix
+			SetNumericGameSetting fHCDehydrationRate fHcRateWater
+			SetNumericGameSetting fHCSleepDeprivationRate fHcRateSleep
+			SetNumericGameSetting fHCStarvationRate fHcRateFood
+			
+		elseif sFixTime == 4
+			set sFixTime to 0
+			; hardcore mode fix
+			
+			set fCalc to Player.GetActorValue Dehydration - fHcPlayerWater
+			Player.RestoreActorValue Dehydration fCalc
+			set fCalc to Player.GetActorValue SleepDeprevation - fHcPlayerSleep
+			Player.RestoreActorValue SleepDeprevation fCalc
+			set fCalc to Player.GetActorValue Hunger - fHcPlayerFood
+			Player.RestoreActorValue Hunger fCalc
+			
+		endif
+	else
+		set sHourLockedNow to 0
+		set fLockHour to -1
+	endif
+
+	endif
+end
+
+begin GameMode
+
+	set sGameLoaded to GetGameLoaded
+	set fSecondsPassed to GetSecondsPassed
+
+	; fix teleports!
+	if fFallImmunityTimer > 0.0
+		if sFallDamageOff == 0
+			set fOldMin to GetGameSetting fJumpFallHeightMin
+			SetNumericGameSetting fJumpFallHeightMin 10240
+			set sFallDamageOff to 1
+		endif
+		set fFallImmunityTimer to fFallImmunityTimer - fSecondsPassed
+		Player.ResetFallDamageTimer
+	else
+		if sFallDamageOff == 1
+			SetNumericGameSetting fJumpFallHeightMin fOldMin
+			set sFallDamageOff to 0
+		endif
+	endif
+
+	; reset lift lights
+	set rLightRef to ListGetNthForm fwvTardisLiftOnLightList 0
+	if rLightRef.GetDisabled == 0 && fwvq1.tPower == 0
+		Call fwvFuncSetListIsDisabled fwvTardisLiftOffLightList 0
+		Call fwvFuncSetListIsDisabled fwvTardisLiftOnLightList 1
+	endif
+	set rLightRef to ListGetNthForm fwvTardisLiftOffLightList 0
+	if rLightRef.GetDisabled == 0 && fwvq1.tPower > 0
+		Call fwvFuncSetListIsDisabled fwvTardisLiftOffLightList 1
+		Call fwvFuncSetListIsDisabled fwvTardisLiftOnLightList 0
+	endif
+	
+	; reset library
+	if tLibrary != sLastLibrary
+		if tLibrary == 0 ; disable bookshelves
+			Call fwvFuncSetListIsDisabled fwvTardisBookshelvesList 1
+		else ; enable bookshelves
+			Call fwvFuncSetListIsDisabled fwvTardisBookshelvesList 0
+		endif
+		set sLastLibrary to tLibrary
+	endif
+	
+	if Player.GetInCell fwvTinterior1 && sLastInCell == 0
+		; teleporting here with godmod cheats won't break it
+		set sLastInCell to 1
+		set sFixWeather to 1
+	elseif Player.GetInCell fwvTinterior1
+		set sLastInCell to 1
+	else
+		set sLastInCell to 0
+	endif
+	if (sFixWeather == 1 || sGameLoaded == 1) && Player.GetInCell fwvTinterior1
+		if sDayWeather == 0
+			set rWeather to fwvq1.rTDesktopWeatherRef
+			if sConsoleWeather == 1
+				if rWeather != 0
+					SetWeather rWeather 1
+				else
+					SetWeather fwvTardisInteriorWeather 1
+				endif
+			elseif sConsoleWeather == 2 ; force console weather
+				if rWeather != 0
+					ForceWeather rWeather 1
+				else
+					ForceWeather fwvTardisInteriorWeather 1
+				endif
+				set sConsoleWeather to 1
+			elseif sConsoleWeather == 3 ; force interior weather
+				ForceWeather fwvTardisInteriorWeather 1
+				set sConsoleWeather to 0
+			elseif sConsoleWeather == 0
+				if GetIsCurrentWeather rWeather
+					SetWeather fwvTardisInteriorWeather 1
+				else
+					ForceWeather fwvTardisInteriorWeather 1
+				endif
+			endif
+		elseif sDayWeather == 1
+			ForceWeather fwvGallifreyWeatherNoIS 1
+		else
+			ForceWeather fwvPoolWeather 1
+		endif
+		set sFixWeather to 0
+	endif
+	if sDayWeather != sLastDayWeather && GetCurrentWeatherPercent == 1.0 && fOldTimeScale == 0.0
+		if sDayWeather == 0
+			SetWeather fwvTardisInteriorWeather 1
+		elseif sDayWeather == 1
+			SetWeather fwvGallifreyWeatherNoIS 1
+		elseif sDayWeather == 2
+			SetWeather fwvPoolWeather 1
+		endif
+		set fOldTimeScale to TimeScale
+		set TimeScale to 30 ;120.0
+	elseif sDayWeather != sLastDayWeather && GetCurrentWeatherPercent == 1.0
+		if sDayWeather == 0
+			set fLockHour to -1
+		endif
+		set TimeScale to fOldTimeScale
+		set fOldTimeScale to 0.0
+		set sLastDayWeather to sDayWeather
+	endif
+	
+	; time locking thing
+	set sShortHour to Floor GameHour
+	if sTimeChangey == 0
+	if Player.GetInCell fwvTinterior1 == 1 || sHourLockedNow == 1 || sTeleportToHourNow == 1 || sFixTime > 0
+		if sTeleportToHourNow == 1
+			set fLastDaysPassed to GameDaysPassed
+			set GameHour to fTeleportToHour
+			set sTeleportToHourNow to 0
+			set fTeleportToHour to -1
+			set sFixTime to 1
+		elseif fLockHour != -1 && sHourLockedNow == 0
+			set sHourLockedNow to 1
+			set fExteriorHour to GameHour
+			set fLastDaysPassed to GameDaysPassed
+			set GameHour to fLockHour
+			set sFixTime to 1
+		elseif (fLockHour == -1 || Player.GetInCell fwvTinterior1 == 0) && sHourLockedNow == 1
+			if sHourLockedNow == 1
+				set fLastDaysPassed to GameDaysPassed
+				set GameHour to fExteriorHour
+				set sFixTime to 1
+			endif
+			set fLockHour to -1
+			set sHourLockedNow to 0
+		elseif (fLockHour + 1 <= sShortHour || fLockHour > sShortHour) && fLockHour != -1
+			set fLastDaysPassed to GameDaysPassed
+			if fLockHour <= GameHour
+				set fCalc to fExteriorHour + GameHour - fLockHour
+			else
+				set fCalc to fExteriorHour + (fLockHour - GameHour) + 24
+			endif
+			set fExteriorHour to fmod fExteriorHour 24.0 fCalc
+			set fLastDaysPassed to GameDaysPassed
+			set GameHour to fLockHour
+			set sFixTime to 1
+		elseif sFixTime == 1
+			set sFixTime to 2
+			; hardcore mode fix
+			set fHcRateWater to GetNumericGameSetting fHCDehydrationRate
+			set fHcRateSleep to GetNumericGameSetting fHCSleepDeprivationRate
+			set fHcRateFood to GetNumericGameSetting fHCStarvationRate
+			set fHcPlayerWater to Player.GetActorValue Dehydration
+			set fHcPlayerSleep to Player.GetActorValue SleepDeprevation
+			set fHcPlayerFood to Player.GetActorValue Hunger
+			SetNumericGameSetting fHCDehydrationRate 2400
+			SetNumericGameSetting fHCSleepDeprivationRate 2400
+			SetNumericGameSetting fHCStarvationRate 2400
+		elseif sFixTime == 2
+			set sFixTime to 3
+			set GameDaysPassed to fLastDaysPassed
+			
+			set fCalc to Player.GetActorValue Dehydration - fHcPlayerWater
+			Player.RestoreActorValue Dehydration fCalc
+			set fCalc to Player.GetActorValue SleepDeprevation - fHcPlayerSleep
+			Player.RestoreActorValue SleepDeprevation fCalc
+			set fCalc to Player.GetActorValue Hunger - fHcPlayerFood
+			Player.RestoreActorValue Hunger fCalc
+			
+			
+		elseif sFixTime == 3
+			set sFixTime to 4
+			; hardcore mode fix
+			SetNumericGameSetting fHCDehydrationRate fHcRateWater
+			SetNumericGameSetting fHCSleepDeprivationRate fHcRateSleep
+			SetNumericGameSetting fHCStarvationRate fHcRateFood
+			
+		elseif sFixTime == 4
+			set sFixTime to 0
+			; hardcore mode fix
+			
+			set fCalc to Player.GetActorValue Dehydration - fHcPlayerWater
+			Player.RestoreActorValue Dehydration fCalc
+			set fCalc to Player.GetActorValue SleepDeprevation - fHcPlayerSleep
+			Player.RestoreActorValue SleepDeprevation fCalc
+			set fCalc to Player.GetActorValue Hunger - fHcPlayerFood
+			Player.RestoreActorValue Hunger fCalc
+			
+		endif
+	else
+		set fLockHour to -1
+	endif
+
+	endif
+	
+	if rNextLoc != 0
+		set rLastLoc to rNextLoc
+		set rNextLoc to 0
+	endif
+	
+	; Skaro-only bit
+
+	if player.getInWorldSpace fwvWorldSkaroForestWorld == 1
+	
+		if player.hasmagiceffect fwvSkaroRadiationBaseEffect == 1
+			Player.RemoveSpell fwvSkaroRadiationEffect
+		endif
+		
+		fwvSkaroRadiationRef.MoveTo Player
+		
+		;fwvSkaroStormExtLoopRef.MoveTo Player
+		set fCalc to Player.GetPos X
+		;fwvSkaroStormExtLoopRef.SetPos X fCalc
+		set fCalc to Player.GetPos Y
+		;fwvSkaroStormExtLoopRef.SetPos Y fCalc
+		if sSkaroIsInterior == 0
+			set fCalc to Player.GetPos Z
+		else
+			set fCalc to Player.GetPos Z + 210
+		endif
+		;fwvSkaroStormExtLoopRef.SetPos Z fCalc
+		
+		;Player.PlaySound3d fwvAMBSkaroStormLoopExt
+	endif
+		
+	; Telos world only
+
+	if player.getInWorldSpace fwvWorldTelosIceWorld == 1
+		if wTimer < 60.0
+			set wTimer to wTimer + getSecondsPassed
+		else
+			set wSpawn to getRandomPercent
+			if wSpawn < 49
+				set coldMult to 2
+				fwvTelosBlizzardRef.enable 1
+				fwvTelosAMBstormRef.enable
+				if wLastWeather <= 0
+					MessageEx "A storm is coming..."
+				endif
+				set wLastWeather to 1
+			else
+				set coldMult to 1
+				fwvTelosBlizzardRef.disable 0
+				fwvTelosAMBstormRef.disable
+				if wLastWeather == 1
+					MessageEx "The storm has subsided..."
+				endif
+				set wLastWeather to 0
+			endif
+			set wTimer to 0.0
+		endif
+		;set coldDmg to 0.25 * coldMult
+		;player.damageAV health coldDmg
+	endif
+
+	;Yuleworld Only bit
+
+	if player.getInWorldSpace fwvWorldYuleWorld == 1
+		if getCurrentTime >= 0.0 && getCurrentTime < 1.0 
+			SetPCSleepHours 1
+		endif 
+	endif
+
+	;Moon Only bit
+
+	if Player.GetInWorldSpace fwvWorldMoonCraterWorld && Player.IsInInterior == 0
+		if GameHour >= 22.9
+			set fTeleportToHour to 1
+			set sTeleportToHourNow to 1
+		endif
+	endif
+	
+	; Camera shaking portion
+	
+	if sDoOnce == 0 || sGameLoaded == 1
+		set sDoOnce to 1
+		; temp amounts
+		set fShakeAngle to 15.0 ; degrees!
+		set fShakeSeconds to 0.15
+		set sShakeEnabled to 0
+		
+		set fShakeAmount to fShakeAngle
+		set fShakeSpeed to fShakeSeconds
+		set sShaking to sShakeEnabled
+		
+		set fShakeMultiplier to 1.0
+		
+	endif
+	
+	if fShakeMultiplier <= 0.05
+		set fShakeMultiplier to 1.0
+	endif
+	
+	set fShakeAngleModded to fShakeAngle * (fShakeMultiplier + fwvq1.tSpeedLvl * 0.25)
+
+	if fShakeAngleExtra > 0
+		if fShakeAngleModded < fShakeAngleExtra
+			set fShakeAngleModded to fShakeAngleExtra
+		endif
+		set sShakeEnabledOverride to 1
+	else
+		set sShakeEnabledOverride to sShakeEnabled
+	endif
+
+
+	if fTimeDone == 0 && sShaking == 1
+		set sFlopped to 0
+		set fXIncBase to (fShakeAmount * 0.5 + GetRandomPercent * (fShakeAmount - fShakeAmount * 0.5 + 1)) / 100
+		if (GetRandomPercent < 50)
+			set fXIncBase to 0 - fXIncBase
+		endif
+
+		set fZIncBase to (fShakeAmount * 0.5 + GetRandomPercent * (fShakeAmount - fShakeAmount * 0.5 + 1)) / 100
+		if (GetRandomPercent < 50)
+			set fZIncBase to 0 - fZIncBase
+		endif
+	endif
+	
+	set fPx to player.getAngle X
+	set fPz to player.getAngle Z
+	set fXNew to fPx
+	set fZNew to fPz
+	
+	set fTimeDone to fTimeDone + fSecondsPassed
+	
+	if fTimeDone >= fShakeSpeed ; reset to public variables
+		set fTimeDone to 0
+		set fShakeAmount to fShakeAngleModded
+		set fShakeSpeed to fShakeSeconds
+		set sShaking to sShakeEnabledOverride
+		set fShakeAngleExtra to 0
+	else
+		if fTimeDone >= fShakeSpeed / 2
+			if sFlopped == 0
+				set sFlopped to 1
+				set fXIncBase to 0 - fXIncBase
+				set fZIncBase to 0 - fZIncBase
+			endif
+		endif
+		set fXNew to fPx + fSecondsPassed * fXIncBase / 2
+		set fZNew to fPz + fSecondsPassed * fZIncBase / 2
+	endif
+	
+	if sShaking == 1
+	
+		set fXNew to fSecondsPassed * fXIncBase / 2.0
+		set fZNew to fSecondsPassed * fZIncBase / 2.0
+		;player.rotate X fXIncBase
+		player.rotate Z fZIncBase
+		;player.SetAngle X fXNew
+		;player.SetAngle Z fZNew
+	endif
+	
+	; Desktop theme menu
+	
+	set sTMListSize to ListGetCount fwvAdditionalConsoleRooms
+	set sMaxVanillaRooms to 7
+	
+	if sTMMenu == 1
+
+		if sCalc == 0
+			let strThemeNames := sv_Construct "Copper|Coral|Classic|Toyota|Edwardian|Glitch|Retro"
+		else
+			let strThemeNames := sv_Construct "[Back]"
+		endif
+		
+		set sTMListIndex to sCalc ; avoid adding extra variables
+		while (sTMListIndex < sTMListSize + sMaxVanillaRooms && sTMListIndex < sCalc + 8)
+			if sTMListIndex >= sMaxVanillaRooms
+				let sTMListIndex -= sMaxVanillaRooms ; avoid adding extra variables
+				set rTMForm to ListGetNthForm fwvAdditionalConsoleRooms sTMListIndex
+				let sTMListIndex += sMaxVanillaRooms
+				let rThemeNameAct := GetRefVariable "rThemeName", rTMForm
+				set strTMThemeName to rThemeNameAct.GetName
+				let strThemeNames := sv_Construct "%z|%z" strThemeNames strTMThemeName
+			endif
+			set sTMListIndex to sTMListIndex + 1
+		loop
+		if sTMListIndex < sTMListSize + sMaxVanillaRooms && sTMListIndex == sCalc + 8
+			let strThemeNames := sv_Construct "%z|[Next]" strThemeNames
+		endif
+		
+		let strTMMenuMessage := sv_Construct "Theme Selection:|%z" strThemeNames
+		MessageBoxEx $strTMMenuMessage
+		set sTMMenu to 2
+	elseif sTMMenu == 2
+		set sTMOption to GetButtonPressed
+		
+		if sTMOption+sCalc > sMaxVanillaRooms + sTMListSize
+			let sTMMenu := 0
+			let sCalc := 0
+		elseif sTMOption == 0 && sCalc > 0 && sTMOption+sCalc < sMaxVanillaRooms+sTMListSize
+			let sCalc -= 8
+			let sTMMenu := 1
+		elseif sTMOption == 8 && sTMOption+sCalc < sMaxVanillaRooms+sTMListSize
+			let sCalc += 8
+			let sTMMenu := 1
+		else
+			if sTMOption > 0 && sCalc > 0
+				let sTMOption -= 1
+			endif
+			ShowMessage fwvTdesktopThemeMessage
+			set sTMThemeIndex to sTMOption+sCalc
+			set fwvq1.tNextTheme to sTMThemeIndex
+			set fwvq1.tSwitchTheme to 1
+			if fwvq1.tNextTheme >= sMaxVanillaRooms
+				set sTMThemeIndex to sTMThemeIndex - sMaxVanillaRooms
+				set fwvq1.tThemeQuest to ListGetNthForm fwvAdditionalConsoleRooms sTMThemeIndex
+			endif
+			set sTMMenu to 0
+			set sCalc to 0
+		endif
+	endif
+
+	;Room checking
+
+	if fwvTardisLibraryRef.getDisabled == 1
+		set fwvqRooms.tLibrary to 0
+	endif
+	if fwvTardisGalleryRef.getDisabled == 1
+		set fwvqRooms.tArtGallery to 0
+	endif
+	if fwvTardisGardensRef.getDisabled == 1
+		set fwvqRooms.tGardens to 0
+	endif
+	if fwvTardisBedroomRef.getDisabled == 1
+		set fwvqRooms.tBedroom to 0
+	endif
+	if fwvTardisGalleyRef.getDisabled == 1
+		set fwvqRooms.tGalley to 0
+	endif
+	if fwvTardisSickbayRef.getDisabled == 1
+		set fwvqRooms.tSickbay to 0
+	endif
+	if fwvTardisWardrobeRef.getDisabled == 1
+		set fwvqRooms.tWardrobe to 0
+	endif
+	if fwvTardisPoolRef.getDisabled == 1
+		set fwvqRooms.tPool to 0
+	endif
+	if fwvTardisWorkshopRef.getDisabled == 1
+		set fwvqRooms.tWorkshop to 0
+	endif
+	if fwvTardisLabRef.getDisabled == 1
+		set fwvqRooms.tLab to 0
+	endif
+	if fwvTardisZeroRmRef.getDisabled == 1
+		set fwvqRooms.tZeroRoom to 0
+	endif
+
+	;ROOM CONFIG
+
+	;return current room power to TARDIS
+	;calculate cost for additional room to be added
+	;check if there's enough power
+
+	if frame == 1
+		ListClear fwvTardisActiveRooms
+		let roomsActive := Call fwvFuncTardisChkRooms rListSize
+		let curRoomPower := roomsActive * fwvqSystems.tRoomPower
+		let neededPower := (roomsActive + 1) * fwvqSystems.tRoomPower
+		set frame to 2
+	elseif frame == 2
+		if fwvqSystems.failsafe == 1
+			if curRoomPower + fwvq1.tPower >= neededPower 
+				set fwvq1.tPower to fwvq1.tPower + curRoomPower 
+				set fwvq1.tPower to fwvq1.tPower - neededPower 
+				set frame to 3
+			else
+				ShowMessage fwvTpowerFailMessage
+				set frame to 0
+			endif
+		else
+			set fwvq1.tPower to fwvq1.tPower + curRoomPower 
+			set fwvq1.tPower to fwvq1.tPower - neededPower 
+			set frame to 3			
+		endif
+	elseif frame == 3
+		if room == 1
+			set fwvqRooms.tBedroom to 1
+			fwvTardisBedroomRef.enable
+		endif
+		if room == 2
+			set fwvqRooms.tGalley to 1
+			fwvTardisGalleyRef.enable
+		endif
+		if room == 3
+			set fwvqRooms.tSickbay to 1
+			fwvTardisSickbayRef.enable
+		endif
+		if room == 4
+			set fwvqRooms.tWardrobe to 1
+			fwvTardisWardrobeRef.enable
+		endif
+		if room == 5
+			set fwvqRooms.tLibrary to 1
+			fwvTardisLibraryRef.enable
+		endif
+		if room == 6
+			set fwvqRooms.tArtGallery to 1
+			fwvTardisGalleryRef.enable
+		endif
+		if room == 7
+			set fwvqRooms.tGardens to 1
+			fwvTardisGardensRef.enable
+		endif
+		if room == 8
+			set fwvqRooms.tObservatory to 1
+			fwvTardisObservatoryRef.enable
+		endif
+		if room == 9
+			set fwvqRooms.tPool to 1
+			fwvTardisPoolRef.enable
+		endif
+		if room == 10
+			set fwvqRooms.tZeroRoom to 1
+			fwvTardisZeroRmRef.enable
+		endif
+		if room == 11
+			set fwvqRooms.tWorkshop to 1
+			fwvTardisWorkshopRef.enable
+		endif
+		if room == 12
+			set fwvqRooms.tLab to 1
+			fwvTardisLabRef.enable
+		endif
+		set frame to 0
+		set room to 0
+	endif
+
+	; LISTEN
+	if getCurrentTime >= 0.0 && getCurrentTime < 2.0 
+		fwvListen1.enable
+		fwvListen2.enable
+	else
+		fwvListen1.disable
+		fwvListen2.disable
+	endif 
+
+	; GARDEN LIGHTS
+
+	if fwvTardisGardens.getdisabled == 1
+		if XOLightMarkerREF.getdisabled != 1
+			XOLightMarkerREF.disable 
+		endif
+	else
+		if GameHour >= 18 || GameHour < 5	
+    			XOLightMarkerREF.enable	
+		else	
+     		XOLightMarkerREF.disable 
+		endif
+	EndIf
+
+
+end

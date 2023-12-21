@@ -1,0 +1,14 @@
+SCN fwvCompanionsQuestScript
+
+short	PlayerHasFollower
+float	FollowerWaitingLeaveDay
+
+;***Salaan Variables***
+short	salaanHired						
+short	salaanFired
+
+BEGIN GameMode
+
+END
+
+

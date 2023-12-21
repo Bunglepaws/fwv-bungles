@@ -1,0 +1,22 @@
+scn fwvSilurPlotGuardTriggerSCRIPT
+
+short sDoOnce
+short sTalk
+
+begin OnTriggerEnter Player
+
+	if sDoOnce == 0
+		set sTalk to 1
+		set sDoOnce to 1
+	endif
+
+end
+
+
+begin Gamemode
+	if sTalk == 1
+		printc "DialTrig"
+		fwvSilurStrngPlotGuardREF.startconversation Player 
+		set sTalk to 2
+	endif
+end

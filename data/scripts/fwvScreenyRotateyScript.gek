@@ -1,0 +1,27 @@
+scn fwvScreenyRotateyScript
+
+float fScreen1Angle
+float fScreen2Angle
+short sRotateNow
+
+Begin OnActivate Player
+	if sRotateNow == 0
+		set sRotateNow to 1
+	else 
+		set sRotateNow to 0
+	endif
+End
+
+
+Begin Gamemode
+	if sRotateNow == 1
+		set fScreen1Angle to fwvxoScreen1REF.getAngle z + 1.5 ;adjust this value for speed
+		set fScreen2Angle to fwvxoScreen2REF.getAngle Z + 1.5 ;adjust this value for speed
+		fwvxoScreen1REF.setAngle z fScreen1Angle
+		fwvxoScreen1HandleLeftREF.setAngle z fScreen1Angle
+		fwvxoScreen1HandleRightREF.setAngle z fScreen1Angle
+		fwvxoScreen2REF.setAngle z fScreen2Angle
+		fwvxoScreen2HandleLeftREF.setAngle z fScreen2Angle
+		fwvxoScreen2HandleRightREF.setAngle z fScreen2Angle
+	endif
+END

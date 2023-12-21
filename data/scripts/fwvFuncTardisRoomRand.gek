@@ -1,0 +1,195 @@
+scn fwvFuncTardisRoomRand
+
+short randomise
+
+Begin Function { }
+
+	if fwvqRooms.tLibrary == 1
+		set randomise to getRandomPercent
+		if randomise > 50
+			fwvTardisLibraryRef.disable
+			set fwvqRooms.tLibrary to 0
+			set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower
+		endif
+	else
+		if fwvq1.tPower > fwvqSystems.tRoomPower
+			set randomise to getRandomPercent
+			if randomise > 50
+				fwvTardisLibraryRef.enable
+				set fwvqRooms.tLibrary to 1
+				set fwvq1.tPower to fwvq1.tPower - fwvqSystems.tRoomPower
+			endif
+		endif
+	endif
+	if fwvqRooms.tArtGallery == 1
+		set randomise to getRandomPercent
+		if randomise > 50
+			fwvTardisGalleryRef.disable
+			set fwvqRooms.tArtGallery to 0
+			set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower
+		endif
+	else
+		if fwvq1.tPower > fwvqSystems.tRoomPower
+			set randomise to getRandomPercent
+			if randomise > 50
+				fwvTardisGalleryRef.enable
+				set fwvqRooms.tArtGallery to 1
+				set fwvq1.tPower to fwvq1.tPower - fwvqSystems.tRoomPower
+			endif
+		endif
+	endif
+	if fwvqRooms.tGardens == 1
+		set randomise to getRandomPercent
+		if randomise > 50
+			fwvTardisGardensRef.disable
+			set fwvqRooms.tGardens to 0
+			set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower
+		endif
+	else
+		if fwvq1.tPower > fwvqSystems.tRoomPower
+			set randomise to getRandomPercent
+			if randomise > 50
+				fwvTardisGardensRef.enable
+				set fwvqRooms.tGardens to 1
+				set fwvq1.tPower to fwvq1.tPower - fwvqSystems.tRoomPower
+			endif
+		endif
+	endif
+	if fwvqRooms.tBedroom == 1
+		set randomise to getRandomPercent
+		if randomise > 50
+			fwvTardisBedroomRef.disable
+			set fwvqRooms.tBedroom to 0
+			set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower
+		endif
+	else
+		if fwvq1.tPower > fwvqSystems.tRoomPower
+			set randomise to getRandomPercent
+			if randomise > 50
+				fwvTardisBedroomRef.enable
+				set fwvqRooms.tBedroom to 1
+				set fwvq1.tPower to fwvq1.tPower - fwvqSystems.tRoomPower
+			endif
+		endif
+	endif
+	if fwvqRooms.tGalley == 1
+		set randomise to getRandomPercent
+		if randomise > 50
+			fwvTardisGalleyRef.disable
+			set fwvqRooms.tGalley to 0
+			set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower
+		endif
+	else
+		if fwvq1.tPower > fwvqSystems.tRoomPower
+			set randomise to getRandomPercent
+			if randomise > 50
+				fwvTardisGalleyRef.enable
+				set fwvqRooms.tGalley to 1
+				set fwvq1.tPower to fwvq1.tPower - fwvqSystems.tRoomPower
+			endif
+		endif
+	endif
+	if fwvqRooms.tSickbay == 1
+		set randomise to getRandomPercent
+		if randomise > 50
+			fwvTardisSickbayRef.disable
+			set fwvqRooms.tSickbay to 0
+			set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower
+		endif
+	else
+		if fwvq1.tPower > fwvqSystems.tRoomPower
+			set randomise to getRandomPercent
+			if randomise > 50
+				fwvTardisSickbayRef.enable
+				set fwvqRooms.tSickbay to 1
+				set fwvq1.tPower to fwvq1.tPower - fwvqSystems.tRoomPower
+			endif
+		endif
+	endif
+	if fwvqRooms.tWardrobe == 1
+		set randomise to getRandomPercent
+		if randomise > 50
+			fwvTardisWardrobeRef.disable
+			set fwvqRooms.tWardrobe to 0
+			set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower
+		endif
+	else
+		if fwvq1.tPower > fwvqSystems.tRoomPower
+			set randomise to getRandomPercent
+			if randomise > 50
+				fwvTardisWardrobeRef.enable
+				set fwvqRooms.tWardrobe to 1
+				set fwvq1.tPower to fwvq1.tPower - fwvqSystems.tRoomPower
+			endif
+		endif
+	endif
+	if fwvqRooms.tPool == 1
+		set randomise to getRandomPercent
+		if randomise > 50
+			fwvTardisPoolRef.disable
+			set fwvqRooms.tPool to 0
+			set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower
+		endif
+	else
+		if fwvq1.tPower > fwvqSystems.tRoomPower
+			set randomise to getRandomPercent
+			if randomise > 50
+				fwvTardisPoolRef.enable
+				set fwvqRooms.tPool to 1
+				set fwvq1.tPower to fwvq1.tPower - fwvqSystems.tRoomPower
+			endif
+		endif
+	endif
+	if fwvqRooms.tWorkshop == 1
+		set randomise to getRandomPercent
+		if randomise > 50
+			fwvTardisWorkshopRef.disable
+			set fwvqRooms.tWorkshop to 0
+			set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower
+		endif
+	else
+		if fwvq1.tPower > fwvqSystems.tRoomPower
+			set randomise to getRandomPercent
+			if randomise > 50
+				fwvTardisWorkshopRef.enable
+				set fwvqRooms.tWorkshop to 1
+				set fwvq1.tPower to fwvq1.tPower - fwvqSystems.tRoomPower
+			endif
+		endif
+	endif
+	if fwvqRooms.tLab == 1
+		set randomise to getRandomPercent
+		if randomise > 50
+			fwvTardisLabRef.disable
+			set fwvqRooms.tLab to 0
+			set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower
+		endif
+	else
+		if fwvq1.tPower > fwvqSystems.tRoomPower
+			set randomise to getRandomPercent
+			if randomise > 50
+				fwvTardisLabRef.enable
+				set fwvqRooms.tLab to 1
+				set fwvq1.tPower to fwvq1.tPower - fwvqSystems.tRoomPower
+			endif
+		endif
+	endif
+	if fwvqRooms.tZeroRoom == 1
+		set randomise to getRandomPercent
+		if randomise > 50
+			fwvTardisZeroRmRef.disable
+			set fwvqRooms.tZeroRoom to 0
+			set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower
+		endif
+	else
+		if fwvq1.tPower > fwvqSystems.tRoomPower
+			set randomise to getRandomPercent
+			if randomise > 50
+				fwvTardisZeroRmRef.enable
+				set fwvqRooms.tZeroRoom to 1
+				set fwvq1.tPower to fwvq1.tPower - fwvqSystems.tRoomPower
+			endif
+		endif
+	endif
+
+End

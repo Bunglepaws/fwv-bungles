@@ -1,0 +1,162 @@
+scn fwvQuestLocationScript
+
+short wipeAll
+
+short fwvLaero300Visited
+short fwvLaerotechExtVisited
+short fwvLangeloWorkshopVisited
+short fwvLantmoundExtVisited
+short fwvLatomicWranglerVisited
+short fwvLbasincreekVisited
+short fwvLbcStationVisited
+short fwvLbigHornVisited
+short fwvLbisonSteveVisited
+short fwvLbitterspringsExtVisited
+short fwvLblackStorageVisited
+short fwvLblackmountainExtVisited
+short fwvLbonnieSpringsExtVisited
+short fwvLboulderCityExtVisited
+short fwvLboulderWorldExtVisited
+short fwvLboulderbeachExtVisited
+short fwvLbrocCaveVisited
+short fwvLcallvilleBayExtVisited
+short fwvLcentralSewerVisited
+short fwvLceruleanRoboticsVisited
+short fwvLcharlestonCaveVisited
+short fwvLcrescentCanyonExtVisited
+short fwvLcrimsonCaravanVisited
+short fwvLdevilsThroatExtVisited
+short fwvLeastPumpVisited
+short fwvLeldoradoSubExtVisited
+short fwvLfirestationVisited
+short fwvLforlornCommandVisited
+short fwvLfreesideCentralExtVisited
+short fwvLfreesideKingsExtVisited
+short fwvLfreesideRobotExtVisited
+short fwvLgamorrahWorldExtVisited
+short fwvLgibsonVisited
+short fwvLgomorrahMainVisited
+short fwvLgoodspringsCemeteryExtVisited
+short fwvLgoodspringsExtVisited
+short fwvLgoodspringsSaloonVisited
+short fwvLguardianCaveVisited
+short fwvLgypsumExtVisited
+short fwvLheliosDeckVisited
+short fwvLheliosExtVisited
+short fwvLhhVisited
+short fwvLhooverPlantExtVisited
+short fwvLhooverPlantVisited
+short fwvLhuntersFarmExtVisited
+short fwvLivanpahExtVisited
+short fwvLjacobstownExtVisited
+short fwvLjacobstownLodgeExtVisited
+short fwvLjacobstownLodgeVisited
+short fwvLkingsSchoolVisited
+short fwvLlakeLasvegasExtVisited
+short fwvLlegateCampExtVisited
+short fwvLlucky38BasementVisited
+short fwvLlucky38ExtVisited
+short fwvLmccarranConcourseVisited
+short fwvLmojaveDriveinExtVisited
+short fwvLmojaveOutpostVisited
+short fwvLmontecarloSuitesExtVisited
+short fwvLmormonFortExtVisited
+short fwvLnellisAfbExtVisited
+short fwvLnellisArrayExtVisited
+short fwvLnellisHangarVisited
+short fwvLnellisTunnelVisited
+short fwvLnewvegasSteelExtVisited
+short fwvLniptonExtVisited
+short fwvLniptonTownhallVisited
+short fwvLnorthSewerVisited
+short fwvLnorthvegasSquareExtVisited
+short fwvLnovacExtVisited
+short fwvLnuclearTestsiteExtVisited
+short fwvLprimmExtVisited
+short fwvLprimmHousesExtVisited
+short fwvLpumpEastExtVisited
+short fwvLpumpWestExtVisited
+short fwvLredrockCanyonExtVisited
+short fwvLrepconBaseVisited
+short fwvLrepconFacExtVisited
+short fwvLrockcrushingPlantExtVisited
+short fwvLrsCharlieVisited
+short fwvLrsFoxtrotVisited
+short fwvLrsFoxtrotExtVisited
+short fwvLsecuritronVaultVisited
+short fwvLsilverpeakMineVisited
+short fwvLthornVisited
+short fwvLtopsCasinoVisited
+short fwvLtopsExtVisited
+short fwvLtopsWorldExtVisited
+short fwvLtumbleweedRanchExtVisited
+short fwvLultraluxeCasinoVisited
+short fwvLvangraffWarehouseVisited
+short fwvLvault3Visited
+short fwvLvault11Visited
+short fwvLvault21Visited
+short fwvLvault22Visited
+short fwvLvault34Visited
+short fwvLvault74Visited
+short fwvLvbStationVisited
+short fwvLvikkivanceCasinoVisited
+short fwvLwestPumpVisited
+short fwvLwestsideParkExtVisited
+short fwvLzappsVisited
+short fwvLrsDeltaVisited
+short fwvLSearchlightVisited
+
+short fwvLangelMotelVisited
+short fwvLdesertCraterVisited
+short fwvLcreepyHouseVisited
+short fwvLsilurianColonyVisited
+short fwvLmoonCraterVisited
+short fwvLautonMurderVisited
+short fwvLyuleVisited
+short fwvLdesertPlanetVisited
+short fwvLssCiriusVisited
+short fwvLDalekSaucerCrashedVisited
+
+short fwvLstrongholdDalekVisited
+short fwvLstrongholdCybermenVisited
+short fwvLstrongholdSilurianVisited
+short fwvLstrongholdAutonVisited
+
+short fwvLspiridonVisited
+short fwvLskaroForestExtVisited
+short fwvLtelosCaveVisited
+short fwvLgallifreyVisited
+short fwvLkarnVisited
+short fwvLzetoniaVisited
+short fwvLtrenzaloreVisited
+short fwvLcyberStationVisited
+
+float fDaleks
+float fCybermen
+float fSilurian
+float fAuton
+
+begin GameMode
+	if fwvLrsFoxtrotVisited == 1
+		; Correction for old saves
+		set fwvLrsFoxtrotVisited to 0
+		set fwvLrsFoxtrotExtVisited to 1
+	endif
+
+	;Stronghold timers
+	;if fwvLstrongholdDalekVisited == 1
+		;if GameDaysPassed > fDaleks + 1
+			;MessageEx "[Dalek Saucer coordinates lost]"
+			;set fwvLstrongholdDalekVisited to 0
+			;let fwvqInvasions.fDay := GameDaysPassed
+			;let fwvqInvasions.sShield := 0
+			;let fwvqInvasions.sBlow := 0
+			;let fwvqInvasions.sHack := 0
+			;let fwvqInvasions.eKilled := 0
+			;let fwvqInvasions.eType := 0
+			;let fwvqInvasions.rLoc := 0
+			;setObjectiveDisplayed fwvqInvasions 60 0
+		;endif
+	;endif
+
+end

@@ -1,0 +1,136 @@
+scn fwvTelosActivatorScript
+
+ref alarm
+ref self
+
+short sWarning
+short sDeactivated
+short effectOn
+
+begin gamemode
+
+	set self to getSelf
+	set alarm to getLinkedRef
+
+	if self.getIsID fwvTelosCyberSensor == 1 && sDeactivated == 0
+		if self.getDistance player <= 1000 && self.getDistance player > 884 && player.getEquipped fwvOutfit3DGlasses == 1
+			self.pms fwvHologramDefenseShader
+		else
+			self.sms fwvHologramDefenseShader
+		endif	
+
+		if self.getDistance player <= 884 && self.getDistance player > 768 && player.getEquipped fwvOutfit3DGlasses == 1		
+			self.pms fwvHologramEvadeShader
+		else
+			self.sms fwvHologramEvadeShader
+		endif	
+					
+		if self.getDistance player < 768 
+			if player.getEquipped fwvOutfit3DGlasses == 1
+				self.pms fwvHologramAttackShader
+			else
+				self.sms fwvHologramAttackShader
+			endif	
+			
+			if player.isSneaking == 0 
+				MessageEx "Alarm triggered!"
+				alarm.enable    ;and then bring in the guards - XO - be sure to trigger only once or at least once each
+				if GetIsReference fwvTelosSensor01 == 1
+					fwvCybermenAlerted01A.enable
+					fwvCybermenAlerted01B.enable
+				endif
+
+				if GetIsReference fwvTelosSensor02 == 1
+					fwvCybermenAlerted02A.enable
+					fwvCybermenAlerted02B.enable
+				endif				
+				
+				if GetIsReference fwvTelosSensor03 == 1
+					fwvCybermenAlerted03A.enable
+					fwvCybermenAlerted03B.enable
+				endif				
+				
+				if GetIsReference fwvTelosSensor04 == 1
+					fwvCybermenAlerted04A.enable
+					fwvCybermenAlerted04B.enable
+				endif				
+			endif
+		else
+			alarm.disable
+		endif
+	endif
+end
+
+Begin onActivate player
+	if GetIsReference fwvTelosSensor01 == 1
+		if sDeactivated == 0
+			set sDeactivated to 1
+			PlaySound OBJForcefieldShutdown
+			MessageEx "[Motion sensor deactivated.]"
+			fwvTelosSensor01.sms fwvHologramInterface
+			fwvTelosSensor01.sms fwvHologramEvadeShader
+			fwvTelosSensor01.sms fwvHologramAttackShader
+			alarm.disable
+		else
+			MessageEx "[Motion sensor already deactivated.]"
+			fwvTelosSensor01.sms fwvHologramInterface
+			fwvTelosSensor01.sms fwvHologramEvadeShader
+			fwvTelosSensor01.sms fwvHologramAttackShader
+			alarm.disable
+		endif
+	endif
+	
+	if GetIsReference fwvTelosSensor02 == 1
+		if sDeactivated == 0
+			set sDeactivated to 1
+			PlaySound OBJForcefieldShutdown
+			MessageEx "[Motion sensor deactivated.]"
+			fwvTelosSensor02.sms fwvHologramInterface
+			fwvTelosSensor02.sms fwvHologramEvadeShader
+			fwvTelosSensor02.sms fwvHologramAttackShader
+			alarm.disable
+		else
+			MessageEx "[Motion sensor already deactivated.]"
+			fwvTelosSensor02.sms fwvHologramInterface
+			fwvTelosSensor02.sms fwvHologramEvadeShader
+			fwvTelosSensor02.sms fwvHologramAttackShader
+			alarm.disable
+		endif
+	endif
+	
+	if GetIsReference fwvTelosSensor03 == 1
+		if sDeactivated == 0
+			set sDeactivated to 1
+			PlaySound OBJForcefieldShutdown
+			MessageEx "[Motion sensor deactivated.]"
+			fwvTelosSensor03.sms fwvHologramInterface
+			fwvTelosSensor03.sms fwvHologramEvadeShader
+			fwvTelosSensor03.sms fwvHologramAttackShader	
+			alarm.disable	
+		else
+			MessageEx "[Motion sensor already deactivated.]"
+			fwvTelosSensor03.sms fwvHologramInterface
+			fwvTelosSensor03.sms fwvHologramEvadeShader
+			fwvTelosSensor03.sms fwvHologramAttackShader			
+			alarm.disable
+		endif
+	endif
+	
+	if GetIsReference fwvTelosSensor04 == 1
+		if sDeactivated == 0
+			set sDeactivated to 1
+			PlaySound OBJForcefieldShutdown
+			MessageEx "[Motion sensor deactivated.]"
+			fwvTelosSensor04.sms fwvHologramInterface
+			fwvTelosSensor04.sms fwvHologramEvadeShader
+			fwvTelosSensor04.sms fwvHologramAttackShader
+			alarm.disable			
+		else
+			MessageEx "[Motion sensor already deactivated.]"
+			fwvTelosSensor04.sms fwvHologramInterface
+			fwvTelosSensor04.sms fwvHologramEvadeShader
+			fwvTelosSensor04.sms fwvHologramAttackShader				
+			alarm.disable
+		endif
+	endif
+end

@@ -1,0 +1,22 @@
+ScriptName fwvxoCryoIceShortSCRIPT
+
+Ref CryoFXTarget
+
+Begin ScriptEffectStart
+
+Set CryoFXTarget to GetOwnerLastTarget
+
+		if (CryoFXTarget != PlayerRef) ;&& (CryoFXTarget.GetInFaction fwvEctothermsFaction != 1) && (CryoFXTarget.GetIsCreatureType 6 != 1)
+			if (isSpellTarget fwvxoCryoOnce == 0)
+				PMS fwvxoCryoFX01
+				cios fwvxoCryoOnce
+				printc "CryoShort"
+			endif
+		endif
+End
+
+Begin ScriptEffectFinish
+	SMS fwvxoCryoFX01
+	
+End
+

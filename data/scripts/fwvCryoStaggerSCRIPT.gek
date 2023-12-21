@@ -1,0 +1,27 @@
+scn fwvCryoStaggerSCRIPT
+
+float timer
+ref rTarget
+
+begin scripteffectstart
+	set timer to 0
+	set rTarget to GetSelf
+	;pms fwvTLtrance
+	SetUnconscious 1
+	;MessageEx "SLEEP"
+end
+
+begin scripteffectupdate
+
+	if timer < 2
+		set timer to timer + getsecondspassed
+	else
+		;sms fwvTLtrance
+		SetUnconscious 0
+		set timer to 0
+		;Dispel fwvTLtranceSpell
+		;MessageEx "Awake"
+	endif
+
+end
+

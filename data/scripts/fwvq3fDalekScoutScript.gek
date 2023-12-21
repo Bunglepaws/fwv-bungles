@@ -1,0 +1,13 @@
+scn fwvq3fDalekScoutScript
+
+begin onActivate player
+
+	if getDead == 1 && getStage fwvq3f == 30
+		ShowMessage fwvq3fDalekScoutMessage
+		PlaySound DRSSewerManholeSewer01Open 1
+		PlaySound PHYGenericMetalSheetLarge 1
+		;trigger the radio broadcast
+		setStage fwvq3f 40
+	endif
+
+end

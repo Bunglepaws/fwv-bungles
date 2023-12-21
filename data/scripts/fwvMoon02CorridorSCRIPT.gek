@@ -1,0 +1,15 @@
+scn fwvMoon02CorridorSCRIPT
+
+Begin OnTriggerEnter Player
+	if fwvqCybermanMoon.o2 == 0
+		MessageEx "[Entering Oxygen Corridor...]"
+		let fwvqCybermanMoon.o2 := 1
+	endif
+END
+
+Begin OnTriggerLeave Player
+	if fwvqCybermanMoon.o2 == 1
+		MessageEx "[Leaving Oxygen Corridor...]"
+		let fwvqCybermanMoon.o2 := 0
+	endif
+End

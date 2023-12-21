@@ -1,0 +1,574 @@
+scn fwvCSRQuestScript
+
+short csrON ; 1 is On, control chosen. 2 is waiting for response. 3 is waiting for response for crashlandings, only. 0 is Off.
+short csrShaderDone ; temporary only for csrON == 3
+short doOnce	
+float randDmg		; Randomises the amount of damage to deduct from a damaged core component
+float randTarget	; Randomises the core component to be damaged
+short randControl	; Var for randomising the CSR command
+
+short controlAttack
+short controlDefense
+short controlEvade
+short controlScan
+short controlSurf
+ref rCsrCtrlAttack
+ref rCsrCtrlDefense
+ref rCsrCtrlEvade
+ref rCsrCtrlScan
+ref rCsrCtrlSurf
+
+ref rTCproximityAlarmRef
+
+float CsrTimer ; CSR timer for giving commands
+float CsrMaxTime ; how long the timer goes 'til
+
+short tSpeed
+float hbTimer
+short control
+short last1Control
+short last2Control
+
+ref rCurRef
+
+ref rCsrDestCtrl ; Next CSR control required
+short done		; Determines if the right control has been activated
+short sMissedControls
+
+float secondsPassed
+
+float dChance	; drifting offcourse chance
+
+begin GameMode
+
+	
+	; CSR setup
+	
+	;set fwvq1.tSpeed to 90 - ((1 - fwvq1.tPowerAutopilot) * (fwvq1.tSpeedLvl * 30.0))
+	
+	if fwvq1.tSpeedLvl == 0
+		if fwvq1.tPowerAutopilot == 0 
+			let fwvq1.tSpeed := 80.0		
+		else
+			let fwvq1.tSpeed := 90.0			
+		endif
+	elseif fwvq1.tSpeedLvl == 1
+		if fwvq1.tPowerAutopilot == 0 
+			let fwvq1.tSpeed := 40.0		
+		else
+			let fwvq1.tSpeed := 45.0						
+		endif
+	else
+		if fwvq1.tPowerAutopilot == 0 
+			let fwvq1.tSpeed := 20.0		
+		else
+			let fwvq1.tSpeed := 22.5						
+		endif
+	endif
+
+	if fwvq1.tSpeedLvl == 0
+		set fwvq1.CsrMaxTime to 7.5
+	elseif fwvq1.tSpeedLvl == 1
+		set fwvq1.CsrMaxTime to 5
+	else
+		set fwvq1.CsrMaxTime to 2.5
+	endif
+	
+
+
+	set csrON to fwvq1.csrON
+	set csrShaderDone to fwvq1.csrShaderDone
+	set doOnce to fwvq1.doOnce
+	set randDmg to fwvq1.randDmg
+	set randTarget to fwvq1.randTarget
+	set randControl to fwvq1.randControl
+	set CsrTimer to fwvq1.CsrTimer
+	set CsrMaxTime to fwvq1.CsrMaxTime
+	set controlAttack to fwvq1.controlAttack
+	set controlDefense to fwvq1.controlDefense
+	set controlEvade to fwvq1.controlEvade
+	set controlScan to fwvq1.controlScan
+	set controlSurf to fwvq1.controlSurf
+	set rCsrCtrlAttack to fwvq1.rCsrCtrlAttack
+	set rCsrCtrlDefense to fwvq1.rCsrCtrlDefense
+	set rCsrCtrlEvade to fwvq1.rCsrCtrlEvade
+	set rCsrCtrlScan to fwvq1.rCsrCtrlScan
+	set rCsrCtrlSurf to fwvq1.rCsrCtrlSurf
+	set hbTimer to fwvq1.hbTimer
+	set control to fwvq1.control
+	set last1Control to fwvq1.last1Control
+	set last2Control to fwvq1.last2Control
+	set rTCproximityAlarmRef to fwvq1.rTCproximityAlarmRef
+	set done to fwvq1.done
+	set sMissedControls to fwvq1.sMissedControls
+	set rCsrDestCtrl to fwvq1.rCsrDestCtrl
+	
+	
+	set secondsPassed to GetSecondsPassed
+	
+	; CSR (CONTEXT SENSITIVE RESPONSE)
+
+	
+	if csrON == 1
+		if doOnce == 0
+			set randControl to 1 + GetRandomPercent * 8 / 100
+			set doOnce to 1
+		endif
+		if CsrTimer < CsrMaxTime											; ======== CSR Block
+			set CsrTimer to CsrTimer + secondsPassed
+		elseif fwvq1.tFlying == 1 && fwvq1.flightMode == 2 && hbTimer < 90 - CsrMaxTime * (90 / fwvq1.tSpeed)
+			; set the control
+			
+			Label 1 ; loop back here if control == last1Control or last2Control
+			
+			; control should be randControl
+			set control to 1 + GetRandomPercent * 8 / 100
+			
+			set csrON to 2
+			set CsrTimer to 0
+			
+			if control == last1Control || control == last2Control || (control == 3 && fwvq1.tHadsOn == 1) || (control == 3 && GetRandomPercent > 25)
+				; we've chosen the last or second-to-last random control
+				; or HADS is on and the proximity sensor is selected
+				; ... or the proximity sensor is selected and a random percent is over 25%
+
+				set randControl to 1 + GetRandomPercent * 8 / 100
+				Goto 1 ; loop back and try again
+			endif
+			
+			if control == 3 ; enable the proximity alarm if it's selected
+				rTCproximityAlarmRef.enable 0
+			endif
+			
+			if rCsrCtrlAttack != 0
+				rCsrCtrlAttack.sms fwvHologramAttackShader
+			endif
+			if rCsrCtrlDefense != 0
+				rCsrCtrlDefense.sms fwvHologramDefenseShader
+			endif
+			if rCsrCtrlEvade != 0
+				rCsrCtrlEvade.sms fwvHologramEvadeShader
+			endif
+			if rCsrCtrlScan != 0
+				rCsrCtrlScan.sms fwvHologramScanShader
+			endif
+			if rCsrCtrlSurf != 0
+				rCsrCtrlSurf.sms fwvHologramSurfShader
+			endif
+			if rCsrDestCtrl != 0
+				rCsrDestCtrl.sms fwvHologramPsychicMarker
+				set csrShaderDone to 0
+			endif
+			
+			; do I need this
+			set rCsrDestCtrl to 0
+			set rCsrCtrlAttack to 0
+			set rCsrCtrlDefense to 0
+			set rCsrCtrlEvade to 0
+			set rCsrCtrlScan to 0
+			set rCsrCtrlSurf to 0
+				
+			; set the control reference
+			set rCsrDestCtrl to Call fwvFuncGetCtrlByIndex control
+			rCsrDestCtrl.pms fwvHologramPsychicMarker
+			set csrShaderDone to 1
+			;Display some random techno-babble
+			
+			Call fwvFuncRandomWordGenCSR
+
+			rCsrDestCtrl.PlaySound fwvFXControlReadyBell
+		elseif fwvq1.tFlying == 1 && fwvq1.flightMode == 2 
+			; can't set the control, too close to landing! Cancel CSR
+			set csrON to 0
+		endif
+	elseif csrON == 2
+		if CsrTimer < CsrMaxTime && control != 3
+			; proximity sensor is not selected
+			set CsrTimer to CsrTimer + secondsPassed
+			if done == 1
+				if rCsrDestCtrl != 0
+					rCsrDestCtrl.sms fwvHologramPsychicMarker
+					set csrShaderDone to 0
+				endif
+			endif
+		elseif CsrTimer >= CsrMaxTime && control != 3
+			if done == 0
+				set sMissedControls to sMissedControls + 1
+				if sMissedControls > 3
+					set sMissedControls to 3
+				endif
+				if fwvq1.tShields > 0
+					set randDmg to getRandomPercent / (4 - sMissedControls)
+					set fwvq1.tShields to fwvq1.tShields - randDmg
+					set randDmg to getrandompercent / (4 - sMissedControls)
+					set randTarget to getrandompercent
+					
+					if fwvq1.pxp >= 5										; Removes Pilot XP for bad outcome
+						set fwvq1.pxp to fwvq1.pxp - 5
+					else
+						set fwvq1.pxp to 0
+					endif
+
+					set randTarget to getrandompercent				; Randomly causes a control to explode
+
+					if randTarget < 14
+						set rCurRef to fwvq1.rTChelmicRef1
+					elseif randTarget < 28
+						set rCurRef to fwvq1.rTCatomicRef1
+					elseif randTarget < 42
+						set rCurRef to fwvq1.rTCpointerRef1
+					elseif randTarget < 56
+						set rCurRef to fwvq1.rTCvortexRef1
+					elseif randTarget < 70
+						set rCurRef to fwvq1.rTCzigzagRef1
+					elseif randTarget < 84
+						set rCurRef to fwvq1.rTCnavicompRef1
+					elseif randTarget < 100
+						set rCurRef to fwvq1.rTCgyroRef1
+					endif
+					rCurRef.PlaceAtMe fwvExpControlExplosion 1
+
+					set randControl to getrandompercent
+					set csrON to 1
+					set CsrTimer to 0
+		
+				elseif fwvq1.tShields <= 0
+
+					;set fShakeAngle to 100
+					ShowMessage fwvTCShieldsFailedMessage
+
+					;TriggerHitShader 5
+					set fwvqRooms.fShakeAngleExtra to GetRandomPercent
+
+					if fwvq1.pxp > 10
+						set fwvq1.pxp to fwvq1.pxp - 10
+					endif
+
+					Call fwvFuncDamageSystemsFunction			
+					
+					set randTarget to getrandompercent				; Randomly causes a control to explode
+					
+					if randTarget < 14
+						set rCurRef to fwvq1.rTChelmicRef1
+					elseif randTarget < 28
+						set rCurRef to fwvq1.rTCatomicRef1
+					elseif randTarget < 42
+						set rCurRef to fwvq1.rTCpointerRef1
+					elseif randTarget < 56
+						set rCurRef to fwvq1.rTCvortexRef1
+					elseif randTarget < 70
+						set rCurRef to fwvq1.rTCzigzagRef1
+					elseif randTarget < 84
+						set rCurRef to fwvq1.rTCnavicompRef1
+					elseif randTarget < 100
+						set rCurRef to fwvq1.rTCgyroRef1
+					endif
+					rCurRef.PlaceAtMe fwvExpControlExplosion2 1
+					
+					set randControl to getrandompercent
+
+					set csrON to 1
+					set CsrTimer to 0
+				endif
+				rCsrDestCtrl.sms fwvHologramPsychicMarker
+				set csrShaderDone to 0
+			elseif done == 1
+				set sMissedControls to 0
+				set last2Control to last1Control
+				set last1Control to control
+				set fwvq1.pxp to fwvq1.pxp + getrandompercent / 10 + 5
+				set randControl to getrandompercent
+				set done to 0
+				set csrON to 1
+				set CsrTimer to 0
+				rCsrDestCtrl.sms fwvHologramPsychicMarker
+				set csrShaderDone to 0
+			endif
+		endif
+	elseif csrON == 3 ; used for crashing
+		if csrShaderDone == 0 && done == 0
+			rTCproximityAlarmRef.disable 0
+			; set the control reference
+			set rCsrDestCtrl to Call fwvFuncGetCtrlByIndex control
+			
+			rCsrDestCtrl.pms fwvHologramPsychicMarker
+			rCsrDestCtrl.PlaySound fwvFXControlReadyBell
+			set csrShaderDone to 1
+		elseif done == 1 && csrShaderDone == 1
+			set csrShaderDone to 0
+			rCsrDestCtrl.sms fwvHologramPsychicMarker
+		endif
+	elseif csrON == 4 && fwvqEncounter.pTimer >= 5.0 ; used for encounters
+	
+		if rCsrDestCtrl != 0
+			rCsrDestCtrl.sms fwvHologramPsychicMarker
+			set rCsrDestCtrl to 0
+		endif
+		
+		if rCsrCtrlAttack == 0 && rCsrCtrlSurf == 0
+			; attack
+			set randControl to GetRandomPercent * (3 - 1 + 1) / 100
+			if randControl == 1
+				set randControl to 4 ; atomic
+			elseif randControl == 2
+				set randControl to 6 ; directional pointer
+			else
+				set randControl to 8 ; vortex
+			endif
+			
+			set controlAttack to randControl
+			
+			; surf
+			set randControl to GetRandomPercent * (3 - 1 + 1) / 100
+			if randControl == 1
+				set randControl to 1 ; helmic regulator
+			elseif randControl == 2
+				set randControl to 6 ; directional pointer
+			else
+				set randControl to 4 ; atomic accelerator
+			endif
+			
+			set controlSurf to randControl
+			
+			; defense
+			set randControl to GetRandomPercent * (3 - 1 + 1) / 100
+			if randControl == 1
+				set randControl to 7 ; zigzag
+			elseif randControl == 2
+				set randControl to 9 ; locking down
+			else
+				set randControl to 5 ; gyro
+			endif
+			
+			set controlDefense to randControl
+			
+			; evasion
+			set controlEvade to 10 ; handbrake
+			
+			; scan
+			set controlScan to 11 ; deep-scan
+			
+			set rCsrCtrlAttack to Call fwvFuncGetCtrlByIndex controlAttack
+			set rCsrCtrlDefense to Call fwvFuncGetCtrlByIndex controlDefense
+			set rCsrCtrlSurf to Call fwvFuncGetCtrlByIndex controlSurf
+			if fwvqEncounter.evasion == 0 || fwvqEncounter.combat == 1
+				set rCsrCtrlEvade to Call fwvFuncGetCtrlByIndex controlEvade
+			endif
+			set rCsrCtrlScan to Call fwvFuncGetCtrlByIndex controlScan
+			
+			if fwvqEncounter.encounterType == 1 || fwvqEncounter.encounterType == 3
+				rCsrCtrlAttack.pms fwvHologramAttackShader
+				rCsrCtrlDefense.pms fwvHologramDefenseShader
+				if fwvqEncounter.evasion == 0 || fwvqEncounter.combat == 1
+					rCsrCtrlEvade.pms fwvHologramEvadeShader
+				endif
+				rCsrCtrlScan.pms fwvHologramScanShader
+			else
+				rCsrCtrlSurf.pms fwvHologramSurfShader
+				rCsrCtrlDefense.pms fwvHologramDefenseShader
+				if fwvqEncounter.evasion == 0
+					rCsrCtrlEvade.pms fwvHologramEvadeShader
+				endif
+				rCsrCtrlScan.pms fwvHologramScanShader
+			endif
+			set csrShaderDone to 1
+		endif
+	elseif csrON == 4 ; encounter commmand timed out
+		if rCsrDestCtrl != 0
+			rCsrDestCtrl.sms fwvHologramPsychicMarker
+		endif
+		
+		if rCsrCtrlSurf != 0
+			rCsrCtrlSurf.sms fwvHologramSurfShader
+		endif
+		
+		if rCsrCtrlAttack != 0
+			rCsrCtrlAttack.sms fwvHologramAttackShader
+		endif
+		
+		if rCsrCtrlDefense != 0
+			rCsrCtrlDefense.sms fwvHologramDefenseShader
+		endif
+		
+		if rCsrCtrlEvade != 0
+			rCsrCtrlEvade.sms fwvHologramEvadeShader
+		endif
+		
+		if rCsrCtrlScan != 0
+			rCsrCtrlScan.sms fwvHologramScanShader
+		endif
+
+		
+		set rCsrDestCtrl to 0
+		set rCsrCtrlAttack to 0
+		set rCsrCtrlDefense to 0
+		set rCsrCtrlEvade to 0
+		set rCsrCtrlScan to 0
+		set rCsrCtrlSurf to 0
+		
+		set csrShaderDone to 0
+	elseif (csrON == 0 && csrShaderDone == 1) || (done == 1 && csrShaderDone == 1)
+		if rCsrDestCtrl != 0
+			rCsrDestCtrl.sms fwvHologramPsychicMarker
+		endif
+		
+		if rCsrCtrlAttack != 0
+			rCsrCtrlAttack.sms fwvHologramAttackShader
+		endif
+		
+		if rCsrCtrlDefense != 0
+			rCsrCtrlDefense.sms fwvHologramDefenseShader
+		endif
+		
+		if rCsrCtrlEvade != 0
+			rCsrCtrlEvade.sms fwvHologramEvadeShader
+		endif
+		
+		if rCsrCtrlScan != 0
+			rCsrCtrlScan.sms fwvHologramScanShader
+		endif
+
+		if rCsrCtrlSurf != 0
+			rCsrCtrlSurf.sms fwvHologramSurfShader
+		endif
+		
+		set rCsrDestCtrl to 0
+		set rCsrCtrlAttack to 0
+		set rCsrCtrlDefense to 0
+		set rCsrCtrlEvade to 0
+		set rCsrCtrlScan to 0
+		set rCsrCtrlSurf to 0
+		
+		set csrShaderDone to 0
+	endif
+	
+	if csrON > 0 && fwvq1.tPowerAutopilot == 1 && fwvqSystems.crashing == 0
+
+		if rCsrDestCtrl != 0
+			rCsrDestCtrl.sms fwvHologramPsychicMarker
+		endif
+		
+		if rCsrCtrlAttack != 0
+			rCsrCtrlAttack.sms fwvHologramAttackShader
+		endif
+		
+		if rCsrCtrlDefense != 0
+			rCsrCtrlDefense.sms fwvHologramDefenseShader
+		endif
+		
+		if rCsrCtrlEvade != 0
+			rCsrCtrlEvade.sms fwvHologramEvadeShader
+		endif
+		
+		if rCsrCtrlScan != 0
+			rCsrCtrlScan.sms fwvHologramScanShader
+		endif
+		
+		if rCsrCtrlSurf != 0
+			rCsrCtrlSurf.sms fwvHologramSurfShader
+		endif
+		
+		set rCsrDestCtrl to 0
+		set rCsrCtrlAttack to 0
+		set rCsrCtrlDefense to 0
+		set rCsrCtrlEvade to 0
+		set rCsrCtrlScan to 0
+		set rCsrCtrlSurf to 0
+		
+		set csrON to 0
+	elseif csrON == 0 && fwvq1.tPowerAutopilot == 0 && fwvq1.tFlying == 1 && fwvqSystems.crashing == 0 && fwvq1.tFlightType <= 4
+
+		if fwvq1.flightMode == 2 && hbTimer < 90 - CsrMaxTime * (90 / fwvq1.tSpeed)
+			set done to 0
+			set csrON to 1
+		endif
+		
+		if rCsrDestCtrl != 0
+			rCsrDestCtrl.sms fwvHologramPsychicMarker
+		endif
+		
+		if rCsrCtrlAttack != 0
+			rCsrCtrlAttack.sms fwvHologramAttackShader
+		endif
+		
+		if rCsrCtrlDefense != 0
+			rCsrCtrlDefense.sms fwvHologramDefenseShader
+		endif
+		
+		if rCsrCtrlEvade != 0
+			rCsrCtrlEvade.sms fwvHologramEvadeShader
+		endif
+		
+		if rCsrCtrlScan != 0
+			rCsrCtrlScan.sms fwvHologramScanShader
+		endif
+		
+		if rCsrCtrlSurf != 0
+			rCsrCtrlSurf.sms fwvHologramSurfShader
+		endif
+		
+		set rCsrDestCtrl to 0
+		set rCsrCtrlAttack to 0
+		set rCsrCtrlDefense to 0
+		set rCsrCtrlEvade to 0
+		set rCsrCtrlScan to 0
+		set rCsrCtrlSurf to 0
+	endif
+	
+	if csrON == 0 && fwvq1.init == 1
+		rTCproximityAlarmRef.disable 0
+	endif
+	
+	if fwvq1.flightMode == 3
+		if rCsrDestCtrl != 0
+			rCsrDestCtrl.sms fwvHologramPsychicMarker
+		endif
+		
+		if rCsrCtrlAttack != 0
+			rCsrCtrlAttack.sms fwvHologramAttackShader
+		endif
+		
+		if rCsrCtrlDefense != 0
+			rCsrCtrlDefense.sms fwvHologramDefenseShader
+		endif
+		
+		if rCsrCtrlEvade != 0
+			rCsrCtrlEvade.sms fwvHologramEvadeShader
+		endif
+		
+		if rCsrCtrlScan != 0
+			rCsrCtrlScan.sms fwvHologramScanShader
+		endif
+		
+		if rCsrCtrlSurf != 0
+			rCsrCtrlSurf.sms fwvHologramSurfShader
+		endif
+	endif
+	
+	set fwvq1.csrON to csrON
+	set fwvq1.csrShaderDone to csrShaderDone
+	set fwvq1.doOnce to doOnce
+	set fwvq1.randDmg to randDmg
+	set fwvq1.randTarget to randTarget
+	set fwvq1.randControl to randControl
+	set fwvq1.CsrTimer to CsrTimer
+	set fwvq1.CsrMaxTime to CsrMaxTime
+	set fwvq1.controlAttack to controlAttack
+	set fwvq1.controlDefense to controlDefense
+	set fwvq1.controlEvade to controlEvade
+	set fwvq1.controlScan to controlScan
+	set fwvq1.controlSurf to controlSurf
+	set fwvq1.rCsrCtrlAttack to rCsrCtrlAttack
+	set fwvq1.rCsrCtrlDefense to rCsrCtrlDefense
+	set fwvq1.rCsrCtrlEvade to rCsrCtrlEvade
+	set fwvq1.rCsrCtrlScan to rCsrCtrlScan
+	set fwvq1.rCsrCtrlSurf to rCsrCtrlSurf
+	set fwvq1.control to control
+	set fwvq1.last1Control to last1Control
+	set fwvq1.last2Control to last2Control
+	set fwvq1.rTCproximityAlarmRef to rTCproximityAlarmRef
+	set fwvq1.done to done
+	set fwvq1.sMissedControls to sMissedControls
+	set fwvq1.rCsrDestCtrl to rCsrDestCtrl
+
+end

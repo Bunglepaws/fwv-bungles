@@ -1,0 +1,35 @@
+scn fwvFuncSystemOverloadFunction
+
+short checkSys
+
+Begin Function { }
+
+;function checks if any of the below systems are active, and disables them, returning power to the TARDIS (used for core ejection)
+
+let checkSys := 0
+
+While checkSys == 0
+	if fwvq1.tArchitectureOn == 1
+		printc "fwvFuncSystemOverloadFunction: archtecture turned off"
+		let fwvq1.tArchitectureOn := 0
+		let fwvq1.tPower := fwvq1.tPower + 25
+		let checkSys := 1
+		Break
+	endif
+	if fwvq1.tLifeSupportOn == 1
+		printc "fwvFuncSystemOverloadFunction: life support turned off"
+		let fwvq1.tLifeSupportOn := 0
+		let fwvq1.tPower := fwvq1.tPower + 10
+		let checkSys := 1
+		Break
+	endif
+	if fwvq1.tCommsOn == 1
+		printc "fwvFuncSystemOverloadFunction: comms turned off"
+		let fwvq1.tCommsOn := 0
+		let fwvq1.tPower := fwvq1.tPower + 5
+		let checkSys := 1
+		Break
+	endif
+Loop
+
+end

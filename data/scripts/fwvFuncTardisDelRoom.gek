@@ -1,0 +1,27 @@
+scn fwvFuncTardisDelRoom
+
+short rListSize
+short tRoom
+ref roomRef
+
+Begin Function { }
+
+	
+	let rListSize := Call fwvFuncTardisChkRooms rListSize
+	PlaySound FXExplosionArtilleryExplosionFar
+	MessageEx "[TARDIS Construct Deleted]"
+	set tRoom to 0 + getRandomPercent * rListSize/100
+	set roomRef to ListGetNthForm fwvTardisActiveRooms tRoom
+	roomRef.disable
+	printc "RoomPower %g" fwvqSystems.tRoomPower 
+	printc "tPower %g" fwvq1.tPower 
+	set fwvq1.tPower to fwvq1.tPower + fwvqSystems.tRoomPower 
+	printc "tPower to %g" fwvq1.tPower 
+	;if fwvqSystems.SpatialDampeners == 0
+		;set fwvq1.tPower to fwvq1.tPower + 5
+	;else
+		;set fwvq1.tPower to fwvq1.tPower + 10
+	;endif
+	ListRemoveNthForm fwvTardisActiveRooms tRoom
+
+End

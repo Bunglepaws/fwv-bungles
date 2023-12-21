@@ -1,0 +1,23 @@
+scn fwvSilurianLeaderPeaceQuestScript
+
+ref rSelf
+
+
+Begin OnDeath fwvXOSilurNCRNPCPlotREF
+
+	if fwvqSilurianPeaceAttempt01.sKillNCRNPC == 0
+		printc "here the Silurian should kill the human"
+		fwvXOSilurNCRNPCPlotREF.removefromfaction PlayerFaction
+		SetEnemy fwvSilurianTempEnemyFaction fwvSilurianTempFriendFaction 1 1
+		fwvSilurOfficerPlotREF.setrestrained 0
+		printc "Silurian victim unrestrained"
+		SetEnemy fwvSilurianTempEnemyFaction fwvSilurianFaction 1 1
+		printc "Silurian enemy time"
+		fwvSilurStrngPlotGuardREF.setrestrained 0
+		printc "guard greenlight"
+		fwvSilurStrngPlotGuardREF.StartCombat fwvXOSilurNCRNPCPlotREF
+		printc "kill already"
+		set fwvqSilurianPeaceAttempt01.sKillNCRNPC to 1
+	endif
+
+End

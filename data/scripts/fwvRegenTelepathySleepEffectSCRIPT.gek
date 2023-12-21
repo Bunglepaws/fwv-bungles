@@ -1,0 +1,29 @@
+scn fwvRegenTelepathySleepEffectSCRIPT
+
+;written by Demeggy 10/3/13
+
+float timer
+short trance
+
+Begin ScriptEffectStart
+	printc "GONE TO SLEEP"
+	setUnconscious 1 
+	set trance to 1
+End
+
+Begin ScriptEffectUpdate
+
+	if trance == 1
+		if timer < 10
+			set timer to timer + getsecondspassed
+		else
+			RemoveSpell fwvRegenTelepathySleep
+			setUnconscious 0
+			printc "WOKEN UP"
+			;ShowMessage fwvRegenTelepathySleepEndMessage
+			set trance to 0
+			set timer to 0.0
+		endif
+	endif
+
+end

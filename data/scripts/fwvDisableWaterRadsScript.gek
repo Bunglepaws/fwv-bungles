@@ -1,0 +1,41 @@
+scn fwvDisableWaterRadsScript
+
+short doOnce
+short swimOn
+short swimCount
+short swimLevel
+
+ref curStrength
+
+begin OnTriggerEnter Player
+	con_SetGameSetting fSwimRadiationDamageMult 0.0
+	con_SetGameSetting fWadeRadiationDamageMult 0.0
+	set swimOn to 1
+	printc "Entering Swim zone..."
+	if doOnce == 0
+		set swimLevel to 200
+		set doOnce to 1
+	endif
+end
+
+begin gamemode
+
+	set curStrength to player.getAV strength
+
+	if SwimOn == 1
+		if player.getPos Z <= -1510 && isControlPressed 0 == 1 || isControlPressed 1 == 1 || isControlPressed 0 == 2 || isControlPressed 0 == 3 
+			set swimCount to swimCount + 1
+			printc "swimCount = %g" swimCount
+		endif
+
+		if swimCount >= swimLevel
+			set swimLevel to swimLevel * 2
+			player.ModAV Strength 1
+			PlaySound UILevelUp
+			ShowMessage fwvTardisSwimmingMessage curStrength
+			set swimCount to 0
+		endif
+	endif
+	
+
+end

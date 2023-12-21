@@ -1,0 +1,13 @@
+scn CryoFatigueAttackOnHitSCRIPT
+
+
+Begin OnHit
+
+	Ref CryoFatigueTarget
+	Set CryoFatigueTarget to GetOwnerLastTarget
+
+	If (CryoFatigueTarget != PlayerRef) && (CryoFatigueTarget.IsInList fwvEctotherms == 1)
+		CryoFatigueTarget.damageav Fatigue 50
+	EndIf
+
+End

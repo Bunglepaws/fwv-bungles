@@ -1,0 +1,20 @@
+scn fwvSilurianBookQuestSCRIPT
+
+short DoOnce
+
+begin Gamemode
+
+
+	if getStage fwvSilurianBook == 20
+		if DoOnce == 0
+			SetObjectiveCompleted fwvSilurianBook 10 1
+			fwvSilurianLibraryGreenLightREF.enable
+			fwvSilurianHistoryBookREF.enable
+			fwvXOSilurianBookWhispersFarREF.enable
+			printc "Go Library Go"
+			set DoOnce to 1
+		endif
+	endif
+
+
+end

@@ -1,0 +1,23 @@
+scn fwvqChristmasSpecialDroneScript
+
+short DoTalk
+short Talking
+
+Begin GameMode
+	ResetHealth
+	StopCombat
+	If DoTalk == 1 && Talking == 0
+		Set Talking to 1
+	Endif
+End
+
+Begin SayToDone GREETING
+	if getStage fwvqChristmasSpecial == 5
+		setStage fwvqChristmasSpecial 10
+		fwvqXmasAuton1Ref.enable		
+	elseif getStage fwvqChristmasSpecial == 15
+		setStage fwvqChristmasSpecial 20
+		fwvqXmasSilent1Ref.enable		
+	endif
+	Set Talking to 0
+End

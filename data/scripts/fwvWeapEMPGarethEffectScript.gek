@@ -1,0 +1,58 @@
+scn fwvWeapEMPGarethEffectScript
+
+short empOn
+float eTimer
+
+Begin ScriptEffectStart
+	;if GetInFaction fwvCybermanFaction == 1
+		;MessageEx "Cyberman has frenzied..."
+		setAV Aggression 0
+		set eTimer to 0.0
+		pms DLC03TeslaFXShader
+		set empOn to 1		
+	;elseif GetInFaction RobotFaction == 1
+		;MessageEx "Roboform has frenzied..."
+		;setAV Aggression 3
+		;set eTimer to 0.0
+		;set empOn to 1
+	;endif
+	;pms DLC03TeslaFXShader
+End
+
+Begin ScriptEffectUpdate
+
+if empOn == 1
+	printc "EMP Effect is on"
+	if eTimer < 5.0
+		set eTimer to eTimer + getSecondsPassed
+	else
+		setAV Aggression 0
+		StopCombat
+		if GetInFaction fwvCybermanFaction == 1
+			;MessageEx "Emotional Inhibitor disabled..."
+			PlayIdle fwvAnimCyberMad
+			set eTimer to 0.0
+			set empOn to 2
+		elseif GetInFaction RobotFaction == 1
+			PlaySound WPNZapGlove3D
+			PlaceAtMe DLC03TeslaCannonExplosionSmall
+			KillActor
+			set empOn to 0
+		endif
+	endif
+elseif empOn == 2
+	if eTimer < 3.0
+		set eTimer to eTimer + getSecondsPassed
+	else
+		PlaySound WPNZapGlove3D
+		PlaceAtMe DLC03TeslaCannonExplosionSmall
+		KillActor
+		set empOn to 0
+	endif
+endif
+End
+
+Begin ScriptEffectFinish
+	printc "Script finished"
+End
+

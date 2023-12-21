@@ -1,0 +1,9 @@
+scn fwvq3dPlayerItemsScript
+
+begin onActivate Player
+
+	removeAllItems player 1
+	Disable
+	MarkForDelete
+
+end

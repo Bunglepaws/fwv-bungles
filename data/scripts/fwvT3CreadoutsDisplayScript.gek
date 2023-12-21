@@ -1,0 +1,42 @@
+scn fwvT3CreadoutsDisplayScript
+
+short sChoice
+short sCheck
+
+short sPatchVersion
+ref rSelf
+begin GameMode
+	if sPatchVersion < fwvPatchVersion
+		set sPatchVersion to fwvPatchVersion
+		set rSelf to GetSelf
+		Call fwvFuncResetPosition rSelf
+	endif
+end
+
+begin GameMode
+	if sCheck == 1
+		set sChoice to GetButtonPressed
+		set sCheck to 0
+		if sChoice == 0 ; exit
+			; exit
+		elseif sChoice == 1 ; fuel
+			ShowMessage fwvTCReadoutFuelMessage fwvq1.tFuel
+		elseif sChoice == 2 ; hull
+			ShowMessage fwvTCReadoutShieldsMessage fwvq1.tShields fwvq1.tHull
+		elseif sChoice == 3 ; power
+			Call fwvFuncReadoutPowerUsage
+			;ShowMessage fwvTCreadoutPowerMessage fwvq1.tPower
+		elseif sChoice == 4 ; systems
+			if fwvqSystems.tAdvanced == 0
+				ShowMessage fwvTCReadoutComponentsMessage fwvq1.tArchitecture fwvq1.tLifeSupport fwvq1.tNav fwvq1.tComms
+			else
+				ShowMessage fwvTCReadoutComponentsAdvMessage fwvqSystems.Temperature fwvqSystems.Mass
+			endif
+		endif
+	endif
+end
+
+begin OnActivate
+	showMessage fwvTCsystemsScannerMessage
+	set sCheck to 1
+end

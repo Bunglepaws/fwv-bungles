@@ -1,0 +1,124 @@
+scn fwvItemHypercubeScript
+
+short frame
+float fTimer
+ref rSelf
+short effectOn
+
+begin onActivate player
+
+	set fwvq1.cube to fwvq1.cube + 1
+	ShowMessage fwvItemHyperCubeMessage fwvq1.cube
+	printc "cube is %g" fwvq1.cube
+	DisablePlayerControls
+	imod FadeToWhiteAndBackISFX
+	set frame to 1
+	set fTimer to 0.0
+	;SetDestroyed 1
+
+end
+
+begin gamemode
+
+	if frame == 1
+		if fwvq1.cube == 1
+			PlaySound fwvDoctor01
+			fwvCube1Ref.enable
+			player.addItem fwvOutfitDoctor1 1
+			player.addItem fwvOutfitDoctor1Hat 1
+			player.addItem fwvWeapStick 1
+		elseif fwvq1.cube == 2
+			PlaySound fwvDoctor02
+			fwvCube2Ref.enable
+			player.addItem fwvOutfitDoctor2 1
+			player.addItem fwvItemSchemSonic2 1
+		elseif fwvq1.cube == 3
+			PlaySound fwvDoctor03
+			fwvCube3Ref.enable
+			player.addItem fwvOutfitDoctor3 1
+			player.addItem fwvItemSchemSonic3 1
+		elseif fwvq1.cube == 4
+			PlaySound fwvDoctor04
+			fwvCube4Ref.enable
+			player.addItem fwvOutfitDoctor4 1
+			player.addItem fwvOutfitDoctor4Hat 1
+			player.addItem fwvItemSchemSonic4 1
+		elseif fwvq1.cube == 5
+			PlaySound fwvDoctor05
+			fwvCube5Ref.enable
+			player.addItem fwvOutfitDoctor5 1
+			player.addItem fwvOutfitDoctor5Hat 1
+		elseif fwvq1.cube == 6
+			PlaySound fwvDoctor06
+			fwvCube6Ref.enable
+			player.addItem fwvOutfitDoctor6 1
+		elseif fwvq1.cube == 7
+			PlaySound fwvDoctor07
+			fwvCube7Ref.enable
+			player.addItem fwvOutfitDoctor7 1
+			player.addItem fwvOutfitDoctor7Hat 1
+			player.addItem fwvItemSchemBatOfOmega 1
+		elseif fwvq1.cube == 8
+			PlaySound fwvDoctor08
+			fwvCube8Ref.enable
+			player.addItem fwvOutfitDoctor8 1
+			player.addItem fwvItemSchemSonic8 1
+		elseif fwvq1.cube == 9
+			PlaySound fwvDoctor09
+			fwvCube9Ref.enable
+			player.addItem fwvOutfitDoctor9 1
+			player.additem fwvWeapPsychicPaper 1
+		elseif fwvq1.cube == 10
+			PlaySound fwvDoctor10
+			fwvCube10Ref.enable
+			player.addItem fwvOutfitDoctor10 1
+			player.addItem fwvItemSchemSonic9 1
+			player.additem fwvBrainySpecsGlasses 1
+		elseif fwvq1.cube == 11
+			PlaySound fwvDoctor11
+			fwvCube11Ref.enable
+			player.addItem fwvOutfitDoctor11Tweed 1
+			player.addItem fwvOutfitDoctor11Victorian 1
+			player.additem fwvOutfitDoctor11Fez 1
+		elseif fwvq1.cube == 12
+			PlaySound fwvDoctorWar
+			fwvCubeWarRef.enable
+			player.addItem fwvOutfitDoctorWar 1
+			player.addItem fwvItemSchemSonicWar 1
+		elseif fwvq1.cube == 13
+			PlaySound fwvDoctor12
+			fwvCube12Ref.enable
+			player.addItem fwvOutfitDoctor12 1
+			player.additem fwvItemSchemSonic12 1
+			player.additem fwvItemSchemSonicShades 1
+			if player.getitemcount fwvItemSchemChronodyne > 0 || fwvTSchematicsRef.getitemcount fwvItemSchemChronodyne > 0
+				printc "player already found Chronomine schematic"
+			else
+				player.addItem fwvItemSchemChronodyne 1
+			endif
+		endif
+		set frame to 2
+	elseif frame == 2
+		if fTimer < 5.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			EnablePlayerControls
+			MarkForDelete
+			Disable
+			set frame to 0
+		endif
+	endif
+
+	let rSelf := GetSelf
+
+	if player.getEquipped fwvOutfit3DGlasses == 1 && rSelf.getDistance player <= 400
+		if effectOn == 0
+			rSelf.pms fwvHologramInterface
+			set effectOn to 1
+		endif
+	else
+		rSelf.sms fwvHologramInterface
+		set effectOn to 0
+	endif
+
+end

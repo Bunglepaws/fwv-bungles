@@ -1,0 +1,93 @@
+scn fwvDalekSkaroTriggerScript
+
+float cTimer
+float iTimer
+float y
+float yPos
+float z
+float zPos
+short crashLand
+short DoOnce
+short DoOnce2
+short Revisit
+short DoOnce3
+
+begin onTriggerEnter player
+	if getIsReference fwvDalekSkaroStartRef
+		if getStage fwvqDalekSkaro == 5
+			setStage fwvqDalekSkaro 10
+			set y to 3501.6777
+			set z to 3953.8618
+			fwvDalekSkaroZetanCrashRef.enable
+			fwvDalekSkaroZetanCrashRef.pms Flames01
+			fwvDalekSkaroZetanCrashRef.PlayGroup forward 0
+			PlaySound fwvSkaroCrashFXExplosionArtilleryFar
+			set crashLand to 1
+		endif
+		
+		if GameDaysPassed > fwvqDalekSkaro.fDay + 1 && getStage fwvqDalekSkaro > 75 ; revisiting a day or more later after completing quest
+			;if DoOnce3 == 0
+				fwvDalekRespawn01.placeatme fwvCrDalek2005
+				fwvDalekRespawn02.placeatme fwvCrDalekShipScientist		
+				fwvDalekRespawn03.placeatme fwvDalekSaucerSupremeXO
+				fwvDalekRespawn04.placeatme fwvCrDalek2010Scientist
+				fwvDalekRespawn05.placeatme fwvCrDalek2010Strategist
+				fwvDalekRespawn06.placeatme fwvCrDalek2010Drone
+				fwvDalekRespawn07.placeatme fwvCrDalek2005flamerv2
+				fwvDalekRespawn08.placeatme fwvCrDalekDegredation
+				fwvDalekRespawn09.placeatme fwvCrDalek2010Drone
+				fwvDalekRespawn10.placeatme fwvCrDalek2005
+				fwvDalekRespawn11.placeatme fwvCrDalekShipScientist
+				fwvDalekRespawn12.placeatme fwvCrDalek2010Eternal
+				fwvDalekRespawn13.placeatme fwvCrDalek2005
+				fwvDalekRespawn14.placeatme fwvCrDalek2010Drone
+				set fwvqDalekSkaro.fDay to GameDaysPassed
+			;set DoOnce3 to 1
+			;endif
+		endif
+
+	endif
+end
+
+
+begin onTriggerLeave player
+		player.RemoveSpell fwvSkaroRadiationEffect
+end
+
+
+
+begin gamemode
+	if player.getInWorldSpace fwvWorldSkaroForestWorld == 1 && player.IsInInterior == 0
+		if player.hasmagiceffect fwvSkaroRadiationPillsBaseEffect == 0
+			if DoOnce == 0
+				ShowMessage fwvSkaroRadiationMessage
+				set DoOnce to 1
+			else
+				player.addSpell fwvSkaroRadiationEffect
+			endif
+		;else	;- no idea why this bit doesn't work, commenting out for now and handling differently	
+			;player.RemoveSpell fwvSkaroRadiationEffect	
+			;dispel fwvSkaroRadiationEffect	
+		endif	
+	endif		
+
+	set yPos to fwvDalekSkaroZetanCrashRef.getPos y - 30
+	set zPos to fwvDalekSkaroZetanCrashRef.getPos z - 5
+	if crashLand == 1
+		if DoOnce2 == 0
+			PlaySound fwvSkaroOBJVertibirdCrashFly
+			set DoOnce2 to 1
+		endif
+		if cTimer < 10.0
+			set cTimer to cTimer + getSecondsPassed
+			fwvDalekSkaroZetanCrashRef.setPos y yPos
+			fwvDalekSkaroZetanCrashRef.setPos z zPos
+		else
+			imod RepconLaunch
+			fwvDalekSkaroZetanCrashRef.disable
+			fwvDalekSkaroIntercomRef.enable
+			PlaySound OBJVertibirdCrashLand
+			set crashLand to 0
+		endif
+	endif
+end

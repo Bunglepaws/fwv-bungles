@@ -1,0 +1,69 @@
+scn fwvTCdeepScanScript
+
+;Deep Scan: Piloting Lvl + Luck > 1 in 10 chance of finding coordinates (used once a day)
+
+short sScan
+short sResult
+float fDay
+short sHint
+short sScanCount 
+short sResultX
+short sResultY
+
+Begin onActivate player
+
+	if sScanCount < 3 && fwvqDrift.sScanned == 0
+		let sScan := (fwvq1.pxl / 2) + (player.getAv Luck / 2)
+		let sResult := Rand 1,20
+		let sHint := 1 + GetRandomPercent * 2 / 100
+		let sScanCount := sScanCount + 1
+	
+		if sScan > sResult
+			if sHint == 1
+				if fwvqDrift.gID == 1
+					let sResultX := 1
+				elseif fwvqDrift.gID == 2
+					let sResultX := 7
+				elseif fwvqDrift.gID == 3
+					let sResultX := 2
+				elseif fwvqDrift.gID == 4
+					let sResultX := 2
+				elseif fwvqDrift.gID == 5
+					let sResultX := 7
+				elseif fwvqDrift.gID == 6
+					let sResultX := 3
+				endif
+				MessageBoxEx "Scan Results [%g/3]:%r%rGallifreyan Binary Vector X: %g" sScanCount sResultX
+			elseif sHint == 2
+				if fwvqDrift.gID == 1
+					let sResultY := 8
+				elseif fwvqDrift.gID == 2
+					let sResultY := 6
+				elseif fwvqDrift.gID == 3
+					let sResultY := 2
+				elseif fwvqDrift.gID == 4
+					let sResultY := 6
+				elseif fwvqDrift.gID == 5
+					let sResultY := 9
+				elseif fwvqDrift.gID == 6
+					let sResultY := 7
+				endif
+				MessageBoxEx "Scan Results [%g/3]:%r%rGallifreyan Binary Vector Y: %g" sScanCount sResultY
+			endif
+		else
+			MessageBoxEx "[%g/3] Scan Failed..." sScanCount
+		endif
+	elseif fwvqDrift.sScanned == 1
+		MessageBoxEx "The scan returns no further results. The TARDIS will need to be rematerialised before further scanning."
+	endif
+
+End
+
+Begin Gamemode
+
+	if sScanCount == 3
+		let fwvqDrift.sScanned := 1
+		let sScanCount := 0
+	endif
+
+End

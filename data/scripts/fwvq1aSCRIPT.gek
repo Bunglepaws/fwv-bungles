@@ -1,0 +1,329 @@
+scn fwvq1aSCRIPT
+
+short tOnce
+short sInit
+short frame
+float fTimer
+
+float playerX
+float playerY
+float playerZ
+float playerAngle
+float fDistance
+
+short sRandomPerc
+
+ref rPlayer12
+
+ref rLandLocation
+
+short sLCount
+short sMoveSpawn
+
+; regen vars
+short sAgeTo
+int iRGB ; hair RGB (65536 * r + 256 * g + b)
+float fSatMult
+float fLightMult
+ref rRace
+ref rHairForm
+ref rTemplate
+short sPlayerGender
+ref rOutfit
+
+float fSecondsPassed
+
+; policebox
+ref rPoliceBoxInteriorRef
+ref rPoliceBoxRef
+ref rLandLocation
+float fPz
+float fMx
+float fMy
+float fMz
+
+float fCalc
+
+short spot
+
+begin gameMode
+	set fSecondsPassed to GetSecondsPassed
+	
+	; TODO: make player face box when needed
+
+if getStage fwvq1a < 100
+	if fwvq1.init == 1
+		if frame > 0 && frame < 14
+			Player.StopCombat
+		endif
+		if frame == 0 && (Player.GetInCell fwvTinterior1 || fwvq1.txp > 0) || (GetStage fwvq1a == 100 && GetQuestCompleted fwvq1a == 0)
+			set frame to 14
+			CompleteQuest fwvq1a
+			set fwvq1.tBeaconOn to 1
+			setObjectiveDisplayed fwvqSystems 20 1
+			set fwvq1.tPower to fwvq1.tPower - 5
+		endif
+		
+		if frame == 0
+			if player.getIsSex Male == 1
+				set rPlayer12 to fwvq1aPlayer12Ref
+				fwvq1aPlayerFemale12Ref.disable
+				fwvq1aPlayer12Ref.enable
+			else
+				set rPlayer12 to fwvq1aPlayerFemale12Ref
+				fwvq1aPlayer12Ref.disable
+				fwvq1aPlayerFemale12Ref.enable
+			endif
+
+			if sInit == 0
+				;printc "Initial stuff!"
+				set fTimer to 8.0
+				set sInit to 1
+			endif
+			
+			; Player is fighting, swimming, trespassing, sleeping, jumping or in Mitchell's house. reset
+			if Player.IsInCombat || Player.IsSwimming || Player.IsTrespassing || IsPCSleeping || IsPlayerActionActive 7 || player.getInCell GSDocMitchellHouse == 1
+				set fTimer to 5.0
+				set tOnce to 0
+				;printc "Resetting timer!"
+			elseif fTimer <= 0.0
+				if tOnce == 0
+					;printc "Marker!"
+					set tOnce to 1
+					fwvq1aPoliceBoxRef.MoveTo Player
+					set fMx to Player.GetPos X
+					set fMy to Player.GetPos Y
+					set fMz to Player.GetPos Z
+					
+					fwvq1aPoliceBoxRef.SetPos X fMx
+					fwvq1aPoliceBoxRef.SetPos Y fMy
+					fwvq1aPoliceBoxRef.SetPos Z fMz
+					
+				else
+					if Player.GetInSameCell fwvq1aPoliceBoxRef
+						set fDistance to Player.GetDistance fwvq1aPoliceBoxRef
+						if fDistance >= 212.0
+							;printc "%f" fDistance
+							set fPz to 90 + Call fwvFuncGetAngleToward fwvq1aPoliceBoxRef Player
+							fwvq1aPoliceBoxRef.SetAngle Z fPz
+							DisablePlayerControls
+							set fTimer to 2.0
+							set frame to 1
+						endif
+					else ; reset because cell left
+						;printc "Oops, reset!"
+						set tOnce to 0
+						set fTimer to 5.0
+					endif
+				endif
+			endif
+			set fTimer to fTimer - fSecondsPassed
+		elseif frame == 1								;Dematerialise the TARDIS
+			if fTimer >= 0.0
+				set fTimer to fTimer - fSecondsPassed
+			else
+				;printc "tardis landing"
+				set frame to 2
+			endif
+		elseif frame == 2 ; land the policebox
+			Call fwvFuncDematTardis fwvq1aPoliceBoxRef
+			
+			set frame to 3
+		elseif frame == 3 ; check if box landed
+			if fwvTardisRecallExtFadeInBox.GetDisabled == 1 && fwvq1.sPoliceBoxIsUnspawned == 0
+				set rPoliceBoxInteriorRef to fwvq1.rPoliceBoxRef
+				set rPoliceBoxRef to fwvq1.rPoliceBoxDoorRef
+				;printc "tardis landed"
+				set fTimer to 3.0
+				set frame to 4
+			endif
+		elseif frame == 4 ; Decide the Stranger's face and match gender/race
+
+			set sAgeTo to 1 + GetRandomPercent * (3 - 1 + 1) / 100
+			set sLCount to ListGetCount fwvRegenTemplate
+			set sRandomPerc to 0 + GetRandomPercent * (sLCount - 0) / 100
+			set rTemplate to ListGetNthForm fwvRegenTemplate sRandomPerc
+			
+			set fSatMult to 1.0
+			set fLightMult to 1.0
+			
+			; for generic/modded races
+			if sAgeTo == 2 
+				set fSatMult to 0.7
+				set fLightMult to 1.1
+			elseif sAgeTo == 3 
+				set fSatMult to 0.4
+				set fLightMult to 1.4
+			endif
+			
+			; attempt natural haircolor (badly)
+			set rRace to Player.GetRace
+			
+			if IsRefInList rRace fwvRaceAfricanAmericanList
+				set fSatMult to 0.9
+				set fLightMult to 0.5
+				if sAgeTo == 2
+					set fSatMult to 0.85
+					set fLightMult to 0.5
+				elseif sAgeTo == 3 
+					set fSatMult to 0.6
+					set fLightMult to 0.6
+				endif
+			elseif IsRefInList rRace fwvRaceAsianList
+				set fSatMult to 0.7
+				set fLightMult to 0.5
+				if sAgeTo == 2
+					set fSatMult to 0.85
+					set fLightMult to 0.6
+				elseif sAgeTo == 3
+					set fSatMult to 0.6
+					set fLightMult to 0.65
+				endif
+			elseif IsRefInList rRace fwvRaceCaucasianList 
+				set fSatMult to 0.8
+				set fLightMult to 1.0
+				if sAgeTo == 2
+					set fSatMult to 0.85
+					set fLightMult to 1.0
+				elseif sAgeTo == 3
+					set fSatMult to 0.6
+					set fLightMult to 1.0
+				endif
+			elseif IsRefInList rRace fwvRaceHispanicList
+				set fSatMult to 0.8
+				set fLightMult to 0.8
+				if sAgeTo == 1
+					set fSatMult to 0.75
+					set fLightMult to 1.0
+				elseif sAgeTo == 2
+					set fSatMult to 0.85
+					set fLightMult to 1.0
+				elseif sAgeTo == 3
+					set fSatMult to 0.6
+					set fLightMult to 1.0
+				endif
+			endif
+			
+			set iRGB to Call fwvFuncRandomHairColorRange 0.0 0.15 fSatMult fLightMult
+			
+			set sPlayerGender to GetPCIsSex Male
+			
+			if sPlayerGender == 1
+				set sLCount to ListGetCount fwvRegenMaleHairList
+				set sRandomPerc to 0 + GetRandomPercent * (sLCount - 0) / 100
+				set rHairForm to ListGetNthForm fwvRegenMaleHairList sRandomPerc
+			else
+				set sLCount to ListGetCount fwvRegenFemaleHairList
+				set sRandomPerc to 0 + GetRandomPercent * (sLCount - 0) / 100
+				set rHairForm to ListGetNthForm fwvRegenFemaleHairList sRandomPerc
+			endif
+			
+			set fwvqRegen.rPlayer12Template to rTemplate
+			set fwvqRegen.sPlayer12Age to sAgeTo
+			
+			set fwvqRegen.rPlayer12HairForm to rHairForm
+			set fwvqRegen.iPlayer12HairColor to iRGB
+			
+			rPlayer12.MatchRace Player
+
+			set frame to 5
+		elseif frame == 5 ; set the Stranger's face and hair
+			rPlayer12.MatchFaceGeometry rTemplate 100
+			rPlayer12.SetHair rHairForm
+			rPlayer12.SetHairColor iRGB
+			rPlayer12.Update3D
+			;rPlayer12.addItem fwvOutfitSB6Helmet 1 1
+			;rPlayer12.addItem fwvOutfitSB6suit 1 1
+			rPlayer12.equipItem fwvOutfitSB6Helmet 0 1
+			rPlayer12.equipItem fwvOutfitSB6suit 0 1
+			set frame to 6
+		elseif frame == 6 ; open the door
+			if fTimer >= 0.0
+				set fTimer to fTimer - fSecondsPassed
+			else
+				set rPoliceBoxRef to fwvq1.rPoliceBoxDoorRef
+				rPoliceBoxRef.PlayGroup Forward 0
+				PlaySound3d DRSWoodSingleLight01Open
+				rPlayer12.disable 0
+				set frame to 7
+			endif
+		elseif frame == 7 ; spawn the Stranger and trigger dialogue
+			if rPoliceBoxRef.IsAnimPlaying == 0 ; door is open
+				if fTimer >= 0.0
+					set fTimer to fTimer - fSecondsPassed
+				else
+					rPoliceBoxRef.PlayGroup Backward 0
+					PlaySound3d DRSWoodSingleLight01Close
+					; stranger steps out
+					rPlayer12.MoveTo PoliceBoxDoorExitRef
+					rPlayer12.Enable 1 ; fade in/enable
+					set frame to 8
+					set fTimer to 1.0 ; wait 1 second before continuing
+				endif
+			endif
+		elseif frame == 8 ; enable package
+			if fTimer >= 0.0
+				set fTimer to fTimer - fSecondsPassed
+			else
+				rPlayer12.AddScriptPackage fwvq1aPlayer12dialoguePackage
+				rPlayer12.EvaluatePackage
+				
+				set frame to 9
+				set fTimer to 0.0
+			endif
+		elseif frame == 9 ; this just pauses while the packages complete
+		
+		elseif frame == 10 ; open door...
+			rPoliceBoxRef.PlayGroup Forward 0
+			set frame to 11
+		elseif frame == 11 ; close door and remove Stranger
+			if rPoliceBoxRef.IsAnimPlaying == 0 ; door is closed
+				DisablePlayerControls 1 1 1 1 1 1 1
+				rPlayer12.Disable 1 ; fade out
+				rPoliceBoxRef.PlayGroup Backward 0
+				set fTimer to 2.5
+				set frame to 12
+			endif
+		elseif frame == 12 ; demat
+			if rPoliceBoxRef.IsAnimPlaying == 0 ; door is closed
+				if fTimer >= 0.0
+					set fTimer to fTimer - fSecondsPassed
+				else
+					;EnablePlayerControls
+					Call fwvFuncDematTardis fwvLgibsonRef
+					set frame to 13
+				endif
+			endif
+		elseif frame == 13 ; move the TARDIS door back
+			if fwvTardisRecallExtFadeInBox.GetDisabled == 1 && fwvq1.sPoliceBoxIsUnspawned == 1
+				set frame to 14
+			endif
+		elseif frame == 14 ; end quest?
+			fwvq1aPlayer12Ref.disable
+			fwvq1aPlayerFemale12Ref.disable
+			fwvIntroPlayerMarkerRef.moveTo player
+			if sMoveSpawn == 0
+				player.moveTo fwvTitleSequenceRef
+				set sMoveSpawn to 1
+			endif
+			set frame to 15
+		endif
+		
+		; The below relates to later in the quest INSIDE the TARDIS and is nothing to do with the above
+
+		if (spot == 1 || spot == 3) && fwvTardisVoiceInterfaceRef.sFadeOut == 0 && fwvTardisVoiceInterfaceRef.sFadeIn == 0
+			if fwvTardisVoiceInterfaceRef.GetDistance Player < 300
+				if spot == 1										;Stairwell - Teleport
+					set fwvTardisVoiceInterfaceRef.sFadeOut to 1
+					set fwvTardisVoiceInterfaceRef.rMoveToRef to fwvq1aSpot2Ref
+					set spot to spot + 1
+				elseif spot == 3										;Lower Level Corridor - Teleport 
+					set fwvTardisVoiceInterfaceRef.sFadeOut to 1
+					set fwvTardisVoiceInterfaceRef.rMoveToRef to fwvq1aSpot4Ref
+					set spot to spot + 1
+				endif
+			endif
+		endif
+	endif
+endif
+end

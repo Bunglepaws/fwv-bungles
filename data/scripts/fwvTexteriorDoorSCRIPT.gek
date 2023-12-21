@@ -1,0 +1,292 @@
+scn fwvTexteriorDoorSCRIPT
+
+; REVISED by Xoanon to include special key for Controller pad users to get around the Isomorphic lock problem with joypads
+short DoOnce
+
+; door variables
+short teleportNow
+short locked
+
+; radar scan variables
+short doRadarScan
+short staticIndex
+short staticCount
+short mapsFound
+
+; other
+short rTimerMinutes
+short fTimerMinutes
+ref rTDesktopInteriorDoor
+
+;control vars
+float hTimer
+
+float fTimeWait
+
+;event vars
+float rMinute
+float rTimer
+short randVar
+short locSize
+ref stolenDoor
+ref intMarkerRef
+
+short pressed
+
+short fix
+float ftimer
+
+ref curRef
+ref cursor
+ref self
+
+Begin onActivate player
+	;printc "TDResinOn %g" fwvqGameOfRassilon.sSpiridonResinOn
+	if IsAnimPlaying == 0 && teleportNow == 0 && fwvq1.tRepair == 0 && fwvq1.tRefuel == 0 && fwvq1.tReset == 0 && fwvqSystems.TimeVectorGenerator > 0 && fwvqGameOfRassilon.sSpiridonResinOn != 1
+		if fwvqSystems.tAdvanced == 1 && player.getInWorldspace fwvWorldYuleWorld == 0
+
+			if eval fwvqEvents.event[10] == 1
+				if fwvq1.tTheme == 2 || fwvq1.tTheme == 6
+					if fwvq1.sDoorIsOpen == 0
+						PlaySound fwvFXtardisExteriorDoor
+						set fwvq1.sDoorIsOpen to 1
+					endif
+				endif
+			endif
+
+			set pressed to 1
+			set hTimer to 0.0
+		else
+			set pressed to 2
+		endif
+	elseif fwvqGameOfRassilon.sSpiridonResinOn == 1
+			MessageEx "[The door is stuck shut with plant resin...]"
+			set pressed to 0
+	elseif fwvq1.tRepair == 2
+		set rTimerMinutes to 	(((500 - fwvq1.damageTotal) - fwvq1.rTimer) / 60) + 1
+		ShowMessage fwvTrepairingMessage rTimerMinutes
+		set pressed to 0
+	elseif fwvq1.tRefuel == 2
+		set fTimerMinutes to ((fwvq1.fuelTotal - fwvq1.fTimer) / 60) + 1
+		ShowMessage fwvTfuellingMessage fTimerMinutes
+		set pressed to 0
+	elseif fwvq1.tReset == 2
+		set fTimerMinutes to ((450 - fwvq1.rTimer) / 60) + 1
+		MessageEx "[TARDIS Resetting... %g minute(s) remaining]" fTimerMinutes 
+		set pressed to 0
+	elseif fwvqSystems.TimeVectorGenerator <= 0
+		if player.getItemCount fwvItemTimeVectorGenerator < 1
+			printc "TVG is %g" fwvqSystems.TimeVectorGenerator
+			if fwvDebugMode == 1
+				MessageBoxEx "[My interior dimensions have collapsed. I will not have another curry...]"
+			else
+				MessageBoxEx "[The interior dimensions have collapsed. Fix the Time Vector Generator before entering...]"
+			endif
+		else
+			imod FadeToBlack2sISFX
+			DisablePlayerControls 1 1 1 1 1 1 1
+			set fix to 1
+		endif
+		set pressed to 0
+	endif
+
+end
+
+Begin GameMode
+
+	if pressed == 1
+
+		if Player.getEquipped fwvWTARDISControllerUserKey
+			if fwvqSystems.IsomorphicSecuritySystem == 1
+				if Player.getEquipped fwvWTARDISControllerUserKey && locked == 0
+					MessageEx "[TARDIS Locked]"
+					PlaySound UILockpickingUnlock
+					set locked to 1
+					Player.UnequipItem fwvWTARDISControllerUserKey 0 1
+					set pressed to 0
+				elseif Player.getEquipped fwvWTARDISControllerUserKey && locked == 1
+					MessageEx "[TARDIS Unlocked]"
+					PlaySound UILockpickingUnlock
+					set locked to 0
+					Player.UnequipItem fwvWTARDISControllerUserKey 0 1
+					set pressed to 0
+				endif
+			else
+				MessageBoxEx "[The Isomorphic Security System must be active to lock the door]"
+				Player.UnequipItem fwvWTARDISControllerUserKey 0 1
+				set pressed to 0
+			endif
+	
+		elseif (isControlPressed 5 == 1) && (cursor == self)
+			set hTimer to hTimer + getSecondsPassed
+			if hTimer >= 1.0
+				if fwvqSystems.IsomorphicSecuritySystem == 1
+					if player.getItemCount fwvTardisKey >= 1
+						if locked == 0
+							MessageEx "[TARDIS Locked]"
+							PlaySound UILockpickingUnlock
+							set locked to 1
+						elseif locked == 1
+							MessageEx "[TARDIS Unlocked]"
+							PlaySound UILockpickingUnlock
+							set locked to 0
+						endif
+					else
+						MessageEx "[You do not have the TARDIS Key...]"
+					endif
+				else
+					MessageBoxEx "[The Isomorphic Security System must be active to lock the door]"
+				endif
+				set pressed to 0
+			endif
+		elseif isControlPressed 5 == 0 && hTimer < 1.0
+			set hTimer to 0.0
+			if locked == 0
+				if eval fwvqEvents.event[10] == 0
+					printc "rMinute = %g & tTime = %g" rMinute fwvqSystems.tTime
+					if eval rMinute < fwvqSystems.tTime || fwvqEvents.event[10] == 1 || fwvqEvents.event[7] == 1
+						set pressed to 2
+					else
+						if eval player.getInWorldspace WastelandNV == 1
+							set randVar to getRandomPercent							
+						else
+							set randVar to 100
+						endif
+						if randVar < 50
+							MessageEx "The TARDIS has been stolen!"
+							self.PushActorAway Player 3
+							set locSize to listGetCount fwvLocationsExt 
+							set randVar to getRandomPercent * locSize / 100
+							set stolenDoor to ListGetNthForm fwvLocationsExt randVar
+							if fwvq1.tBeaconOn == 0
+								set fwvq1.tBeaconOn to 1
+								setObjectiveDisplayed fwvqSystems 20 1
+								if fwvqSystems.InterstitialAntenna == 0
+									set fwvqSystems.InterstitialAntenna to 1
+									set fwvq1.tPower to fwvq1.tPower - 2
+								endif
+							endif
+							intMarkerRef.placeAtMe fwvTimeRaider01
+							intMarkerRef.placeAtMe fwvTimeRaider01
+							set fwvq1.sPoliceBoxIsUnspawned to 0
+							set fwvq1.enableDoor to stolenDoor
+							fwvTardisRecallExtFadeInBox.disable 
+							call fwvFuncDematTardis PLAYER
+						else
+							MessageEx "The TARDIS is compromised!"
+							Call fwvFuncDamageSystemsFunction
+							intMarkerRef.placeAtMe Raider1GunCM
+							intMarkerRef.placeAtMe Raider1GunCF
+							if fwvq1.tHull > 20
+								set fwvq1.tHull to 20
+							endif
+							set teleportNow to 1							
+						endif
+						set rMinute to 0
+					endif
+				else
+					set pressed to 2
+				endif
+			else
+				MessageEx "[The door is locked]"
+				PlaySound DRSLocked
+				set pressed to 0
+			endif
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		endif
+	elseif pressed == 2
+		PlaySound DRSWoodSingleLight01Open
+		PlayGroup Forward 0
+		set teleportNow to 1
+		set pressed to 0
+	endif
+
+	if fwvq1.sDoorLockFire == 2
+		MessageEx "[System Function Complete, TARDIS autolocked]"
+		PlaySound UILockpickingUnlock
+		set locked to 1
+		set fwvq1.sDoorLockFire to 0
+		printc "Locked is %g" locked
+	endif	
+	
+	
+	if fwvqSystems.tAdvanced == 1
+		;door locking timer
+		if locked == 0 && player.getInCell fwvtInterior1 == 0 && fwvqSystems.cSys == 1 && fwvq1.tRepair == 0 || fwvq1.tRefuel == 0 || fwvq1.tReset == 0
+			set rTimer to rTimer + getSecondsPassed
+			if rTimer > 60
+				set rMinute to rMinute + 1
+				set rTimer to 0.0
+			endif
+		else
+			set rMinute to 0
+		endif
+
+		;fix time vector generator
+		if fix == 1
+			if fTimer < 1.0
+				set fTimer to fTimer + getSecondsPassed
+			else
+				imod FadeInFromBlack2sISFX
+				PlaySound UIRepairWeapon
+				player.removeItem fwvItemTimeVectorGenerator 1
+				set fTimer to 0.0
+				set fix to 2
+			endif
+		elseif fix == 2
+			if fTimer < 1.0
+				set fTimer to fTimer + getSecondsPassed
+			else
+				EnablePlayerControls
+				MessageEx "[Time Vector Generator installed]"
+				let fwvqEvents.event[7] := 0
+				set fwvqSystems.TimeVectorGenerator to 100
+				set fwvq1.tSpeed to 90
+				printc "tspeed %g" fwvq1.tSpeed
+				set teleportNow to 1
+				set fTimer to 0.0
+				set fix to 0
+			endif
+		endif
+	endif
+
+	;Essential Code
+	if fTimeWait < 0.1 ; give a few frames before doing the following check
+		set fTimeWait to fTimeWait + GetSecondsPassed
+	else
+		; Fix to delete duplicate policeboxes when the player teleports into the TARDIS then leaves it
+		if fwvq1.rPoliceBoxDoorRef != GetSelf && GetSelf != PoliceBoxDoorRef
+			MarkForDelete
+			Disable
+		endif
+	endif
+	
+	if fwvqAutonMurder.sLeaveUnlock == 1
+		set locked to 0
+		set fwvqAutonMurder.sLeaveUnlock to 2
+	endif
+
+	;Teleporting Player Code
+	if IsAnimPlaying == 0 && teleportNow == 1
+		set teleportNow to 0
+		PlayGroup Backward 0 ; play to close the box
+		PlaySound DRSWoodSingleLight01Close
+		set fwvq1.sMoveBoxNow to 1
+		set rTDesktopInteriorDoor to fwvq1.rTDesktopInteriorDoor
+		set fwvqRooms.sFixWeather to 1
+		set fwvqRooms.sConsoleWeather to 2
+		set fwvqRooms.sDayWeather to 0
+		Player.MoveTo rTDesktopInteriorDoor
+	endif
+
+end

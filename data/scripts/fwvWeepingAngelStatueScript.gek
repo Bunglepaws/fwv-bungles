@@ -1,0 +1,7 @@
+scn fwvWeepingAngelStatueScript
+
+begin GameMode
+ if GetDisabled || (GetQuestCompleted fwvqAngelMotel && fwvqAngelMotel.rift == 0 && GetParentCell == fwvTinterior1)
+  MarkForDelete
+ endif
+end

@@ -1,0 +1,10 @@
+scn fwvBrainySpecsScript
+
+BEGIN OnEquip
+	Player.AddPerk fwvBrainySpecs
+	 ShowMessage fwvBrainySpecsMessage
+END
+	
+BEGIN OnUnEquip
+	Player.RemovePerk fwvBrainySpecs
+END

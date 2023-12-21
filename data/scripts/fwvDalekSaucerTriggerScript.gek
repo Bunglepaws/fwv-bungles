@@ -1,0 +1,24 @@
+scn fwvDalekSaucerTriggerScript
+
+short doOnce
+short frame
+float fTimer
+
+Begin onTriggerEnter Player
+
+	if getIsReference fwvDalekSaucerEscapeTriggerRef == 1
+		if getStage fwvqDalekSaucer == 75
+			if doOnce == 0
+				fwvqDalekSaucerLabCamRef.startConversation player
+				set doOnce to 1
+			endif
+		endif
+	endif
+
+End
+
+Begin Gamemode
+
+	fwvqDalekSaucerLabCamRef.setTalkingActivatorActor fwvqDalekSaucerEliteRef
+
+End

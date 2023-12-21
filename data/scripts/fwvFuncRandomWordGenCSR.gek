@@ -1,0 +1,115 @@
+scn fwvFuncRandomWordGenCSR		
+
+short sRandomPerc
+string_var strWord1
+string_var strWord2
+string_var strWord3
+string_var strPhrase
+
+begin function { }
+	set sRandomPerc to getRandomPercent / 10
+
+	if sRandomPerc < 1
+		set strWord1 to sv_construct "Amplify"
+	elseif sRandomPerc < 2
+		set strWord1 to sv_construct "Reverse"
+	elseif sRandomPerc < 3
+		set strWord1 to sv_construct "Magnify" 
+	elseif sRandomPerc < 4
+		set strWord1 to sv_construct "Vent"
+	elseif sRandomPerc < 5
+		set strWord1 to sv_construct "Increase"
+	elseif sRandomPerc < 6
+		set strWord1 to sv_construct "Decrease"
+	elseif sRandomPerc < 7
+		set strWord1 to sv_construct "Engage"
+	elseif sRandomPerc < 8
+		set strWord1 to sv_construct "Calculate"
+	elseif sRandomPerc < 9
+		set strWord1 to sv_construct "Adjust"
+	elseif sRandomPerc < 10
+		set strWord1 to sv_construct "Disengage"
+	endif
+
+	set sRandomPerc to getRandomPercent / 10
+	
+	if sRandomPerc < 1
+		set strWord2 to sv_construct "Temporal"
+	elseif sRandomPerc < 2
+		set strWord2 to sv_construct "Neutron-Flow"
+	elseif sRandomPerc < 3
+		set strWord2 to sv_construct "Dimensional"
+	elseif sRandomPerc < 4
+		set strWord2 to sv_construct "Quantum"
+	elseif sRandomPerc < 5
+		set strWord2 to sv_construct "Vortex"
+	elseif sRandomPerc < 6
+		set strWord2 to sv_construct "Block-Transfer Computer"
+	elseif sRandomPerc < 7
+		set strWord2 to sv_construct "Dark Matter"
+	elseif sRandomPerc < 8
+		set strWord2 to sv_construct "Warpfold"
+	elseif sRandomPerc < 9
+		set strWord2 to sv_construct "Engine"
+	elseif sRandomPerc < 10
+		set strWord2 to sv_construct "Chronon"
+	endif
+
+	;set strPhrase to sv_Construct "%z %z" strPhrase strWord1
+	set sRandomPerc to getRandomPercent / 10
+	
+	if sRandomPerc < 1
+		set strWord3 to sv_construct "Fractals"
+		set strWord1 to sv_Construct "%z the TARDIS" strWord1
+	elseif sRandomPerc < 2
+		set strWord3 to sv_construct "polarity"
+		set strWord1 to sv_Construct "%z the" strWord1
+		set strWord2 to sv_ToLower strWord2
+	elseif sRandomPerc < 3
+		set strWord3 to sv_construct "harmonics"
+		set strWord1 to sv_Construct "%z all" strWord1
+		set strWord2 to sv_ToLower strWord2
+	elseif sRandomPerc < 4
+		set strWord3 to sv_construct "power"
+		set strWord1 to sv_Construct "%z the TARDIS's" strWord1
+		set strWord2 to sv_ToLower strWord2
+	elseif sRandomPerc < 5
+		set strWord3 to sv_construct "thrust"
+		set strWord1 to sv_Construct "%z" strWord1
+		set strWord2 to sv_ToLower strWord2
+	elseif sRandomPerc < 6
+		set strWord3 to sv_construct "Cycles"
+		set strWord1 to sv_Construct "%z the" strWord1
+	elseif sRandomPerc < 7
+		set strWord3 to sv_construct "booleans"
+		set strWord1 to sv_Construct "%z both" strWord1
+		set strWord2 to sv_ToLower strWord2
+	elseif sRandomPerc < 8
+		set strWord3 to sv_construct "Conjugation"
+		set strWord1 to sv_Construct "%z the" strWord1
+	elseif sRandomPerc < 9
+		set strWord3 to sv_construct "Phase"
+		set strWord1 to sv_Construct "%z TARDIS" strWord1
+	elseif sRandomPerc < 10
+		set strWord3 to sv_construct "Loop"
+		set strWord1 to sv_Construct "%z the" strWord1
+	endif
+	
+	set sRandomPerc to GetRandomPercent
+	if sRandomPerc < 33
+		set strWord3 to sv_Construct "%z..." strWord3
+	elseif sRandomPerc < 66
+		set strWord3 to sv_Construct "%z!" strWord3
+	else
+		set strWord3 to sv_Construct "%z." strWord3
+	endif
+	set strPhrase to sv_Construct "[%z %z %z]" strWord1 strWord2 strWord3
+	
+	SetFunctionValue strPhrase
+	MessageEx "%z" strPhrase
+	sv_Destruct strWord1
+	sv_Destruct strWord2
+	sv_Destruct strWord3
+	sv_Destruct strPhrase
+
+end

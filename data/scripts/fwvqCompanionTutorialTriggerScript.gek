@@ -1,0 +1,37 @@
+scn fwvqCompanionTutorialTriggerScript
+
+short doOnce
+short doTwice
+short sayOnce
+ref linked
+
+begin onTriggerEnter player
+
+	if getIsReference fwvCQtrapRef == 1
+		if getStage fwvqCompanionTutorial == 20
+			if doOnce == 0
+				set linked to fwvCQtrapRef.getlinkedRef
+				linked.setOpenState 0
+				linked.lock 200
+				set doOnce to 1
+			endif
+		endif
+	elseif getIsReference fwvCQcaptainIntroRef == 1
+		if getStage fwvqCompanionTutorial == 20
+			fwvCQcaptainRef.startConversation player GREETING
+		endif
+	elseif getIsReference fwvCQlockpickRef == 1
+		if getStage fwvqCompanionTutorial == 35
+			if doTwice == 0
+				MessageBoxEx "With a high enough Lockpick skill, Companions can be asked to break into doors and containers!"
+				set doTwice to 1
+			endif
+		endif
+	elseif getIsReference fwvCQbreakinRef == 1
+		if getStage fwvqCompanionTutorial == 35
+			MessageBoxEx "With a high enough Science skill, Companions can be asked to hack into terminals!"
+			setStage fwvqCompanionTutorial 40
+		endif
+	endif
+
+end

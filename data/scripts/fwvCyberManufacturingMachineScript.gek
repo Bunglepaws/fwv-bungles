@@ -1,0 +1,14 @@
+scn fwvCyberManufacturingMachineScript
+
+
+begin onActivate player
+
+	if player.getItemCount fwvItemSchemAnticybergun >= 1
+		player.removeItem fwvItemSchemAnticybergun 1
+		fwvTSchematicsRef.addItem fwvItemSchemAnticybergun 1
+	endif
+
+	player.showrecipemenu fwvTardisItemRecipes
+
+	activate
+end

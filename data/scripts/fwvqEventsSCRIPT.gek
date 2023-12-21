@@ -1,0 +1,273 @@
+scn fwvqEventsScript
+
+array_var event		;event array
+array_var frame		;frame array
+array_var timer		;timer array
+array_var randVar	;randVar array
+array_var tempVar	;tempVar array
+
+short systemEvent	;true if event runs on system
+short flightEvent	;true if event runs during flight
+
+short sCollapseHold
+short RomanaCube ;RomanaCubes Collected
+
+short init
+short sTARDISRefSetOnce
+short debug			; debug var to write temp vars to for printc's
+
+int LocListLength
+int LocChoice
+ref EmergencyLoc
+
+ref consoleRef
+ref interiorRef
+ref exteriorRef
+
+BEGIN GAMEMODE
+
+	if init == 0
+		;let event := ar_list 1, 50
+		let event := ar_list 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		let frame := ar_range 1, 50
+		let timer := ar_list 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+		let randVar := ar_range 1, 50
+		let tempVar := ar_range 1, 50
+
+		set init to 1
+	endif
+
+	if fwvqSystems.tAdvanced == 1
+
+		if fwvq1.tTheme == 0
+			set consoleRef to fwvTinteriorScanner1Ref
+			set interiorRef to fwvTinterior1Ref
+		elseif fwvq1.tTheme == 1
+			set consoleRef to fwvTinteriorScanner2Ref
+			set interiorRef to fwvTinterior2Ref
+		elseif fwvq1.tTheme == 2
+			set consoleRef to fwvTinteriorScanner3Ref
+			set interiorRef to fwvTinterior3Ref
+		elseif fwvq1.tTheme == 3
+			set consoleRef to fwvTinteriorScanner4Ref
+			set interiorRef to fwvTinterior4Ref
+		elseif fwvq1.tTheme == 4
+			set consoleRef to fwvTinteriorScanner5Ref
+			set interiorRef to fwvTinterior5Ref
+		elseif fwvq1.tTheme == 5
+			set consoleRef to fwvTinteriorScanner6Ref
+			set interiorRef to fwvTinterior6Ref
+		elseif fwvq1.tTheme == 6
+			set consoleRef to fwvTinteriorScanner7Ref
+			set interiorRef to fwvTinterior7Ref
+		endif
+
+		;INITIALISER BLOCK
+		;=================
+		if systemEvent == 0
+
+			;CORE OVERLOAD
+			;=============
+			if eval event[1] == 0
+				if fwvqSystems.failsafe == 0 && fwvq1.tPower < 0 && fwvqSystems.core == 1
+					if eval timer[1] < 60.0
+						let timer[1] := timer[1] + getSecondsPassed
+					else
+						let randVar[1] := getrandomPercent
+						if eval randVar[1] > 75
+							MessageEx "[Core Supernova in 60 seconds]"
+							Call fwvFuncSystemOverloadFunction
+							fwvTCcoreAlarmRef.enable
+							let systemEvent := 1
+							let timer[1] := 0.0
+							let event[1] := 1
+							let fwvq1.tHull := 19
+							let fwvqSystems.failsafe := 1
+						else
+							printc "Meltdown didnt happen"
+							let timer[1] := 0.0
+						endif
+					endif
+				endif		
+			endif
+
+			;DIMENSIONAL COLLAPSE	- DISABLED Until we can find a workaround
+			;====================
+			if eval event[7] == 0 && event[10] == 0 && fwvq1.tSpace == 0 && Player.GetInCell fwvTinterior1 == 1
+				if fwvqSystems.TimeVectorGenerator <= 0
+					; FORCE PLAYER TO COPPER BECAUSE PROBLEMS
+					if fwvq1.tTheme != 0
+						set fwvq1.tNextTheme to 0
+						set fwvq1.tSwitchTheme to 1
+						ShowMessage fwvDimComCopperMESG					
+					else
+						MessageEx "[Dimensional Collapse!]"
+					endif
+					MessageEx "[Emergency Landing Location Selected]"
+					if fwvq1.tFlying == 0		
+						set LocListLength to ListGetCount fwvLocationsExtSafeForDimCol
+						set LocListLength to LocListLength + 1
+						set LocChoice to Rand 1, LocListLength
+						set EmergencyLoc to ListGetNthForm fwvLocationsExtSafeForDimCol LocChoice
+						let fwvq1.chosenDoor := EmergencyLoc
+						if fwvq1.tTheme == 4
+							PlaySound fwvFXT4Launch
+							fwvT4flightRef.Enable 0
+						else
+							PlaySound fwvFXtardisLaunchLong
+							fwvTflightRef.Enable 0
+						endif
+						if fwvq1.tFuel <= 10
+							;printc "Fuel %g" fwvq1.tFuel
+							set fwvq1.tFuel to fwvq1.tFuel + 10
+							;printc "Fuel now %g" fwvq1.tFuel
+						endif
+						let fwvq1.tFlightType := 2
+						let fwvq1.tPowerAutopilot := 1
+						let fwvq1.tNextFlightType := 1
+						let fwvq1.tActive := 1
+						let fwvq1.tFlying := 1
+						let fwvq1.flightMode := 1
+						;set fwvq1.tSpeed to 10       ; MAKE EMERGENCY FLIGHT SHORTER
+						let timer[7] := 0.0
+						let event[7] := 1
+						let frame[7] := 1
+						let systemEvent := 1						
+					elseif fwvq1.tFlying == 1
+						set LocListLength to ListGetCount fwvLocationsExtSafeForDimCol
+						set LocListLength to LocListLength + 1
+						set LocChoice to Rand 1, LocListLength
+						set EmergencyLoc to ListGetNthForm fwvLocationsExtSafeForDimCol LocChoice
+						set fwvq1.enableDoor to EmergencyLoc
+						let fwvq1.chosenDoor := EmergencyLoc
+						Call fwvFuncResetTardisExitLocation
+						;PlaySound fwvFXTardisCrashLanding
+						let timer[7] := 0.0
+						let event[7] := 1
+						let frame[7] := 1
+						let systemEvent := 1	
+					endif
+				else
+					let event[7] := 0
+				endif
+			endif
+
+			;SPACE LOOP
+			;====================
+			if eval event[10] == 0 && event[7] == 0
+				if fwvqSystems.RedThermocouplings <= 0 || fwvqSystems.BlueThermocouplings <= 0 || fwvqSystems.GreenThermocouplings <= 0
+					MessageEx "[Space Loop!]"
+					let fwvqSystems.navCtrls := 0
+					let frame[10] := 1
+					let event[10] := 1
+					let systemEvent := 1
+				endif
+			endif
+		endif
+
+		if flightEvent == 0
+
+			;DRIFTING FLIGHT
+			;===============
+			;if eval event[20] == 0
+			;	if fwvq1.tFlying == 1 && fwvq1.tFlightType == 2 && fwvqSystems.Axiomator == 0 ;&&fwvq1.FlightMode == 2
+			;		if eval timer[20] < 5.0
+			;			let timer[20] := timer[20] + getSecondsPassed
+			;		else
+			;			let randVar[20] := getRandomPercent
+			;			printc "checking drift"
+			;			if eval randVar[20] > 50
+			;				PlaySound fwvFXtardisDrum
+			;				MessageEx "[The TARDIS has drifted off course]"
+			;				let fwvq1.tFlightType := 0
+			;				let flightEvent := 1
+			;				let timer[20] := 0.0
+			;				let event[20] := 1
+			;			else
+			;				let timer[20] := 0.0
+			;			endif
+			;		endif
+			;	endif
+			;endif
+			
+		endif
+
+		;SCRIPTED EVENT BLOCK
+		;====================
+
+		;Core Overload
+		;============
+		if eval event[1] == 1
+			if eval timer[1] < 60.0
+				let timer[1] := timer[1] + getSecondsPassed
+			else
+				set fwvq1.tHull to 0
+				let frame[1] := 0
+			endif
+		endif
+
+		;Dimensional Collapse
+		;==================
+		if eval event[7] == 1
+			if eval frame[7] == 1
+				let tempVar[7] := Call fwvFuncTardisChkRooms rListSize
+				let timer[7] := 0.0
+				set sCollapseHold to 0
+				;set fwvq1.tSpeed to 10
+				set fwvq1.hbTimer to 80
+				let frame[7] := 2
+			elseif eval frame[7] == 2
+				set sCollapseHold to 1
+				if eval timer[7] < 5.0
+					let timer[7] := timer[7] + getSecondsPassed
+				else
+					let tempVar[7] := Call fwvFuncTardisChkRooms rListSize
+					if eval tempVar[7] > 0
+						MessageEx "[Dimension Dams Collapsing...]"
+						Call fwvFuncTardisDelRoom
+						ListClear fwvTardisActiveRooms
+						let timer[7] := 0.0
+					else
+						if fwvq1.tFlying != 0
+							;set fwvqSystems.crashing to 1
+						else
+							let timer[7] := 0.0
+							let frame[7] := 3
+						endif
+					endif
+				endif
+			elseif eval frame[7] == 3
+				player.addItem fwvItemTimeVectorGeneratorBroken 1
+				set sCollapseHold to 0
+				imod FadeInFromWhiteISFX
+				player.moveto consoleRef
+				let frame[7] := 4
+				let systemEvent := 0
+			endif
+		endif
+
+		;Space Loop
+		;==================
+		if eval event[10] == 1
+			if eval frame[10] == 1
+				if sTARDISRefSetOnce == 0
+					let exteriorRef := fwvq1.enableDoor
+					fwvxoSpaceLoopResetLocREF.moveto exteriorRef
+					printc "SLResetLoc moved to EnableDoor"
+					let tempVar[10] := fwvq1.enableDoor
+					set sTARDISRefSetOnce to 1
+				endif
+				Call fwvFuncDematTardis interiorRef
+				if fwvq1.tTheme == 2 || fwvq1.tTheme == 6
+					if fwvq1.sDoorIsOpen == 1
+						PlaySound fwvFXtardisExteriorDoor
+						set fwvq1.sDoorIsOpen to 1 - fwvq1.sDoorIsOpen
+					endif
+				endif
+				let frame[10] := 0
+			endif
+		endif
+
+	endif
+
+END

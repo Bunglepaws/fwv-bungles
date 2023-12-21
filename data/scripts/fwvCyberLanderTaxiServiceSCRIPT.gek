@@ -1,0 +1,139 @@
+scn fwvCyberLanderTaxiServiceSCRIPT
+
+short Step
+
+;float x
+float xPos
+;float y
+float yPos
+;float z
+float zPos
+float yAngle
+float zAngle
+
+float xCount
+float yCount
+float zCount
+
+float fTimer
+short sRewardNumber
+
+short LanderDoOnce
+ref rSelf
+
+begin GameMode
+
+; use GetPos and GetAngle, setPos and setAngle
+; set fTimer to fTimer + getSecondsPassed	being skipped 
+
+	if fwvqInvasions.sLanderLaunch == 1
+
+		set rSelf to GetSelf
+				
+		if Step == 0     ; init
+			set fTimer to 0.0
+			set xCount to 0
+			set yCount to 0
+			set zCount to 0
+			set LanderDoOnce to 0
+			fwvLanderLaunchSound01.disable
+			fwvLanderLaunchSound02.disable
+			set Step to 1	
+		
+		elseif Step == 1   ; +128 Z     
+			fwvLanderLaunchSound01.enable
+			fwvLanderLaunchSound02.enable
+			if zCount < 128
+				set zPos to rSelf.getPos z + 2
+				rSelf.setPos z zPos
+				set zCount to zCount + 2
+			else
+				set Step to 2
+				set zCount to 0
+			endif
+		
+		elseif Step == 2   ; +640 Y 	 
+			if yCount < 640
+				set yPos to rSelf.getPos y + 4
+				rSelf.setPos y yPos
+				set yCount to yCount + 4
+			else
+				set Step to 3
+				set yCount to 0
+			endif
+
+		elseif Step == 3   ; Rotate Z -90 (3 seconds)
+			if zCount < 90
+				set zAngle to rSelf.getAngle z - 1.5
+				rSelf.setAngle z zAngle
+				set zCount to zCount + 1.5
+			else
+				set Step to 4
+				set zCount to 0
+			endif
+			
+		elseif Step == 4   ; -X 3520		(4 seconds)
+			;if xCount < 3520
+			if xCount < 2300
+				set xPos to rSelf.getPos x - 6.875
+				rSelf.setPos x xPos
+				set xCount to xCount + 6.875
+			else
+				set Step to 5
+				set xCount to 0
+			endif
+
+		
+		elseif Step == 5   ; Rotate Y +45	(3 seconds)
+
+			if yCount < 45
+				set yAngle to rSelf.getAngle y+ 1.5
+				rSelf.setAngle y yAngle
+				set yCount to yCount + 1.5
+			else
+				set Step to 6
+				set yCount to 0
+			endif		
+		
+
+				
+		elseif Step == 6   ; then awayyyyyyy!  -20 Z and -20 X for 5 seconds 
+			if fTimer < 5.0
+				set rSelf to GetSelf
+				set xPos to rSelf.getPos x - 20
+				set zPos to rSelf.getPos z - 20
+				fwvLanderLaunchSound01.disable
+				fwvLanderLaunchSound02.disable
+				if LanderDoOnce == 0
+					;PlaySound fwvSkaroOBJVertibirdCrashFly
+					set LanderDoOnce to 1
+				endif
+				set fTimer to fTimer + getSecondsPassed
+				rSelf.setPos x xPos
+				rSelf.setPos z zPos
+			else
+				set Step to 7
+			endif
+			
+		elseif Step == 7	; Disable
+			; Reward Karma
+			if fwvqInvasions.Kablooey == 0
+				set fwvqInvasions.sCyberEscapes to fwvqInvasions.sCyberLanderPassengers
+				MessageEx "[%g Wastelanders returning to Earth]" fwvqInvasions.sCyberEscapes
+				set sRewardNumber to (fwvqInvasions.sCyberEscapes * 5)
+				if sRewardNumber > 0				
+					rewardKarma sRewardNumber
+				endif
+				set fwvqInvasions.sLanderLaunch to 2
+			endif
+						
+			
+			
+			set Step to 0
+			rSelf.disable 1
+			rSelf.MarkForDelete
+ 		endif
+
+	endif
+		
+End

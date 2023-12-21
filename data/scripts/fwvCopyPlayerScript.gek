@@ -1,0 +1,96 @@
+scn fwvCopyPlayerScript
+
+ref rEquipped
+ref rHair
+ref rTemplate
+int iHairColor
+short sMatchMode
+string_var strName
+string_var strCurTempName
+short sNameSet
+
+begin OnActivate
+	if sMatchMode == 0 && sNameSet == 0
+		set sNameSet to 1
+		set sMatchMode to 1
+		set strName to sv_construct "Player"
+		set strName to Player.GetName
+		SetNameEx "%z" strName
+	endif
+end
+
+begin GameMode
+	if sNameSet == 1 && GetDisabled == 0
+		set strCurTempName to Player.GetName
+		if eval (sv_Compare strCurTempName strName 1 != 0)
+			SetNameEx "%z" strName
+		endif
+	elseif sNameSet == 0 && GetDisabled == 0
+		set sNameSet to 1
+		set sMatchMode to 1
+		set strName to sv_construct "Player"
+		set strName to Player.GetName
+		SetNameEx "%z" strName
+	else
+		set sNameSet to 0
+	endif
+
+	if sMatchMode > 0
+		if sMatchMode == 1
+			;MatchRace Player
+		elseif sMatchMode == 2
+			set rTemplate to fwvqRegen.rTemplate
+			MatchFaceGeometry Player 100
+		elseif sMatchMode == 3
+			set rHair to Player.GetHair
+			SetHair rHair
+		elseif sMatchMode == 4
+			set iHairColor to Player.GetHairColor iHairColor
+			SetHairColor iHairColor
+		elseif sMatchMode == 5
+			set rEquipped to Player.GetEquippedObject 2 ; upperbody armor
+			set rEquipped to rEquipped.GetBaseObject
+			if rEquipped.IsFormValid && rEquipped != 0
+				AddItem rEquipped 1
+			else
+				set rEquipped to 0
+			endif
+		elseif sMatchMode == 6
+			if rEquipped.IsFormValid && rEquipped != 0
+				EquipItem rEquipped 1
+			endif
+		elseif sMatchMode == 7
+			set rEquipped to Player.GetEquippedObject 10 ; hat
+			set rEquipped to rEquipped.GetBaseObject
+			if rEquipped.IsFormValid && rEquipped != 0
+				AddItem rEquipped 1
+			else
+				set rEquipped to 0
+			endif
+		elseif sMatchMode == 8
+			if rEquipped.IsFormValid && rEquipped != 0
+				EquipItem rEquipped 1
+			endif
+		elseif sMatchMode == 9
+			set rEquipped to Player.GetEquippedObject 5 ; weapon
+			set rEquipped to rEquipped.GetBaseObject
+			if rEquipped.IsFormValid && rEquipped != 0
+				AddItem rEquipped 1
+			else
+				set rEquipped to 0
+			endif
+		elseif sMatchMode == 10
+			if rEquipped.IsFormValid && rEquipped != 0
+				EquipItem rEquipped 1
+			endif
+		elseif sMatchMode == 11
+			Update3D
+		else
+			set sMatchMode to 0
+		endif
+		if sMatchMode != 0
+			set sMatchMode to sMatchMode + 1
+		endif
+		printc "%.0f" sMatchMode
+	endif
+end

@@ -1,0 +1,59 @@
+scn fwvItemHypercubeRomanaIGNOREScript
+
+short frame
+float fTimer
+ref rSelf
+short effectOn
+
+begin onActivate player
+
+	set fwvq1.RomanaCube to fwvq1.RomanaCube + 1
+	ShowMessage fwvItemHyperCubeTimeLadyMessage
+	printc "TimeLadyCube is %g" fwvq1.RomanaCube
+	DisablePlayerControls
+	imod FadeToWhiteAndBackISFX
+	set frame to 1
+	set fTimer to 0.0
+	;SetDestroyed 1
+
+end
+
+begin gamemode
+
+	if frame == 1
+		if fwvq1.RomanaCube == 1
+			PlaySound fwvRomana
+			fwvCubeRomanaRef.enable
+			;player.addItem 
+
+		elseif fwvq1.RomanaCube == 2
+			PlaySound fwvRomanaII
+			fwvCubeRomanaIIRef.enable
+			player.addItem fwvOutfitRomana 1
+			player.addItem fwvItemSchemSonicRomana 1
+		endif
+		set frame to 2
+	elseif frame == 2
+		if fTimer < 5.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			EnablePlayerControls
+			MarkForDelete
+			Disable
+			set frame to 0
+		endif
+	endif
+
+	let rSelf := GetSelf
+
+	if player.getEquipped fwvOutfit3DGlasses == 1 && rSelf.getDistance player <= 400
+		if effectOn == 0
+			rSelf.pms fwvHologramInterface
+			set effectOn to 1
+		endif
+	else
+		rSelf.sms fwvHologramInterface
+		set effectOn to 0
+	endif
+
+end

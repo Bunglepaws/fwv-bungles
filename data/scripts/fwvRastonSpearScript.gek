@@ -1,0 +1,9 @@
+scn fwvRastonSpearScript
+
+Begin onActivate player
+
+	MessageBoxEx "This Relic of the Cybermen was taken down by the javelin of a Raston Warrior Robot - one of the most lethal killing machines ever devised.%r%rCapable of moving at lightning speed, this advanced deathmachine prowls the Death Zone looking for unwary targets.%r%rShould you encounter one, remaining perfectly still should allow you enough time to wait it out until it moves on, scanning for other prey..."
+	MarkForDelete
+	Disable
+
+End

@@ -1,0 +1,24 @@
+scn fwvq3bAutonWaxScript
+
+short alerted
+
+begin gamemode
+
+	if getHealthPercentage < 0.9
+		moveTo fwvq3bWaxSpawnRef
+		resethealth
+	endif
+
+	if getdistance player <= 400
+		if alerted == 0
+			StartCombat Player
+			set alerted to 1
+		endif
+	endif
+
+end
+
+begin onActivate player
+
+end
+

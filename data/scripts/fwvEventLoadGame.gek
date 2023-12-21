@@ -1,0 +1,33 @@
+scn fwvEventLoadGame
+
+short gameLoadedSuccessfully
+
+begin Function { gameLoadedSuccessfully }	
+
+	;fwvQuestScript
+	;fwvqTardisThemeDefaultScript
+	if fwvq1.init == 1
+		let fwvq1.init := 2
+		let fwvqThemeDefaults.sInit := 0
+		let fwvqThemeRani.sInit := 0
+		let fwvq1.sRestart := 1
+		let fwvq1.sFlightRegionsMax := 0
+		let fwvq1.arRegionNames := ar_Construct "array"
+		Call fwvFuncChangePoliceBoxScript
+	endif
+
+
+	;fwvTardisArchitecturalConfigSCRIPT
+	let fwvqRooms.sGameLoaded := 1
+
+
+	; Other using GetGameRestarted:
+	;fwvTCradioDialScript
+	;fwvSilentScript
+	;fwvTardsVoiceInterfaceScript
+	;fwvCreatureNeverwereScript
+	;fwvSilenceVoiceInterfaceScript
+	;fwvPoliceBoxUpdateSCRIPT
+	;fwvqCompanionKrogScript
+	;fwvqThemeRaniQuestScript
+end

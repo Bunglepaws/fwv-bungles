@@ -1,0 +1,12 @@
+scn fwvFuncSetPosition
+
+ref rObj
+float fPosX
+float fPosY
+float fPosZ
+
+begin function { rObj, fPosX, fPosY, fPosZ }
+	rObj.SetPos X fPosX
+	rObj.SetPos Y fPosY
+	rObj.SetPos Z fPosZ
+end

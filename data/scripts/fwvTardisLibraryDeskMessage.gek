@@ -1,0 +1,19 @@
+scn fwvTardisLibraryDeskMessage
+
+begin onActivate player
+
+if getStage fwvquestTwo < 25
+	ShowMessage fwvq2libraryDeskMessage
+endif
+
+if getStage fwvquestTwo == 25 && player.getItemCount fwvq2AncientBookLocked == 1 && player.getItemCount fwvWfobWatch == 1
+	PlaySound NPCIdleRprWallScrew
+	PlaySound OBJBookSpecialPageTurn
+	player.removeItem fwvq2AncientBookLocked 1 1
+	player.addItem fwvq2AncientBookUnlocked 1 1
+	ShowMessage fwvq2ancientBookUnlockedMessage
+	player.addItem fwvItemSchemChameleonArch 1
+	setStage fwvquestTwo 30
+endif
+
+end

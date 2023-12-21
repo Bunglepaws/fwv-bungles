@@ -1,0 +1,10 @@
+scn fwvTCtardisWorkbenchSCRIPT
+
+; Written by Demeggy 27/2/13
+
+Begin OnActivate player
+
+	player.showrecipemenu fwvTardisItemRecipes
+
+End
+

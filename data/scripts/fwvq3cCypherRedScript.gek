@@ -1,0 +1,48 @@
+scn fwvq3cCypherRedScript
+
+begin gameMode
+	rotate Z -100	
+end
+
+begin onActivate player
+
+	printc " 2 activated"
+	printc " path is %g" fwvq3c.path 
+
+	if fwvq3c.path == 1
+		if fwvq3c.p1 == 2
+			;pass
+			PlaySound UIHackingPassGood
+			set fwvq3c.path to 2
+		else
+			;fail
+			PlaySound UIHackingPassBad
+			set fwvq3c.lives to fwvq3c.lives - 1
+			set fwvq3c.path to 1
+		endif
+	elseif fwvq3c.path == 2
+		if fwvq3c.p2 == 2
+			;pass
+			PlaySound UIHackingPassGood
+			set fwvq3c.path to 3
+		else
+			;fail
+			PlaySound UIHackingPassBad
+			set fwvq3c.lives to fwvq3c.lives - 1
+			set fwvq3c.path to 1
+		endif
+	elseif fwvq3c.path == 3
+		if fwvq3c.p3 == 2
+			;pass
+			PlaySound UIHackingPassGood
+			set fwvq3c.path to 4
+			set fwvq3c.cypherGame to 0
+		else
+			;fail
+			PlaySound UIHackingPassBad
+			set fwvq3c.lives to fwvq3c.lives - 1
+			set fwvq3c.path to 1
+		endif
+	endif
+
+end

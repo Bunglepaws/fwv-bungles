@@ -1,0 +1,8 @@
+scn fwvq1TardisTrunkSCRIPT
+
+begin onactivate player
+
+	ShowMessage fwvq1trunkMessage
+	activate
+
+end

@@ -1,0 +1,14 @@
+scn fwvTardisTranspowerScript
+
+short button
+
+Begin OnActivate Player
+
+	;ShowMessage fwvTardisTranspowerMessage
+	;take emergency powercell
+
+End
+
+Begin GameMode
+
+End

@@ -1,0 +1,27 @@
+scn fwvTCmechanicalInterfaceSCRIPT
+
+; TARDIS Vortex Loop script, written by Demeggy 21/2/13
+; edited by Spyduck for ANIMATIONS on Feb. 23
+
+ref curRef
+short direction
+
+Begin OnActivate player
+	if fwvq1.tTheme == 0
+		set curRef to fwvTCmechanicalRef1
+	elseif fwvq1.tTheme == 1
+		set curRef to fwvT2FloorPanelRef
+	endif
+	if IsAnimPlaying == 0
+		if direction
+			PlayGroup Backward 0
+			curRef.PlayGroup Backward 0
+		else
+			PlayGroup Forward 0
+			curRef.PlayGroup Forward 0
+		endif
+		set direction to 1 - direction
+	endif
+	activate
+
+end

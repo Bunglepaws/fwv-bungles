@@ -1,0 +1,38 @@
+scn fwvWeapChronomineSCRIPT
+
+float day
+ref marker
+ref name
+ref self
+
+Begin ScriptEffectStart
+	set self to GetSelf
+
+	if getisid fwvKarnBeast == 1
+		MessageEx "[Morbius' Timelord mental powers shunt away the Chronodyne energy...]"
+	elseif getisid fwvMoonCybermanBoss == 1
+		MessageEx "[The electric field inside the Moonbase is disrupting the Chronodyne energy...]"
+	elseif getisid fwvZetaPlantBoss == 1
+		MessageEx "[The energy Gorlax has absorbed is canceling out the Chronodyne energy...]"
+
+	elseif (GetIsID fwvAngelYuleworld) && self != Player
+		MessageEx "%n has been trapped in the Vortex..." self
+		Self.Disable 0
+		
+	elseif (GetIsID fwvAngel || GetIsID fwvAngelMotel || GetIsId fwvAngelMotelXO || GetIsID fwvAngelNipton || GetIsID fwvAngelNPC || GetIsID fwvAngelMojaveXO || GetCombatTarget == Player) && self != Player
+		set day to GameDaysPassed + 1
+		; (1.0 / 24.0) ; 1 hour test
+		Ar_Append fwvqWeaponQuest.arChronoActors self
+		Ar_Append fwvqWeaponQuest.arChronoTimers day
+		MessageEx "%n has been trapped in the Vortex for 24 hours..." self
+		set fwvqWeaponQuest.chronoMode to 1 ; just do the check until the list's clear
+		Self.Disable 0
+		
+	endif
+
+End
+
+Begin ScriptEffectFinish
+	;printc "spell removed"
+	;RemoveSpell fwvWeapChronomineSpell
+End

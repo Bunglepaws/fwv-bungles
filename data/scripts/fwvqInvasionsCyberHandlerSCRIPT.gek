@@ -1,0 +1,370 @@
+scn fwvqInvasionsCyberHandlerSCRIPT
+
+; REF all the Cybermen and Captives and Dummies to be populated
+
+ref CyberPrisoner01
+ref CyberPrisoner02
+ref CyberPrisoner03
+ref CyberPrisoner04
+
+ref CyberLanderStrngPop
+
+short sGarethProgLoaded
+short sLanderNavProgrammed
+short sCruxOnce
+short CleanupCyber
+short sForceRunNow
+
+ref CyberLeaderStrngPop
+
+ref CybermanStngPop01
+ref CybermanStngPop02
+ref CybermanStngPop03
+ref CybermanStngPop04
+ref CybermanStngPop05
+ref CybermanStngPop06
+ref CybermanStngPop07
+ref CybermanStngPop08
+ref CybermanStngPop09
+ref CybermanStngPop10
+ref CybermanStngPop11
+ref CybermanStngPop12
+ref CybermanStngPop13
+ref CybermanStngPop14
+ref CybermanStngPop15
+ref CybermanStngPop16
+ref CybermanStngPop17
+ref CybermanStngPop18
+ref CybermanStngPop19
+
+ref CyberDummyPop01
+ref CyberDummyPop02
+ref CyberDummyPop03
+ref CyberDummyPop04
+ref CyberDummyPop05
+ref CyberDummyPop06
+ref CyberDummyPop07
+ref CyberDummyPop08
+ref CyberDummyPop09
+ref CyberDummyPop10
+ref CyberDummyPop11
+ref CyberDummyPop12
+ref CyberDummyPop13
+ref CyberDummyPop14
+ref CyberDummyPop15
+ref CyberDummyPop16
+ref CyberDummyPop17
+ref CyberDummyPop18
+ref CyberDummyPop19
+ref CyberDummyPop20
+ref CyberDummyPop21
+ref CyberDummyPop22
+ref CyberDummyPop23
+ref CyberDummyPop24
+ref CyberDummyPop25
+ref CyberDummyPop26
+ref CyberDummyPop27
+ref CyberDummyPop28
+ref CyberDummyPop29
+ref CyberDummyPop30
+ref CyberDummyPop31
+ref CyberDummyPop32
+
+Begin GameMode
+
+	; Population of ship upon entry
+	if player.getInCell fwvStrongholdCyberman == 1 && fwvqInvasions.sPopulateCybership == 1
+		;if fwvqInvasions.sExternalPopCyber == 1
+		printc "starting Cyber Pop"
+		; Turn off any warning lights or sounds
+		fwvCyberStrngAlarmREF.disable
+		fwvLanderLaunchSound01.disable
+		fwvLanderLaunchSound02.disable
+		
+		; reset the Convert-o-boxes for safety
+		fwvCybStngConvertobox01REF.PlayGroup Left 1
+		fwvCybStngConvertobox02REF.PlayGroup Left 1
+		fwvCybStngConvertobox03REF.PlayGroup Left 1
+		fwvCybStngConvertobox04REF.PlayGroup Left 1
+			
+
+		; Set the initial variables to get the Ship prepped for action
+		set fwvqInvasions.sCyberEscapes to 0
+		set fwvqInvasions.sCyberLanderPassengers to 0
+		set fwvqInvasions.sLanderLaunch to 0
+		set sLanderNavProgrammed to 0
+		setAlly fwvCybermanFaction FWVCyberStrongholdPrisonerFaction 1 1  ; Cybermen will not kill prisoners in cell
+		setAlly PlayerFaction FWVCyberStrongholdPrisonerFaction 1 1  ; Reset in case Player previously enraged Prisoners
+		set fwvqInvasions.CyberPrisoner01Uncrux to 0
+		set sCruxOnce to 0
+
+		;Duplicate settings are just here in the hopes of forcing past a glitch with the AI
+		
+		; set the uncrux to 0 for all 4 prisoners, which should set their idles if I'm lucky
+		set fwvqInvasions.CyberPrisoner01Uncrux to 0
+
+
+
+		;Populate the prisoners and the lander
+		let CyberPrisoner01 := fwvCybStrngPrisoner01Wait.placeatme fwvCyberStrongholdPrisoner01z
+		let CyberPrisoner02 := fwvCybStrngPrisoner02Wait.placeatme fwvCyberStrongholdPrisoner02z
+		let CyberPrisoner03 := fwvCybStrngPrisoner03Wait.placeatme fwvCyberStrongholdPrisoner03z
+		let CyberPrisoner04 := fwvCybStrngPrisoner04Wait.placeatme fwvCyberStrongholdPrisoner04z
+		
+		
+		CyberPrisoner01.addscriptpackage fwvCyberCaptiveCrux01Bak
+		CyberPrisoner02.addscriptpackage fwvCyberCaptiveCrux02Bak
+		CyberPrisoner03.addscriptpackage fwvCyberCaptiveCrux03Bak
+		CyberPrisoner04.addscriptpackage fwvCyberCaptiveCrux04Bak
+
+		let CyberLanderStrngPop := fwvCyberStrngLanderPlace.placeatme fwvCyberLanderStrng2x
+		;CyberLanderStrngPop.SetScale 2
+		
+		; Populate the Cybermen
+		let CyberLeaderStrngPop := fwvCybStrCyberleader01.placeatme fwvCrCyberleaderStrng
+
+		let CybermanStngPop01 := fwvCybStrCyberman01.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop02 := fwvCybStrCyberman02.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop03 := fwvCybStrCyberman03.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop04 := fwvCybStrCyberman04.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop05 := fwvCybStrCyberman05.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop06 := fwvCybStrCyberman06.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop07 := fwvCybStrCyberman07.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop08 := fwvCybStrCyberman08.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop09 := fwvCybStrCyberman09.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop10 := fwvCybStrCyberman10.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop11 := fwvCybStrCyberman11.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop12 := fwvCybStrCyberman12.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop13 := fwvCybStrCyberman13.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop14 := fwvCybStrCyberman14.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop15 := fwvCybStrCyberman15.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop16 := fwvCybStrCyberman16.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop17 := fwvCybStrCyberman17.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop18 := fwvCybStrCyberman18.placeatme fwvLvlCybermenStrng
+		let CybermanStngPop19 := fwvCybStrCyberman19.placeatme fwvLvlCybermenStrng
+
+		; Populate the Dummies
+		let CyberDummyPop01 := fwvCybStrngDummy01.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop02 := fwvCybStrngDummy02.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop03 := fwvCybStrngDummy03.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop04 := fwvCybStrngDummy04.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop05 := fwvCybStrngDummy05.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop06 := fwvCybStrngDummy06.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop07 := fwvCybStrngDummy07.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop08 := fwvCybStrngDummy08.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop09 := fwvCybStrngDummy09.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop10 := fwvCybStrngDummy10.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop11 := fwvCybStrngDummy11.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop12 := fwvCybStrngDummy12.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop13 := fwvCybStrngDummy13.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop14 := fwvCybStrngDummy14.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop15 := fwvCybStrngDummy15.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop16 := fwvCybStrngDummy16.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop17 := fwvCybStrngDummy17.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop18 := fwvCybStrngDummy18.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop19 := fwvCybStrngDummy19.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop20 := fwvCybStrngDummy20.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop21 := fwvCybStrngDummy21.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop22 := fwvCybStrngDummy22.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop23 := fwvCybStrngDummy23.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop24 := fwvCybStrngDummy24.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop25 := fwvCybStrngDummy25.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop26 := fwvCybStrngDummy26.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop27 := fwvCybStrngDummy27.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop28 := fwvCybStrngDummy28.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop29 := fwvCybStrngDummy29.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop30 := fwvCybStrngDummy30.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop31 := fwvCybStrngDummy31.placeatme fwvStrngCyberDummy103
+		let CyberDummyPop32 := fwvCybStrngDummy32.placeatme fwvStrngCyberDummy103
+		
+		
+		set CleanupCyber to 0
+		set fwvqInvasions.DoOnce to 0
+		set fwvqInvasions.sTransmatOn to 0
+		printc "Cyberpop done"
+		set fwvqInvasions.sPopulateCybership to 0
+	endif
+
+	;NEW - force all Prisoners to run immediately when it's OK to go, not fiddlefart around
+	if fwvqInvasions.sEscape == 1 && player.getInCell fwvStrongholdCyberman == 1
+		if sForceRunNow == 0
+			printc "Run Now %g" sForceRunNow
+			CyberPrisoner01.evp
+			CyberPrisoner02.evp
+			CyberPrisoner03.evp
+			CyberPrisoner04.evp
+			set sForceRunNow to 1
+			printc "Run Now now %g" sForceRunNow
+		endif
+	endif	
+
+	; After blowing up the Ship
+	 if fwvqInvasions.sBlow == 1 && player.getInCell fwvtInterior1 == 1 && fwvq1.tFlying == 1 && fwvqInvasions.eType == 2 
+	 
+		 if CleanupCyber == 0
+			;Disable alarm noise
+			fwvCyberStrngAlarmREF.disable
+			fwvLanderLaunchSound01.disable
+			fwvLanderLaunchSound02.disable
+			
+			set sForceRunNow to 0
+			printc "sForceRunNow %g" sForceRunNow
+			
+			; Door Locks
+			fwvCyberEnginesDoor01REF.Lock 255
+			fwvCyberEnginesDoor02REF.Lock 255
+			fwvGarethRoomDoorREF.Lock 255
+			fwvConversionRoomDoorREF.Lock 255
+			
+			; Remove Keys
+			Player.RemoveItem fwvCyberEngineRoomKey 1 1
+			Player.RemoveItem fwvCyberStrngCellKey 1 1		
+				
+			let fwvCybStrngEngScreens01.sValveOff := 0					
+			let fwvCybStrngEngScreens02.sValveOff := 0									
+			let fwvCybStrngKeyboard01.sValveOff := 0									
+			let fwvCybStrngKeyboard02.sValveOff := 0		
+			
+
+			; restore any destroyed Panels
+			;fwvCybStrngPrisoner01Control.SetDestroyed 0
+			;fwvCybStrngPrisoner02Control.SetDestroyed 0
+			;fwvCybStrngPrisoner03Control.SetDestroyed 0
+			;fwvCybStrngPrisoner04Control.SetDestroyed 0
+
+			; clear any remaining Cybermen, landers, Dummies, or Prisoners
+			CyberPrisoner01.disable
+			CyberPrisoner02.disable
+			CyberPrisoner03.disable
+			CyberPrisoner04.disable
+
+			CyberLanderStrngPop.disable
+
+			CyberLeaderStrngPop.disable
+
+			CybermanStngPop01.disable
+			CybermanStngPop02.disable
+			CybermanStngPop03.disable
+			CybermanStngPop04.disable
+			CybermanStngPop05.disable
+			CybermanStngPop06.disable
+			CybermanStngPop07.disable
+			CybermanStngPop08.disable
+			CybermanStngPop09.disable
+			CybermanStngPop10.disable
+			CybermanStngPop11.disable
+			CybermanStngPop12.disable
+			CybermanStngPop13.disable
+			CybermanStngPop14.disable
+			CybermanStngPop15.disable
+			CybermanStngPop16.disable
+			CybermanStngPop17.disable
+			CybermanStngPop18.disable
+			CybermanStngPop19.disable
+
+			CyberDummyPop01.disable
+			CyberDummyPop02.disable
+			CyberDummyPop03.disable
+			CyberDummyPop04.disable
+			CyberDummyPop05.disable
+			CyberDummyPop06.disable
+			CyberDummyPop07.disable
+			CyberDummyPop08.disable
+			CyberDummyPop09.disable
+			CyberDummyPop10.disable
+			CyberDummyPop11.disable
+			CyberDummyPop12.disable
+			CyberDummyPop13.disable
+			CyberDummyPop14.disable
+			CyberDummyPop15.disable
+			CyberDummyPop16.disable
+			CyberDummyPop17.disable
+			CyberDummyPop18.disable
+			CyberDummyPop19.disable
+			CyberDummyPop20.disable
+			CyberDummyPop21.disable
+			CyberDummyPop22.disable
+			CyberDummyPop23.disable
+			CyberDummyPop24.disable
+			CyberDummyPop25.disable
+			CyberDummyPop26.disable
+			CyberDummyPop27.disable
+			CyberDummyPop28.disable
+			CyberDummyPop29.disable
+			CyberDummyPop30.disable
+			CyberDummyPop31.disable
+			CyberDummyPop32.disable
+
+			CyberPrisoner01.markfordelete
+			CyberPrisoner02.markfordelete
+			CyberPrisoner03.markfordelete
+			CyberPrisoner04.markfordelete			
+			
+			CyberLanderStrngPop.MarkForDelete
+
+			CyberLeaderStrngPop.MarkForDelete
+
+			CybermanStngPop01.MarkForDelete
+			CybermanStngPop02.MarkForDelete
+			CybermanStngPop03.MarkForDelete
+			CybermanStngPop04.MarkForDelete
+			CybermanStngPop05.MarkForDelete
+			CybermanStngPop06.MarkForDelete
+			CybermanStngPop07.MarkForDelete
+			CybermanStngPop08.MarkForDelete
+			CybermanStngPop09.MarkForDelete
+			CybermanStngPop10.MarkForDelete
+			CybermanStngPop11.MarkForDelete
+			CybermanStngPop12.MarkForDelete
+			CybermanStngPop13.MarkForDelete
+			CybermanStngPop14.MarkForDelete
+			CybermanStngPop15.MarkForDelete
+			CybermanStngPop16.MarkForDelete
+			CybermanStngPop17.MarkForDelete
+			CybermanStngPop18.MarkForDelete
+			CybermanStngPop19.MarkForDelete
+
+			CyberDummyPop01.MarkForDelete
+			CyberDummyPop02.MarkForDelete
+			CyberDummyPop03.MarkForDelete
+			CyberDummyPop04.MarkForDelete
+			CyberDummyPop05.MarkForDelete
+			CyberDummyPop06.MarkForDelete
+			CyberDummyPop07.MarkForDelete
+			CyberDummyPop08.MarkForDelete
+			CyberDummyPop09.MarkForDelete
+			CyberDummyPop10.MarkForDelete
+			CyberDummyPop11.MarkForDelete
+			CyberDummyPop12.MarkForDelete
+			CyberDummyPop13.MarkForDelete
+			CyberDummyPop14.MarkForDelete
+			CyberDummyPop15.MarkForDelete
+			CyberDummyPop16.MarkForDelete
+			CyberDummyPop17.MarkForDelete
+			CyberDummyPop18.MarkForDelete
+			CyberDummyPop19.MarkForDelete
+			CyberDummyPop20.MarkForDelete
+			CyberDummyPop21.MarkForDelete
+			CyberDummyPop22.MarkForDelete
+			CyberDummyPop23.MarkForDelete
+			CyberDummyPop24.MarkForDelete
+			CyberDummyPop25.MarkForDelete
+			CyberDummyPop26.MarkForDelete
+			CyberDummyPop27.MarkForDelete
+			CyberDummyPop28.MarkForDelete
+			CyberDummyPop29.MarkForDelete
+			CyberDummyPop30.MarkForDelete
+			CyberDummyPop31.MarkForDelete
+			CyberDummyPop32.MarkForDelete
+
+			; reset the Convert-o-boxes for next load
+			fwvCybStngConvertobox01REF.PlayGroup Left 1
+			fwvCybStngConvertobox02REF.PlayGroup Left 1
+			fwvCybStngConvertobox03REF.PlayGroup Left 1
+			fwvCybStngConvertobox04REF.PlayGroup Left 1
+			set CleanupCyber to 1
+		endif
+	endif
+
+
+end

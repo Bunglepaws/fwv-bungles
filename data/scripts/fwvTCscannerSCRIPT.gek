@@ -1,0 +1,284 @@
+scn fwvTCscannerSCRIPT
+
+short sFailed
+short sSTC
+short sListSize
+short sListRand
+ref rNote
+
+begin onActivate player
+	activate
+	set sFailed to 1
+	if player.getItemCount fwvItemSchemSonicScrewdriver >= 1
+		player.removeItem fwvItemSchemSonicScrewdriver 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonicScrewdriver 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemPolyArmor >= 1
+		player.removeItem fwvItemSchemPolyArmor 1
+		fwvTSchematicsRef.addItem fwvItemSchemPolyArmor 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemK9 >= 1
+		player.removeItem fwvItemSchemK9 1
+		fwvTSchematicsRef.addItem fwvItemSchemK9 1
+		set sFailed to 0
+	endif	
+	if player.getItemCount fwvItemSchemBatMilk >= 1
+		player.removeItem fwvItemSchemBatMilk 1
+		fwvTSchematicsRef.addItem fwvItemSchemBatMilk 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemNitro9 >= 1
+		player.removeItem fwvItemSchemNitro9 1
+		fwvTSchematicsRef.addItem fwvItemSchemNitro9 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemBiogenicmine >= 1
+		player.removeItem fwvItemSchemBiogenicmine 1
+		fwvTSchematicsRef.addItem fwvItemSchemBiogenicmine 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemDalekaniumBomb >= 1
+		player.removeItem fwvItemSchemDalekaniumBomb 1
+		fwvTSchematicsRef.addItem fwvItemSchemDalekaniumBomb 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSerendipity >= 1
+		player.removeItem fwvItemSchemSerendipity 1
+		fwvTSchematicsRef.addItem fwvItemSchemSerendipity 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSonic2 >= 1
+		player.removeItem fwvItemSchemSonic2 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonic2 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSonic3 >= 1
+		player.removeItem fwvItemSchemSonic3 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonic3 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSonic4 >= 1
+		player.removeItem fwvItemSchemSonic4 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonic4 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSonic8 >= 1
+		player.removeItem fwvItemSchemSonic8 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonic8 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSonic9 >= 1
+		player.removeItem fwvItemSchemSonic9 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonic9 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSonicRomana >= 1
+		player.removeItem fwvItemSchemSonicRomana 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonicRomana 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSonicWar >= 1
+		player.removeItem fwvItemSchemSonicWar 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonicWar 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemVortexManipulator >= 1
+		player.removeItem fwvItemSchemVortexManipulator 1
+		fwvTSchematicsRef.addItem fwvItemSchemVortexManipulator 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemLaserScrewdriver >= 1
+		player.removeItem fwvItemSchemLaserScrewdriver 1
+		fwvTSchematicsRef.addItem fwvItemSchemLaserScrewdriver 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemEyeDrive >= 1
+		player.removeItem fwvItemSchemEyeDrive 1
+		fwvTSchematicsRef.addItem fwvItemSchemEyeDrive 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemAlphaBlaster >= 1
+		player.removeItem fwvItemSchemAlphaBlaster 1
+		fwvTSchematicsRef.addItem fwvItemSchemAlphaBlaster 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSymbioticNuclei >= 1
+		player.removeItem fwvItemSchemSymbioticNuclei 1
+		fwvTSchematicsRef.addItem fwvItemSchemSymbioticNuclei 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemTimeDevice >= 1
+		player.removeItem fwvItemSchemTimeDevice 1
+		fwvTSchematicsRef.addItem fwvItemSchemTimeDevice 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemFobWatch >= 1
+		player.removeItem fwvItemSchemFobWatch 1
+		fwvTSchematicsRef.addItem fwvItemSchemFobWatch 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemBatOfOmega >= 1
+		player.removeItem fwvItemSchemBatOfOmega 1
+		fwvTSchematicsRef.addItem fwvItemSchemBatOfOmega 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemDalekTommygun >= 1
+		player.removeItem fwvItemSchemDalekTommygun 1
+		fwvTSchematicsRef.addItem fwvItemSchemDalekTommygun 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemEMP >= 1
+		player.removeItem fwvItemSchemEMP 1
+		fwvTSchematicsRef.addItem fwvItemSchemEMP 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemChronodyne >= 1
+		player.removeItem fwvItemSchemChronodyne 1
+		fwvTSchematicsRef.addItem fwvItemSchemChronodyne 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemAntiplastic >= 1
+		player.removeItem fwvItemSchemAntiplastic 1
+		fwvTSchematicsRef.addItem fwvItemSchemAntiplastic 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSonic82 >= 1
+		player.removeItem fwvItemSchemSonic82 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonic82 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSontaranMedicalProbe >= 1
+		player.removeItem fwvItemSchemSontaranMedicalProbe 1
+		fwvTSchematicsRef.addItem fwvItemSchemSontaranMedicalProbe 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemDefabricator >= 1
+		player.removeItem fwvItemSchemDefabricator 1
+		fwvTSchematicsRef.addItem fwvItemSchemDefabricator 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSontaranBlaster >= 1
+		player.removeItem fwvItemSchemSontaranBlaster 1
+		fwvTSchematicsRef.addItem fwvItemSchemSontaranBlaster 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemDalekPistol >= 1
+		player.removeItem fwvItemSchemDalekPistol 1
+		fwvTSchematicsRef.addItem fwvItemSchemDalekPistol 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemDalekJammingDevice >= 1
+		player.removeItem fwvItemSchemDalekJammingDevice 1
+		fwvTSchematicsRef.addItem fwvItemSchemDalekJammingDevice 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemAlienBlaster >= 1
+		player.removeItem fwvItemSchemAlienBlaster 1
+		fwvTSchematicsRef.addItem fwvItemSchemAlienBlaster 1
+		set sFailed to 0
+	endif
+
+	if player.getItemCount fwvItemSchemRubberMask >= 1
+		player.removeItem fwvItemSchemRubberMask 1
+		fwvTSchematicsRef.addItem fwvItemSchemRubberMask 1
+		set sFailed to 0
+	endif
+
+	if player.getItemCount fwvItemSchemModdableSilurian >= 1
+		player.removeItem fwvItemSchemModdableSilurian 1
+		fwvTSchematicsRef.addItem fwvItemSchemModdableSilurian 1
+		set sFailed to 0
+	endif
+
+	if player.getItemCount fwvItemSchemHuntressMask >= 1
+		player.removeItem fwvItemSchemHuntressMask 1
+		fwvTSchematicsRef.addItem fwvItemSchemHuntressMask 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemJanisSpear >= 1
+		player.removeItem fwvItemSchemJanisSpear 1
+		fwvTSchematicsRef.addItem fwvItemSchemJanisSpear 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSTC >= 1
+		player.removeItem fwvItemSchemSTC 1
+		set sSTC to 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSTCKarn >= 1
+		player.removeItem fwvItemSchemSTCKarn 1
+		player.addItem fwvNoteSTCKarn 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSTCSkaro >= 1
+		player.removeItem fwvItemSchemSTCSkaro 1
+		player.addItem fwvNoteSTCSkaro 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSTCSpiridon >= 1
+		player.removeItem fwvItemSchemSTCSpiridon 1
+		player.addItem fwvNoteSTCSpiridon 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSTCStationZero >= 1
+		player.removeItem fwvItemSchemSTCStationZero 1
+		player.addItem fwvNoteSTCStationZero 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSTCTelos >= 1
+		player.removeItem fwvItemSchemSTCTelos 1
+		player.addItem fwvNoteSTCTelos 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSTCTrenzalore >= 1
+		player.removeItem fwvItemSchemSTCTrenzalore 1
+		player.addItem fwvNoteSTCTrenzalore 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSTCZetonia >= 1
+		player.removeItem fwvItemSchemSTCZetonia 1
+		player.addItem fwvNoteSTCZetonia 1
+		set sFailed to 0
+	endif	
+	if player.getItemCount fwvItemSchemSonicRiver >= 1
+		player.removeItem fwvItemSchemSonicRiver 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonicRiver 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSonic12 >= 1
+		player.removeItem fwvItemSchemSonic12 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonic12 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemSonicShades >= 1
+		player.removeItem fwvItemSchemSonicShades 1
+		fwvTSchematicsRef.addItem fwvItemSchemSonicShades 1
+		set sFailed to 0
+	endif
+	if player.getItemCount fwvItemSchemAnticybergun >= 1
+		player.removeItem fwvItemSchemAnticybergun 1
+		fwvTSchematicsRef.addItem fwvItemSchemAnticybergun 1
+		set sFailed to 0
+	endif
+	if sFailed
+		ShowMessage fwvTCScannerFailedMessage
+		set sFailed to 0
+	else
+		ShowMessage fwvTCScannerLoadedMessage
+	endif
+end
+
+Begin GameMode
+
+	if sSTC == 1
+		set sListSize to ListGetCount fwvSchemSTC
+		set sListRand to Rand 0,sListSize
+		set rNote to ListGetNthForm fwvSchemSTC sListRand
+		ListRemoveNthForm fwvSchemSTC sListRand
+		player.addItem rNote 1
+		set sSTC to 0
+	endif
+
+End

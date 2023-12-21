@@ -1,0 +1,122 @@
+scn fwvTCastronavSCRIPT
+
+string_var svGalaxy		;Galaxy Name
+string_var svPlanet		;Planet Name
+short button
+short sMenu
+short sMenuMode
+short sPause
+
+;sDetected - if a planet has been detected
+;sDrift  -1- Stationary  1- Drifting, 2- Navigating
+;tSpace 1- In Space
+
+Begin onActivate player
+
+	if fwvq1.tSpace == 1 && fwvq1.tFlying == 0 && fwvq1.tFuel > 0 && getStage fwvqGameOfRassilon >= 20
+		MessageBoxEx "Astronav:%r%rGalaxy: %z%r%rX: %g%rY: %g%r|Set Co-ordinates|Cancel|" svGalaxy fwvqDrift.gcX fwvqDrift.gcY
+		let sMenu := 1
+	elseif fwvq1.tSpace == 0
+		MessageEx "[The TARDIS must be in Space for this to function...]"
+	elseif fwvq1.tFlying == 1
+		MessageEx "[The TARDIS must be stationary first...]"		
+	elseif fwvq1.tFuel <= 0
+		MessageEx "[Not enough Artron Fuel to enter Navigation]"
+	endif
+	
+End
+
+Begin GameMode
+
+	let button:= getButtonPressed
+
+	if fwvqDrift.gID == 1
+		let svGalaxy := sv_construct "Acteon Galaxy"
+	elseif fwvqDrift.gID == 2
+		let svGalaxy := sv_construct "Isop Galaxy"
+	elseif fwvqDrift.gID == 3
+		let svGalaxy := sv_construct "Constellation of Kasterborous"
+	elseif fwvqDrift.gID == 4
+		let svGalaxy := sv_construct "Magellanic Clouds"
+	elseif fwvqDrift.gID == 5
+		let svGalaxy := sv_construct "Mutter's Spiral"
+	elseif fwvqDrift.gID == 6
+		let svGalaxy := sv_construct "Tremulus Three"
+	endif
+
+	;NAV MENU
+	;========
+	if sMenu == 1
+		if button == 0
+			let sMenu := 2
+		else
+			let sMenu := 0
+		endif		
+	elseif sMenu == 2
+		MessageBoxEx "Astronav:%r%rGalaxy: %z%r%rDestination X: %g%rDestination Y: %g%r%rCurrent X: %g%rCurrent Y: %g%r|Travel to Set Co-ordinates|Randomise Co-ordinates|Clear Co-ordinates|X+|X-|Y+|Y-|Cancel|" svGalaxy fwvqDrift.gcTX fwvqDrift.gcTY fwvqDrift.gcX fwvqDrift.gcY
+		let sMenu := 3
+	elseif sMenu == 3
+		if button == 0
+			if fwvqDrift.gcTX != 0 || fwvqDrift.gcTY != 0
+				MessageEx "[Galactic Co-ordinates Set]"
+				if fwvq1.tTheme == 4
+					PlaySound fwvFXT4Launch
+					fwvT4flightRef.Enable 0
+				else
+					PlaySound fwvFXtardisLaunchLong
+					fwvTflightRef.Enable 0
+				endif
+				let fwvq1.tFlightType := 3
+				let fwvq1.tPowerAutopilot := 1
+				let fwvq1.tActive := 1
+				let fwvq1.tFlying := 1
+				let fwvq1.flightMode := 1
+				let fwvq1.hbTimerWait := 0
+
+			elseif fwvqDrift.gcTX == 0 || fwvqDrift.gcTY == 0
+				MessageEx "[Invalid Galactic Co-ordinates. Try again]"
+			endif
+			let fwvqDrift.sDrift := 2
+			let sMenu := 0
+		elseif button == 1
+			let fwvqDrift.gcTX := 1 + getRandomPercent * 10/100
+			let fwvqDrift.gcTY := 1 + getRandomPercent * 10/100
+			let sMenu := 2
+		elseif button == 2
+			let fwvqDrift.gcTX := 0
+			let fwvqDrift.gcTY := 0
+			let sMenu := 2
+		elseif button == 3
+			if fwvqDrift.gcTX < 10
+				let fwvqDrift.gcTX := fwvqDrift.gcTX + 1
+			else
+				let fwvqDrift.gcTX := 1
+			endif
+			let sMenu := 2
+		elseif button == 4
+			if fwvqDrift.gcTX > 1
+				let fwvqDrift.gcTX := fwvqDrift.gcTX - 1
+			else
+				let fwvqDrift.gcTX := 10
+			endif
+			let sMenu := 2
+		elseif button == 5
+			if fwvqDrift.gcTY < 10
+				let fwvqDrift.gcTY := fwvqDrift.gcTY + 1
+			else
+				let fwvqDrift.gcTY := 1
+			endif
+			let sMenu := 2
+		elseif button == 6
+			if fwvqDrift.gcTY > 1
+				let fwvqDrift.gcTY := fwvqDrift.gcTY - 1
+			else
+				let fwvqDrift.gcTY := 10
+			endif
+			let sMenu := 2
+		else
+			let sMenu := 0
+		endif
+	endif
+
+end

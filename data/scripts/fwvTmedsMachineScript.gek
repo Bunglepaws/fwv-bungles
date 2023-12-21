@@ -1,0 +1,110 @@
+scn fwvTmedsMachineScript
+
+
+float zAngle
+short direction
+short doOnce
+short countTotal
+short count
+float dispenseTimer
+float randDist
+ref linkRef
+ref curRef
+ref cube1
+ref cube2
+ref cube3
+float StimpakDay
+short sMustWaitStim
+
+
+
+
+begin OnActivate Player
+	if GameDaysPassed < StimpakDay
+		set StimpakDay to 0.0
+	endif
+
+	if GameDaysPassed > StimpakDay + 1.0
+	
+		if doOnce == 0
+			set zAngle to GetAngle Z
+			set zAngle to fmod zAngle 360
+			set direction to zAngle / 90
+			set linkRef to GetLinkedRef
+			set doOnce to 1
+			set countTotal to 1
+			set dispenseTimer to 0
+		elseif countTotal == 0
+			set countTotal to 1
+			set count to 0
+			set dispenseTimer to 0
+			PlaySound3d fwvFXfoodProcessorBeep
+			set StimpakDay to GameDaysPassed
+		endif
+		activate
+
+	else
+		MessageBoxEx "The Medbay Vendor must recharge until tomorrow."
+	endif
+	
+end
+
+begin GameMode
+	
+	if countTotal > 0
+		
+
+		
+			set dispenseTimer to dispenseTimer + GetSecondsPassed
+			if dispenseTimer > 0.25 && count == 0
+				set dispenseTimer to 0
+				set count to 1
+				
+				set cube1 to linkRef.PlaceAtMe Stimpak 1
+				set cube2 to linkRef.PlaceAtMe Stimpak 1
+
+				;player.additem Stimpak 3				
+
+				set countTotal to countTotal - 1
+				PlaySound fwvFXfoodProcessorSpawn
+			elseif count == 1
+				set count to 0
+			
+				Label 0
+				
+				if count == 0
+					set curRef to cube1
+				elseif count == 1
+					set curRef to cube2
+				endif
+				
+				set randDist to 150 + GetRandomPercent
+				if direction == 0 ; Y -
+					set randDist to 0-randDist
+					curRef.con_SetVel Y randDist
+				elseif direction == 1 ; X -
+					set randDist to 0-randDist
+					curRef.con_SetVel X randDist
+				elseif direction == 2 ; Y +
+					curRef.con_SetVel Y randDist
+				else ; direction == 3 ; X +
+					curRef.con_SetVel X randDist
+				endif
+				
+				set count to count + 1
+				
+				if count < 2
+					Goto 0
+				endif
+				
+				set count to 0
+			endif
+		
+
+			
+			
+	endif
+
+
+	
+end

@@ -1,0 +1,14 @@
+scn fwvq3dGeneratorFixScript
+
+begin onActivate player
+
+if player.getItemCount fwvq3dEBU >= 1
+	PlaySound OBJNelsonGeneratorACTI
+	fwvq3dGeneratorSFXref.enable
+	player.removeItem fwvq3dEBU 1
+	fwvq3dSecurityGateRef.disable
+else
+	PlaySound OBJNelsonGeneratorACTI
+endif
+
+end

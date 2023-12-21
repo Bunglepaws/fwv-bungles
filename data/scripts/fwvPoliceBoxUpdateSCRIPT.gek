@@ -1,0 +1,12 @@
+scn fwvPoliceBoxUpdateSCRIPT
+
+Begin GameMode
+
+	if GetGameLoaded == 1 || GetGameRestarted == 1
+		Call fwvFuncChangePoliceBoxScript
+		printc " Loaded  and PBUpdater func called."
+		call fwvFuncChangeFaderPoliceBoxSCRIPT fwvTardisRecallExtFadeInBox
+		printc "PBFader Updater called"
+	Endif
+
+End

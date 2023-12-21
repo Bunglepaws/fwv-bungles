@@ -1,0 +1,21 @@
+scn fwvTardisForcefieldScript
+
+;controls forcefield mesh
+ref self
+ref policeBox
+
+Begin GameMode
+
+	let self := GetSelf
+	let policeBox := fwvq1.enableDoor
+
+	if eval fwvqProtocols.protocol[8] == 1
+		self.enable
+		self.moveTo policeBox
+	elseif eval fwvqProtocols.protocol[8] == 0
+		self.disable
+	endif
+
+	;if not player, or companion, pushactoraway from tardis far enough to exit forcefield
+
+End

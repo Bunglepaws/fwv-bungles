@@ -1,0 +1,8 @@
+scn fwvxoAutonMaskPickupSCRIPT
+
+begin OnAdd Player
+	if fwvqInvasionsAuton.sMaskOnce == 0
+		showmessage fwvAutonMaskFoundMESG
+		set fwvqInvasionsAuton.sMaskOnce to 1
+	endif	
+end

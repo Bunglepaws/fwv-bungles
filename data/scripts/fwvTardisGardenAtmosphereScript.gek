@@ -1,0 +1,81 @@
+scn fwvTardisGardenAtmosphereScript
+
+short patch ; for patching
+short direction
+float gardenDay
+short infectMod
+short init
+
+short frame
+float fTimer
+
+begin onActivate player
+
+	if patch < 3
+		;patch stuff here
+		set init to 0
+		set infectMod to 0
+		set gardenDay to GameDaysPassed
+		set patch to 3
+	endif
+
+	if init == 0
+		set infectMod to 0
+		set fTimer to 0.0
+		set frame to 1
+		set gardenDay to GameDaysPassed
+		fwvTardisGardenJetRef.enable
+		PlaySound OBJSwitchButtonBPass
+		PlaySound OBJPipeControlTurn
+		ShowMessage fwvTardisGardenPesticideMessage
+		if IsAnimPlaying == 0
+			if direction
+				PlayGroup Backward 0
+			else
+				PlayGroup Forward 0
+			endif
+			set direction to 1 - direction
+		endif
+		set init to 1
+	else
+		if gameDaysPassed > gardenDay + 1
+			set fTimer to 0.0
+			set frame to 1
+			set infectMod to 0
+			set gardenDay to GameDaysPassed
+			fwvTardisGardenJetRef.enable
+			PlaySound OBJSwitchButtonBPass
+			PlaySound OBJPipeControlTurn
+			ShowMessage fwvTardisGardenPesticideMessage
+			if IsAnimPlaying == 0
+				if direction
+					PlayGroup Backward 0
+				else
+					PlayGroup Forward 0
+				endif
+			set direction to 1 - direction
+			endif
+		else
+			ShowMessage fwvTardisGardenPesticideFailMessage
+		endif
+	endif
+
+end
+
+begin gameMode
+
+	if GameDaysPassed > gardenDay + 1
+		set infectMod to infectMod + 1
+	endif
+
+	if frame == 1
+		if fTimer < 10.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			fwvTardisGardenJetRef.disable
+			set frame to 0
+			set fTimer to 0.0
+		endif
+	endif
+
+end

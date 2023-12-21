@@ -1,0 +1,17 @@
+scn fwvq3eCyberConversionConsoleScript
+
+begin onActivate player
+
+	if getStage fwvq3e == 50
+		setStage fwvq3e 60
+		fwvq3eCyberConverterRef.placeAtMe DLC03TeslaCannonExplosion
+
+		if fwvq3eConvert1Ref.GetSitting == 3
+			player.rewardKarma -10
+		endif
+
+		fwvq3eConversionAlarmFx.enable
+		fwvq3eCyberSewerRef.unlock
+	endif
+
+end

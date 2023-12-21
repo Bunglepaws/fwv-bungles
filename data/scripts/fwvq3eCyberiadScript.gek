@@ -1,0 +1,36 @@
+scn fwvq3eCyberiadScript
+
+short frame
+float fTimer
+
+ref holoCyber
+
+begin onActivate player
+	imod FadeInFromWhiteISFX
+	DisablePlayerControls 1 1 1 1 1 1 1
+	player.moveTo fwvq3ePlayerCyberiadRef
+	set frame to 1
+end
+
+begin gameMode
+
+	if frame == 1
+		if fTimer < 3.0
+			set fTimer to fTimer + getsecondspassed
+		else
+			set holoCyber to fwvq3eCyberiadHoloRef.placeAtMe fwvq3eCyberController
+			holoCyber.setActorAlpha 0.75
+			set fTimer to 0.0
+			set frame to 2
+		endif
+	elseif frame == 2
+		if fTimer < 1.0
+			set fTimer to fTimer + getsecondspassed
+		else
+			holoCyber.StartConversation player GREETING [headtrack=1]
+			set fTimer to 0.0
+			set frame to 0
+		endif
+	endif
+
+end

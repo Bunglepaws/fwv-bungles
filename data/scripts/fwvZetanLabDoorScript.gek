@@ -1,0 +1,57 @@
+scn fwvZetanLabDoorScript
+
+Begin onActivate player
+
+	if fwvZetaGorlaxRef.getDead == 0
+		ShowMessage fwvGorlaxWarningMESG
+		ShowMessage fwvGorlaxWarningMESG2
+		if fwvZetaGorlaxRef.getDisabled == 1
+			;PlaySound NPCSuperMutantBehemothDeath02
+			fwvGorlaxStaticREF.disable
+			GorlaxKlaxonOnREF.enable
+			GorlaxKlaxonOffREF.disable
+			fwvZetaGorlaxRef.enable
+			fwvZetaPlant01Ref.enable
+			fwvZetaPlant02Ref.enable
+			fwvZetaPlant03Ref.enable
+			fwvZetaPlant04Ref.enable
+			ZetaKlaxonSoundREF.enable
+			;set ZetaRightKlaxonActREF.state to 1
+			;set ZetaLeftKlaxonActREF.state to 1
+			fwvGorlaxRumbleREF.enable
+			;RightKlaxonLightREF.enable
+			;LeftKlaxonLightREF.enable
+
+			fwvGorlaxBrainSparks01.enable
+			fwvGorlaxBrainSparks02.enable
+			fwvGorlaxBrainSparks03.enable
+			fwvGorlaxBrainSparks04.enable
+
+			RightKlaxonLightRedREF.enable
+			LeftKlaxonLightRedREF.enable
+			fwvGorlaxKaxonLightRedREF.enable
+			RightKlaxonLightREF.activate RightKlaxonLightREF 1
+			LeftKlaxonLightREF.activate LeftKlaxonLightREF 1
+
+			ZetaRightKlaxonActREF.activate ZetaRightKlaxonActREF 1
+			ZetaLeftKlaxonActREF.activate ZetaLeftKlaxonActREF 1
+			
+			fwvGorlaxGeneratorOKREF.playgroup Forward 1
+			fwvGorlaxGeneratorWindow1.playgroup Forward 1
+			fwvGorlaxGeneratorWindow2.playgroup Forward 1
+			fwvGorlaxGeneratorWindow3.playgroup Forward 1
+			fwvGorlaxGeneratorWindow4.playgroup Forward 1
+			fwvGorlaxGeneratorWindow5.playgroup Forward 1
+			fwvGorlaxGeneratorWindow6.playgroup Forward 1
+			fwvGorlaxGeneratorWindow7.playgroup Forward 1
+			fwvGorlaxGeneratorWindow8.playgroup Forward 1
+			fwvGorlaxGeneratorCoreREF.playgroup Forward 1
+			fwvGorlaxGeneratorCoreGlowREF.playgroup ReloadD 1
+			
+
+		endif
+	else
+		MessageBoxEx "[The Security Lockdown has been rescinded.]"
+	endif
+
+End

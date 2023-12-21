@@ -1,0 +1,429 @@
+scn fwvPipBoyTARDISSync
+
+begin onActivate
+	
+	;JUST HERE FOR COMPLETENESS, SHOULD BE TRIGGERED UPON FIRST USE OF TARDIS
+	if GibsonScrapYardMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLgibsonVisited == 0
+		set fwvqLocs.fwvLgibsonVisited to 1
+		MessageEx "Gibson Scrap Yard added to NavCom Databanks."
+	
+	;Goodsprings should be found by default in the game, and has no mapmarker ref name to call, so automatically unlocking it
+	elseif fwvqLocs.fwvLgoodspringsExtVisited == 0
+		set fwvqLocs.fwvLgoodspringsExtVisited to 1
+		MessageEx "Goodsprings added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLtopsWorldExtVisited == 0
+		set fwvqLocs.fwvLtopsWorldExtVisited to 1
+		MessageEx "The Tops Courtyard added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLgamorrahWorldExtVisited == 0
+		set fwvqLocs.fwvLgamorrahWorldExtVisited to 1
+		MessageEx "Gomorrah Exterior added to NavCom Databanks."
+	
+	elseif BoulderCityMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLboulderWorldExtVisited == 0
+		set fwvqLocs.fwvLboulderWorldExtVisited to 1
+		MessageEx "Boulder City [2] added to NavCom Databanks."
+	
+	elseif FreesideMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLfreesideKingsExtVisited == 0
+		set fwvqLocs.fwvLfreesideKingsExtVisited to 1
+		MessageEx "Freeside [2] added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLfreesideRobotExtVisited == 0
+		set fwvqLocs.fwvLfreesideRobotExtVisited to 1
+		MessageEx "Freeside [3] added to NavCom Databanks."
+	
+	elseif FreesideMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLfreesideCentralExtVisited == 0
+		set fwvqLocs.fwvLfreesideCentralExtVisited to 1
+		MessageEx "Freeside added to NavCom Databanks."
+	
+	elseif FreesideMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLmormonFortExtVisited == 0
+		set fwvqLocs.fwvLmormonFortExtVisited to 1
+		MessageEx "Old Mormon Fort added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLtopsExtVisited == 0
+		set fwvqLocs.fwvLtopsExtVisited to 1
+		MessageEx "The Tops Exterior added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLlucky38ExtVisited == 0
+		set fwvqLocs.fwvLlucky38ExtVisited to 1
+		MessageEx "Lucky 38 Exterior added to NavCom Databanks."
+	
+	elseif JacobstownMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLjacobstownLodgeExtVisited == 0
+		set fwvqLocs.fwvLjacobstownLodgeExtVisited to 1
+		MessageEx "Jacobstown Lodge Exterior added to NavCom Databanks."
+	
+	elseif fwvXOHuntersFarmMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLhuntersFarmExtVisited == 0
+		set fwvqLocs.fwvLhuntersFarmExtVisited to 1
+		MessageEx "Hunter's Farm added to NavCom Databanks."
+	
+	elseif CrescentCanyonEastREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLcrescentCanyonExtVisited == 0
+		set fwvqLocs.fwvLcrescentCanyonExtVisited to 1
+		MessageEx "Crescent Canyon added to NavCom Databanks."
+
+	elseif CrescentCanyonWestREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLcrescentCanyonExtVisited == 0
+		set fwvqLocs.fwvLcrescentCanyonExtVisited to 1	
+		MessageEx "Crescent Canyon added to NavCom Databanks."
+
+	elseif NiptonMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLniptonExtVisited == 0
+		set fwvqLocs.fwvLniptonExtVisited to 1
+		MessageEx "Nipton added to NavCom Databanks."
+	
+	elseif fwvXOWestsideParkMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLwestsideParkExtVisited == 0
+		set fwvqLocs.fwvLwestsideParkExtVisited to 1
+		MessageEx "Westside added to NavCom Databanks."
+	
+	elseif fwvXOTumbleweedMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLtumbleweedRanchExtVisited == 0
+		set fwvqLocs.fwvLtumbleweedRanchExtVisited to 1
+		MessageEx "Brooks Tumbleweed Ranch added to NavCom Databanks."
+	
+	elseif fwvXODevilsThroatMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLdevilsThroatExtVisited == 0
+		set fwvqLocs.fwvLdevilsThroatExtVisited to 1
+	MessageEx "The Devil's Throat added to NavCom Databanks."
+	
+	elseif fwvXONukeSiteMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLnuclearTestsiteExtVisited == 0
+		set fwvqLocs.fwvLnuclearTestsiteExtVisited to 1
+		MessageEx "Old Nuclear Test Site added to NavCom Databanks."
+	
+	elseif RockCrushingPlantMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLrockcrushingPlantExtVisited == 0
+		set fwvqLocs.fwvLrockcrushingPlantExtVisited to 1
+		MessageEx "Rock Crushing Plant added to NavCom Databanks."
+	
+	elseif RepconMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLrepconFacExtVisited == 0
+		set fwvqLocs.fwvLrepconFacExtVisited to 1
+		MessageEx "REPCONN Test Site added to NavCom Databanks."
+	
+	elseif RedRockCanyonMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLredrockCanyonExtVisited == 0
+		set fwvqLocs.fwvLredrockCanyonExtVisited to 1
+		MessageEx "Red Rock Canyon added to NavCom Databanks."
+	
+	elseif fwvXOPumpStationEastMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLpumpEastExtVisited == 0
+		set fwvqLocs.fwvLpumpEastExtVisited to 1
+		MessageEx "East Pump Station Exterior added to NavCom Databanks."
+	
+	elseif fwvXOPumpStationWestMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLpumpWestExtVisited  == 0
+		set fwvqLocs.fwvLpumpWestExtVisited to 1
+		MessageEx "West Pump Station Exterior added to NavCom Databanks."
+	
+	elseif PrimmMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLprimmHousesExtVisited == 0
+		set fwvqLocs.fwvLprimmHousesExtVisited to 1
+		MessageEx "Primm Houses added to NavCom Databanks."
+	
+	elseif PrimmMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLprimmExtVisited == 0
+		set fwvqLocs.fwvLprimmExtVisited to 1
+		MessageEx "Primm added to NavCom Databanks."
+	
+	elseif NovacMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLnovacExtVisited == 0
+		set fwvqLocs.fwvLnovacExtVisited to 1
+		MessageEx "Novac added to NavCom Databanks."
+	
+	elseif NorthVegasSquareMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLnorthvegasSquareExtVisited == 0
+		set fwvqLocs.fwvLnorthvegasSquareExtVisited to 1
+		MessageEx "North Vegas Square added to NavCom Databanks."
+	
+	elseif fwvXONewVegasSteelMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLnewvegasSteelExtVisited == 0
+		set fwvqLocs.fwvLnewvegasSteelExtVisited to 1
+		MessageEx "New Vegas Steel added to NavCom Databanks."
+	
+	elseif NellisArrayMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLnellisArrayExtVisited == 0
+		set fwvqLocs.fwvLnellisArrayExtVisited to 1
+		MessageEx "Nellis Array added to NavCom Databanks."
+	
+	elseif NellisMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLnellisAfbExtVisited == 0
+		set fwvqLocs.fwvLnellisAfbExtVisited to 1
+		MessageEx "Nellis Air Force Base added to NavCom Databanks."
+	
+	elseif fwvXOMonteCarloMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLmontecarloSuitesExtVisited == 0 
+		set fwvqLocs.fwvLmontecarloSuitesExtVisited to 1
+		MessageEx "Monte Carlo Suites added to NavCom Databanks."
+	
+	elseif MojaveOutpostMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLmojaveOutpostVisited == 0
+		set fwvqLocs.fwvLmojaveOutpostVisited to 1
+		MessageEx "Mojave Outpost added to NavCom Databanks."
+	
+	elseif fwvXODriveInMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLmojaveDriveinExtVisited == 0
+		set fwvqLocs.fwvLmojaveDriveinExtVisited to 1
+		MessageEx "Mojave Drive-In added to NavCom Databanks."
+	
+	elseif fwvXOLegateCampMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLlegateCampExtVisited == 0
+		set fwvqLocs.fwvLlegateCampExtVisited to 1
+		MessageEx "Legate's Camp added to NavCom Databanks."
+	
+	elseif fwvXOLLVMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLlakeLasvegasExtVisited == 0
+		set fwvqLocs.fwvLlakeLasvegasExtVisited to 1
+		MessageEx "Lake Las Vegas added to NavCom Databanks."
+	
+	elseif JacobstownMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLjacobstownExtVisited == 0
+		set fwvqLocs.fwvLjacobstownExtVisited to 1
+		MessageEx "Jacobstown added to NavCom Databanks."
+	
+	elseif fwvXOIvanpahDryLakeMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLivanpahExtVisited == 0
+		set fwvqLocs.fwvLivanpahExtVisited to 1
+		MessageEx "Ivanpah Dry Lake added to NavCom Databanks."
+	
+	elseif VHDMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLhooverPlantExtVisited == 0
+		set fwvqLocs.fwvLhooverPlantExtVisited to 1
+		MessageEx "Hoover Dam Exterior added to NavCom Databanks."
+	
+	elseif VHeliosONEMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLheliosExtVisited == 0
+		set fwvqLocs.fwvLheliosExtVisited to 1
+		MessageEx "HELIOS One added to NavCom Databanks."
+	
+	elseif fwvXOGypsumYardMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLgypsumExtVisited == 0
+		set fwvqLocs.fwvLgypsumExtVisited to 1
+		MessageEx "Gypsum Train Yard added to NavCom Databanks."
+	
+	elseif GoodspringsCemeteryMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLgoodspringsCemeteryExtVisited == 0
+		set fwvqLocs.fwvLgoodspringsCemeteryExtVisited to 1
+		MessageEx "Goodsprings Cemetery added to NavCom Databanks."
+	
+	elseif fwvXOElDoradoSubMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLeldoradoSubExtVisited == 0
+		set fwvqLocs.fwvLeldoradoSubExtVisited to 1
+		MessageEx "El Dorado Substation added to NavCom Databanks."
+	
+	elseif fwvXOCallvilleBayMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLcallvilleBayExtVisited == 0
+		set fwvqLocs.fwvLcallvilleBayExtVisited to 1
+		MessageEx "Callville Bay added to NavCom Databanks."
+	
+	elseif BoulderCityMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLboulderCityExtVisited == 0
+		set fwvqLocs.fwvLboulderCityExtVisited to 1
+		MessageEx "Boulder City added to NavCom Databanks."
+	
+	elseif fwvXOBoulderBeachMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLboulderbeachExtVisited == 0
+		set fwvqLocs.fwvLboulderbeachExtVisited to 1
+		MessageEx "Boulder Beach Campground added to NavCom Databanks."
+	
+	elseif fwvXOBonnieSpringsMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLbonnieSpringsExtVisited == 0
+		set fwvqLocs.fwvLbonnieSpringsExtVisited to 1
+		MessageEx "Bonnie Springs added to NavCom Databanks."
+	
+	elseif BlackMountainMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLblackmountainExtVisited == 0
+		set fwvqLocs.fwvLblackmountainExtVisited to 1
+		MessageEx "Black Mountain added to NavCom Databanks."
+	
+	elseif BitterSpringsMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLbitterspringsExtVisited == 0
+		set fwvqLocs.fwvLbitterspringsExtVisited to 1
+		MessageEx "Bitter Springs added to NavCom Databanks."
+	
+	elseif fwvAntMoundMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLantmoundExtVisited == 0
+		set fwvqLocs.fwvLantmoundExtVisited to 1
+		MessageEx "Ant Mound added to NavCom Databanks."
+	
+	elseif fwvXOAerotechMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLaerotechExtVisited == 0
+		set fwvqLocs.fwvLaerotechExtVisited to 1
+		MessageEx "Aerotech added to NavCom Databanks."
+	
+	elseif JacobstownMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLjacobstownLodgeVisited == 0
+		set fwvqLocs.fwvLjacobstownLodgeVisited to 1
+		MessageEx "Jacobstown Lodge added to NavCom Databanks."
+	
+	elseif fwvXOSilverPeakMineMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLsilverpeakMineVisited == 0
+		set fwvqLocs.fwvLsilverpeakMineVisited to 1
+		MessageEx "Silver Peak Mine added to NavCom Databanks."
+	
+	elseif PrimmMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLvikkivanceCasinoVisited == 0
+		set fwvqLocs.fwvLvikkivanceCasinoVisited to 1
+		MessageEx "Vikki and Vance Casino added to NavCom Databanks."
+	
+	elseif SouthVegasRuinsEastEntranceMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLvault3Visited == 0
+		set fwvqLocs.fwvLvault3Visited to 1
+		MessageEx "Vault 3 added to NavCom Databanks."
+	
+	elseif SouthVegasRuinsWestEntranceMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLvault3Visited == 0
+		set fwvqLocs.fwvLvault3Visited to 1	
+		MessageEx "Vault 3 added to NavCom Databanks."
+	
+	elseif Vault34MapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLvault34Visited == 0
+		set fwvqLocs.fwvLvault34Visited to 1
+		MessageEx "Vault 34 added to NavCom Databanks."
+	
+	elseif Vault22MapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLvault22Visited == 0
+		set fwvqLocs.fwvLvault22Visited to 1
+		MessageEx "Vault 22 added to NavCom Databanks."
+	
+	elseif Vault11MapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLvault11Visited == 0
+		set fwvqLocs.fwvLvault11Visited to 1
+		MessageEx "Vault 11 added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLultraluxeCasinoVisited == 0
+		set fwvqLocs.fwvLultraluxeCasinoVisited to 1
+		MessageEx "Ultra-Luxe added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLtopsCasinoVisited == 0
+		set fwvqLocs.fwvLtopsCasinoVisited to 1
+		MessageEx "The Tops Interior added to NavCom Databanks."
+	
+	elseif fwvXOBasincreekMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLbasincreekVisited == 0
+		set fwvqLocs.fwvLbasincreekVisited to 1
+		MessageEx "The Basincreek Building added to NavCom Databanks."
+	
+	elseif TheFortMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLsecuritronVaultVisited == 0
+		set fwvqLocs.fwvLsecuritronVaultVisited to 1
+		MessageEx "Securitron Vault added to NavCom Databanks."
+	
+	elseif RangerStationFoxtrotMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLrsFoxtrotExtVisited == 0
+		set fwvqLocs.fwvLrsFoxtrotExtVisited to 1
+		MessageEx "Ranger Station Foxtrot added to NavCom Databanks."
+	
+	elseif RangerStationDeltaMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLrsDeltaVisited == 0
+		set fwvqLocs.fwvLrsDeltaVisited to 1
+		MessageEx "Ranger Station Delta added to NavCom Databanks."
+	
+	elseif RangerStationCharlieMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLrsCharlieVisited == 0
+		set fwvqLocs.fwvLrsCharlieVisited to 1
+		MessageEx "Ranger Station Charlie added to NavCom Databanks."
+	
+	elseif RepconMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLrepconBaseVisited == 0
+		set fwvqLocs.fwvLrepconBaseVisited to 1
+		MessageEx "REPCONN Test Site Basement added to NavCom Databanks."
+	
+	elseif VCliffsideCavernMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLbrocCaveVisited == 0
+		set fwvqLocs.fwvLbrocCaveVisited to 1
+		MessageEx "Broc Flower Cave added to NavCom Databanks."
+	
+	elseif fwvXOWestsideParkMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLthornVisited == 0
+		set fwvqLocs.fwvLthornVisited to 1
+		MessageEx "The Thorn added to NavCom Databanks."
+	
+	elseif NorthVegasSquareMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLnorthSewerVisited == 0
+		set fwvqLocs.fwvLnorthSewerVisited to 1
+		MessageEx "North Sewer added to NavCom Databanks."
+	
+	elseif NorthVegasSquareMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLcentralSewerVisited == 0
+		set fwvqLocs.fwvLcentralSewerVisited to 1
+		MessageEx "Central Sewers added to NavCom Databanks."
+	
+	elseif HouseToolsMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLhhVisited == 0
+		set fwvqLocs.fwvLhhVisited to 1
+		MessageEx "H&H Tools Factory added to NavCom Databanks."
+	
+	elseif NiptonMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLniptonTownhallVisited == 0
+		set fwvqLocs.fwvLniptonTownhallVisited to 1
+		MessageEx "Nipton Town Hall added to NavCom Databanks."
+	
+	elseif RaulsShackMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLnellisTunnelVisited == 0
+		set fwvqLocs.fwvLnellisTunnelVisited to 1
+		MessageEx "Nellis Train Tunnel added to NavCom Databanks."
+	
+	elseif NellisHangarsMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLnellisHangarVisited == 0
+		set fwvqLocs.fwvLnellisHangarVisited to 1
+		MessageEx "Nellis Hangars added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLlucky38BasementVisited == 0
+		set fwvqLocs.fwvLlucky38BasementVisited to 1
+		MessageEx "Lucky 38 Basement added to NavCom Databanks."
+	
+	elseif NightstalkerLairMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLcharlestonCaveVisited == 0
+		set fwvqLocs.fwvLcharlestonCaveVisited to 1
+		MessageEx "Charleston Cave added to NavCom Databanks."
+	
+	elseif VHDMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLhooverPlantVisited == 0
+		set fwvqLocs.fwvLhooverPlantVisited to 1
+		MessageEx "Hoover Dam added to NavCom Databanks."
+	
+	elseif VHeliosONEMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLheliosDeckVisited == 0
+		set fwvqLocs.fwvLheliosDeckVisited to 1
+		MessageEx "HELIOS One Observation Deck added to NavCom Databanks."
+	
+	elseif fwvqLocs.fwvLgoodspringsSaloonVisited == 0
+		set fwvqLocs.fwvLgoodspringsSaloonVisited to 1
+		MessageEx "Goodsprings Prospector Saloon added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLgomorrahMainVisited == 0
+		set fwvqLocs.fwvLgomorrahMainVisited to 1
+		MessageEx "Gomorrah added to NavCom Databanks."
+	
+	elseif fwvXOAlliedTechMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLvangraffWarehouseVisited == 0
+		set fwvqLocs.fwvLvangraffWarehouseVisited to 1
+		MessageEx "Abandoned Warehouse added to NavCom Databanks."
+	
+	elseif FreesideMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLceruleanRoboticsVisited == 0
+		set fwvqLocs.fwvLceruleanRoboticsVisited to 1
+		MessageEx "Cerulean Robotics added to NavCom Databanks."
+	
+	elseif FreesideMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLkingsSchoolVisited == 0
+		set fwvqLocs.fwvLkingsSchoolVisited to 1
+		MessageEx "The King's School of Impersonation added to NavCom Databanks."
+	
+	elseif FreesideMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLatomicWranglerVisited == 0
+		set fwvqLocs.fwvLatomicWranglerVisited to 1
+		MessageEx "The Atomic Wrangler added to NavCom Databanks."
+	
+	elseif CrimsonCaravanMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLcrimsonCaravanVisited == 0
+		set fwvqLocs.fwvLcrimsonCaravanVisited to 1
+		MessageEx "Crimson Caravan Main Office added to NavCom Databanks."
+	
+	elseif SearchlightMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLfirestationVisited == 0
+		set fwvqLocs.fwvLfirestationVisited to 1
+		MessageEx "Fire Station (Searchlight) added to NavCom Databanks."
+	
+	elseif CampMcCarranMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLmccarranConcourseVisited == 0
+		set fwvqLocs.fwvLmccarranConcourseVisited to 1
+		MessageEx "Camp McCarran Concourse added to NavCom Databanks."
+	
+	elseif CampGuardianMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLguardianCaveVisited == 0
+		set fwvqLocs.fwvLguardianCaveVisited to 1
+		MessageEx "Camp Guardian Caves added to NavCom Databanks."
+	
+	elseif VCampForlornHopeMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLforlornCommandVisited == 0
+		set fwvqLocs.fwvLforlornCommandVisited to 1
+		MessageEx "Camp Forlorn Hope Command Center added to NavCom Databanks."
+	
+	elseif BlackMountainMapMarkerREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLblackStorageVisited == 0
+		set fwvqLocs.fwvLblackStorageVisited to 1
+		MessageEx "Black Mountain Storage Building added to NavCom Databanks."
+	
+	elseif PrimmMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLbisonSteveVisited == 0
+		set fwvqLocs.fwvLbisonSteveVisited to 1
+		MessageEx "The Bison Steve added to NavCom Databanks."
+	
+	elseif BoulderCityMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLbcStationVisited == 0
+		set fwvqLocs.fwvLbcStationVisited to 1
+		MessageEx "Boulder City Train Station added to NavCom Databanks."
+	
+	elseif BoulderCityMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLbigHornVisited == 0
+		set fwvqLocs.fwvLbigHornVisited to 1
+		MessageEx "Big Horn Saloon added to NavCom Databanks."
+	
+	elseif fwvXOAerotechMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLaero300Visited == 0
+		set fwvqLocs.fwvLaero300Visited to 1
+		MessageEx "Aerotech Suite 300 added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLvault21Visited == 0
+		set fwvqLocs.fwvLvault21Visited to 1
+		MessageEx "Vault 21 added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLangeloWorkshopVisited == 0
+		set fwvqLocs.fwvLangeloWorkshopVisited to 1
+		MessageEx "Angelo's Workshop added to NavCom Databanks."
+	
+	elseif fwvStripNorthGateMapRef.GetMapMarkerVisible == 2 && fwvqLocs.fwvLvbStationVisited == 0
+		set fwvqLocs.fwvLvbStationVisited to 1
+		MessageEx "Las Vegas Boulevard Station added to NavCom Databanks."
+	
+	elseif fwvXOPumpStationWestMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLwestPumpVisited == 0
+		set fwvqLocs.fwvLwestPumpVisited to 1
+		MessageEx "West Pump Station added to NavCom Databanks."
+	
+	elseif SouthVegasRuinsWestEntranceMapMarker.GetMapMarkerVisible == 2 && fwvqLocs.fwvLzappsVisited == 0
+		set fwvqLocs.fwvLzappsVisited to 1
+		MessageEx "Zapp's Neon Signs added to NavCom Databanks."
+	
+	elseif fwvXOPumpStationEastMapREF.GetMapMarkerVisible == 2 && fwvqLocs.fwvLeastPumpVisited == 0
+		set fwvqLocs.fwvLeastPumpVisited to 1
+		MessageEx "East Pump Station added to NavCom Databanks."
+	
+	elseif fwvq1.enableDoor == fwvLcreepyHouseRef && fwvqLocs.fwvLcreepyHouseVisited == 0   ; What the hell
+		set fwvqLocs.fwvLcreepyHouseVisited to 1
+		MessageEx "Abandoned Home added to NavCom Databanks."
+	
+	elseif fwvq1.enableDoor == fwvLskaroForestRef && fwvqLocs.fwvLskaroForestExtVisited == 0
+		set fwvqLocs.fwvLskaroForestExtVisited to 1
+		MessageEx "Skaro - The Petrified Forest added to NavCom Databanks."
+
+	endif
+
+	if IsActionRef Player == 1
+		activate
+	endif
+
+end

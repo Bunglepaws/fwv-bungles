@@ -1,0 +1,22 @@
+scn fwvq3cSilurianPoisonScript
+
+float day
+float eTimer
+ref myself
+
+begin ScriptEffectStart
+	
+	set day to gamedayspassed
+	imod fwvq3cSilurianPoisonISFX
+
+end
+
+begin ScriptEffectUpdate
+
+	if day < gameDaysPassed + 3
+		player.killActor
+	endif
+
+end
+
+

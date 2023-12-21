@@ -1,0 +1,18 @@
+scn fwvElixerRegenArchiMechanicScript
+
+
+ref rBaseObject
+
+begin MenuMode 1002
+	set rBaseObject to GetBaseObject
+	if Player.IsSpellTarget rBaseObject 
+		set fwvqRegen.fStatModStr to 1.0
+		set fwvqRegen.fStatModPer to 1.0
+		set fwvqRegen.fStatModEnd to 0.5
+		set fwvqRegen.fStatModCha to 0.1
+		set fwvqRegen.fStatModInt to 1.0
+		set fwvqRegen.fStatModAg to 0.1
+		set fwvqRegen.fStatModLuck to 0.1
+		Call fwvFuncForceRegen
+	endif
+end

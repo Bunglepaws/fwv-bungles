@@ -1,0 +1,397 @@
+scn fwvTControlCSRScript
+
+short sAnimType	; type of animation to play:
+				; 0 = don't play animation (though still use Forward sound if available)
+				; 1 = play only "Forward" when clicked
+				; 2 = toggle between playing "Forward" and "Backward" when clicked
+short sCSRType	; which CSR control this responds to
+				; 0 = Doesn't affect CSR
+				; 1 = Helmic Regulator
+				; 2 = Navigations Mode
+				; 3 = Proximity Sensor
+				; 4 = Atomic Accelerator
+				; 5 = Gyroscopic Stabiliser
+				; 6 = Directional Pointer
+				; 7 = Zigzag Plotter
+				; 8 = Vortex Loop
+				; 9 = Locking-Down Mechanism
+				; 10 = Handbrake
+				; 11 = Deep-Scan
+				; 12 = Throttle
+short sLaunchType ; what kind of flight mode to initiate for sPathDoAt == 0 controls
+				; -1 = disabled
+				; 0 = randomiser
+				; 1 = vortex (DISABLED for this build)
+				; 2 = programmed
+				; 3 = Drift
+short sPathDoAt ; which number fwvq1.tPath has to be at to activate that way
+short sPilotLevelMin ; minimum piloting level to use this outside of CSR
+short sDriftCtrl ; if this can be used in spaceflight modes
+ref rSoundForward ; which sound to play for Forward animation
+ref rSoundBackward ; which sound to play for Backward animation
+
+
+ref rSelf ; me
+ref rBaseObject ; base object
+short sDirection ; direction to animate in for sAnimType == 2
+short sInit ; initialize
+short sMenu ; menu
+short sChoice ; menu choice
+
+short sAction ; encounter action
+
+short sLastTheme ; last recorded theme
+ref rLastThemeQuest ; for custom rooms
+
+ref rProximityAlarm ; only for proximity sensor
+
+string_var strControlName
+short sNameChanged
+short sShaderDone
+
+short sChangeNow
+
+short sPatchVersion
+
+begin GameMode
+	if fwvq1.tSwitchTheme > 4 || fwvq1.sRestart
+		set sChangeNow to 1
+		Call fwvFuncResetPosition rSelf
+	endif
+	if sPatchVersion < fwvPatchVersion
+		set sPatchVersion to fwvPatchVersion
+		set rSelf to GetSelf
+		Call fwvFuncResetPosition rSelf
+		set sChangeNow to 1
+	endif
+	if GetGameRestarted || sInit == 0 || (fwvq1.tSwitchTheme == 0 && sChangeNow)
+		set sChangeNow to 0
+		set sLastTheme to fwvq1.tTheme
+		set rLastThemeQuest to fwvq1.tThemeQuest
+		set sInit to 1
+		set rSelf to GetSelf
+		set rBaseObject to GetBaseObject
+		
+		; setup animation type
+		set sAnimType to 0
+		if ListGetFormIndex fwvControlAnimation1List rBaseObject >= 0
+			set sAnimType to 1
+		elseif ListGetFormIndex fwvControlAnimation2List rBaseObject >= 0
+			set sAnimType to 2
+		endif
+		
+		; set stuff for specific controls
+		set sPathDoAt to -1
+		set rSoundForward to 0
+		set rSoundBackward to 0
+		set sCSRType to 0
+		set sPilotLevelMin to 0
+		set sLaunchType to -1
+		set sDriftCtrl to 0
+	
+		if rSelf == fwvq1.rTChelmicRef1
+			; helmic regulator
+			set sCSRType to 1
+			set sPathDoAt to 1
+		elseif rSelf == fwvq1.rTCnavicompRef1
+			; navicomp
+			set sPilotLevelMin to 5
+			set sCSRType to 2
+			set sPathDoAt to 0
+			set sLaunchType to 2
+		elseif rSelf == fwvq1.rTCatomicRef1
+			; atomic
+			set sCSRType to 4
+		elseif rSelf == fwvq1.rTCgyroRef1
+			; gyroscopic
+			set sCSRType to 5
+		elseif rSelf == fwvq1.rTCpointerRef1
+			; directional pointer
+			set sCSRType to 6
+		elseif rSelf == fwvq1.rTCzigzagRef1
+			; zigzag
+			set sCSRType to 7
+			set sPilotLevelMin to 0
+			set sPathDoAt to 0
+			set sLaunchType to 0
+		elseif rSelf == fwvq1.rTCvortexRef1
+			; vortex
+			set sCSRType to 8
+			;set sPilotLevelMin to 3
+			; (disable for now) set sPathDoAt to 0
+			; set sLaunchType to 1
+		elseif rSelf == fwvq1.rTClockdownRef1
+			; locking-down
+			set sCSRType to 9
+			set sPilotLevelMin to 0
+			set sPathDoAt to 3
+		elseif rSelf == fwvq1.rTCthrottleRef1
+			; throttle
+			; this shouldn't operate here but I'm putting it in temporarily, for reference
+			set sCSRType to 0
+			set sPilotLevelMin to 0
+			set sPathDoAt to 2
+		elseif rSelf == fwvq1.rTChandbrakeRef
+			; handbrake
+			set sCSRType to 10
+			set sPilotLevelMin to 0
+			set sPathDoAt to 4
+		elseif rSelf == fwvq1.rTCastronavRef1
+			; astronav
+			set sCSRType to 0
+			set sPilotLevelMin to 0
+			set sPathDoAt to 0
+			set sLaunchType to 3
+			set sDriftCtrl to 1
+		elseif rSelf == fwvq1.rTCdeepScanRef
+			; deep-scan
+			set sCSRType to 11
+		elseif rSelf == fwvq1.rTCproximityRef1
+			; proximity sensor
+			set sCSRType to 3
+		endif
+		
+		set strControlName to rSelf.GetName
+	endif
+	
+	if GetStage fwvq1a >= 30 && GetQuestCompleted fwvq1a == 0
+		if fwvq1.flightMode == 0 && fwvq1.csrON == 0 && fwvq1.tPath == sPathDoAt && ((sLaunchType == 0 && sPathDoAt == 0) || sPathDoAt != 0)
+			if sShaderDone == 0
+				pms fwvHologramPsychicMarker
+				set sShaderDone to 1
+			endif
+		elseif fwvq1.csrON == 0
+			sms fwvHologramPsychicMarker
+			set sShaderDone to 0
+		endif
+	elseif fwvq1.flightMode == 0
+		sms fwvHologramPsychicMarker
+		set sShaderDone to 0
+	endif
+	
+	if sNameChanged == 0 && fwvqEncounter.pTimer < 5
+		;set strControlName to rSelf.GetName
+	endif
+	
+	if fwvq1.controlAttack == sCSRType && fwvqEncounter.combat == 1 && sNameChanged == 0 && fwvqEncounter.pTimer >= 5
+		set sNameChanged to 1
+		SetNameEx "%z [Offensive Action]" strControlName
+	elseif fwvq1.controlDefense == sCSRType && sNameChanged == 0 && fwvqEncounter.pTimer >= 5
+		set sNameChanged to 1
+		SetNameEx "%z [Boost Shields]" strControlName
+	elseif fwvq1.controlScan == sCSRType && sNameChanged == 0 && fwvqEncounter.pTimer >= 5
+		set sNameChanged to 1
+		SetNameEx "%z [Scan]" strControlName
+	elseif fwvq1.controlEvade == sCSRType && sNameChanged == 0 && fwvqEncounter.pTimer >= 5
+		set sNameChanged to 1
+		if fwvqEncounter.evasion == 0
+			SetNameEx "%z [Evasive Maneuver]" strControlName
+		else
+			SetNameEx "%z [Temporal Phase]" strControlName
+		endif
+	elseif fwvq1.controlSurf == sCSRType && sNameChanged == 0 && fwvqEncounter.pTimer >= 5
+		set sNameChanged to 1
+		SetNameEx "%z [Surf Anomaly]" strControlName
+	elseif sNameChanged && (sMenu == 5 || fwvq1.csrON <= 2 || fwvqEncounter.pTimer < 5)
+		set sNameChanged to 0
+		SetNameEx "%z" strControlName
+	endif
+	
+	; re-added by spyduck do not delete
+	if sMenu == 5
+		set sChoice to 1;GetButtonPressed
+		if sChoice == 0
+			set sMenu to 0
+		else
+			set fwvq1.done to 1
+			set fwvqEncounter.tAction to sAction
+			set sMenu to 0
+		endif
+	endif
+end
+
+begin OnActivate
+	activate
+	if IsAnimPlaying == 0 || sAnimType == 0
+
+		if sCSRType == 10 ; handbrake
+			if fwvqDrift.sDrift == 2 && (fwvqEncounter.combat == 0 && fwvqEncounter.anomaly == 0)
+				MessageEx "[Galactic Navigations cancelled. Returning to Drift Mode]"
+				fwvTflightRef.Disable 0
+				fwvT4flightRef.Disable 0
+				if fwvq1.tTheme == 4
+					playSound fwvFXT4Landing
+				else
+					playSound fwvFXtardisLandingShort ; fwvFXtardisLandingLong
+				endif
+				let fwvq1.tSpace := 0
+				let fwvq1.tFlying := 0
+				let fwvq1.tPath := 0
+				let fwvq1.CSROn := 0
+				let fwvq1.tActive := 0
+				let fwvq1.hbTimer := 0.0
+				let fwvq1.hbTimerWait := 0.0
+				let fwvq1.flightMode := 0
+				let fwvqRooms.sShakeEnabled := 0
+				let fwvq1.tSpeedLvl := 0
+				let fwvqDrift.sDrift := 1
+			endif
+		endif
+
+		;activate the deepscan control.
+		if fwvqEncounter.combat == 0 && fwvqEncounter.anomaly == 0
+			if rSelf == fwvq1.rTCdeepScanRef
+				if fwvq1.tSpace == 1 && fwvq1.tFlying == 0
+					fwvTCdeepScanAllRef.activate player 1
+				elseif fwvq1.tSpace == 0
+					MessageBoxEx "[The TARDIS must be in Space for this to work]"
+				endif
+			endif
+		endif
+			
+			if (fwvq1.csrON == 0) && fwvq1.tPath == sPathDoAt
+				; specific launch maneuvers
+				if eval (sPathDoAt == 0 && fwvq1.flightMode == 0 && sPilotLevelMin <= fwvq1.pxl && fwvqSystems.crashed == 0 && fwvqEvents.event[10] == 1)
+					MessageEx "[Cannot launch during a Space Loop]"
+					set fwvq1.tPath to 0
+					;set sPathDoAt to 0
+					PlaySound UIHackingPassBad
+					printc "tPath %g and sPathDoAt %g" fwvq1.tPath sPathDoAt
+				elseif eval (sPathDoAt == 0 && fwvq1.flightMode == 0 && sPilotLevelMin <= fwvq1.pxl && fwvqSystems.crashed == 0 && fwvqEvents.event[10] == 0)
+					; launch control to choose between randomised/programmed
+					if sLaunchType == 0
+						ShowMessage fwvTflightRandomiserMessage
+						set fwvq1.tFlightType to sLaunchType
+					elseif sLaunchType == 1
+						ShowMessage fwvTflightVortexMessage
+						set fwvq1.tFlightType to sLaunchType
+					elseif sLaunchType == 2
+						ShowMessage fwvTflightProgrammedMessage
+						set fwvq1.tFlightType to sLaunchType
+					;elseif sLaunchType == 3
+					;	ShowMessage fwvqDriftNavModeMenu fwvqDrift.ucX fwvqDrift.ucY
+					;	set sMenu to 1
+					endif
+				elseif sPathDoAt == 0 && fwvq1.flightMode == 0 && sPilotLevelMin > fwvq1.pxl && fwvqSystems.crashed == 0
+					; level too low to use
+					ShowMessage fwvTCskillNeededMessage
+					set fwvq1.tPath to 0
+					PlaySound UIHackingPassBad
+				elseif sPathDoAt == 4 && fwvq1.flightMode == 0 && fwvq1.tFuel > 0 && fwvqSystems.crashed == 0
+					; time rotor handbrake code
+					if fwvq1.tNavOn == 1 && fwvq1.tNav > 0
+						if fwvq1.sDoorIsOpen == 1 ; don't takeoff with the doors open in the classical room
+							set fwvq1.tPath to 0
+							PlaySound UIHackingPassBad
+						elseif fwvq1.tFlying == 0 && (fwvq1.sDoorIsOpen == 0)
+							set fwvq1.tPowerAutopilot to 1 ; autopilot always on
+							set fwvq1.txp to fwvq1.txp + 5 ; reward XP
+							if fwvq1.tTheme == 4
+								PlaySound fwvFXT4Launch
+							else
+								PlaySound fwvFXtardisLaunchLong
+							endif
+							set fwvq1.tNextFlightType to 1 ; reset, basically
+							set fwvq1.last1Control to 0 ; last used control
+							set fwvq1.last2Control to 0 ; second-to-last used contrl
+							set fwvq1.tActive to 1 ; time rotor activated
+							set fwvq1.tFlying to 1 ; TARDIS in-flight
+							set fwvq1.flightMode to 1 ; launching
+							set fwvq1.hbTimerWait to 0
+						elseif fwvq1.tFlying == 1 && fwvq1.tFlightType == 1 ; exit from vortex flight
+							set fwvq1.tFlightType to 2 ; enter programmable
+							set fwvq1.chosenDoor to fwvq1.enableDoor ; set it to the same landing point as takeoff
+							set fwvq1.hbTimer to fwvq1.tSpeed ; and immediately land
+						endif
+					else
+						MessageEx "[Navigational Systems Offline]"
+						PlaySound fwvFXtardisLaunchFail
+						set fwvq1.tPath to 0
+					endif
+				endif
+				if ((sLaunchType == 3 || sPilotLevelMin > fwvq1.pxl) && sPathDoAt == 0) == 0 && fwvqSystems.crashed == 0
+					if eval fwvqEvents.event[10] == 1
+						MessageEx "[Cannot launch during a Space Loop]"
+						set fwvq1.tPath to 0
+						;set sPathDoAt to 0
+						PlaySound UIHackingPassBad
+					elseif eval fwvqEvents.event[7] == 1
+						MessageEx "[Cannot launch during a Dimensional Collapse]"
+						set fwvq1.tPath to 0
+						;set sPathDoAt to 0
+						PlaySound UIHackingPassBad
+					else
+						set fwvq1.tPath to fwvq1.tPath + 1
+						PlaySound UIHackingPassGood
+					endif
+				endif
+			elseif fwvq1.csrON == 0 && fwvq1.tPath != sPathDoAt && fwvq1.tFlying == 0
+				set fwvq1.tPath to 0
+				set fwvq1.tFlightType to -1
+				PlaySound UIHackingPassBad
+			elseif (fwvq1.csrON == 2 || fwvq1.csrON == 3) && fwvq1.done == 0; && fwvq1.tFlying == 0
+				if fwvq1.control == sCSRType
+					set rProximityAlarm to fwvq1.rTCproximityAlarmRef
+					if sCSRType == 3
+						set fwvqEncounter.encounter to 1
+						rProximityAlarm.Disable 0
+					endif
+					rProximityAlarm.Disable 0
+					set fwvq1.done to 1
+					PlaySound UIHackingPassGood
+				else
+					PlaySound UIHackingPassBad
+				endif
+			elseif fwvq1.csrON == 4 && fwvqEncounter.pTimer >= 5.0
+				if fwvq1.controlAttack == sCSRType && fwvqEncounter.combat == 1
+					set sMenu to 5
+					set sAction to 1
+					PlaySound UIHackingPassGood
+				elseif fwvq1.controlDefense == sCSRType
+					set fwvqEncounter.tBonusDef	to getRandomPercent / 2 + 5
+					MessageEx "Shield Oscillator output boosted by %g%%..." fwvqEncounter.tBonusDef
+					set sMenu to 5
+					set sAction to 2
+					PlaySound UIHackingPassGood
+				elseif fwvq1.controlScan == sCSRType
+					set sMenu to 5
+					set sAction to 3
+					PlaySound UIHackingPassGood
+				elseif fwvq1.controlEvade == sCSRType
+					set sMenu to 5
+					set sAction to 4
+					PlaySound UIHackingPassGood
+				elseif fwvq1.controlSurf == sCSRType ;&& (fwvqEncounter.encounterType == 2 || fwvqEncounter.encounterType == 4)
+					MessageEx "Preparing to enter Slipstream..."
+					set sMenu to 5
+					set sAction to 5
+					PlaySound UIHackingPassGood
+				endif
+			endif
+		
+			if sAnimType == 0 ; only use sound
+				if rSoundForward
+					PlaySound rSoundForward
+				endif
+			elseif sAnimType == 1 ; only forward animation
+				if rSoundForward
+					PlaySound rSoundForward
+				endif
+				PlayGroup Forward 1
+			elseif sAnimType == 2 ; toggle animations
+				if sDirection
+					if rSoundBackward
+						PlaySound rSoundBackward
+					endif
+					PlayGroup Backward 1
+				else
+					if rSoundForward
+						PlaySound rSoundForward
+					endif
+					PlayGroup Forward 1
+				endif
+				set sDirection to 1 - sDirection
+			endif
+		endif
+	;endif
+end

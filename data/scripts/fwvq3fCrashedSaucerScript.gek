@@ -1,0 +1,30 @@
+scn fwvq3fCrashedSaucerScript
+
+float fTimer
+short frame
+short doOnce
+
+begin onTrigger player
+
+	if doOnce == 0
+		fwvq3fNcrRef.enable
+		set frame to 1
+		set fTimer to 0.0
+		set doOnce to 1
+	endif
+
+end
+
+begin gamemode
+
+	if frame == 1
+		if fTimer < 5.0
+			set fTimer to fTimer + getSecondsPassed
+		else
+			PlaySound fwvCreatureFXdalekCry1
+			fwvq3fDalekScoutRef.enable
+			setStage fwvq3f 20
+			set frame to 0
+		endif
+	endif
+end

@@ -1,0 +1,19 @@
+scn fwvSkaroWorldActivatorScript
+
+short randVar
+
+begin onActivate player
+
+	if getIsID fwvSkaroMercuryPool == 1
+		set randVar to 1 + getRandomPercent * 10 / 100
+		printc "randVar %g" randVar
+		if randVar < player.getAV Luck
+			set randVar to 1 + getRandomPercent * 3 / 100
+			player.addItem fwvItemMercury randVar
+		else
+			player.damageAV Health 25
+			MessageEx "You burn yourself in the process..."
+		endif
+	endif 
+
+end

@@ -1,0 +1,13 @@
+scn fwvAnimatedStaticsScript
+
+ref rSelf
+
+Begin GameMode
+
+	let rSelf := GetSelf
+	
+	if rSelf.getIsID ecvhallsm1way01wPHanimated == 1
+		rSelf.Playgroup Forward 1
+	endif
+
+End

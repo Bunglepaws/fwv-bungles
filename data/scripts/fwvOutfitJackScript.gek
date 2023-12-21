@@ -1,0 +1,12 @@
+scn fwvOutfitJackScript
+
+short doOnce
+
+begin onEquip player
+
+	if doOnce == 0
+		player.addItem fwvItemSchemVortexManipulator 1
+		set doOnce to 1
+	endif
+
+end

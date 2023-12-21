@@ -1,0 +1,9 @@
+scn fwvq3eCyberConversionTriggerScript
+
+begin onTriggerEnter player
+
+	if getStage fwvq3e == 40
+		setStage fwvq3e 50
+	endif
+
+end

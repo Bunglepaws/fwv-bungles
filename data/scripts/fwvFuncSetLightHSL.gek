@@ -1,0 +1,56 @@
+scn fwvFuncSetLightHSL
+
+; requires JIP
+; Called on a light reference or base-object
+; returns whether the light changed, may require Update3D on references
+
+; let iUpdated := Call fwvFuncSetLightHSL rLight, fHue, fSaturation, fLightness
+
+ref rLight
+
+short red
+short green
+short blue
+
+float h
+float s
+float l
+
+float p
+float q
+float t
+
+float fTemp
+
+int iReturnValue
+
+begin Function {rLight, h, s, l}
+	if s == 0 ;achromatic
+		set red to 255 * l
+		set green to 255 * l
+		set blue to 255 * l
+	else
+		
+		if l < 0.5
+			set q to l * (1 + s)
+		else
+			set q to l + s - l * s
+		endif
+		set p to 2 * l - q
+		set fTemp to h + 1.0/3.0
+		set red to 255 * Call fwvFuncHueToRGB p q fTemp
+		set green to 255 * Call fwvFuncHueToRGB p q h
+		set fTemp to h - 1.0/3.0
+		set blue to 255 * Call fwvFuncHueToRGB p q fTemp
+
+	endif
+	;set iReturnValue to Call fwvFuncRGBToInt red green blue
+	if eval ( (red != GetLightTraitNumeric rLight 1) || (green != GetLightTraitNumeric rLight 2) || (blue != GetLightTraitNumeric rLight 3) )
+		SetLightTraitNumeric rLight 1 red
+		SetLightTraitNumeric rLight 2 green
+		SetLightTraitNumeric rLight 3 blue
+		set iReturnValue to 1 ; Light has changed
+	endif
+	SetFunctionValue iReturnValue
+
+end

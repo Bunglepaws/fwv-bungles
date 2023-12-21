@@ -1,0 +1,256 @@
+scn fwvStrongholdActivatorScript
+
+short wire1
+short wire2
+short wire3
+short wire4
+short stage
+short hotwire
+short iHotwire
+short button
+float hTimer
+short circuit
+
+
+short sShieldOff
+short sBlow
+float fTimer
+ref rDoor
+
+Begin onActivate player
+
+	if getisReference fwvStrongholdDalekPowerRef == 1
+		if fwvqInvasions.sBlow == 0
+			if fwvqInvasions.eType == 1
+				MessageEx "[Taranium Core will overload in 60 seconds]"
+				fwvStrongholdDalekAlarmRef.enable
+				;fwvXODalekRedLightREF.enable
+			endif
+			set fwvqInvasions.sBlow to 1
+			;set fwvqInvasions.Kablooey to 0
+			;set fwvqInvasions.fBoomOnce to 0
+
+			set fwvqInvasions.fTimer to 0.0
+		endif
+
+		
+	elseif getisReference fwvStrongholdDalekCellRef == 1
+		set rDoor to getlinkedRef
+		if rDoor.getOpenState == 3
+			if iHotwire == 0
+				set wire1 to 1 + GetRandomPercent * 4/100
+				set wire2 to 1 + GetRandomPercent * 4/100
+				set wire3 to 1 + GetRandomPercent * 4/100
+				set wire4 to 1 + GetRandomPercent * 4/100
+				set stage to 0
+				printc "wire 1 is %g" wire1
+				printc "wire 2 is %g" wire2
+				printc "wire 3 is %g" wire3
+				printc "wire 4 is %g" wire4
+				set iHotwire to 1
+			endif
+		else
+			MessageEx "[Cell Door Controls already hacked]"
+		endif
+		ShowMessage fwvDalekSaucerHotwireMessage stage
+		set hotwire to 1
+		
+	elseif getIsID fwvDalekMachine04TransMat == 1
+		if fwvqInvasions.sTransmatOn == 0
+			MessageEx "[TransMat pads activated]"
+			set fwvqInvasions.sTransmatOn to 1
+			fwvDalekTransmatLight01.enable
+			fwvDalekTransmatLight02.enable
+			fwvDalekTransmatLight03.enable
+			fwvDalekTransmatLight01A.enable
+			fwvDalekTransmatLight02A.enable
+			fwvDalekTransmatLight03A.enable
+			;fwvDalekTransmatGlow01.enable
+			;fwvDalekTransmatGlow02.enable
+			;fwvDalekTransmatGlow03.enable
+			fwvTransmatZap01.enable
+			fwvTransmatZap02.enable
+			fwvTransmatZap03.enable
+		else
+			MessageEx "[Transmat pads deactivated]"
+			set fwvqInvasions.sTransmatOn to 0
+			fwvDalekTransmatLight01.disable
+			fwvDalekTransmatLight02.disable
+			fwvDalekTransmatLight03.disable
+			fwvDalekTransmatLight01A.disable
+			fwvDalekTransmatLight02A.disable
+			fwvDalekTransmatLight03A.disable
+			;fwvDalekTransmatGlow01.disable
+			;fwvDalekTransmatGlow02.disable
+			;fwvDalekTransmatGlow03.disable
+			fwvTransmatZap01.disable
+			fwvTransmatZap02.disable
+			fwvTransmatZap03.disable
+		endif
+		
+		
+	elseif getIsId fwvDalekShieldControls == 1
+		if GetIsReference fwvDalekSaucerShieldControl01
+			if sShieldOff == 0
+				let fwvqInvasions.sShield := fwvqInvasions.sShield + 1
+				if fwvqInvasions.sShield > 3
+					MessageEx "[Stronghold Shields have been disabled]"
+					PlaySound OBJForcefieldShutdown
+					fwvStrongholdDalekShieldRef.disable
+				else
+					PlaySound OBJIntercomHail
+					MessageEx "[%g/4 Shield Controls hacked]" fwvqInvasions.sShield			
+				endif
+				let sShieldOff := 1
+			else
+				MessageEx "[Shield Control already hacked]"
+				printc "sShieldoff is %g" sShieldOff
+			endif
+
+		endif
+		
+		if GetIsReference fwvDalekSaucerShieldControl02
+			if sShieldOff == 0
+				let fwvqInvasions.sShield := fwvqInvasions.sShield + 1
+				if fwvqInvasions.sShield > 3
+					MessageEx "[Stronghold Shields have been disabled]"
+					PlaySound OBJForcefieldShutdown
+					fwvStrongholdDalekShieldRef.disable
+				else
+					PlaySound OBJIntercomHail
+					MessageEx "[%g/4 Shield Controls hacked]" fwvqInvasions.sShield			
+				endif
+				let sShieldOff := 1
+			else
+				MessageEx "[Shield Control already hacked]"
+				printc "sShieldoff is %g" sShieldOff
+			endif
+
+		endif
+
+		
+		if GetIsReference fwvDalekSaucerShieldControl03
+			if sShieldOff == 0
+				let fwvqInvasions.sShield := fwvqInvasions.sShield + 1
+				if fwvqInvasions.sShield > 3
+					MessageEx "[Stronghold Shields have been disabled]"
+					PlaySound OBJForcefieldShutdown
+					fwvStrongholdDalekShieldRef.disable
+				else
+					PlaySound OBJIntercomHail
+					MessageEx "[%g/4 Shield Controls hacked]" fwvqInvasions.sShield			
+				endif
+				let sShieldOff := 1
+			else
+				MessageEx "[Shield Control already hacked]"
+				printc "sShieldoff is %g" sShieldOff
+			endif
+
+		endif
+
+		
+		if GetIsReference fwvDalekSaucerShieldControl04
+			if sShieldOff == 0
+				let fwvqInvasions.sShield := fwvqInvasions.sShield + 1
+				if fwvqInvasions.sShield > 3
+					MessageEx "[Stronghold Shields have been disabled]"
+					PlaySound OBJForcefieldShutdown
+					fwvStrongholdDalekShieldRef.disable
+				else
+					PlaySound OBJIntercomHail
+					MessageEx "[%g/4 Shield Controls hacked]" fwvqInvasions.sShield			
+				endif
+				let sShieldOff := 1
+			else
+				MessageEx "[Shield Control already hacked]"
+				printc "sShieldoff is %g" sShieldOff
+			endif
+		endif
+
+		
+	endif
+End
+
+begin gameMode
+
+	set button to getbuttonpressed
+
+	if hotwire == 1
+		if button == 0
+			set circuit to 1
+			set hTimer to 0.0
+			set hotwire to 2
+		elseif button == 1
+			set circuit to 2
+			set hTimer to 0.0
+			set hotwire to 2
+		elseif button == 2
+			set circuit to 3
+			set hTimer to 0.0
+			set hotwire to 2
+		elseif button == 3
+			set circuit to 4
+			set hTimer to 0.0
+			set hotwire to 2
+		elseif button == 4
+			set stage to 0
+			set hotwire to 0
+		endif
+	elseif hotwire == 2
+		if hTimer < 0.25
+			set hTimer to hTimer + getSecondsPassed
+		else
+			if stage == 0
+				if circuit == wire1
+					set stage to stage + 1
+				else
+					set stage to 0
+				endif
+				set hotwire to 3
+			elseif stage == 1
+				if circuit == wire2
+					set stage to stage + 1
+				else
+					set stage to 0
+				endif
+				set hotwire to 3
+			elseif stage == 2
+				if circuit == wire3
+					set stage to stage + 1
+				else
+					set stage to 0
+				endif
+				set hotwire to 3
+			elseif stage == 3
+				if circuit == wire4
+					set stage to stage + 1
+				else
+					set stage to 0
+				endif
+				set hotwire to 3
+			endif
+		endif
+	elseif hotwire == 3
+		if stage < 4
+			ShowMessage fwvDalekSaucerHotwireMessage stage
+			set hTimer to 0.0
+			set hotwire to 1		
+		else
+			set fwvqDalekSaucer.vent to 2
+			MessageEx "The Cell Door controls short out..."
+			player.rewardKarma 5
+			rDoor.setOpenState 1
+			set fwvqInvasions.sHack to 1
+			set iHotwire to 0
+			set hotwire to 0
+			set stage to 0
+		endif
+	endif
+
+	if getIsID fwvStrongholdDalekShield == 1
+		if getDistance player < 340 && getDisabled == 0
+			player.killActor
+		endif
+	endif
+	
+end

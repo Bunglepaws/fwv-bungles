@@ -1,0 +1,34 @@
+scn fwvFuncGetWithinRange2D
+
+ref rRef1
+ref rRef2
+float fCalc
+float fDist
+float fDistMin
+float fDistMax
+
+short sReturnValue
+short sOnlyEnabled ; only enabled refs will be compared, returns 0 if true and either are disabled
+
+begin function { fDistMin, fDistMax, sOnlyEnabled, rRef1, rRef2 }
+	if rRef2.IsFormValid == 1 && rRef1.IsFormValid == 1
+		set fCalc to rRef2.GetPos X - rRef1.GetPos X
+		set fDist to Pow fCalc 2
+		set fCalc to rRef2.GetPos Y - rRef1.GetPos Y
+		set fCalc to Pow fCalc 2 + fDist
+		set fDist to Sqrt fCalc
+		if fDist < fDistMin
+			set sReturnValue to 0
+		elseif fDist > fDistMax
+			set sReturnValue to 0
+		elseif (rRef1.GetDisabled || rRef2.GetDisabled) && sOnlyEnabled ; not enabled but sOnlyEnabled is true
+			set sReturnValue to 0
+		elseif rRef1.IsInInterior != rRef2.IsInInterior || (rRef1.IsInInterior && rRef1.GetParentCell != rRef2.GetParentCell) || (rRef1.IsInInterior == 0 && rRef1.GetParentWorldspace != rRef2.GetParentWorldspace) ; not able to be compared anyway
+			set sReturnValue to 0
+		else
+			set sReturnValue to 1
+		endif
+	else
+	endif
+	SetFunctionValue sReturnValue
+end

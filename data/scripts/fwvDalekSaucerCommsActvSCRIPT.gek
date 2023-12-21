@@ -1,0 +1,70 @@
+scn fwvDalekSaucerCommsActvSCRIPT
+
+
+float fRandPer
+short sErased
+short sSent
+short button
+short sRewardK
+short awaitinginput
+
+begin OnActivate
+	if fwvqInvasions.sDalekCommsActivated == 0
+		;fwvSaucerCommsFlashREF.disable
+		fwvXODalekSaucerCommsKlaxLightREF.playgroup Backward 1
+		; this is for fwvDalekMachine04A - XO
+		let fRandPer := getRandomPercent
+		set sErased to 0
+		set sSent to 0
+		if fRandPer < 20
+			ShowMessage fwvXODalekCommsRelay01
+			set awaitingInput to 1
+		elseif fRandPer >= 20 && fRandPer < 40
+			ShowMessage fwvXODalekCommsRelay02
+			set awaitingInput to 1
+		elseif fRandPer >=40 && fRandPer < 60
+			ShowMessage fwvXODalekCommsRelay03
+			set awaitingInput to 1
+		elseif fRandPer >= 60 && fRandPer < 80
+			ShowMessage fwvXODalekCommsRelay04
+			set awaitingInput to 1
+		else
+			ShowMessage fwvXODalekCommsRelay05
+			set awaitingInput to 1
+		endif
+		set fwvqInvasions.sDalekCommsActivated to 1
+	else
+		if sErased == 1 && sSent == 0
+			MessageEx "[The transmission has already been canceled.]"
+	    elseif sSent == 1 && sErased == 0
+			MessageEx "[The transmission has already been sent.]"
+		else
+			MessageEx "[The Communications Relay is not responding.]"
+		endif
+		
+	endif
+	
+	
+end
+
+
+begin gamemode
+	if awaitingInput == 1
+		set button to getbuttonpressed
+		if button > -1
+			set awaitingInput to 0
+			if button == 0
+				RewardKarma 25
+				MessageEx "[Data file erased.]"
+				set sErased to 1
+				set sSent to 0
+			elseif button == 1
+				RewardKarma -25
+				MessageEx "[Data file sent.]"
+				set sErased to 0
+				set sSent to 1
+			endif
+		endif
+	endif
+end
+

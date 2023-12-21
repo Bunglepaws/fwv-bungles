@@ -1,0 +1,33 @@
+scn fwvSilurianPlotNCRNPCScript
+
+short sPlotOnce
+
+begin GameMode
+
+	if sPlotOnce == 0
+		setrestrained 1
+		set sPlotOnce to 1
+	endif
+
+	
+
+	if fwvqSilurianGasStation.sPlotCaptiveUntied == 1
+		setrestrained 0
+		printc "untied from NPC script"
+		;removescriptpackage
+		StartCombat fwvSilurOfficerPlotREF
+	endif
+	
+End
+
+Begin OnDeath
+
+	if fwvqSilurianPeaceAttempt01.sPlotOver == 0 && fwvqSilurianPeaceAttempt01.sGuardWrap == 0
+		enableplayercontrols
+		set fwvqSilurianPeaceAttempt01.sGuardWrap to 1
+		fwvSilurStrngPlotGuardREF.removescriptpackage
+		fwvSilurStrngPlotGuardREF.addscriptpackage fwvSilurianPlotGuardGreeting2
+		fwvSilurStrngPlotGuardREF.evp
+	endif
+
+End

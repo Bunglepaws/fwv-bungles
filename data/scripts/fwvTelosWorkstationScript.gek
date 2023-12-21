@@ -1,0 +1,11 @@
+scn fwvTelosWorkstationScript
+
+short doOnce
+
+begin onActivate player
+
+	player.showrecipemenu WorkbenchRecipes
+
+	activate
+end
+

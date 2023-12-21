@@ -1,0 +1,14 @@
+scn fwvXOAngelMotelTReturnTrigSCRIPT
+
+short DoOnce
+
+Begin OnTriggerEnter Player
+	
+	if DoOnce == 0
+		Call fwvFuncDematTardis fwvXOAngelMotelTReturnREF
+		ShowMessage fwvWeapSonicRecallMessage
+		ShowMessage fwvXOAngelMotelReturnParadoxMsg
+		set DoOnce to 1
+	endif
+	
+end

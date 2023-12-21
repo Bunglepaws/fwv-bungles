@@ -1,0 +1,39 @@
+scn fwvTCreadoutComponentsSCRIPT
+
+; TARDIS Components Readout script, written by Demeggy 21/2/13
+
+short sPatchVersion
+short tempRef
+ref rSelf
+begin GameMode
+	if sPatchVersion < fwvPatchVersion
+		set sPatchVersion to fwvPatchVersion
+		set rSelf to GetSelf
+		Call fwvFuncResetPosition rSelf
+	endif
+
+	if fwvqSystems.tAdvanced == 0
+		rSelf.setName "Systems Display"
+	else
+		rSelf.setName "Temperature Gauge"
+	endif
+
+end
+
+Begin OnActivate player
+
+	;ref shieldHealth
+	;set shieldHealth to 100 - 100 / fwvq1.tShields 
+
+	set tempRef to fwvqSystems.Temperature 
+
+	if fwvqSystems.tAdvanced == 0
+		ShowMessage fwvTCReadoutComponentsMessage fwvq1.tArchitecture fwvq1.tLifeSupport fwvq1.tNav fwvq1.tComms
+	else
+		MessageEx "Capsule Tempature: %g degrees above comfort level" tempRef
+	endif
+
+activate
+
+end
+

@@ -1,0 +1,104 @@
+scn fwvMoonActivatorScript
+
+short airOn
+short aFrame
+short airlock
+float aTimer
+
+ref light
+
+begin onActivate player
+
+	if getIsReference fwvMoonAirlockControlRef
+		if fwvqCybermanMoon.interior == 0			;close exterior door
+			fwvMoonDoorExtRef.setOpenState 0
+			fwvMoonDoorExtRef.lock 200
+		elseif fwvqCybermanMoon.interior == 1
+			fwvMoonDoorIntRef.setOpenState 0		;close interior door
+			fwvMoonDoorIntRef.lock 200
+		endif
+		if fwvqCybermanMoon.interior == 0
+			MessageEx "The airlock is repressurising..."
+		else	
+			MessageEx "The airlock is depressurising..."
+		endif		
+				
+		set light to getLinkedRef
+		light.playGroup Left 0
+		fwvMoonAirlockLightRef.enable 1
+		set aFrame to 1
+		set aTimer to 0.0
+	elseif getIsReference fwvMoonCommsControlRef
+		if getStage fwvqCybermanMoon == 40
+			fwvLunarCyberMorseSignalREF.disable
+			PlaySound UIRadioSignalLost
+			MessageBoxEx "The Transmission has been cancelled. Space/Time Coordinates for the Polar Ice Caps of Telos, seized and occupied by the Cybermen as their replacement homeworld, have been added to the TARDIS navcom databanks."
+			;fwvMoonCyberSpawnRef.enable
+			;fwvMoonCyberSpawnRef2.enable
+			;fwvMoonCyberSpawnRef3.enable
+			;fwvMoonCyberSpawnRef4.enable
+			;fwvMoonCyberSpawnRef5.enable
+			;fwvMoonCyberSpawnRef6.enable
+			fwvMoonCyberShhhREF01.placeatme fwvCrCybermanVarLevMoon
+			fwvMoonCyberShhhREF02.placeatme fwvCrCybermanVarLevMoon
+			fwvMoonCyberShhhREF03.placeatme fwvCrCybermanVarLevMoon
+			fwvMoonCyberShhhREF04.placeatme fwvCrCybermanVarLevMoon
+			fwvMoonCyberShhhREF05.placeatme fwvCrCybermanVarLevMoon
+			fwvMoonCyberShhhREF06.placeatme fwvCrCybermanVarLevMoon
+			fwvMoonCyberLanderREF.enable
+			fwvMoonCyberLanderLightREF.enable
+			set fwvqLocs.fwvLtelosCaveVisited to 1
+			setStage fwvqCybermanMoon 50
+		else
+			MessageEx "This is of no further use..."
+		endif
+	elseif getIsReference fwvMoonPowerSwitch01Ref == 1
+		;if getStageDone fwvqCybermanMoon 20 == 0
+			fwvMoonPowerSwitch01Ref.Activate
+			setObjectiveCompleted fwvqCybermanMoon 20 1
+			PlaySound QSTEndPowerUpTurbine
+			fwvMoonBaseLPRef.enable
+			fwvMoonStationLightsRef.enable 1
+			fwvMoonBunkDoorRef.unlock
+			fwvMoonBunkDoorRef.setOpenState 1
+		;endif
+	elseif getIsReference fwvMoonBunkDoorRef
+		if getStageDone fwvqCybermanMoon 20 == 0
+			MessageEx "The power needs restored first..."
+		endif
+	elseif getIsID fwvMoonJunctionBox
+		;MessageBoxEx "A Junction Box, can highly volatile if damaged..."
+		showmessage fwvMoonJunctionBoxesWarningMESG
+	endif 
+end
+
+begin gamemode
+
+	if aFrame == 1
+		if aTimer < 5.0
+			set aTimer to aTimer + getSecondsPassed
+			printc "atimer %g" aTimer
+		else
+			if fwvqCybermanMoon.interior == 0
+				MessageEx "The airlock is now repressurised..."
+			else	
+				MessageEx "The airlock is now depressurised..."
+			endif
+			
+			if fwvqCybermanMoon.interior == 0
+				set fwvqCybermanMoon.interior to 1
+				fwvMoonDoorIntRef.unlock
+				fwvMoonDoorIntRef.setOpenState 1		;open interior door
+			elseif fwvqCybermanMoon.interior == 1
+				set fwvqCybermanMoon.interior to 0
+				fwvMoonDoorExtRef.unlock
+				fwvMoonDoorExtRef.setOpenState 1		;open exterior door
+			endif
+			fwvMoonAirlockLightRef.disable 1
+			light.playGroup Backward 0
+			set aTimer to 0.0
+			set aFrame to 0
+		endif
+	endif
+
+end

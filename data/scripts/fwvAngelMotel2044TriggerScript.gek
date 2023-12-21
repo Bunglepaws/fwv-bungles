@@ -1,0 +1,21 @@
+scn fwvAngelMotel2044TriggerScript
+
+short scare1
+
+begin onTriggerLeave player
+
+	if getIsReference fwvAngel2044ScareTrig == 1
+		if scare1 == 0 
+			imod fwvAngelMotelLightsISFX
+			PlaySound FXExplosionRobotBuzz
+			set scare1 to 1
+			if fwvxoMotel2044DoorREF.GetOpenState < 3
+				fwvxoMotel2044DoorREF.SetOpenState 0
+			endif
+			MessageEx "[Looks like you're stuck here...]"
+			fwvxoMotel2044DoorREF.Lock 255
+		endif
+	endif
+
+end
+

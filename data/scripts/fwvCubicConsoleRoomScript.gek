@@ -1,0 +1,19 @@
+scn fwvCubicConsoleRoomScript
+
+begin OnTriggerEnter Player
+	if fwvqRooms.sConsoleWeather == 0
+		set fwvqRooms.sConsoleWeather to 1
+	endif
+	printc "Console Weather 0 set"
+	set fwvqRooms.sFixWeather to 1
+	printc "sFixWeather 1 set"
+end
+
+begin OnTriggerLeave Player
+	set fwvqRooms.sConsoleWeather to 0
+	set fwvqRooms.sFixWeather to 1
+	printc "OnLeave set"
+end
+
+
+

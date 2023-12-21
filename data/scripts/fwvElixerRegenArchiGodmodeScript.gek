@@ -1,0 +1,16 @@
+scn fwvElixerRegenArchiGodmodeScript
+
+ref rBaseObject
+
+begin MenuMode 1002
+	if Player.IsSpellTarget fwvItemRegenElixerDebugGodmod
+		set fwvqRegen.fStatModStr to 1.0
+		set fwvqRegen.fStatModPer to 1.0
+		set fwvqRegen.fStatModEnd to 1.0
+		set fwvqRegen.fStatModCha to 1.0
+		set fwvqRegen.fStatModInt to 1.0
+		set fwvqRegen.fStatModAg to 1.0
+		set fwvqRegen.fStatModLuck to 1.0
+		Call fwvFuncForceRegen
+	endif
+end
