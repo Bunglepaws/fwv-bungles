@@ -2,6 +2,10 @@
 
 Bunglepaws' changes for Fallout Who Vegas
 
+## Installation
+
+Download [fwvBungles.esp](https://github.com/Bunglepaws/fwv-bungles/raw/master/data/fwvBungles.esp) and put it below the other FWV addons in your load order.
+
 ## Changes
 
 Fixes for xNVSE compatibility:
