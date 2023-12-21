@@ -121,12 +121,15 @@ Begin GameMode
 
 	;================================================== COMPANION RECRUITMENT SHIT STARTS HERE
 
-	if patch <= 0
-		if eval (arParentCells == Ar_Null)
-			let arParentCells := Ar_Construct "array"
-		endif
-		set patch to 1
+	; start xNVSE fixes
+	if eval (arNPCs == Ar_Null)
+		let arNPCs := Ar_Construct "array"
 	endif
+
+	if eval (arParentCells == Ar_Null)
+		let arParentCells := Ar_Construct "array"
+	endif
+	; end xNVSE fixes
 
 	if sGenericFollow == 0
 		printc "sGeneric Follow is %g" sGenericFollow

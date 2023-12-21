@@ -26,6 +26,28 @@ ref exteriorRef
 
 BEGIN GAMEMODE
 
+	; start fixes for xNVSE
+	if eval (event == Ar_Null)
+		let event := ar_list 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	endif
+	
+	if eval (frame == Ar_Null)
+		let frame := ar_range 1, 50
+	endif
+	
+	if eval (timer == Ar_Null)
+		let timer := ar_list 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+	endif
+	
+	if eval (randVar == Ar_Null)
+		let randVar := ar_range 1, 50
+	endif
+	
+	if eval (tempVar == Ar_Null)
+		let tempVar := ar_range 1, 50
+	endif
+	; end fixes for xNVSE
+	
 	if init == 0
 		;let event := ar_list 1, 50
 		let event := ar_list 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -271,3 +293,4 @@ BEGIN GAMEMODE
 	endif
 
 END
+
