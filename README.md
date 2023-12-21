@@ -18,6 +18,8 @@ Fixes for xNVSE compatibility:
 
 - Add some missing array constructors
 
+- Recompiled a swinging cable animation script to fix error spam
+
 - enabled flag for fwvCompanion script to run at start (initializes arrays)
 
 - fixed fwvFuncResetPosition (used in the console addon's scripts) crashing when running on null object
