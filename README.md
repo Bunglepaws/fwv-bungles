@@ -4,7 +4,7 @@ Bunglepaws' changes for Fallout Who Vegas
 
 ## Installation
 
-1. Download and install the latest [xNVSE](https://github.com/xNVSE/NVSE)
+1. Download and install the latest [xNVSE](https://github.com/xNVSE/NVSE) and [JIP LN NVSE Plugin](https://www.nexusmods.com/newvegas/mods/58277)
 
 2. Download and install Fallout Who Vegas Complete Edition from [its github](https://github.com/Fallout-Who-Vegas/Fallout-Who-Vegas-Complete-Edition), following those instructions
 
