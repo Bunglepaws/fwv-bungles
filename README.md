@@ -4,7 +4,13 @@ Bunglepaws' changes for Fallout Who Vegas
 
 ## Installation
 
-Download [fwvBungles.esp](https://github.com/Bunglepaws/fwv-bungles/raw/master/data/fwvBungles.esp) and put it below the other FWV addons in your load order.
+1. Download and install the latest [xNVSE](https://github.com/xNVSE/NVSE)
+
+2. Download and install Fallout Who Vegas Complete Edition from [its github](https://github.com/Fallout-Who-Vegas/Fallout-Who-Vegas-Complete-Edition), following those instructions
+
+3. Download [fwvBungles.esp](https://github.com/Bunglepaws/fwv-bungles/raw/master/data/fwvBungles.esp) and install it into your Fallout New Vegas "Data" directory
+
+4. Put fwvBungles.esp below the other FWV addons in your load order.
 
 ## Changes
 
