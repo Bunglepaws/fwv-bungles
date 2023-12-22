@@ -72,6 +72,7 @@ Begin OnActivate Player
 		MessageBoxEx "Current Companions:%r%r1. %z %r2. %z %r3. %z %r%rYou can enable or disable the Fallout Who Vegas Companion Recruitment Function with this book.%rDisabling only affects generic Wasteland NPCs, not New Vegas Follower or Unique Fallout Who Vegas companions.%r%r|[Cancel]%{|[Enable Companion Recruitment]%}%{|[Disable Companion Recruitment]%}" rName1 rName2 rName3 sHireNotOk sHireOK		
 		
 	endif
+	sv_destruct rName1 rName2 rName3
 	set awaitingInput to 1
 End
 
@@ -95,3 +96,4 @@ Begin Gamemode
 		endif
 	endif
 end
+

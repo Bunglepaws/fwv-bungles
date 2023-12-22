@@ -18,6 +18,7 @@ Begin onActivate player
 			;ShowMessage fwvqChristmasLetterMessage
 			let strMessageText := "Seasons Greetings to you, " + $Player + "!%r%rYou've been very well behaved this year, so I won't kill you straight away!%rA little challenge is in order...%rA select guestlist will shortly be arriving... %rThe gifts before you have been handpicked to 'accomodate' each guest accordingly...%rI trust you'll use them wisely and sparingly!%rAfter all - it is your life on the line - HO HO HO!%r%rMerry Yulestide - and a Happy New Year,%r%rF. Christmas."
 			MessageBoxEx "%z" strMessageText
+			sv_destruct strMessageText
 			setStage fwvqChristmasSpecial 10
 			set fwvqChristmasSpecial.wave to 1
 			MessageEx "Teleports inbound..."
@@ -108,3 +109,4 @@ Begin GameMode
 	endif
 
 End
+

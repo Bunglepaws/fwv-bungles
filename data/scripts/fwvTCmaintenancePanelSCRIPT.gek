@@ -13,12 +13,10 @@ short rInit					;initialise which tool is needed next
 ref rTool						;randomise which tool to use for the current step
 ref rComponent				;store the component ID in here
 short rComponentHP		;store component HP from fwvqSystems vars here
-string_var rToolName	;name of tool to use
 short rStep					;repair step
 short rState
 short rMod					;repair Val Modifier (0 or 100)
 
-string_var rName		;name of component being repaired
 short component
 short rndDmg
 
@@ -349,6 +347,7 @@ else
 				set rComponentHP to fwvqSystems.ArtronCapacitor
 			elseif rComponent == fwvItemRelativeDimensionalStabiliser 
 				set rComponentHP to fwvqSystems.RelativeDimensionalStabiliser
+
 			elseif rComponent == fwvItemChameleonCircuit 
 				set rComponentHP to fwvqSystems.ChameleonCircuit
 			elseif rComponent == fwvItemDematerializationCircuit 
@@ -514,6 +513,7 @@ else
 			set fwvqSystems.InterstitialBeamSynthesiser to rMod
 		endif
 		set rState to 0
+
 	elseif rState == 2
 		;used for examining components
 		printc "component is %g%%" rComponentHP
@@ -534,3 +534,4 @@ else
 endif
 
 end
+

@@ -140,7 +140,6 @@ float fLinks
 
 float tTime
 
-string_var sysRef
 short sysToggle
 short tempPower
 short sysBool
@@ -362,6 +361,7 @@ begin GameMode
 				rLightNormal.enable
 			else
 				rLightNormal.disable
+
 			endif
 
 			if eval (Call fwvFuncGetInTardis) == 1
@@ -678,3 +678,4 @@ begin GameMode
 	endif
 
 end
+

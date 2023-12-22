@@ -27,7 +27,6 @@ float fLFHealthPerc
 
 ref rRace
 string_var rSpecies
-string_var rGender
 string_var rName
 short rHeal
 short rHP
@@ -281,6 +280,8 @@ begin onFire
 	elseif active == 1
 		MessageEx "Medical Probe already in use..."
 	endif
+	
+	sv_destruct rSpecies rName
 end
 
 begin gamemode
@@ -301,3 +302,4 @@ begin gamemode
 		endif
 	endif
 end
+

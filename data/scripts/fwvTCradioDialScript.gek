@@ -72,9 +72,11 @@ begin GameMode
 			if rLinkedRef != 0
 				rLinkedRef.SetBroadcastState 1
 			endif
+			sv_destruct strRadioName strNewName
 		else
 			rSelf.SetNameEx "%z" strOriginName
 		endif
 	endif
 	
 end
+
