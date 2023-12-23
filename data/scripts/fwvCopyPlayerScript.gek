@@ -25,6 +25,7 @@ begin GameMode
 		if eval (sv_Compare strCurTempName strName 1 != 0)
 			SetNameEx "%z" strName
 		endif
+		sv_destruct strCurTempName
 	elseif sNameSet == 0 && GetDisabled == 0
 		set sNameSet to 1
 		set sMatchMode to 1
@@ -94,3 +95,4 @@ begin GameMode
 		printc "%.0f" sMatchMode
 	endif
 end
+

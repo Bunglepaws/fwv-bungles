@@ -4,7 +4,6 @@ scn fwvTCreadoutPowerSCRIPT
 
 short sPatchVersion
 ref rSelf
-string_var strReadout
 
 begin GameMode
 	if sPatchVersion < fwvPatchVersion
@@ -24,3 +23,4 @@ Begin OnActivate player
 	activate
 	
 end
+

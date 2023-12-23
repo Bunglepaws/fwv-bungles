@@ -918,6 +918,8 @@ Begin Gamemode
 
 	if reward == 1										;combat rewards
 
+		sv_destruct enemyName rWord1 rWord2
+		
 		if wasDrifting == 1
 			printc "Combat is ended, so we're turning navigated flight back on"
 			set fwvqDrift.sDrift to 2
@@ -1023,3 +1025,4 @@ Begin Gamemode
 	endif
 
 end
+

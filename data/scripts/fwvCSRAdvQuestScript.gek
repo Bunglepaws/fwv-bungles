@@ -136,6 +136,7 @@ Begin Gamemode
 		control.setName $controlString
 		control.pms fwvHologramProtocolSolidMarker
 		set frame to 0
+		sv_destruct controlString controlType instruction
 	elseif frame == 3
 		control.sms fwvHologramProtocolSolidMarker
 		set lastControl to control
@@ -175,3 +176,4 @@ Begin Gamemode
 	Endif
 
 End
+

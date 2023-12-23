@@ -15,7 +15,7 @@ Begin Function { }
 	let gID := fwvqDrift.gID
 	let gcX := fwvqDrift.gcX
 	let gcY := fwvqDrift.gcY
-	let svPlanet := fwvqDrift.svPlanet
+	let svPlanet := ""
 	let sDetected := fwvqDrift.sDetected
 
 	if gID == 1
@@ -168,3 +168,4 @@ Begin Function { }
 	endif
 	sv_Destruct svPlanet
 End
+

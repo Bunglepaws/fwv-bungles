@@ -587,6 +587,7 @@ begin GameMode
 				let rThemeNameAct := GetRefVariable "rThemeName", rTMForm
 				set strTMThemeName to rThemeNameAct.GetName
 				let strThemeNames := sv_Construct "%z|%z" strThemeNames strTMThemeName
+				sv_destruct strTMThemeName
 			endif
 			set sTMListIndex to sTMListIndex + 1
 		loop
@@ -596,6 +597,7 @@ begin GameMode
 		
 		let strTMMenuMessage := sv_Construct "Theme Selection:|%z" strThemeNames
 		MessageBoxEx $strTMMenuMessage
+		sv_destruct strTMMenuMessage strThemeNames
 		set sTMMenu to 2
 	elseif sTMMenu == 2
 		set sTMOption to GetButtonPressed
@@ -659,6 +661,7 @@ begin GameMode
 		set fwvqRooms.tLab to 0
 	endif
 	if fwvTardisZeroRmRef.getDisabled == 1
+
 		set fwvqRooms.tZeroRoom to 0
 	endif
 
@@ -767,3 +770,4 @@ begin GameMode
 
 
 end
+

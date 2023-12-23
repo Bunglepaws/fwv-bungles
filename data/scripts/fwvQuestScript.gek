@@ -169,7 +169,6 @@ short randControl	; Var for randomising the CSR command
 float word1
 float word2
 float word3
-string_var strPhrase
 
 float CsrTimer ; CSR timer for giving commands
 float CsrMaxTime ; how long the timer goes 'til
@@ -384,6 +383,7 @@ Begin GameMode
 		
 		set fwvqThemeDefaults.sInit to 0
 		
+
 		set sFlightRegionsMax to 0
 		
 		if (sPoliceBoxIsUnspawned == 1 && init == 1) || Player.GetInCell fwvTinterior1 ; TardisInteriorRefin the TARDIS now, reset the position
@@ -997,6 +997,7 @@ Begin GameMode
 	; DLC region menus
 	
 	let sRegionSize := 1 + ar_Size arRegionNames
+
 	
 	if sRegionMenu == 1
 
@@ -1009,6 +1010,7 @@ Begin GameMode
 		
 		let strMessageText := sv_Construct "Region Selection:|%z|[Exit]" strMessageText
 		MessageBoxEx $strMessageText
+		sv_destruct strRegionName strMessageText
 		set sRegionMenu to 2
 	elseif sRegionMenu == 2
 		set sRegionOption to GetButtonPressed
@@ -1028,3 +1030,4 @@ begin MenuMode
 		set sFlightRegion to 0
 	endif
 end
+

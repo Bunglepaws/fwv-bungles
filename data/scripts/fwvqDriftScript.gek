@@ -1,7 +1,6 @@
 scn fwvqDriftScript
 
 string_var svGalaxy
-string_var svPlanet
 short sDrift					;-1- stationary, 0- orbiting, 1- drifting, 2- navigating, 3- adrift
 short gID						;Galaxy
 short gcX
@@ -83,6 +82,7 @@ Begin GameMode
 
 		if fwvq1.tSpeedLvl == 0
 			if fwvq1.tPowerAutopilot == 0 
+
 				let fSpeed := 80.0		
 			else
 				let fSpeed := 90.0			
@@ -215,4 +215,6 @@ Begin GameMode
 		printc "sdetected is %g" sdetected
 	endif
 
+	sv_destruct svGalaxy
 End
+
