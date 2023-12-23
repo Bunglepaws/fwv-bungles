@@ -23,3 +23,7 @@ Fixes for xNVSE compatibility:
 - enabled flag for fwvCompanion script to run at start (initializes arrays)
 
 - fixed fwvFuncResetPosition (used in the console addon's scripts) crashing when running on null object
+
+Other fixes:
+
+- Fix string bloat in save games (may not help old saves)
