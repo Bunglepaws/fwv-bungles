@@ -27,3 +27,5 @@ Fixes for xNVSE compatibility:
 Other fixes:
 
 - Fix string bloat in save games (may not help old saves)
+
+- Improve TARDIS flight's camera shaking
