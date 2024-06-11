@@ -556,13 +556,10 @@ begin GameMode
 	endif
 	
 	if sShaking == 1
-	
-		set fXNew to fSecondsPassed * fXIncBase / 2.0
-		set fZNew to fSecondsPassed * fZIncBase / 2.0
-		;player.rotate X fXIncBase
-		player.rotate Z fZIncBase
-		;player.SetAngle X fXNew
-		;player.SetAngle Z fZNew
+		; modified to use JIP setAngleEx to move both axes
+		set fXNew to fSecondsPassed * fXIncBase / 2.0 + Player.GetAngle X
+		set fZNew to fSecondsPassed * fZIncBase / 2.0 + Player.GetAngle Z
+		player.setAngleEx fXNew 0 fZNew
 	endif
 	
 	; Desktop theme menu
