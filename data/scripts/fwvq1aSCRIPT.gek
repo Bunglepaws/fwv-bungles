@@ -81,8 +81,8 @@ if getStage fwvq1a < 100
 				set sInit to 1
 			endif
 			
-			; Player is fighting, swimming, trespassing, sleeping, jumping or in Mitchell's house. reset
-			if Player.IsInCombat || Player.IsSwimming || Player.IsTrespassing || IsPCSleeping || IsPlayerActionActive 7 || player.getInCell GSDocMitchellHouse == 1
+			; Player is fighting, swimming, trespassing, sleeping, jumping or not in the Mojave Wasteland worldspace. reset
+			if Player.IsInCombat || Player.IsSwimming || Player.IsTrespassing || IsPCSleeping || IsPlayerActionActive 7 || player.GetInWorldspace WastelandNV == 0
 				set fTimer to 5.0
 				set tOnce to 0
 				;printc "Resetting timer!"

@@ -29,3 +29,5 @@ Other fixes:
 - Fix string bloat in save games (may not help old saves)
 
 - Improve TARDIS flight's camera shaking
+
+- Fix for alternate start mods: the TARDIS only appears once entering the WastelandNV worldspace
